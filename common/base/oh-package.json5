@@ -1,0 +1,9 @@
+{
+  "name": "@handwer/base",
+  "version": "1.0.0",
+  "description": "Please describe the basic information.",
+  "main": "Index.ets",
+  "author": "",
+  "license": "GPL-2.0",
+  "dependencies": {}
+}
