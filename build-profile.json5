@@ -1,6 +1,20 @@
 {
   "app": {
-    "signingConfigs": [],
+    "signingConfigs": [
+      {
+        "name": "default",
+        "type": "HarmonyOS",
+        "material": {
+          "certpath": "C:\\Users\\handw\\.ohos\\config\\default_CloudPurePlay_nhc6xdidR_8RfT1xbA4ysLVZDnaCCereVSnVgQPOifU=.cer",
+          "keyAlias": "debugKey",
+          "keyPassword": "0000001AB1C668D2C200D3E4DB98EA684BC534AC2E7865E23810BAAA446E00338F23DBFA349B29E84869",
+          "profile": "C:\\Users\\handw\\.ohos\\config\\default_CloudPurePlay_nhc6xdidR_8RfT1xbA4ysLVZDnaCCereVSnVgQPOifU=.p7b",
+          "signAlg": "SHA256withECDSA",
+          "storeFile": "C:\\Users\\handw\\.ohos\\config\\default_CloudPurePlay_nhc6xdidR_8RfT1xbA4ysLVZDnaCCereVSnVgQPOifU=.p12",
+          "storePassword": "0000001AAFD7B347E03BD447CB0B7D07430E6F4B66E445F906BE180E3DCBC4461AB02F151175A80AABEE"
+        }
+      }
+    ],
     "products": [
       {
         "name": "default",
