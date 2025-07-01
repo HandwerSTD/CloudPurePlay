@@ -3,6 +3,22 @@
     {
       "name": "page_show",
       "value": "page from package"
+    },
+    {
+      "name": "standard",
+      "value": "Standard"
+    },
+    {
+      "name": "high",
+      "value": "High"
+    },
+    {
+      "name": "exhigh",
+      "value": "Super"
+    },
+    {
+      "name": "lossless",
+      "value": "Lossless"
     }
   ]
 }

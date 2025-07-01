@@ -55,6 +55,10 @@
     {
       "name": "base",
       "srcPath": "./common/base",
+    },
+    {
+      "name": "player",
+      "srcPath": "./feature/player",
     }
   ]
 }

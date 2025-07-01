@@ -1,0 +1,20 @@
+{
+  "string": [
+    {
+      "name": "standard",
+      "value": "标准"
+    },
+    {
+      "name": "high",
+      "value": "高品质"
+    },
+    {
+      "name": "exhigh",
+      "value": "超高品质"
+    },
+    {
+      "name": "lossless",
+      "value": "无损"
+    }
+  ]
+}
