@@ -75,7 +75,7 @@ export const FloatLyric_INITIAL: FloatLyric = {
     y: 30
   },
   size: 16,
-  color: $r('app.color.app_red'),
+  color: $r('sys.color.brand'),
   align: 'center',
   lines: 1,
   opacity: 1.0,
