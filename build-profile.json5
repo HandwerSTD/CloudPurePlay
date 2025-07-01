@@ -59,6 +59,10 @@
     {
       "name": "player",
       "srcPath": "./feature/player",
+    },
+    {
+      "name": "ui_components",
+      "srcPath": "./common/ui_components",
     }
   ]
 }

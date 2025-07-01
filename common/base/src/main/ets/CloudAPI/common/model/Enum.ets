@@ -23,3 +23,10 @@ export enum COMMENT_SORT_TYPE {
   HOT = 2,
   TIME = 3
 }
+
+export enum PlayerStatus {
+  STOPPED = 'stopped',
+  PLAYING = 'playing',
+  PAUSED = 'paused',
+  LOADING = 'loading'
+}
