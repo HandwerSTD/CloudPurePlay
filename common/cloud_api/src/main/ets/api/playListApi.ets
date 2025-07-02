@@ -10,7 +10,7 @@ import { Song } from "../common/entities/Song"
 import { User, User_INITIAL } from "../common/entities/User"
 import PreferencesUtils from "../common/utils/data/PreferencesUtils"
 import { StorageConstants } from "../common/constants/StorageConstants"
-import commonRequest from "./RequestUtil"
+import commonRequest from "./request/RequestUtil"
 import { Personalized, PersonalListItem } from "../common/entities/Recommend"
 import { preferences } from "@kit.ArkData"
 

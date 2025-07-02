@@ -1,5 +1,5 @@
 import { ArtistInfo, ArtistItem, ArtistsResult } from "../common/entities/Artists"
-import commonRequest from "./RequestUtil"
+import commonRequest from "./request/RequestUtil"
 
 /**
  * 获取歌手信息

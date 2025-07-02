@@ -4,7 +4,7 @@ import { PlayQueue } from "../common/model/PlayQueue"
 import { Song } from "../common/entities/Song"
 import PreferencesUtils from "../common/utils/data/PreferencesUtils"
 import PlayQueueUtils from "../common/utils/play/PlayQueueUtils"
-import commonRequest from "./RequestUtil"
+import commonRequest from "./request/RequestUtil"
 import { preferences } from "@kit.ArkData"
 
 /**

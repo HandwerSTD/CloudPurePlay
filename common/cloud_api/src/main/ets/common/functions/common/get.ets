@@ -2,33 +2,10 @@ import { LogUtil } from "@pura/harmony-utils";
 import { StorageConstants } from "../../constants/StorageConstants";
 import { CacheSet, CacheSet_INITIAL } from "../../model/Settings";
 import { Artist } from "../../entities/Song";
-import commonRequest from "../../../api/RequestUtil";
+import commonRequest from "../../../api/request/RequestUtil";
 import { getArtists } from "./convert";
 
 const TAG = '[GET ]'
-/**
- * 获取API Url
- * （根据用户设置）
- * @returns string - ApiUrl
- */
-export async function getApiUrl(): Promise<string | undefined> {
-  return AppStorage.get(StorageConstants.API_URL)
-}
-
-/**
- * 获取用户Cookie
- * @returns
- */
-export async function getCookie(): Promise<string> {
-  let cookie = ''
-  let isCustomCookie = await AppStorage.get(StorageConstants.IS_CUSTOM_COOKIE) as boolean
-  if(isCustomCookie) {
-    cookie = await AppStorage.get(StorageConstants.CUSTOM_COOKIE) as string
-  } else {
-    cookie = await AppStorage.get(StorageConstants.COOKIE) as string
-  }
-  return cookie
-}
 
 interface InnerData {
   version: string
@@ -38,29 +15,35 @@ interface InnerVersion {
   code: number,
   data: InnerData
 }
+
+interface checkValidUriParams {
+  setChecking: (status: boolean) => void
+  setResult: (success: boolean) => void
+}
+
 /**
  * 检查API URL连通性
  * @returns
  */
-export async function checkValidUrl(): Promise<boolean> {
+export async function checkValidUrl(params: checkValidUriParams): Promise<boolean> {
   try {
-    AppStorage.setOrCreate(StorageConstants.IS_CHECKING_VALID_API, true)
+    params.setChecking(true)
     const response = await commonRequest<InnerVersion>({
       url: '/inner/version',
       params: { timeout: 5000, noCookie: true }
     })
     if (response.code === 200) {
-      AppStorage.setOrCreate(StorageConstants.VALID_API_URL, true)
+      params.setResult(true)
       return true
     } else {
-      AppStorage.setOrCreate(StorageConstants.VALID_API_URL, false)
+      params.setResult(false)
       return false
     }
   } catch (e) {
-    AppStorage.setOrCreate(StorageConstants.VALID_API_URL, false)
+    params.setResult(false)
     return false
   } finally {
-    AppStorage.setOrCreate(StorageConstants.IS_CHECKING_VALID_API, false)
+    params.setChecking(false)
   }
 }
 

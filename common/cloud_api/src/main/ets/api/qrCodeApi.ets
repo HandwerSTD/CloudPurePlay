@@ -1,7 +1,7 @@
 import { LogUtil, ToastUtil } from "@pura/harmony-utils"
 import { StorageConstants } from "../common/constants/StorageConstants"
 import { extractCookie } from "../common/functions/common/convert"
-import commonRequest from "./RequestUtil"
+import commonRequest from "./request/RequestUtil"
 import { getLoginStatus } from "./loginApi"
 import { preferences } from "@kit.ArkData"
 

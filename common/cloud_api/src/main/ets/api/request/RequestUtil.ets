@@ -1,36 +1,49 @@
 import axios, { AxiosError, AxiosRequestConfig, AxiosResponse, InternalAxiosRequestConfig } from '@ohos/axios'
 import { LogUtil } from '@pura/harmony-utils'
-import Constants from '../common/constants/Constants'
-import { StorageConstants } from '../common/constants/StorageConstants'
-import { Api } from '../common/model/Api'
-import { getApiUrl, getCookie } from '../common/functions/common/get'
-import { RealIP } from '../common/model/Settings'
+import Constants from '../../common/constants/Constants'
+import { StorageConstants } from '../../common/constants/StorageConstants'
+import { Api } from '../../common/model/Api'
+import { RealIP } from '../../common/model/Settings'
+import { RequestContext } from './RequestContext'
 
 const TAG = 'RequestUtil'
 
-let isLogged = AppStorage.prop<boolean>(StorageConstants.IS_LOGGED)
-let baseUrl = AppStorage.prop<string>(StorageConstants.API_URL)
+
+let currentContext: RequestContext | null = null
+
+export const setupRequestContext = (context: RequestContext) => {
+  currentContext = context
+}
+export const getNowRequestContext = () => {
+  return currentContext
+}
 
 const instance = axios.create({
   timeout: 15000
 })
 
+// custom cookie 比 cookie 优先级高
+const getCookie = () => {
+  if (!currentContext) return ''
+  if (currentContext.cookie.customCookie) return currentContext.cookie.customCookie
+  return currentContext.cookie.cookie
+}
+
 instance.interceptors.request.use(async (request: InternalAxiosRequestConfig ) => {
   const settings: Api = await AppStorage.get(StorageConstants.API_SETTINGS) as Api
+  if (!currentContext) return Promise.reject()
   if(settings.user !== 'cloudmusic' && request.params?.baseUrl != Constants.API_URL) return Promise.reject()
   // baseUrl
-  request.baseURL = !request.params.baseUrl ? await getApiUrl() : request.params.baseUrl
+  request.baseURL = !request.params.baseUrl ? currentContext.baseUrl : request.params.baseUrl
   // timeout
   request.timeout = request.params.timeout ?? 15000
   // Cookie
   if(!request.params.noCookie) {
-    const cookie = await getCookie()
-    // request.params.cookie = cookie
-    request.headers['cookie'] = await getCookie()
+    request.headers['cookie'] = getCookie()
   }
   // realIP
   if(!request.url?.includes('/login')) {
-    const realIP = await AppStorage.get(StorageConstants.REAL_IP) as RealIP
+    const realIP = currentContext?.realIp
     if(realIP.toggle) {
       request.params.realIP = realIP.realIp
     }

@@ -7,7 +7,7 @@ import { QualityType, Song, SongDetail, Song_INITIAL, SongPlayResult, SongSearch
 import { User } from "../common/entities/User"
 import PlayQueueUtils from "../common/utils/play/PlayQueueUtils"
 import { DailySongRes } from "./playListApi"
-import commonRequest from "./RequestUtil"
+import commonRequest from "./request/RequestUtil"
 import { DailyListSongs } from "../common/entities/PlayList"
 import { preferences } from "@kit.ArkData"
 

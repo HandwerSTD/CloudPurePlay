@@ -1,6 +1,6 @@
 import { CommentResult } from "../common/entities/Comment";
 import { COMMENT_SORT_TYPE, COMMENT_TYPE } from "../common/model/Enum";
-import commonRequest from "./RequestUtil";
+import commonRequest from "./request/RequestUtil";
 
 /**
  * 获取评论信息

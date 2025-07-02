@@ -5,7 +5,7 @@ import {
   AlbumSearchResult,
   SubAlbumResult, SubAlbumResult_INITIAL } from "../common/entities/Album";
 import PreferencesUtils from "../common/utils/data/PreferencesUtils";
-import commonRequest from "./RequestUtil";
+import commonRequest from "./request/RequestUtil";
 import { preferences, ValueType } from "@kit.ArkData";
 
 /**
