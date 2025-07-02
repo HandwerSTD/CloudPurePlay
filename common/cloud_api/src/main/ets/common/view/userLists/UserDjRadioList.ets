@@ -1,5 +1,5 @@
 import { LogUtil, ToastUtil } from "@pura/harmony-utils";
-import { getDjSublist } from "../../../api/djApi";
+import { getUserDjSubscribeList } from "../../../api/djApi";
 import Constants from "../../constants/Constants";
 import { StorageConstants } from "../../constants/StorageConstants";
 import { DjRadioParam } from "../../model/PageParams";
@@ -32,7 +32,7 @@ export struct UserDjRadioList {
   private async getRadioList() {
     if(this.isLogged && this.djRadioList.length == 0) {
       this.isLoading = true
-      const result = await getDjSublist()
+      const result = await getUserDjSubscribeList()
       this.djRadioList = result.djRadios
       this.isLoading = false
     }
@@ -47,7 +47,7 @@ export struct UserDjRadioList {
       ToastUtil.showToast('操作过于频繁，请5秒后再试')
     } else {
       try {
-        const result = await getDjSublist()
+        const result = await getUserDjSubscribeList()
         this.djRadioList = []
         this.djRadioList = result.djRadios
         this.lastRefreshTime = currentTime

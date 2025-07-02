@@ -10,8 +10,9 @@ import { Song } from "../common/entities/Song"
 import { User, User_INITIAL } from "../common/entities/User"
 import PreferencesUtils from "../common/utils/data/PreferencesUtils"
 import { StorageConstants } from "../common/constants/StorageConstants"
-import commonRequest from "../common/utils/request/RequestUtil"
+import commonRequest from "./RequestUtil"
 import { Personalized, PersonalListItem } from "../common/entities/Recommend"
+import { preferences } from "@kit.ArkData"
 
 export interface PlayListsResult {
   more:boolean
@@ -22,9 +23,9 @@ export interface PlayListsResult {
  * @param offset - 偏移量
  * @returns list
  */
-export const getPlayLists = async (offset: number): Promise<PlayListsResult> => {
+export const getPlayLists = async (offset: number, user: User, statePersistent?: (val: preferences.ValueType) => void): Promise<PlayListsResult> => {
   let list: PlayList[] = new Array()
-  const user = await PreferencesUtils.getPreferenceValue<User>(StorageConstants.USER_PREF, StorageConstants.USER, User_INITIAL)
+  // const user = await PreferencesUtils.getPreferenceValue<User>(StorageConstants.USER_PREF, StorageConstants.USER, User_INITIAL)
   if(user.data.account.id === 0) {
     return { more: false, playlist: [] }
   }
@@ -33,8 +34,9 @@ export const getPlayLists = async (offset: number): Promise<PlayListsResult> => 
     params: { uid: user.data.account.id, offset, timestamp: new Date().getTime() }
   })
   list = response.playlist
-  AppStorage.setOrCreate(StorageConstants.USER_PLAYLISTS, list)
-  PreferencesUtils.putPreferenceValue(StorageConstants.USER_PREF, StorageConstants.USER_PLAYLISTS, list)
+  // AppStorage.setOrCreate(StorageConstants.USER_PLAYLISTS, list)
+  // PreferencesUtils.putPreferenceValue(StorageConstants.USER_PREF, StorageConstants.USER_PLAYLISTS, list)
+  statePersistent?.(list)
   return response
 }
 
@@ -137,13 +139,14 @@ export const subscribePlayList = async (id: number, mode: number): Promise<boole
  * Get personalized list
  * @returns Array<PersonalListItem>
  */
-export const getPersonalizedList = async (): Promise<Array<PersonalListItem>> => {
+export const getPersonalizedList = async (statePersistent?: (val: preferences.ValueType) => void): Promise<Array<PersonalListItem>> => {
   const request = await commonRequest<Personalized>({
     url: '/personalized',
     params: { timestamp: new Date().getTime() }
   })
-  AppStorage.setOrCreate(StorageConstants.PERSONALIZED_LIST, request.result)
-  PreferencesUtils.putPreferenceValue(StorageConstants.USER_PREF, StorageConstants.PERSONALIZED_LIST, request.result)
+  // AppStorage.setOrCreate(StorageConstants.PERSONALIZED_LIST, request.result)
+  // PreferencesUtils.putPreferenceValue(StorageConstants.USER_PREF, StorageConstants.PERSONALIZED_LIST, request.result)
+  statePersistent?.(request.result)
   return request.result
 }
 

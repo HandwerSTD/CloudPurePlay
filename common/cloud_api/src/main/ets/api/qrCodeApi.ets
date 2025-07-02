@@ -1,8 +1,9 @@
 import { LogUtil, ToastUtil } from "@pura/harmony-utils"
 import { StorageConstants } from "../common/constants/StorageConstants"
 import { extractCookie } from "../common/functions/common/convert"
-import commonRequest from "../common/utils/request/RequestUtil"
+import commonRequest from "./RequestUtil"
 import { getLoginStatus } from "./loginApi"
+import { preferences } from "@kit.ArkData"
 
 interface GetQrCodeImg {
   qrimg: string
@@ -48,7 +49,7 @@ interface CheckQrResponse {
   message: string
   cookie: string
 }
-export const checkQrLogin = async (key: string): Promise<boolean> => {
+export const checkQrLogin = async (key: string, cookieSetter: (cookie: string) => void, loginStatePersistent?: (val: preferences.ValueType) => void): Promise<boolean> => {
   const response = await commonRequest<CheckQrResponse>({
     url: '/login/qr/check',
     params: { key, noCookie: true, timestamp: new Date().getTime() }
@@ -58,8 +59,9 @@ export const checkQrLogin = async (key: string): Promise<boolean> => {
     if(cookie) {
       cookie = extractCookie(cookie)
       cookie = cookie + '; OS=pc'
-      AppStorage.setOrCreate(StorageConstants.COOKIE, cookie)
-      const result = await getLoginStatus(cookie)
+      // AppStorage.setOrCreate(StorageConstants.COOKIE, cookie)
+      cookieSetter(cookie)
+      const result = await getLoginStatus(loginStatePersistent)
       return result
     }
   }

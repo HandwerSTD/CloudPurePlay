@@ -1,16 +1,20 @@
 import { StorageConstants } from "../common/constants/StorageConstants"
 import { TopList, TopListItem } from "../common/entities/Recommend"
 import PreferencesUtils from "../common/utils/data/PreferencesUtils"
-import commonRequest from "../common/utils/request/RequestUtil"
+import commonRequest from "./RequestUtil"
+import { preferences } from "@kit.ArkData"
 
 /**
  * 排行榜
  */
-export const getTopList = async (): Promise<TopListItem[]> => {
+export const getTopList = async (statePersistent?: (val: preferences.ValueType) => void): Promise<TopListItem[]> => {
   const response = await commonRequest<TopList>({
     url: '/toplist',
     params: {}
   })
-  if(response.code === 200) PreferencesUtils.putPreferenceValue(StorageConstants.USER_PREF, StorageConstants.TOPLISTS, response.list)
+  if(response.code === 200) {
+    // PreferencesUtils.putPreferenceValue(StorageConstants.USER_PREF, StorageConstants.TOPLISTS, response.list)
+    statePersistent?.(response.list)
+  }
   return response.list
 }

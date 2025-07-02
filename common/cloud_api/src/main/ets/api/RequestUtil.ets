@@ -1,10 +1,10 @@
 import axios, { AxiosError, AxiosRequestConfig, AxiosResponse, InternalAxiosRequestConfig } from '@ohos/axios'
 import { LogUtil } from '@pura/harmony-utils'
-import Constants from '../../constants/Constants'
-import { StorageConstants } from '../../constants/StorageConstants'
-import { Api } from '../../model/Api'
-import { getApiUrl, getCookie } from '../../functions/common/get'
-import { RealIP } from '../../model/Settings'
+import Constants from '../common/constants/Constants'
+import { StorageConstants } from '../common/constants/StorageConstants'
+import { Api } from '../common/model/Api'
+import { getApiUrl, getCookie } from '../common/functions/common/get'
+import { RealIP } from '../common/model/Settings'
 
 const TAG = 'RequestUtil'
 

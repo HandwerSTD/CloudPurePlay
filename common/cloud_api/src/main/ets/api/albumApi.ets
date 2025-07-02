@@ -5,7 +5,8 @@ import {
   AlbumSearchResult,
   SubAlbumResult, SubAlbumResult_INITIAL } from "../common/entities/Album";
 import PreferencesUtils from "../common/utils/data/PreferencesUtils";
-import commonRequest from "../common/utils/request/RequestUtil";
+import commonRequest from "./RequestUtil";
+import { preferences, ValueType } from "@kit.ArkData";
 
 /**
  * 获取专辑信息和歌曲
@@ -23,12 +24,13 @@ export const getAlbumInfo = async (id: number): Promise<AlbumInfoResult> =>
  * 获取收藏的专辑
  * @returns
  */
-export const getSubAlbum = async (): Promise<SubAlbumResult> => {
+export const getUserSubscribedAlbum = async (statePersistent?: (val: preferences.ValueType) => void): Promise<SubAlbumResult> => {
   const result = await commonRequest<SubAlbumResult>({
     url: '/album/sublist',
     params: {}
   })
-  PreferencesUtils.putPreferenceValue(StorageConstants.USER_PREF, StorageConstants.USER_SUB_ALBUM, result.data)
+  // PreferencesUtils.putPreferenceValue(StorageConstants.USER_PREF, StorageConstants.USER_SUB_ALBUM, result.data)
+  statePersistent?.(result.data)
   return result ?? SubAlbumResult_INITIAL
 }
 

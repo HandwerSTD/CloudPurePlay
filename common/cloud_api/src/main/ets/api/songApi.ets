@@ -7,8 +7,9 @@ import { QualityType, Song, SongDetail, Song_INITIAL, SongPlayResult, SongSearch
 import { User } from "../common/entities/User"
 import PlayQueueUtils from "../common/utils/play/PlayQueueUtils"
 import { DailySongRes } from "./playListApi"
-import commonRequest from "../common/utils/request/RequestUtil"
+import commonRequest from "./RequestUtil"
 import { DailyListSongs } from "../common/entities/PlayList"
+import { preferences } from "@kit.ArkData"
 
 interface CheckValiableResponse {
   success: boolean
@@ -123,7 +124,7 @@ interface LikeListResponse {
  * @param uid
  * @returns
  */
-export const getLikeList = async (): Promise<string[]> => {
+export const getLikeList = async (statePersistent?: (val: preferences.ValueType) => void): Promise<string[]> => {
   let user = await AppStorage.get(StorageConstants.USER) as User
   let list:Array<string> = []
   const response = await commonRequest<LikeListResponse>({
@@ -135,7 +136,8 @@ export const getLikeList = async (): Promise<string[]> => {
     list = dataGot
   } catch (e) {
   } finally {
-    AppStorage.setOrCreate(StorageConstants.USER_LIKELIST, list)
+    // AppStorage.setOrCreate(StorageConstants.USER_LIKELIST, list)
+    statePersistent?.(list)
     return list
   }
 }

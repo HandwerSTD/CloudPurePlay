@@ -4,19 +4,21 @@ import { PlayQueue } from "../common/model/PlayQueue"
 import { Song } from "../common/entities/Song"
 import PreferencesUtils from "../common/utils/data/PreferencesUtils"
 import PlayQueueUtils from "../common/utils/play/PlayQueueUtils"
-import commonRequest from "../common/utils/request/RequestUtil"
+import commonRequest from "./RequestUtil"
+import { preferences } from "@kit.ArkData"
 
 /**
  * 获取用户电台 Sublist
  * @returns DjResult
  */
-export const getDjSublist = async (): Promise<DjResult> => {
+export const getUserDjSubscribeList = async (statePersistent?: (val: preferences.ValueType) => void): Promise<DjResult> => {
   const response = await commonRequest<DjResult>({
     url: '/dj/sublist',
     params: { timestamp: new Date().getTime() }
   })
-  AppStorage.setOrCreate(StorageConstants.USER_DJRADIO_LIST, response.djRadios)
-  PreferencesUtils.putPreferenceValue(StorageConstants.USER_PREF, StorageConstants.USER_DJRADIO_LIST, response.djRadios)
+  // AppStorage.setOrCreate(StorageConstants.USER_DJRADIO_LIST, response.djRadios)
+  // PreferencesUtils.putPreferenceValue(StorageConstants.USER_PREF, StorageConstants.USER_DJRADIO_LIST, response.djRadios)
+  statePersistent?.(response.djRadios)
   return response
 }
 

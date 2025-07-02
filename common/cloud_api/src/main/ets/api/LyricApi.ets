@@ -1,6 +1,6 @@
 import { LyricResult } from "../common/entities/Lyric";
 import { getApiUrl } from "../common/functions/common/get";
-import commonRequest from "../common/utils/request/RequestUtil";
+import commonRequest from "./RequestUtil";
 
 /**
  * 获取歌词

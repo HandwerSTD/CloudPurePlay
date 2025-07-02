@@ -1,7 +1,7 @@
 import { LogUtil, ToastUtil } from "@pura/harmony-utils";
 import Constants from "../../constants/Constants";
 import { StorageConstants } from "../../constants/StorageConstants";
-import { getSubAlbum } from "../../../api/albumApi";
+import { getUserSubscribedAlbum } from "../../../api/albumApi";
 import { Album } from "../../entities/Album";
 import { AlbumCard } from "../../../components/cards/AlbumCard";
 import { PlayListSkeleton } from "../../../components/skeleton/Skeleton";
@@ -31,7 +31,7 @@ export struct UserAlbumList {
   private async getAlbumList() {
     if(this.isLogged && this.subAlbums.length == 0) {
       this.isLoading = true
-      const result = await getSubAlbum()
+      const result = await getUserSubscribedAlbum()
       this.subAlbums = result.data
       this.isLoading = false
     }
@@ -46,7 +46,7 @@ export struct UserAlbumList {
       ToastUtil.showToast('操作过于频繁，请5秒后再试')
     } else {
       try {
-        const result = await getSubAlbum()
+        const result = await getUserSubscribedAlbum()
         this.subAlbums = []
         this.subAlbums = result.data
         this.lastRefreshTime = currentTime
