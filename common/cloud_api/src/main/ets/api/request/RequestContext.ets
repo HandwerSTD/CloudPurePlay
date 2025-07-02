@@ -1,4 +1,4 @@
-import { RealIP } from "../../common/model/Settings"
+import { RealIP } from "../../model/Settings"
 
 export interface RequestContext {
   baseUrl: string

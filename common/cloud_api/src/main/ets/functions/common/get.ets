@@ -2,7 +2,7 @@ import { LogUtil } from "@pura/harmony-utils";
 import { StorageConstants } from "../../constants/StorageConstants";
 import { CacheSet, CacheSet_INITIAL } from "../../model/Settings";
 import { Artist } from "../../entities/Song";
-import commonRequest from "../../../api/request/RequestUtil";
+import commonRequest from "../../api/request/RequestUtil";
 import { getArtists } from "./convert";
 
 const TAG = '[GET ]'

@@ -1,5 +1,5 @@
-import { LyricResult } from "../common/entities/Lyric";
-import { getApiUrl } from "../common/functions/common/get";
+import { LyricResult } from "../entities/Lyric";
+import { getApiUrl } from "../functions/common/get";
 import commonRequest from "./request/RequestUtil";
 
 /**

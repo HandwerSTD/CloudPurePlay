@@ -2,7 +2,7 @@
   "string": [
     {
       "name": "module_desc",
-      "value": "module description"
+      "value": "模块描述"
     },
     {
       "name": "EntryAbility_desc",
@@ -14,215 +14,215 @@
     },
     {
       "name": "Explore",
-      "value": "Explore"
+      "value": "发现"
     },
     {
       "name": "Me",
-      "value": "Me"
+      "value": "我的"
     },
     {
       "name": "Lists",
-      "value": "Lists"
+      "value": "播单"
     },
     {
       "name": "LocalSongs",
-      "value": "Local Songs"
+      "value": "本地曲库"
     },
     {
       "name": "Login",
-      "value": "Login"
+      "value": "登录"
     },
     {
       "name": "Logout",
-      "value": "Logout"
+      "value": "退出登录"
     },
     {
       "name": "SET_DEFAULTHOMEPAGE",
-      "value": "Default HomePage"
+      "value": "默认首页"
     },
     {
       "name": "SET_PLAYANDLYRIC",
-      "value": "Play & Lyric"
+      "value": "播放与歌词"
     },
     {
       "name": "SET_CLOUDSERVICE",
-      "value": "Cloud Service"
+      "value": "用户私有云"
     },
     {
       "name": "SET_DATAANDCACHE",
-      "value": "App Data & Cache"
+      "value": "应用数据与缓存"
     },
     {
       "name": "About",
-      "value": "About"
+      "value": "关于"
     },
     {
       "name": "SET_FEEDBACK",
-      "value": "Suggestions & Feedback"
+      "value": "建议与反馈"
     },
     {
       "name": "SET_SONGCARD",
-      "value": "Song Card"
+      "value": "歌曲卡片设置"
     },
     {
       "name": "Clean_temp_cache",
-      "value": "Clear temporary cache"
+      "value": "清理临时文件缓存"
     },
     {
       "name": "Clean_persistent_data",
-      "value": "Clear persistent data"
+      "value": "清理持久化数据"
     },
     {
       "name": "Playlist",
-      "value": "Play List"
+      "value": "歌单"
     },
     {
       "name": "Album",
-      "value": "Album"
+      "value": "专辑"
     },
     {
       "name": "Radio",
-      "value": "Radio"
+      "value": "播客"
     },
     {
       "name": "Search_content",
-      "value": "Search something"
+      "value": "搜索内容"
     },
     {
       "name": "Daily_recommend",
-      "value": "Daily"
+      "value": "每日推荐"
     },
     {
       "name": "Personal_fm",
-      "value": "Personal FM"
+      "value": "私人FM"
     },
     {
       "name": "Cloud",
-      "value": "Cloud"
+      "value": "音乐云盘"
     },
     {
       "name": "Heart_list",
-      "value": "Heart PlayList"
+      "value": "心动歌单"
     },
     {
       "name": "Loading",
-      "value": "Loading..."
+      "value": "正在加载..."
     },
     {
       "name": "SET_UI",
-      "value": "UI & Animation"
+      "value": "界面与动效"
     },
     {
       "name": "clean_song_cache",
-      "value": "Clear Cached Songs"
+      "value": "清理已缓存歌曲"
     },
     {
       "name": "checking_for_update",
-      "value": "Checking for update"
+      "value": "正在检查更新"
     },
     {
       "name": "error_occurred",
-      "value": "Error Occurred"
+      "value": " 发生错误"
     },
     {
       "name": "privacy_policy",
-      "value": "Privacy Policy"
+      "value": "隐私政策"
     },
     {
       "name": "app_log",
-      "value": "App Log"
+      "value": "应用日志"
     },
     {
       "name": "sponsor",
-      "value": "Sponsor"
+      "value": "赞助"
     },
     {
       "name": "new_version_found",
-      "value": "New Version"
+      "value": "发现新版本"
     },
     {
       "name": "download",
-      "value": "Download"
+      "value": "下载"
     },
     {
       "name": "close",
-      "value": "Close"
+      "value": "关闭"
     },
     {
       "name": "version",
-      "value": "Version"
+      "value": "版本"
     },
     {
       "name": "mix_with_others",
-      "value": "Mix With Others"
+      "value": "允许与其他应用同时播放"
     },
     {
       "name": "play_quality",
-      "value": "Play Quality"
+      "value": "在线播放音质"
     },
     {
       "name": "quality",
-      "value": "Quality"
-    },
-    {
-      "name": "standard",
-      "value": "Standard"
-    },
-    {
-      "name": "high",
-      "value": "High"
+      "value": "音质"
     },
     {
       "name": "exhigh",
-      "value": "Extra High"
+      "value": "极高"
+    },
+    {
+      "name": "standard",
+      "value": "标准"
+    },
+    {
+      "name": "high",
+      "value": "高"
     },
     {
       "name": "lossless",
-      "value": "Lossless/Hi-Res"
+      "value": "无损/Hi-Res"
     },
     {
       "name": "settings",
-      "value": "Settings"
+      "value": "应用设置"
     },
     {
       "name": "app",
-      "value": "App"
+      "value": "应用"
     },
     {
       "name": "float_lyric",
-      "value": "Float Lyric"
+      "value": "浮动歌词"
     },
     {
       "name": "lyric_translate",
-      "value": "Lyric Translate"
+      "value": "歌词翻译"
     },
     {
       "name": "none",
-      "value": "None"
+      "value": "无"
     },
     {
       "name": "translate",
-      "value": "Translate"
+      "value": "翻译"
     },
     {
       "name": "roman",
-      "value": "Roman"
+      "value": "罗马音"
     },
     {
       "name": "align_center",
-      "value": "Align Center"
+      "value": "居中显示"
     },
     {
       "name": "font_size",
-      "value": "Font Size"
+      "value": "字体大小"
     },
     {
       "name": "font_weight",
-      "value": "Font Weight"
+      "value": "字体粗细"
     },
     {
       "name": "lyric",
-      "value": "Lyric"
+      "value": "歌词"
     }
   ]
 }

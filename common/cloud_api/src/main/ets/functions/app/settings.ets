@@ -5,7 +5,7 @@ import { CacheSet, CacheSet_INITIAL,
   FloatLyric_INITIAL, LyricStyle, LyricStyle_INITIAL,
   RealIP,
   RealIP_INITIAL } from "../../model/Settings"
-import PreferencesUtils from "../../utils/data/PreferencesUtils"
+import PreferencesUtils from "../../common/utils/data/PreferencesUtils"
 import { preferences } from "@kit.ArkData"
 import { Api, Api_INITIAL } from "../../model/Api"
 

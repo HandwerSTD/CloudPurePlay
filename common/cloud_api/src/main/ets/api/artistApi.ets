@@ -1,4 +1,4 @@
-import { ArtistInfo, ArtistItem, ArtistsResult } from "../common/entities/Artists"
+import { ArtistInfo, ArtistItem, ArtistsResult } from "../entities/Artists"
 import commonRequest from "./request/RequestUtil"
 
 /**

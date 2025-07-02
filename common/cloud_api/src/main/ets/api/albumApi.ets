@@ -1,9 +1,9 @@
-import { StorageConstants } from "../common/constants/StorageConstants";
+import { StorageConstants } from "../constants/StorageConstants";
 import {
   Album,
   AlbumInfoResult,
   AlbumSearchResult,
-  SubAlbumResult, SubAlbumResult_INITIAL } from "../common/entities/Album";
+  SubAlbumResult, SubAlbumResult_INITIAL } from "../entities/Album";
 import PreferencesUtils from "../common/utils/data/PreferencesUtils";
 import commonRequest from "./request/RequestUtil";
 import { preferences, ValueType } from "@kit.ArkData";

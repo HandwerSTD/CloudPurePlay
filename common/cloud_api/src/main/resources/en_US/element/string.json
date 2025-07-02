@@ -58,7 +58,7 @@
     },
     {
       "name": "SET_FEEDBACK",
-      "value": "Suggestions & Feedback"
+      "value": "Suggestion & Feedback"
     },
     {
       "name": "SET_SONGCARD",
@@ -165,16 +165,16 @@
       "value": "Quality"
     },
     {
-      "name": "standard",
-      "value": "Standard"
+      "name": "exhigh",
+      "value": "Extra High"
     },
     {
       "name": "high",
       "value": "High"
     },
     {
-      "name": "exhigh",
-      "value": "Extra High"
+      "name": "standard",
+      "value": "Standard"
     },
     {
       "name": "lossless",
