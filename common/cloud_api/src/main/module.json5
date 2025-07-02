@@ -1,0 +1,13 @@
+{
+  "module": {
+    "name": "cloud_api",
+    "type": "har",
+    "deviceTypes": [
+      "default",
+      "tablet",
+      "2in1",
+      "car",
+      "wearable"
+    ]
+  }
+}

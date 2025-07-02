@@ -63,6 +63,10 @@
     {
       "name": "ui_components",
       "srcPath": "./common/ui_components",
+    },
+    {
+      "name": "cloud_api",
+      "srcPath": "./common/cloud_api",
     }
   ]
 }
