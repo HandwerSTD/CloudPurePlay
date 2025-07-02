@@ -1,5 +1,4 @@
 import { LyricResult } from "../entities/Lyric";
-import { getApiUrl } from "../functions/common/get";
 import commonRequest from "./request/RequestUtil";
 
 /**

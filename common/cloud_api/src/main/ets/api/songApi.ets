@@ -5,7 +5,6 @@ import { HeartMode } from "../entities/Recommend"
 import { PlayQueue } from "../model/PlayQueue"
 import { QualityType, Song, SongDetail, Song_INITIAL, SongPlayResult, SongSearchResult } from "../entities/Song"
 import { User } from "../entities/User"
-import PlayQueueUtils from "../common/utils/play/PlayQueueUtils"
 import { DailySongRes } from "./playListApi"
 import commonRequest from "./request/RequestUtil"
 import { DailyListSongs } from "../entities/PlayList"
@@ -163,7 +162,7 @@ export const likeMusic = async (id: number): Promise<boolean> => {
  * @param id - 歌曲id
  * @param pid - 歌单id
  */
-export const setHeartMode = async (id: number, pid: number): Promise<void> => {
+export const setHeartMode = async (id: number, pid: number, cleanQueue: () => Promise<void>, addQueue: (queue: PlayQueue[]) => Promise<void>): Promise<void> => {
   let queue: Array<PlayQueue> = []
   let tempSong: Song
   const response = await commonRequest<HeartMode>({
@@ -187,8 +186,8 @@ export const setHeartMode = async (id: number, pid: number): Promise<void> => {
       picUrl: item.songInfo.al.picUrl ?? ''
     })
   }
-  await PlayQueueUtils.cleanQueue()
-  await PlayQueueUtils.queueAdd_array(queue)
+  await cleanQueue();
+  await addQueue(queue);
 }
 
 interface PersonalFmSongResult {

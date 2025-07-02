@@ -1,12 +1,10 @@
-import { StorageConstants } from "../constants/StorageConstants";
 import {
   Album,
   AlbumInfoResult,
   AlbumSearchResult,
   SubAlbumResult, SubAlbumResult_INITIAL } from "../entities/Album";
-import PreferencesUtils from "../common/utils/data/PreferencesUtils";
 import commonRequest from "./request/RequestUtil";
-import { preferences, ValueType } from "@kit.ArkData";
+import { preferences } from "@kit.ArkData";
 
 /**
  * 获取专辑信息和歌曲

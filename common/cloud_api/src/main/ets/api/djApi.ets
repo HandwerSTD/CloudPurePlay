@@ -1,9 +1,6 @@
-import { StorageConstants } from "../constants/StorageConstants"
 import { DjProgramResult, DjRadio, DjResult } from "../entities/DjRadio"
 import { PlayQueue } from "../model/PlayQueue"
 import { Song } from "../entities/Song"
-import PreferencesUtils from "../common/utils/data/PreferencesUtils"
-import PlayQueueUtils from "../common/utils/play/PlayQueueUtils"
 import commonRequest from "./request/RequestUtil"
 import { preferences } from "@kit.ArkData"
 
@@ -50,7 +47,9 @@ export const putDjRadioInQueue = async (
   trackCount: number,
   limit: number = 100,
   offset: number = 0,
-  first: boolean = true
+  first: boolean = true,
+  cleanQueue: () => Promise<void>,
+  addToQueue: (queue: PlayQueue[]) => Promise<void>
 ): Promise<void> => {
   const allQueue: PlayQueue[] = []
 
@@ -69,8 +68,8 @@ export const putDjRadioInQueue = async (
     offset += limit
   }
 
-  if (first) await PlayQueueUtils.cleanQueue()
-  await PlayQueueUtils.queueAdd_array(allQueue)
+  if (first) await cleanQueue()
+  await addToQueue(allQueue)
 }
 
 interface DjRadioBody {

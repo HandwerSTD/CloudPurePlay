@@ -1,4 +1,4 @@
-import { Artist, Song } from "../../entities/Song"
+import { Artist, Song } from "../entities/Song"
 import { util } from "@kit.ArkTS"
 import { media } from "@kit.MediaKit"
 import { fileIo } from "@kit.CoreFileKit"

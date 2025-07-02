@@ -1,6 +1,5 @@
 import { StorageConstants } from "../constants/StorageConstants"
 import { TopList, TopListItem } from "../entities/Recommend"
-import PreferencesUtils from "../common/utils/data/PreferencesUtils"
 import commonRequest from "./request/RequestUtil"
 import { preferences } from "@kit.ArkData"
 

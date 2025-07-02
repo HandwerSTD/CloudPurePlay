@@ -8,7 +8,6 @@ import {
   PlayListSongsResult} from "../entities/PlayList"
 import { Song } from "../entities/Song"
 import { User, User_INITIAL } from "../entities/User"
-import PreferencesUtils from "../common/utils/data/PreferencesUtils"
 import { StorageConstants } from "../constants/StorageConstants"
 import commonRequest from "./request/RequestUtil"
 import { Personalized, PersonalListItem } from "../entities/Recommend"

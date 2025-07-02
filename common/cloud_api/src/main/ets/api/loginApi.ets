@@ -1,7 +1,5 @@
 import { LogUtil } from "@pura/harmony-utils"
 import { User, User_INITIAL } from "../entities/User"
-import PreferencesUtils from "../common/utils/data/PreferencesUtils"
-import { StorageConstants } from "../constants/StorageConstants"
 import commonRequest from "./request/RequestUtil"
 import { preferences } from "@kit.ArkData"
 
