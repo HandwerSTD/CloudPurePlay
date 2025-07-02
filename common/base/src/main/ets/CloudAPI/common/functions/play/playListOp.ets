@@ -25,7 +25,7 @@ export async function playListToQueue(playlist: PlayListSong[], index: number) {
       picUrl: item.al.picUrl
     }))
     await PlayQueueUtils.cleanQueue()
-    await PlayQueueUtils.queueAdd_array(queue)
+    await PlayQueueUtils.queueAddArray(queue)
     playQueue(index)
   } catch (e) {
     ToastUtil.showToast('播放失败: ' + e.message)
