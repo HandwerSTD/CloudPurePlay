@@ -1,6 +1,6 @@
 import { LogUtil, ToastUtil } from "@pura/harmony-utils"
 import { StorageConstants } from "../constants/StorageConstants"
-import { extractCookie } from "../functions/convert"
+import { SongConvertUtils } from "../functions/convert"
 import commonRequest from "./request/RequestUtil"
 import { getLoginStatus } from "./loginApi"
 import { preferences } from "@kit.ArkData"
@@ -57,7 +57,7 @@ export const checkQrLogin = async (key: string, cookieSetter: (cookie: string) =
   if(response.code === 803) { // success
     let cookie = response.cookie
     if(cookie) {
-      cookie = extractCookie(cookie)
+      cookie = SongConvertUtils.extractCookie(cookie)
       cookie = cookie + '; OS=pc'
       // AppStorage.setOrCreate(StorageConstants.COOKIE, cookie)
       cookieSetter(cookie)

@@ -3,7 +3,7 @@ import { StorageConstants } from "../constants/StorageConstants";
 import { CacheSet, CacheSet_INITIAL } from "../model/Settings";
 import { Artist } from "../entities/Song";
 import commonRequest from "../api/request/RequestUtil";
-import { getArtists } from "./convert";
+import { SongConvertUtils } from "./convert";
 
 const TAG = '[GET ]'
 
@@ -51,7 +51,7 @@ export function getLocalSongArtistsString(localSongArtists: string): string {
   let artists: string = localSongArtists
   try {
     const artistsArr: Artist[] = JSON.parse(localSongArtists)
-    artists = getArtists(artistsArr)
+    artists = SongConvertUtils.getArtists(artistsArr)
   } catch (e) {
     LogUtil.warn(TAG + 'getLocalSongArtistString Error')
   }

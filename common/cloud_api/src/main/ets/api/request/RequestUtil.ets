@@ -2,7 +2,7 @@ import axios, { AxiosError, AxiosRequestConfig, AxiosResponse, InternalAxiosRequ
 import { LogUtil } from '@pura/harmony-utils'
 import Constants from '../../constants/Constants'
 import { StorageConstants } from '../../constants/StorageConstants'
-import { Api } from '../../model/Api'
+import { Api } from '../../entities/Api'
 import { RealIP } from '../../model/Settings'
 import { RequestContext } from './RequestContext'
 

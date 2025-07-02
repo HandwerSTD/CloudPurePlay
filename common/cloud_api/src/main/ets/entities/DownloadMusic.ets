@@ -1,4 +1,4 @@
-import { Song, SongDownloadItem } from "../entities/Song";
+import { Song, SongDownloadItem } from "./Song";
 
 export interface DownloadItem {
   song: Song
