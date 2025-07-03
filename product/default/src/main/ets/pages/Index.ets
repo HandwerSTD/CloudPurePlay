@@ -1,4 +1,4 @@
-import { ConfigUtils, LoginAPIUtils, RealIP_INITIAL, User } from '@handwer/cloud_api'
+import { CloudAPIConfigUtils, LoginAPIUtils, RealIP_INITIAL, User } from '@handwer/cloud_api'
 import { promptAction } from '@kit.ArkUI'
 
 @Entry
@@ -21,7 +21,7 @@ struct TestComponent {
   @Local qrKey: string = ''
 
   aboutToAppear(): void {
-    ConfigUtils.setRequestContext({
+    CloudAPIConfigUtils.setRequestContext({
       baseUrl: 'http://139.9.223.233:3000/',
       cookie: {},
       realIp: RealIP_INITIAL

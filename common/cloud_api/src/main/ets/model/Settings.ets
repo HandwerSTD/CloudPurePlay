@@ -46,7 +46,13 @@ export interface CacheSet {
  * Real IP 设置
  */
 export interface RealIP {
+  /**
+   * 是否使用 Real IP
+   */
   toggle: boolean
+  /**
+   * 设置的 Real IP 值
+   */
   realIp: string
 }
 

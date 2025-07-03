@@ -8,7 +8,7 @@ import { getNowRequestContext, setupRequestContext } from "../api/request/Reques
 
 export { RequestContext, RequestCookieConfig }
 
-export class ConfigUtils {
+export class CloudAPIConfigUtils {
   static getRequestContext(): RequestContext | null {
     return getNowRequestContext()
   }

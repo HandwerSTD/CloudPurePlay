@@ -10,7 +10,7 @@ export interface RequestContext {
    */
   cookie: RequestCookieConfig
   /**
-   * 模拟地理位置 IP，建议使用 RealIP_INITIAL
+   * 模拟地理位置的 IP，用于突破地区限制访问网易云音乐，不知道填什么请使用 RealIP_INITIAL
    */
   realIp: RealIP
 }
