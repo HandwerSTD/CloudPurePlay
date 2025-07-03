@@ -158,9 +158,9 @@ export class LoginAPIUtils {
   /**
    * 在二维码扫描之后检查二维码扫描结果（可定时轮询或用户手动查询）
    * @param key 刚刚获取的二维码的 key
-   * @param cookieSetter 函数会获取 cookie，此为保存 cookie 的回调
+   * @param cookieSetter 函数会获取 cookie，此为保存 cookie 的回调（无需重新设置 RequestContext 中的 Cookie，系统会自动处理）
    * @param loginStatePersistent 持久化用户信息的回调
-   * @returns
+   * @returns 是否登录成功
    */
   static async checkQrLogin(
     key: string,

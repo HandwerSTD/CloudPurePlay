@@ -1,7 +1,7 @@
 import { LogUtil, ToastUtil } from "@pura/harmony-utils"
 import { StorageConstants } from "../constants/StorageConstants"
 import { SongConvertUtils } from "../functions/convert"
-import commonRequest from "./request/RequestUtil"
+import commonRequest, { getNowRequestContext, setupRequestContext } from "./request/RequestUtil"
 import { getLoginStatus } from "./loginApi"
 import { preferences } from "@kit.ArkData"
 import { User } from "../entities/User"
@@ -60,8 +60,15 @@ export const checkQrLogin = async (key: string, cookieSetter: (cookie: string) =
     if(cookie) {
       cookie = SongConvertUtils.extractCookie(cookie)
       cookie = cookie + '; OS=pc'
-      // AppStorage.setOrCreate(StorageConstants.COOKIE, cookie)
+      // 设置 RequestContext
+      let context = getNowRequestContext()
+      if (context) {
+        context.cookie.cookie = cookie
+        setupRequestContext(context)
+      }
+      // 调用 cookie 保存回调
       cookieSetter(cookie)
+      // 检测登录状态，获取用户信息
       const result = await getLoginStatus(loginStatePersistent)
       return result
     }

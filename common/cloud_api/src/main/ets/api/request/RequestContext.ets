@@ -1,9 +1,17 @@
 import { RealIP } from "../../model/Settings"
 
 export interface RequestContext {
+  /**
+   * API 地址，需要带 http/https 前缀和端口号
+   */
   baseUrl: string
-  timeout: number
+  /**
+   * Cookie 数据，可空（填 {} 即可）
+   */
   cookie: RequestCookieConfig
+  /**
+   * 模拟地理位置 IP，建议使用 RealIP_INITIAL
+   */
   realIp: RealIP
 }
 

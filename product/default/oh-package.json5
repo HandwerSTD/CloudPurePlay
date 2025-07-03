@@ -5,6 +5,8 @@
   "main": "",
   "author": "",
   "license": "",
-  "dependencies": {}
+  "dependencies": {
+    '@handwer/cloud_api': "file:../../common/cloud_api"
+  }
 }
 

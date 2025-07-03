@@ -32,7 +32,7 @@ const getCookie = () => {
 instance.interceptors.request.use(async (request: InternalAxiosRequestConfig ) => {
   const settings: Api = await AppStorage.get(StorageConstants.API_SETTINGS) as Api
   if (!currentContext) return Promise.reject()
-  if(settings.user !== 'cloudmusic' && request.params?.baseUrl != Constants.API_URL) return Promise.reject()
+  // if(settings.user !== 'cloudmusic' && request.params?.baseUrl != Constants.API_URL) return Promise.reject()
   // baseUrl
   request.baseURL = !request.params.baseUrl ? currentContext.baseUrl : request.params.baseUrl
   // timeout

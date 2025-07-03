@@ -1,5 +1,4 @@
 export * from '../entities/Album';
-export * from '../entities/AppInfo';
 export * from '../entities/Artists';
 export * from '../entities/Comment';
 export * from '../entities/DjRadio';
