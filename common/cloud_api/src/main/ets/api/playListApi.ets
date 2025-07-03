@@ -22,7 +22,7 @@ export interface PlayListsResult {
  * @param offset - 偏移量
  * @returns list
  */
-export const getPlayLists = async (offset: number, user: User, statePersistent?: (val: preferences.ValueType) => void): Promise<PlayListsResult> => {
+export const getPlayLists = async (offset: number, user: User, statePersistent?: (val: PlayList[]) => void): Promise<PlayListsResult> => {
   let list: PlayList[] = new Array()
   // const user = await PreferencesUtils.getPreferenceValue<User>(StorageConstants.USER_PREF, StorageConstants.USER, User_INITIAL)
   if(user.data.account.id === 0) {
@@ -138,7 +138,7 @@ export const subscribePlayList = async (id: number, mode: number): Promise<boole
  * Get personalized list
  * @returns Array<PersonalListItem>
  */
-export const getPersonalizedList = async (statePersistent?: (val: preferences.ValueType) => void): Promise<Array<PersonalListItem>> => {
+export const getPersonalizedList = async (statePersistent?: (val: PersonalListItem[]) => void): Promise<Array<PersonalListItem>> => {
   const request = await commonRequest<Personalized>({
     url: '/personalized',
     params: { timestamp: new Date().getTime() }

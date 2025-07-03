@@ -8,7 +8,7 @@ import { preferences } from "@kit.ArkData"
  * 获取用户电台 Sublist
  * @returns DjResult
  */
-export const getUserDjSubscribeList = async (statePersistent?: (val: preferences.ValueType) => void): Promise<DjResult> => {
+export const getUserDjSubscribeList = async (statePersistent?: (val: DjRadio[]) => void): Promise<DjResult> => {
   const response = await commonRequest<DjResult>({
     url: '/dj/sublist',
     params: { timestamp: new Date().getTime() }

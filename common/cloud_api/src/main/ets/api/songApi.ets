@@ -123,7 +123,7 @@ interface LikeListResponse {
  * @param uid
  * @returns
  */
-export const getLikeList = async (statePersistent?: (val: preferences.ValueType) => void): Promise<string[]> => {
+export const getLikeList = async (statePersistent?: (val: string[]) => void): Promise<string[]> => {
   let user = await AppStorage.get(StorageConstants.USER) as User
   let list:Array<string> = []
   const response = await commonRequest<LikeListResponse>({

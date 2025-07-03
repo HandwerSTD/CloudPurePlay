@@ -6,7 +6,7 @@ import { preferences } from "@kit.ArkData"
 /**
  * 排行榜
  */
-export const getTopList = async (statePersistent?: (val: preferences.ValueType) => void): Promise<TopListItem[]> => {
+export const getTopList = async (statePersistent?: (val: TopListItem[]) => void): Promise<TopListItem[]> => {
   const response = await commonRequest<TopList>({
     url: '/toplist',
     params: {}

@@ -4,6 +4,7 @@ import { SongConvertUtils } from "../functions/convert"
 import commonRequest from "./request/RequestUtil"
 import { getLoginStatus } from "./loginApi"
 import { preferences } from "@kit.ArkData"
+import { User } from "../entities/User"
 
 interface GetQrCodeImg {
   qrimg: string
@@ -49,7 +50,7 @@ interface CheckQrResponse {
   message: string
   cookie: string
 }
-export const checkQrLogin = async (key: string, cookieSetter: (cookie: string) => void, loginStatePersistent?: (val: preferences.ValueType) => void): Promise<boolean> => {
+export const checkQrLogin = async (key: string, cookieSetter: (cookie: string) => void, loginStatePersistent?: (val: User) => void): Promise<boolean> => {
   const response = await commonRequest<CheckQrResponse>({
     url: '/login/qr/check',
     params: { key, noCookie: true, timestamp: new Date().getTime() }

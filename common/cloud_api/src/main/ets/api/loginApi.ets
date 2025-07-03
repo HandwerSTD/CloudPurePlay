@@ -6,7 +6,7 @@ import { preferences } from "@kit.ArkData"
 /**
  * 获取登录状态，在此之前需要先把 Cookie 设置好
  */
-export const getLoginStatus = async (statePersistent?: (val: preferences.ValueType) => void): Promise<boolean> => {
+export const getLoginStatus = async (statePersistent?: (val: User) => void): Promise<boolean> => {
   try {
     const response = await commonRequest<User>({
       url: '/login/status',
@@ -49,7 +49,7 @@ interface LogOutResponse {
 /**
  * 退出登录
  */
-export const logOut = async (statePersistent?: (val: preferences.ValueType) => void): Promise<boolean> => {
+export const logOut = async (statePersistent?: (val: User) => void): Promise<boolean> => {
   const response = await commonRequest<LogOutResponse>({
     url: '/logout',
     params: { timestamp: new Date().getTime() }

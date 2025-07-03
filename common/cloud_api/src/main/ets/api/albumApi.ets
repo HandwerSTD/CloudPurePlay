@@ -22,7 +22,7 @@ export const getAlbumInfo = async (id: number): Promise<AlbumInfoResult> =>
  * 获取收藏的专辑
  * @returns
  */
-export const getUserSubscribedAlbum = async (statePersistent?: (val: preferences.ValueType) => void): Promise<SubAlbumResult> => {
+export const getUserSubscribedAlbum = async (statePersistent?: (val: Album[]) => void): Promise<SubAlbumResult> => {
   const result = await commonRequest<SubAlbumResult>({
     url: '/album/sublist',
     params: {}
