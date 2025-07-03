@@ -7,7 +7,7 @@ struct Index {
 
   build() {
     Column() {
-      TestComponent()
+
     }
     .height('100%')
     .width('100%')
