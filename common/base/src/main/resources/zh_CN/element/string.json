@@ -15,6 +15,49 @@
     {
       "name": "lossless",
       "value": "无损"
+    },{
+      "name": "dist_service_failed",
+      "value": "分布式服务未初始化，请检查您的权限设置。"
+    },
+    {
+      "name": "dist_service_no_device_selected",
+      "value": "请选择至少一个设备"
+    },
+    {
+      "name": "cosmic_blue",
+      "value": "星河蓝"
+    },
+    {
+      "name": "navy_blue",
+      "value": "深空蓝"
+    },
+    {
+      "name": "sky_blue",
+      "value": "天空蓝"
+    },
+    {
+      "name": "cyan_green",
+      "value": "青柠绿"
+    },
+    {
+      "name": "grass_green",
+      "value": "草木绿"
+    },
+    {
+      "name": "lilac_purple",
+      "value": "丁香紫"
+    },
+    {
+      "name": "strawberry_pink",
+      "value": "草莓粉"
+    },
+    {
+      "name": "crimson_red",
+      "value": "绯霞红"
+    },
+    {
+      "name": "orange",
+      "value": "暖阳橙"
     }
   ]
 }

@@ -1,13 +1,16 @@
 import { AbilityConstant, ConfigurationConstant, UIAbility, Want } from '@kit.AbilityKit';
 import { hilog } from '@kit.PerformanceAnalysisKit';
 import { window } from '@kit.ArkUI';
+import { Logger, LogStorage, WindowUtil } from '@handwer/base';
 
-const DOMAIN = 0x0000;
+const DOMAIN = 0xA0FF;
+const TAG = '[MainAbility]'
 
 export default class MainAbility extends UIAbility {
   onCreate(want: Want, launchParam: AbilityConstant.LaunchParam): void {
     this.context.getApplicationContext().setColorMode(ConfigurationConstant.ColorMode.COLOR_MODE_NOT_SET);
     hilog.info(DOMAIN, 'testTag', '%{public}s', 'Ability onCreate');
+    Logger.setLogStorage(LogStorage.instance())
   }
 
   onDestroy(): void {
@@ -40,5 +43,10 @@ export default class MainAbility extends UIAbility {
   onBackground(): void {
     // Ability has back to background
     hilog.info(DOMAIN, 'testTag', '%{public}s', 'Ability onBackground');
+  }
+
+  async appStartUp() {
+    Logger.debug(TAG, 'app start up')
+    WindowUtil.registerRotationControl(this.context) // 折叠屏旋转控制
   }
 }

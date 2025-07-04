@@ -3,7 +3,9 @@
   "description": "Please describe the basic information.",
   "dependencies": {
     "@sj/mediacache": "^1.0.3",
-    "@hadss/super_fast_file_trans": "^1.0.1"
+    "@hadss/super_fast_file_trans": "^1.0.1",
+    "@pura/harmony-dialog": "^1.1.7",
+    "@tencent/mmkv": "^2.2.2"
   },
   "devDependencies": {
     "@ohos/hypium": "1.0.21",

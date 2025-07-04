@@ -1,6 +1,6 @@
 {
   "module": {
-    "name": "player_test",
+    "name": "app_settings_test",
     "type": "feature",
     "deviceTypes": [
       "default",

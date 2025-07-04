@@ -1,10 +1,6 @@
 {
   "string": [
     {
-      "name": "page_show",
-      "value": "page from package"
-    },
-    {
       "name": "standard",
       "value": "Standard"
     },
@@ -19,6 +15,49 @@
     {
       "name": "lossless",
       "value": "Lossless"
+    },
+    {
+      "name": "dist_service_failed",
+      "value": "Distributed service not initialized. Please check your permission."
+    },
+    {
+      "name": "dist_service_no_device_selected",
+      "value": "Please select at least one device"
+    },{
+      "name": "cosmic_blue",
+      "value": "Cosmic Blue"
+    },
+    {
+      "name": "navy_blue",
+      "value": "Navy Blue"
+    },
+    {
+      "name": "sky_blue",
+      "value": "Sky Blue"
+    },
+    {
+      "name": "cyan_green",
+      "value": "Cyan Green"
+    },
+    {
+      "name": "grass_green",
+      "value": "Grass Green"
+    },
+    {
+      "name": "lilac_purple",
+      "value": "Lilac Purple"
+    },
+    {
+      "name": "strawberry_pink",
+      "value": "Strawberry Pink"
+    },
+    {
+      "name": "crimson_red",
+      "value": "Crimson Red"
+    },
+    {
+      "name": "orange",
+      "value": "Warm Orange"
     }
   ]
 }

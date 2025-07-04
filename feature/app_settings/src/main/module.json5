@@ -1,6 +1,6 @@
 {
   "module": {
-    "name": "player",
+    "name": "app_settings",
     "type": "har",
     "deviceTypes": [
       "default",

@@ -57,8 +57,8 @@
       "srcPath": "./common/base",
     },
     {
-      "name": "player",
-      "srcPath": "./feature/player",
+      "name": "player_ui",
+      "srcPath": "./feature/player_ui"
     },
     {
       "name": "ui_components",
@@ -67,6 +67,10 @@
     {
       "name": "cloud_api",
       "srcPath": "./common/cloud_api",
+    },
+    {
+      "name": "app_settings",
+      "srcPath": "./feature/app_settings",
     }
   ]
 }

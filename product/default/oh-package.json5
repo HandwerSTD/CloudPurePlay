@@ -6,6 +6,7 @@
   "author": "",
   "license": "",
   "dependencies": {
+    '@handwer/base': "file:../../common/base",
     '@handwer/cloud_api': "file:../../common/cloud_api"
   }
 }
