@@ -17,6 +17,8 @@ class GlobalStore {
 
   @Trace wbp: BreakpointInfo = new BreakpointInfo('sm')
   @Trace hbp: BreakpointInfo = new BreakpointInfo('lg')
+
+  @Trace appVersion: string = ''
 }
 
 export default new GlobalStore()

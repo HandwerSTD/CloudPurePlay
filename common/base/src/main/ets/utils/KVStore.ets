@@ -1,4 +1,5 @@
 import { MMKV } from '@tencent/mmkv'
+import { common } from '@kit.AbilityKit'
 
 export class KVStoreUtil {
   mmkv: MMKV
@@ -10,8 +11,11 @@ export class KVStoreUtil {
       this.mmkv = MMKV.mmkvWithID(name, MMKV.MULTI_PROCESS_MODE)
     }
   }
-  static init(rootPath: string) {
+  static init(rootPath?: string) {
     MMKV.initializeWithPath(`${rootPath}/MMKVrootDir`, `${rootPath}/MMKVcacheDir`)
+  }
+  static initDefault(context: common.ApplicationContext) {
+    MMKV.initialize(context)
   }
 
   storeString(key: string, param: string) {
