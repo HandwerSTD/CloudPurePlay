@@ -5,5 +5,8 @@
   "main": "Index.ets",
   "author": "",
   "license": "Apache-2.0",
-  "dependencies": {}
+  "dependencies": {
+    '@handwer/base': 'file:../../common/base',
+    '@handwer/cloud_api': 'file:../../common/cloud_api'
+  }
 }

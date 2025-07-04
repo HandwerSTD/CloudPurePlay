@@ -1,1 +1,1 @@
-export { MainPage as PlayerUI } from './src/main/ets/components/MainPage';
+export { MainPage as PlayerUI } from './src/main/ets/views/MainPage';

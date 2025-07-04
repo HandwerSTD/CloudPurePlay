@@ -7,7 +7,8 @@
   "license": "",
   "dependencies": {
     '@handwer/base': "file:../../common/base",
-    '@handwer/cloud_api': "file:../../common/cloud_api"
+    '@handwer/cloud_api': "file:../../common/cloud_api",
+    '@handwer/player_ui': "file:../../feature/player_ui"
   }
 }
 

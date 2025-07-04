@@ -1,4 +1,5 @@
 import { CloudAPIConfigUtils, LoginAPIUtils, RealIP_INITIAL, User } from '@handwer/cloud_api'
+import { PlayerUI } from '@handwer/player_ui'
 import { promptAction } from '@kit.ArkUI'
 
 @Entry
@@ -7,7 +8,7 @@ struct Index {
 
   build() {
     Column() {
-
+      PlayerUI()
     }
     .height('100%')
     .width('100%')

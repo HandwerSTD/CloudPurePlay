@@ -270,9 +270,13 @@ export class ResponsiveUtil {
     const hbp = GlobalStore.hbp.value, wbp = GlobalStore.wbp.value
     return ResponsiveUtil.smOrMdCheck(hbp) && ResponsiveUtil.smCheck(wbp)
   }
-  static lgOrXlCheck(): boolean {
+  static wLgXl(): boolean {
     let wbp = GlobalStore.wbp.value
     return wbp == BreakpointTypeEnum.LG || wbp == BreakpointTypeEnum.XL
+  }
+  static widthCheck(breakpoint: string[]) {
+    let wbp = GlobalStore.wbp.value
+    return breakpoint.indexOf(wbp) !== -1
   }
   static lgCheck(bp: string): boolean {
     return bp == BreakpointTypeEnum.LG
