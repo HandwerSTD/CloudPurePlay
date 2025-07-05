@@ -6,6 +6,7 @@
   "author": "",
   "license": "GPL-2.0",
   "dependencies": {
-    '@pura/harmony-utils': '^1.3.6'
+    '@pura/harmony-utils': '^1.3.6',
+    '@handwer/cloud_api': "file:../cloud_api"
   }
 }

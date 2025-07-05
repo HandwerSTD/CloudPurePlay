@@ -27,3 +27,10 @@ export class PlayConstants {
    */
   static readonly PERSONAL_FM_MODE_NAME: string[] = ['默认模式', '熟悉模式', '探索模式']
 }
+
+export enum CycleMode {
+  seq_once = 0,
+  single,
+  seq_repeat,
+  random
+}

@@ -18,9 +18,18 @@ import { BusinessError } from '@kit.BasicServicesKit';
 import { image } from '@kit.ImageKit';
 import Logger from './Logger';
 
-const TAG: string = '[FileUtil]';
+const TAG: string = '[FileUtils]';
 
-export class FileUtil {
+export class FileUtils {
+  static moveFile(src: string, dest: string, mode: number = 0): Promise<void> {
+    return fileIo.moveFile(src, dest, mode)
+  }
+  static getCacheDir() {
+    return (getContext()).cacheDir + '/cloud_cache'
+  }
+  static getFilesDir() {
+    return (getContext()).filesDir + '/cloud_files'
+  }
   static getFilenameFromUri(uri: string) {
     return uri.substring(uri.lastIndexOf('/') + 1);
   }

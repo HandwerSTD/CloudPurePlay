@@ -5,8 +5,9 @@
  */
 import { RequestContext, RequestCookieConfig } from "../api/request/RequestContext";
 import { getNowRequestContext, setupRequestContext } from "../api/request/RequestUtil";
+import { checkValidUriParams, checkValidUrl } from "../functions/get";
 
-export { RequestContext, RequestCookieConfig }
+export { RequestContext, RequestCookieConfig, checkValidUriParams }
 
 export class CloudAPIConfigUtils {
   static getRequestContext(): RequestContext | null {
@@ -14,5 +15,8 @@ export class CloudAPIConfigUtils {
   }
   static setRequestContext(context: RequestContext) {
     setupRequestContext(context)
+  }
+  static checkValidConnection(param: checkValidUriParams) {
+    return checkValidUrl(param)
   }
 }

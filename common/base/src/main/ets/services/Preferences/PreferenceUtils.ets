@@ -1,15 +1,23 @@
 import { KVStoreUtil } from '../../utils/KVStore'
 
-class PreferenceUtils {
+export class PreferenceUtils {
   kv?: KVStoreUtil
-  init() {
-    this.kv = new KVStoreUtil('Preferences')
+  kvName: string = 'Preferences'
+
+  constructor(name?: string) {
+    if (name) {
+      this.kvName = name
+    }
   }
-  put<T>(key_: number, data: T) {
+
+  init() {
+    this.kv = new KVStoreUtil(this.kvName)
+  }
+  put<T>(key_: number | string, data: T) {
     const key = key_.toString()
     this.kv!.storeString(key, JSON.stringify(data))
   }
-  get<T>(key: number) {
+  get<T>(key: number | string) {
     try {
       return JSON.parse(this.kv!.queryString(key.toString())) as T
     } catch (e) {
