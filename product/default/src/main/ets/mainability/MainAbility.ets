@@ -32,9 +32,9 @@ export default class MainAbility extends UIAbility {
     Settings.init()
 
     let jumpPage = 'pages/Index'
-    if (Settings.get<boolean>(SCPref.notFirstOpen) !== true) {
-      jumpPage = 'pages/FirstOpenPage'
-    }
+    // if (Settings.get<boolean>(SCPref.notFirstOpen) !== true) {
+    //   jumpPage = 'pages/FirstOpenPage'
+    // }
 
     windowStage.loadContent(jumpPage, (err) => {
       if (err.code) {

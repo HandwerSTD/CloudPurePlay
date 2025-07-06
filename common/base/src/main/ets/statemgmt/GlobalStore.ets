@@ -5,6 +5,16 @@ import { WindowAvoidanceData } from "../utils/WindowUtil"
 
 @ObservedV2
 class GlobalStore {
+
+  private static _instance?: GlobalStore
+
+  static get instance() {
+    if (!GlobalStore._instance) {
+      GlobalStore._instance = new GlobalStore()
+    }
+    return GlobalStore._instance
+  }
+
   @Trace targetDevice?: SingleDeviceViewModel
   @Trace allDevices: SingleDeviceViewModel[] = []
 
@@ -15,10 +25,10 @@ class GlobalStore {
   @Trace isPCMode: boolean = false
   @Trace wd: WindowAvoidanceData = new WindowAvoidanceData(0,0)
 
-  @Trace wbp: BreakpointInfo = new BreakpointInfo('sm')
-  @Trace hbp: BreakpointInfo = new BreakpointInfo('lg')
+  @Trace wbp: string = 'sm'
+  @Trace hbp: string = 'lg'
 
   @Trace appVersion: string = ''
 }
 
-export default new GlobalStore()
+export default GlobalStore.instance

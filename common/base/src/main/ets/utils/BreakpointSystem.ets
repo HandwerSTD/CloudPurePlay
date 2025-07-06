@@ -212,7 +212,7 @@ export class BreakpointSystem {
     this.updateWidthBp()
     this.updateHeightBp() // 更新断点
     this.changeUI()
-    Logger.debug(TAG, `updateBreakpoint: width = ${GlobalStore.wbp.value}, height = ${GlobalStore.hbp.value}`)
+    Logger.debug(TAG, `updateBreakpoint: width = ${GlobalStore.wbp}, height = ${GlobalStore.hbp}`)
   }
 
   updateWidthBp(): void {
@@ -231,7 +231,7 @@ export class BreakpointSystem {
     } else {
       widthBp = BreakpointTypeEnum.XL
     }
-    GlobalStore.wbp = new BreakpointInfo(widthBp)
+    GlobalStore.wbp = new BreakpointInfo(widthBp).value
   }
 
   updateHeightBp(): void {
@@ -249,7 +249,7 @@ export class BreakpointSystem {
     } else {
       heightBp = BreakpointTypeEnum.LG
     }
-    GlobalStore.hbp = new BreakpointInfo(heightBp)
+    GlobalStore.hbp = new BreakpointInfo(heightBp).value
   }
 
   changeUI() {
@@ -267,15 +267,15 @@ export class ResponsiveUtil {
     return deviceInfo.deviceType === '2in1'
   }
   static PuraXOuterCheck(): boolean {
-    const hbp = GlobalStore.hbp.value, wbp = GlobalStore.wbp.value
+    const hbp = GlobalStore.hbp, wbp = GlobalStore.wbp
     return ResponsiveUtil.smOrMdCheck(hbp) && ResponsiveUtil.smCheck(wbp)
   }
   static wLgXl(): boolean {
-    let wbp = GlobalStore.wbp.value
+    let wbp = GlobalStore.wbp
     return wbp == BreakpointTypeEnum.LG || wbp == BreakpointTypeEnum.XL
   }
   static widthCheck(breakpoint: string[]) {
-    let wbp = GlobalStore.wbp.value
+    let wbp = GlobalStore.wbp
     return breakpoint.indexOf(wbp) !== -1
   }
   static lgCheck(bp: string): boolean {

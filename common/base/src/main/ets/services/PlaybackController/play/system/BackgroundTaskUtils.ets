@@ -1,7 +1,6 @@
 import { BusinessError } from '@kit.BasicServicesKit';
 import { backgroundTaskManager } from '@kit.BackgroundTasksKit';
 import { WantAgent, wantAgent } from '@kit.AbilityKit';
-import { getContext_ } from '../system/AppUtils';
 
 /**
  * 长时任务
@@ -25,7 +24,7 @@ class BackgroundTaskUtils {
     wantAgent.getWantAgent(wantAgentInfo).then((wantAgentObj: WantAgent) => {
       let bgModes: string[] = modeType === 0 ? ["audioPlayback"] : ["audioPlayback", "dataTransfer"]
       backgroundTaskManager.startBackgroundRunning(
-        getContext_(),
+        getContext(),
         bgModes,
         wantAgentObj
       )
@@ -38,7 +37,7 @@ class BackgroundTaskUtils {
   }
 
   async stopBackgroundTask() {
-    backgroundTaskManager.stopBackgroundRunning(getContext_()).then(() => {
+    backgroundTaskManager.stopBackgroundRunning(getContext()).then(() => {
     }).catch((err: BusinessError) => {
       // LogUtil.error(TAG, `结束长时任务 Stop Background Running 失败：Code - ${err.code}, Message - ${err.message}`);
     })

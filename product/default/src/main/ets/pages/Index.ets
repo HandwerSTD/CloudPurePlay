@@ -1,17 +1,37 @@
-import { CloudAPIConfigUtils, LoginAPIUtils, RealIP_INITIAL, User } from '@handwer/cloud_api'
+import { GlobalStore, Logger, PlayControl, PlayListOp } from '@handwer/base'
+import {
+  AlbumAPIUtils,
+  CloudAPIConfigUtils, LoginAPIUtils, RealIP_INITIAL, SongAPIUtils, User } from '@handwer/cloud_api'
 import { PlayerUI } from '@handwer/player_ui'
 import { promptAction } from '@kit.ArkUI'
+
+const TAG = '[Index]'
 
 @Entry
 @ComponentV2
 struct Index {
+  gs = GlobalStore
+
+  @Local consoleSheet: boolean = false
+  @Builder testConsole() {
+    TestComponent()
+  }
 
   build() {
     Column() {
+      Button('console')
+        .onClick(() => {
+          this.consoleSheet = !this.consoleSheet
+        })
+        .bindSheet($$this.consoleSheet, this.testConsole)
       PlayerUI()
     }
     .height('100%')
     .width('100%')
+    .padding({
+      top: this.gs.wd.top,
+      bottom: this.gs.wd.bottom
+    })
   }
 }
 
@@ -56,16 +76,20 @@ struct TestComponent {
             message: '登录' + (result ? '成功' : '失败')
           })
         })
-      Button('登出')
-        .onClick(async () => {
-          let result = await LoginAPIUtils.logOut((user) => {
-            this.qrImg = ''
-            this.qrKey = ''
-          })
+      Button('搜索 Lose My Mind')
+        .onClick(() => {
+          SongAPIUtils.searchSongs('Lose My Mind', 0, )
+            .then((res) => {
+              Logger.debug(TAG, `search lose my mind = ${res}`)
 
-          promptAction.showToast({
-            message: '登出' + (result ? '成功' : '失败')
-          })
+            })
+        })
+      Button('播放 F1 专辑')
+        .onClick(() => {
+          AlbumAPIUtils.getAlbumInfo(276211562)
+            .then((res) => {
+              PlayListOp.playListToQueue(res.songs, 0)
+            })
         })
 
     }.width('100%').height('100%')

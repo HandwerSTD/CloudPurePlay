@@ -1,4 +1,4 @@
-import { ResponsiveUtil } from "@ohos/base"
+import { ResponsiveUtil } from "@handwer/base"
 
 @ComponentV2
 export struct ImageTitleWelcomeTemplate {
