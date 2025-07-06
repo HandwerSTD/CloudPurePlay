@@ -27,3 +27,5 @@ export { default as UserStore } from './services/Network/UserStore'
 
 export * from './services/PlaybackController/queue/PlayQueueUtils'
 export { default as PlayQueueStore } from './services/Network/UserStore'
+
+export * from './services/ServiceInitUtils'

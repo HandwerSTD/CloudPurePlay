@@ -80,7 +80,7 @@ struct TestComponent {
         .onClick(() => {
           SongAPIUtils.searchSongs('Lose My Mind', 0, )
             .then((res) => {
-              Logger.debug(TAG, `search lose my mind = ${res}`)
+              Logger.debug(TAG, `search lose my mind = ${JSON.stringify(res)}`)
 
             })
         })

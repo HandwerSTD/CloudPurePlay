@@ -72,7 +72,8 @@ export struct MainPage {
             PlayControl.playNext()
           }, 500)
         })
-    }
+    }.justifyContent(FlexAlign.SpaceEvenly)
+    .width('100%')
   }
 
   // -----------------------------------------------
@@ -97,6 +98,7 @@ export struct MainPage {
           this.LyricArea()
         }.vertical(false)
         .displayCount(ResponsiveUtil.widthCheck(['md','lg','xl']) ? 2 : 1)
+        .indicator(false)
         .animation({
           curve: curves.springMotion()
         })
@@ -113,7 +115,7 @@ export struct MainPage {
 
 @Extend(SymbolGlyph) function playControlButton() {
   .clickEffect({ level: ClickEffectLevel.LIGHT, scale: 0.8 })
-  .width(30)
-  .fontColor([Color.White])
+  .fontSize(30)
+  .fontColor([Color.Black])
   .draggable(false)
 }

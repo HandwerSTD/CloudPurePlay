@@ -4,7 +4,9 @@ import { window } from '@kit.ArkUI';
 import {
   BreakpointSystem,
   GlobalStore,
-  KVStoreUtil, Logger, LogStorage, SCPref, Settings, SpiderMan, ThemeManager, WindowUtil } from '@handwer/base';
+  KVStoreUtil, Logger, LogStorage, SCPref,
+  ServiceInitUtils,
+  Settings, SpiderMan, ThemeManager, WindowUtil } from '@handwer/base';
 import { DialogHelper } from '@pura/harmony-dialog';
 
 const DOMAIN = 0xA0FF;
@@ -85,5 +87,7 @@ export default class MainAbility extends UIAbility {
     // App Version
     let info = bundleManager.getBundleInfoForSelfSync(bundleManager.BundleFlag.GET_BUNDLE_INFO_WITH_APPLICATION)
     GlobalStore.appVersion = info.versionName + ` (${info.versionCode.toString().substring(5)})`
+    // MusicAPI
+    ServiceInitUtils.init()
   }
 }
