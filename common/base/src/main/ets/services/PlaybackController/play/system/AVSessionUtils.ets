@@ -1,12 +1,12 @@
+import { Song, Song_INITIAL } from "@handwer/cloud_api";
 import { avSession } from "@kit.AVSessionKit";
-import { LogUtil, RandomUtil } from "@pura/harmony-utils";
-import { StorageConstants } from "../../constants/StorageConstants";
-import { Song, Song_INITIAL } from "../../entities/Song";
-import { changeCycleMode,
-  pauseMusic, playNext, playPre, resumeMusic, seekMusic } from "../../functions/play/playControl";
-import { likeThisSong } from "../../functions/play/songLike";
-import { getContext_ } from "../system/AppUtils";
-import LyricUtils from "../lyric/LyricUtils";
+import { LogUtil } from "@pura/harmony-utils";
+import LyricUtils from "../../lyric/LyricUtils";
+import NowPlayingStore from "../NowPlayingStore";
+import { playQueueStore } from '../../queue/PlayQueueStore'
+import { PlayControl } from "../user/playControl";
+import { SongLike } from "../user/songLike";
+import PlayQueueUtils from "../../queue/PlayQueueUtils";
 
 /**
  * AVSession 播控中心工具类
@@ -39,37 +39,37 @@ class AVSessionUtils {
   }
 
   async createSession(): Promise<avSession.AVSession> {
-    let session = await avSession.createAVSession(getContext_(), 'cloudmusic', 'audio')
+    let session = await avSession.createAVSession(getContext(), 'cloudmusic', 'audio')
     try {
-      let cycleMode: number | undefined = AppStorage.get('cycleMode')
-      if(cycleMode) this.cycleMode = this.cycleMode
-      else this.cycleMode = 0
+      let cycleMode: number = playQueueStore.cycleMode
+      this.cycleMode = cycleMode
 
       session.on('play', () => {
-        resumeMusic()
+        PlayControl.resumeMusic()
       });
       session.on('pause', () => {
-        pauseMusic()
+        PlayControl.pauseMusic()
       });
       session.on('playNext', () => {
-        playNext()
+        PlayControl.playNext()
       });
       session.on('playPrevious', () => {
-        playPre()
+        PlayControl.playPre()
       });
       session.on('seek', (time) => {
-        seekMusic(time)
+        PlayControl.seekMusic(time)
       });
       session.on('toggleFavorite', (isFavor) => {
-        likeThisSong().then(async () => {
+        SongLike.likeThisSong().then(async () => {
           (await this.getInstance()).setAVPlaybackState({ isFavorite: this.isFavorite() })
         })
       })
       session.on('setLoopMode', (loopMode) => {
-        if(loopMode == 0) { changeCycleMode(1) }
-        else if(loopMode == 1) { changeCycleMode(2) }
-        else if(loopMode == 2) { changeCycleMode(3) }
-        else { changeCycleMode(0) }
+        // if(loopMode == 0) { PlayQueueUtils.changeCycleMode(1) }
+        // else if(loopMode == 1) { changeCycleMode(2) }
+        // else if(loopMode == 2) { changeCycleMode(3) }
+        // else { changeCycleMode(0) }
+        PlayQueueUtils.changeCycleMode((loopMode + 1) % 4)
       })
 
       this.controller = await session.getController()
@@ -154,7 +154,7 @@ class AVSessionUtils {
   }
 
   private isFavorite(): boolean {
-    const is: boolean = AppStorage.get(StorageConstants.ISLIKED) as boolean
+    const is: boolean = NowPlayingStore.isLiked
     return is
   }
 
@@ -212,12 +212,7 @@ class AVSessionUtils {
 }
 
 async function getLoopMode(): Promise<number> {
-  let loopMode = 0
-  let cycleMode: number | undefined = await AppStorage.get('cycleMode')
-  if(cycleMode) {
-    loopMode = cycleMode
-  }
-  return loopMode
+  return playQueueStore.cycleMode
 }
 
 const avSessionUtils = new AVSessionUtils()

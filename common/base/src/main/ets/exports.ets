@@ -14,3 +14,16 @@ export * from './theme/ThemeUtils';
 export * from './services/CrashSpider/SpiderMan';
 export { default as Settings, PreferenceUtils } from './services/Preferences/PreferenceUtils'
 export * from './constants/PreferenceConstants'
+
+export * from './services/PlaybackController/lyric/LyricUtils'
+export * from './services/PlaybackController/play/user/playControl'
+export * from './services/PlaybackController/play/user/playListOp'
+export * from './services/PlaybackController/play/user/podcastOp'
+export * from './services/PlaybackController/play/user/songLike'
+export { default as NowPlayingStore } from './services/PlaybackController/play/NowPlayingStore'
+
+export * from './services/Network/UserManager'
+export { default as UserStore } from './services/Network/UserStore'
+
+export * from './services/PlaybackController/queue/PlayQueueUtils'
+export { default as PlayQueueStore } from './services/Network/UserStore'

@@ -1,14 +1,14 @@
 import { LogUtil } from '@pura/harmony-utils'
 import ContinuousTask from './BackgroundTaskUtils'
 import AVSessionUtils from './AVSessionUtils'
-import { completeDo, playQueue } from '../../functions/play/playControl'
-import LyricUtils from '../lyric/LyricUtils'
+import LyricUtils from '../../lyric/LyricUtils'
 import { audio } from '@kit.AudioKit'
-import { StorageConstants } from '../../constants/StorageConstants'
 import { media } from '@kit.MediaKit'
 import { BusinessError } from '@kit.BasicServicesKit'
-import PlayQueueUtils from '../queue/PlayQueueUtils'
+import PlayQueueUtils from '../../queue/PlayQueueUtils'
 import BackgroundTaskUtils from './BackgroundTaskUtils'
+import NowPlayingStore from '../NowPlayingStore'
+import { PlayControl } from '../user/playControl'
 
 const TAG = '[AVPlayerUtils] '
 
@@ -84,7 +84,7 @@ class AVPlayerUtils {
             AVSessionUtils.playState(avPlayer.currentTime)
           }, 1000)
         } else {
-          AppStorage.setOrCreate(StorageConstants.PLAY_TIME, time)
+          NowPlayingStore.playTime = time
         }
       })
     } catch (e) {
@@ -112,7 +112,7 @@ class AVPlayerUtils {
     const avPlayer = await this.init()
     this.isSeeking = true
     this.updateFlag = true
-    AppStorage.setOrCreate(StorageConstants.PLAY_TIME, time)
+    NowPlayingStore.playTime = time
     AVSessionUtils.bufferingState(time)
     avPlayer.seek(time)
     avPlayer.play()
@@ -146,7 +146,7 @@ class AVPlayerUtils {
       if (!this.errorFlag) {
         this.errorFlag = true
         setTimeout(() => {
-          playQueue(PlayQueueUtils.currentQueueIndex)
+          PlayControl.playQueue(PlayQueueUtils.currentQueueIndex)
           this.errorFlag = false
         }, 3000)
       }
@@ -201,22 +201,22 @@ class AVPlayerUtils {
           break
         case 'playing':
           BackgroundTaskUtils.startTask()
-          AppStorage.setOrCreate(StorageConstants.IS_PLAYING, true)
-          AppStorage.setOrCreate(StorageConstants.IS_PAUSED, false)
+          NowPlayingStore.isPlaying = true
+          NowPlayingStore.isPaused = false
           LyricUtils.startInterval()
           AVSessionUtils.playState(avPlayer.currentTime)
           break
         case 'paused':
           this.clearInterval()
-          AppStorage.setOrCreate(StorageConstants.IS_PAUSED, true)
+          NowPlayingStore.isPaused = true
           AVSessionUtils.pauseState(avPlayer.currentTime)
           break
         case 'completed':
           this.clearInterval()
           AVSessionUtils.pauseState(avPlayer.currentTime)
           avPlayer.reset()
-          AppStorage.setOrCreate(StorageConstants.IS_PAUSED, true)
-          completeDo()
+          NowPlayingStore.isPaused = true
+          PlayControl.completeDo()
           break
         case 'stopped':
           this.clearInterval()
@@ -226,7 +226,7 @@ class AVPlayerUtils {
   }
 
   async setAudioSession() {
-    const isMixWithOthers = await AppStorage.get(StorageConstants.MIX_WITH_OTHERS) as boolean
+    const isMixWithOthers = NowPlayingStore.mixWithOthers
     const strategy: audio.AudioSessionStrategy = {
       concurrencyMode: isMixWithOthers ?
       audio.AudioConcurrencyMode.CONCURRENCY_MIX_WITH_OTHERS :

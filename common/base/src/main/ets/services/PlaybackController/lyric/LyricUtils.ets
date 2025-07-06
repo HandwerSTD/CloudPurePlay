@@ -1,8 +1,11 @@
-import { Lrc_INITIAL, Lyric, LyricResult, LyricResult_INITIAL, Song } from "@handwer/cloud_api"
+import { Lrc_INITIAL, Lyric,
+  LyricAPIUtils,
+  LyricResult, LyricResult_INITIAL, LyricStyle, Song } from "@handwer/cloud_api"
 import { EmitterUtil, LogUtil } from "@pura/harmony-utils"
 import { FileUtils } from "../../../utils/FileUtil"
 import { fileIo, ReadOptions } from "@kit.CoreFileKit"
 import { buffer } from "@kit.ArkTS"
+import NowPlayingStore from '../play/NowPlayingStore'
 
 const TAG = '[LyricUtils] '
 
@@ -25,7 +28,7 @@ class LyricUtils {
 
   async setLyric(song: Song) {
     this.resetLyric()
-    AppStorage.setOrCreate(StorageConstants.CURRENT_LYRIC, `《${song.name}》`)
+    NowPlayingStore.currentLyric = `《${song.name}》`
     this.currentLyricIndex = 0
     let lyricArr: string[] = []
     try {
@@ -33,7 +36,7 @@ class LyricUtils {
         this.lyric.lrc.lyric = '[00:00:00] 暂无歌词'
         lyricArr = ['[00:00:00] 暂无歌词']
       } else {
-        this.lyric = await getLyric(song.id)
+        this.lyric = await LyricAPIUtils.getLyric(song.id)
         lyricArr = this.lyric.lrc.lyric.split('\n')
       }
       this.lyricObjects = await this.parseLyricArray(lyricArr)
@@ -48,13 +51,13 @@ class LyricUtils {
       }
       this.lyricObjects = [{ time: 0, content: '暂无歌词' }]
     } finally {
-      AppStorage.setOrCreate(StorageConstants.CURRENT_LYRIC_INDEX, 0)
-      EmitterUtil.post(EmitterConstants.EMITTER_LYRIC_UPDATE, 'Lyric Updated')
+      NowPlayingStore.currentLyricIndex = 0
+      // EmitterUtil.post(EmitterConstants.EMITTER_LYRIC_UPDATE, 'Lyric Updated')
     }
   }
 
   async getLyricObjects(): Promise<Lyric[]> {
-    const lyricStyle: LyricStyle = await AppStorage.get(StorageConstants.LYRIC_STYLE) as LyricStyle
+    const lyricStyle: LyricStyle = NowPlayingStore.lyricStyle as LyricStyle
     if(lyricStyle.mode == 1 && this.lyric.tlyric.lyric)
       return this.mergeLyrics(this.lyricObjects, this.tLyricObjects)
     else if(lyricStyle.mode == 2 && this.lyric.romalrc.lyric)
@@ -77,13 +80,13 @@ class LyricUtils {
     else {
       this.isUpdating = true
       this.updateLyricInterval = setInterval(() => {
-        let time: number | undefined = AppStorage.get(StorageConstants.PLAY_TIME)
+        let time: number | undefined = NowPlayingStore.playTime
         if (time) {
          let newIndex = this.updateCurrentLyricIndex(time, this.lyricObjects)
           if(newIndex != this.currentLyricIndex) {
             this.currentLyricIndex = newIndex
-            AppStorage.setOrCreate(StorageConstants.CURRENT_LYRIC_INDEX, this.currentLyricIndex)
-            AppStorage.setOrCreate(StorageConstants.CURRENT_LYRIC, this.lyricObjects[newIndex].content)
+            NowPlayingStore.currentLyricIndex = this.currentLyricIndex
+            NowPlayingStore.currentLyric = this.lyricObjects[newIndex].content
           }
         }
       }, 100)

@@ -1,4 +1,4 @@
-import { PlayQueue, Song } from '@handwer/cloud_api'
+import { CycleMode, PlayQueue, Song } from '@handwer/cloud_api'
 import { EmitterUtil, LogUtil } from '@pura/harmony-utils'
 import { playQueueStore, playQueueKV } from './PlayQueueStore'
 
@@ -10,6 +10,13 @@ enum SCQueueKV {
 }
 
 class PlayQueueUtils {
+  get queue() {
+    return playQueueStore.queue
+  }
+  get currentQueueIndex() {
+    return playQueueStore.currentQueueIndex
+  }
+
   async init() {
     try {
       playQueueKV.init()
@@ -17,7 +24,7 @@ class PlayQueueUtils {
       const gotQueue = playQueueKV.get<Array<PlayQueue>>(SCQueueKV.queue) ?? playQueueStore.queue
       const circleMode = playQueueKV.get<number>(SCQueueKV.cycleMode) ?? 0
       playQueueStore.queue = gotQueue
-      playQueueStore.cycleMode = circleMode // 可选：挂载额外字段，或转存入 App 初始化逻辑
+      playQueueStore.cycleMode = circleMode
     } catch (e) {
       LogUtil.error(TAG, '初始化播放列表 init playqueue error: ' + e.message())
     }
@@ -91,6 +98,27 @@ class PlayQueueUtils {
       return true
     }
     return false
+  }
+
+  getQueueLength(): number {
+    return playQueueStore.getQueueLength()
+  }
+
+  getQueueElement(index: number): PlayQueue {
+    return playQueueStore.getQueueElement(index)
+  }
+
+  getQueue(): Array<PlayQueue> {
+    return this.queue
+  }
+
+  getCurrentSong(): Song {
+    return playQueueStore.getCurrentSong()
+  }
+
+  changeCycleMode(mode: CycleMode) {
+    playQueueStore.cycleMode = mode
+    playQueueKV.put(SCQueueKV.cycleMode, mode)
   }
 }
 

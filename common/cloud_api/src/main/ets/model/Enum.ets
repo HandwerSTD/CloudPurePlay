@@ -23,3 +23,4 @@ export enum COMMENT_SORT_TYPE {
   HOT = 2,
   TIME = 3
 }
+

@@ -79,6 +79,10 @@ export class CommentAPIUtils {
   }
 }
 
+/**
+ * DjAPIUtils 提供对电台（播客 Podcast）的支持，不是私人 FM，私人 FM 请使用 SongAPIUtils
+ */
+
 export class DjAPIUtils {
   /**
    * 获取用户订阅的私人电台
@@ -385,3 +389,5 @@ export class GetDownloadInfoAPIUtils {
     return getDownloadInfo(id, quality, isLogged);
   }
 }
+
+export * from '../functions/convert'

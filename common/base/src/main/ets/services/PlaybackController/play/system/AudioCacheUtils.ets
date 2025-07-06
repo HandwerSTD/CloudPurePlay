@@ -1,8 +1,9 @@
 import { CacheSet, CacheSet_INITIAL } from "@handwer/cloud_api";
 import { LogUtil } from "@pura/harmony-utils";
 import { MCMediaCache } from "@sj/mediacache";
-import { SCPref } from "../../../constants/PreferenceConstants";
-import Settings from "../../Preferences/PreferenceUtils";
+import { SCPref } from "../../../../constants/PreferenceConstants";
+import { UserManager } from "../../../Network/UserManager";
+import Settings from "../../../Preferences/PreferenceUtils";
 
 function getCacheSet() {
   try {
@@ -20,7 +21,7 @@ export default class AudioCacheUtils {
     const cacheSet = getCacheSet()
     MCMediaCache.setLogEnabled(false)
     MCMediaCache.setRequestHandler(async (request) => {
-      let cookie = await getCookie()
+      let cookie = UserManager.getCookie()
       request.setHeader('cookie', cookie)
     })
     MCMediaCache.setAssetIdentifierPreprocessor(async (url) => {

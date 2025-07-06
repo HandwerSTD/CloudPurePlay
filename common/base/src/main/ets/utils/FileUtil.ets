@@ -21,6 +21,18 @@ import Logger from './Logger';
 const TAG: string = '[FileUtils]';
 
 export class FileUtils {
+  static async accessLocalFile(fileName: string): Promise<string> {
+    const fileType: Array<string> = ['flac', 'FLAC', 'mp3', 'MP3']
+    for(let type of fileType) {
+      let filePath = FileUtils.getFilesDir() + `/${fileName}.${type}`
+      if(await(FileUtils.fileExists(filePath))) {
+        let file = await fileIo.open(filePath)
+        let fdPath = 'fd://' + file.fd
+        return fdPath
+      }
+    }
+    return ''
+  }
   static moveFile(src: string, dest: string, mode: number = 0): Promise<void> {
     return fileIo.moveFile(src, dest, mode)
   }
