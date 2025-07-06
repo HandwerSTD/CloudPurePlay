@@ -1,6 +1,8 @@
 import { BusinessError } from '@kit.BasicServicesKit';
 import { backgroundTaskManager } from '@kit.BackgroundTasksKit';
 import { WantAgent, wantAgent } from '@kit.AbilityKit';
+import { CommonConstants } from '../../../../exports';
+import { LogUtil } from '@pura/harmony-utils';
 
 /**
  * 长时任务
@@ -12,8 +14,8 @@ class BackgroundTaskUtils {
     let wantAgentInfo: wantAgent.WantAgentInfo = {
       wants: [
         {
-          bundleName: "cn.chenlvin.melotopia.hm",
-          abilityName: "EntryAbility"
+          bundleName: CommonConstants.bundleName,
+          abilityName: CommonConstants.abilityName
         }
       ],
       actionType: wantAgent.OperationType.START_ABILITY,
@@ -27,11 +29,11 @@ class BackgroundTaskUtils {
         getContext(),
         bgModes,
         wantAgentObj
-      )
-        .then(() => {
+      ).then(() => {
+        LogUtil.info(TAG, `启动长时任务 Start Background Running`)
       })
         .catch((err: BusinessError) => {
-        // LogUtil.error(TAG, `启动长时任务 Start Background Running 失败：Code - ${err.code}, Message - ${err.message}`)
+        LogUtil.error(TAG, `启动长时任务 Start Background Running 失败：Code - ${err.code}, Message - ${err.message}`)
       })
     })
   }

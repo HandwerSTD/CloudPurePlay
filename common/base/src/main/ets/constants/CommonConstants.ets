@@ -1,5 +1,10 @@
 import { distributedKVStore } from "@kit.ArkData"
 
+export class CommonConstants {
+  static readonly bundleName = 'top.handwer.cloudpureplay'
+  static readonly abilityName = 'MainAbility'
+}
+
 export class SCDistKV {
   static readonly dbName = 'distKV'
   static readonly dbOptions: distributedKVStore.Options = {

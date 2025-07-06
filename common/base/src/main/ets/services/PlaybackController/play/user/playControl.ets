@@ -1,4 +1,4 @@
-import { PlayConstants, Song, SongAPIUtils, SongConvertUtils, SongPlayResult } from "@handwer/cloud_api"
+import { PlayConstants, Song, SongAPIUtils, SongConvertUtils, SongPlayResult, Song_INITIAL } from "@handwer/cloud_api"
 import { FileUtil, LogUtil, RandomUtil, ToastUtil } from "@pura/harmony-utils"
 import { FileUtils } from "../../../../utils/FileUtil"
 import LyricUtils from "../../lyric/LyricUtils"
@@ -36,6 +36,10 @@ export class PlayControl {
     store.currentPic = kv.get('CurrentImage') ?? store.currentPic
     store.playMode = kv.get('PlayMode') ?? store.playMode
     store.isPersonalFMState = kv.get('isPersonalFMState') ?? store.isPersonalFMState
+    if (store.currentSong !== Song_INITIAL) {
+      store.isPlaying = true
+      store.isPaused = true
+    }
   }
   static async playMusicByUrl(song: Song, isLogged: boolean, picUrl: string = '', mode: number = 1) {
     try {

@@ -31,7 +31,8 @@
               "action.system.home"
             ]
           }
-        ]
+        ],
+        "backgroundModes": ['audioPlayback', 'dataTransfer']
       }
     ],
     "requestPermissions": [

@@ -41,14 +41,6 @@ struct TestComponent {
   @Local qrImg: string = ''
   @Local qrKey: string = ''
 
-  aboutToAppear(): void {
-    CloudAPIConfigUtils.setRequestContext({
-      baseUrl: 'http://139.9.223.233:3000/',
-      cookie: {},
-      realIp: RealIP_INITIAL
-    })
-  }
-
   build() {
     Column() {
       if (this.qrImg !== '') {
