@@ -45,7 +45,7 @@ class LyricUtils {
       if(this.lyric.romalrc.lyric)
         this.rLyricObjects = await this.parseLyricArray(this.lyric.romalrc.lyric.split('\n'))
     } catch (e) {
-      LogUtil.error(TAG, 'Set Lyric Error: ' + e.message)
+      LogUtil.error(TAG, 'Set Lyric Error: ' + JSON.stringify(e))
       this.lyric = {
         code: 200, lrc: Lrc_INITIAL, tlyric: Lrc_INITIAL, klyric: Lrc_INITIAL, romalrc: Lrc_INITIAL
       }

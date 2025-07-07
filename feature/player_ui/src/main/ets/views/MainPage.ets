@@ -22,7 +22,7 @@ export struct MainPage {
         .aspectRatio(1)
         .height(nps.currentSong.id === 0 ? '70%' : '100%')
         .borderRadius(12)
-        .shadow(ShadowStyle.OUTER_FLOATING_SM)
+        .shadow(ShadowStyle.OUTER_FLOATING_MD)
         .scale({ x: nps.isPaused ? 0.9 : 1.0, y: nps.isPaused ? 0.9 : 1.0})
         .animation({ duration: 300, curve: Curve.Smooth })
         .gesture(
@@ -83,6 +83,7 @@ export struct MainPage {
       this.CoverInfo()
       this.PlaybackControl()
     }.height('100%')
+    .padding({left: 24, right: 24})
     .justifyContent(FlexAlign.SpaceAround)
   }
 

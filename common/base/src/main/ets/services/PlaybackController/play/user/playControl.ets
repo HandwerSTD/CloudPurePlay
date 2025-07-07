@@ -1,4 +1,6 @@
-import { PlayConstants, Song, SongAPIUtils, SongConvertUtils, SongPlayResult, Song_INITIAL } from "@handwer/cloud_api"
+import {
+  CycleMode,
+  PlayConstants, Song, SongAPIUtils, SongConvertUtils, SongPlayResult, Song_INITIAL } from "@handwer/cloud_api"
 import { FileUtil, LogUtil, RandomUtil, ToastUtil } from "@pura/harmony-utils"
 import { FileUtils } from "../../../../utils/FileUtil"
 import LyricUtils from "../../lyric/LyricUtils"
@@ -36,9 +38,11 @@ export class PlayControl {
     store.currentPic = kv.get('CurrentImage') ?? store.currentPic
     store.playMode = kv.get('PlayMode') ?? store.playMode
     store.isPersonalFMState = kv.get('isPersonalFMState') ?? store.isPersonalFMState
+    await AVPlayerUtils.init()
     if (store.currentSong !== Song_INITIAL) {
       store.isPlaying = true
       store.isPaused = true
+      await PlayControl.playMusicByUrl(store.currentSong, UserManager.isLogged, store.currentPic as string, store.playMode)
     }
   }
   static async playMusicByUrl(song: Song, isLogged: boolean, picUrl: string = '', mode: number = 1) {
@@ -191,7 +195,7 @@ export class PlayControl {
     }
     let isLogged:boolean | undefined = UserManager.isLogged
     let cycleMode = await PlayControl.getCycleMode()
-    if(cycleMode == 3) {
+    if(cycleMode == CycleMode.random) {
       let queueLength = PlayQueueUtils.getQueueLength()
       let randomIndex = RandomUtil.getRandomInt(0, queueLength - 1)
       PlayControl.playQueue(randomIndex)
