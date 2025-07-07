@@ -58,7 +58,7 @@ instance.interceptors.request.use(async (request: InternalAxiosRequestConfig ) =
 instance.interceptors.response.use((response: AxiosResponse) => {
   return response
 }, (err: AxiosError) => {
-  LogUtil.error(TAG, `error: ${err?.status} + ${err.message}`)
+  LogUtil.error(TAG, `error: ${err?.status} + ${err?.message ?? ""}`)
   return Promise.reject(err)
 })
 

@@ -15,6 +15,7 @@ import { playQueueStore } from "../../queue/PlayQueueStore"
 import { UserManager } from "../../../Network/UserManager"
 import Settings, { PreferenceUtils } from "../../../Preferences/PreferenceUtils"
 import { SCPref } from "../../../../constants/PreferenceConstants"
+import { Logger } from "../../../../../../../Index"
 
 
 const TAG = '[playerControl] '
@@ -38,6 +39,7 @@ export class PlayControl {
     store.currentPic = kv.get('CurrentImage') ?? store.currentPic
     store.playMode = kv.get('PlayMode') ?? store.playMode
     store.isPersonalFMState = kv.get('isPersonalFMState') ?? store.isPersonalFMState
+    Logger.debug(TAG, `load store info = ${JSON.stringify(store)}`)
     await AVPlayerUtils.init()
     if (store.currentSong !== Song_INITIAL) {
       store.isPlaying = true
@@ -285,6 +287,7 @@ export class PlayControl {
   }
 
   static async saveCurrentSongInfo(playMode: number, song: Song, artists: string, imgUrl: string | ResourceStr) {
+    Logger.debug(TAG, `triggered to save current song: song = ${JSON.stringify(song)}`)
     playControlKV.put('PlayMode', playMode)
     playControlKV.put('CurrentSong', song)
     playControlKV.put('CurrentArtists', artists)

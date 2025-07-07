@@ -88,6 +88,6 @@ export default class MainAbility extends UIAbility {
     let info = bundleManager.getBundleInfoForSelfSync(bundleManager.BundleFlag.GET_BUNDLE_INFO_WITH_APPLICATION)
     GlobalStore.appVersion = info.versionName + ` (${info.versionCode.toString().substring(5)})`
     // MusicAPI
-    ServiceInitUtils.init()
+    await ServiceInitUtils.init()
   }
 }

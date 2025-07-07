@@ -7,6 +7,7 @@ const TAG = '[PlayQueueUtils] '
 enum SCQueueKV {
   queue = 0,
   cycleMode = 1,
+  currentIndex = 2,
 }
 
 class PlayQueueUtils {
@@ -20,7 +21,7 @@ class PlayQueueUtils {
   async init() {
     try {
       playQueueKV.init()
-      playQueueStore.currentQueueIndex = -1
+      playQueueStore.currentQueueIndex = playQueueKV.get(SCQueueKV.currentIndex) ?? -1
       const gotQueue = playQueueKV.get<Array<PlayQueue>>(SCQueueKV.queue) ?? playQueueStore.queue
       const circleMode = playQueueKV.get<number>(SCQueueKV.cycleMode) ?? 0
       playQueueStore.queue = gotQueue
@@ -33,6 +34,8 @@ class PlayQueueUtils {
   private async syncQueueToStorage() {
     try {
       playQueueKV.put(SCQueueKV.queue, playQueueStore.queue)
+      playQueueKV.put(SCQueueKV.cycleMode, playQueueStore.cycleMode)
+      playQueueKV.put(SCQueueKV.currentIndex, playQueueStore.currentQueueIndex)
     } catch (e) {
       LogUtil.error(TAG, 'Error while syncQueueToStorage: ' + e.message)
     }
@@ -78,10 +81,12 @@ class PlayQueueUtils {
     playQueueStore.queue = []
     playQueueStore.currentQueueIndex = -1
     playQueueKV.put(SCQueueKV.queue, playQueueStore.queue)
+    playQueueKV.put(SCQueueKV.currentIndex, playQueueStore.currentQueueIndex)
   }
 
   async setIndex(index: number) {
     playQueueStore.currentQueueIndex = index
+    playQueueKV.put(SCQueueKV.currentIndex, playQueueStore.currentQueueIndex)
   }
 
   pre(): boolean {
