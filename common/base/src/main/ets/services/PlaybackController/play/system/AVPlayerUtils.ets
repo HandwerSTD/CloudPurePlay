@@ -113,7 +113,7 @@ class AVPlayerUtils {
     this.isSeeking = true
     this.updateFlag = true
     NowPlayingStore.playTime = time
-    AVSessionUtils.bufferingState(time)
+    await AVSessionUtils.bufferingState(time)
     avPlayer.seek(time)
     avPlayer.play()
   }
@@ -134,6 +134,7 @@ class AVPlayerUtils {
 
   private setCallback(avPlayer: media.AVPlayer) {
     avPlayer.on('error', (err: BusinessError) => {
+      // TODO: 遗留问题
       LogUtil.error(TAG, `Invoke avPlayer failed, code is ${err.code}, message is ${err.message}`)
       if(avPlayer.state === 'paused' || avPlayer.state === 'stopped') return
 

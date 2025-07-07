@@ -66,7 +66,7 @@ export class PlayControl {
       }
       await AVSessionUtils.setDefaultMetadata(song, artists)
       await AVSessionUtils.activate()
-      AVSessionUtils.bufferingState(0)
+      await AVSessionUtils.bufferingState(0)
 
       if(!picUrl) {
         picUrl = await SongAPIUtils.getSongPicUrl(song.id)
@@ -86,11 +86,12 @@ export class PlayControl {
         const songPlay: SongPlayResult = await SongAPIUtils.getSongUrl(song.id, quality ? PlayConstants.QUALITY[quality] : "standard", isLogged)
         NowPlayingStore.isLocalFile = false
         let proxyUrl = await AudioCacheUtils.getProxyUrl(songPlay.data[0].url)
+        Logger.debug(TAG, `playMusicByUrl got final data, set url = ${proxyUrl ?? songPlay.data[0].url}`)
         await AVPlayerUtils.setUrl(proxyUrl ?? songPlay.data[0].url)
       }
     } catch (e) {
       LogUtil.error(TAG, '播放出错: ' + e)
-      PlayControl.playNext()
+      await PlayControl.playNext()
     }
   }
 
@@ -122,10 +123,10 @@ export class PlayControl {
         // EmitterUtil.post(EmitterConstants.EMITTER_LYRIC_UPDATE, 'Lyric Updated')
         // AVSession
         await AVSessionUtils.setMetadata(song, artistsString, picUrl)
-        AVSessionUtils.activate()
-        AVSessionUtils.bufferingState(0)
+        await AVSessionUtils.activate()
+        await AVSessionUtils.bufferingState(0)
         await PlayControl.saveCurrentSongInfo(0, song, artistsString, picUrl)
-        AVPlayerUtils.setUrl(fdPath)
+        await AVPlayerUtils.setUrl(fdPath)
       } else {
         ToastUtil.showToast('未找到文件')
         PlayControl.playNext()
@@ -208,6 +209,7 @@ export class PlayControl {
       if(res.playmode == 0) {
         PlayControl.playMusicWithFile(res.song as Song, res.fileName)
       } else {
+        Logger.debug(TAG, `playNext triggered playMusicByUrl`)
         PlayControl.playMusicByUrl(res.song, isLogged ?? false, res.picUrl, res.playmode)
       }
     } else {
