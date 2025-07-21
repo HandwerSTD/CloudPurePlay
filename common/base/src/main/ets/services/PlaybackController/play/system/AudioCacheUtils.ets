@@ -37,6 +37,8 @@ export default class AudioCacheUtils {
   }
 
   static async getProxyUrl(url: string) {
+    // 临时屏蔽 Proxy
+    return url;
     return await MCMediaCache.proxy(url)
   }
 

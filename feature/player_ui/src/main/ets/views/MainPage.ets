@@ -17,7 +17,7 @@ export struct MainPage {
   }
 
   @Builder CoverInfo() {
-    Column() {
+    Column({space: 24}) {
       Image(this.nowPlayingCoverImg)
         .aspectRatio(1)
         .height(nps.currentSong.id === 0 ? '70%' : '100%')
@@ -30,6 +30,7 @@ export struct MainPage {
             count: 2,
           }).onAction(this.handleLike)
         )
+      Text(nps.currentSong.name)
     }
     .layoutWeight(1)
     .height('100%')
