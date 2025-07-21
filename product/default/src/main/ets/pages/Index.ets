@@ -12,26 +12,20 @@ const TAG = '[Index]'
 struct Index {
   gs = GlobalStore
 
-  @Local consoleSheet: boolean = false
+  @Provider('consoleSheet') consoleSheet: boolean = false
   @Builder testConsole() {
     TestComponent()
   }
 
   build() {
     Column() {
-      Button('console')
-        .onClick(() => {
-          this.consoleSheet = !this.consoleSheet
-        })
-        .bindSheet($$this.consoleSheet, this.testConsole)
       PlayerUI()
     }
+    .bindSheet($$this.consoleSheet, this.testConsole, {
+      preferType: SheetType.CENTER
+    })
     .height('100%')
     .width('100%')
-    .padding({
-      top: this.gs.wd.top,
-      bottom: this.gs.wd.bottom
-    })
   }
 }
 

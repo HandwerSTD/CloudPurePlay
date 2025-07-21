@@ -293,4 +293,10 @@ export class ResponsiveUtil {
   static smCheck(bp: string): boolean {
     return bp == BreakpointTypeEnum.SM
   }
+
+  static chooseByWidth<T>(item: T[]) {
+    const breakpointOrder = ['sm', 'md', 'lg', 'xl']
+    let wbp = GlobalStore.wbp
+    return item[Math.min(breakpointOrder.indexOf(wbp), item.length-1)]
+  }
 }
