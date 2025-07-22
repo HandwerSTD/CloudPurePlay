@@ -1,5 +1,5 @@
 import { GlobalStore, NowPlayingStore, PlayControl, ResponsiveUtil } from "@handwer/base"
-import { PLAYMODE, Song_INITIAL } from "@handwer/cloud_api"
+import { PLAYMODE, SongConvertUtils, Song_INITIAL } from "@handwer/cloud_api"
 import { LightUpRoundedButton, LightUpConfig, LightUpBorderRoundButton } from "@handwer/ui_components"
 import { curves } from "@kit.ArkUI"
 import { ClickUtil } from "@pura/harmony-utils"
@@ -49,6 +49,9 @@ export struct MainPage {
       return nps.playMode === PLAYMODE.LOCAL ? nps.currentPic : nps.currentPic + '?param=512y512'
     }
   }
+  @Local sliderThickness: number = 10
+  @Local isMovingSlider: boolean = false
+  @Local sliderMovingTime: number = 0
 
   @Builder TopArea() {
     Row({space: 24}) {
@@ -69,17 +72,25 @@ export struct MainPage {
         },
         customFontColor: [Color.White, Color.White]
       })
-    }.width('100%').padding({left: 24, right: 24})
+    }.width('100%').padding({left: 24, right: 24, top: 24})
     .justifyContent(FlexAlign.SpaceBetween)
   }
 
   @Builder CoverInfo() {
     Column({space: 24}) {
+      // TODO: 考虑在播放时封面背后放一个点光源？
       Image(this.nowPlayingCoverImg)
         .aspectRatio(1)
         .layoutWeight(nps.currentSong.id === 0 ? undefined : 1)
+        .constraintSize({
+          maxWidth: '100%'
+        })
         .borderRadius(20)
-        .shadow(ShadowStyle.OUTER_DEFAULT_LG)
+        .shadow({
+          color: '#77000000',
+          radius: this.getUIContext().vp2px(64),
+          offsetY: this.getUIContext().vp2px(24)
+        })
         .scale({ x: nps.isPaused ? 0.8 : 0.9, y: nps.isPaused ? 0.8 : 0.9})
         .animation({ curve: curves.springMotion(0.6, 0.5) })
         .visualEffect(new hdsEffect.HdsEffectBuilder().pointLight({
@@ -91,23 +102,88 @@ export struct MainPage {
           }).onAction(this.handleLike)
         )
       Text(nps.currentSong.name)
+        .width('90%')
+        .textAlign(TextAlign.Center)
+        .textOverflow({
+          overflow: TextOverflow.MARQUEE
+        })
+        .marqueeOptions({
+          start: true,
+          fadeout: true
+        })
+
+      this.ProgressBar('90%')
     }
     .layoutWeight(1)
     .height('100%')
     .justifyContent(FlexAlign.Center)
-    .aspectRatio(1)
+    // .aspectRatio(1)
     .constraintSize({
       minWidth: 0,
       maxWidth: '100%',
       minHeight: 0,
-      maxHeight: 500
+      maxHeight: ResponsiveUtil.widthCheck(['sm', 'md']) ? '100%' : 500
     })
+  }
+
+  @Builder ProgressBar(wid: Dimension) {
+    Column() {
+      // 进度条
+      Slider({
+        value: nps.playTime,
+        min: 0,
+        max: nps.currentSong.duration,
+        step: 1,
+        style: SliderStyle.InSet
+      })
+        .width('100%')
+        .blockColor(Color.Transparent)
+        .trackColor('#aaffffff')
+        .trackThickness(this.sliderThickness)
+        .selectedColor(Color.White)
+        .showSteps(false)
+        .showTips(false)
+        .onChange(this.handleSliderChange)
+
+      Row() {
+        // 当前时间
+        Text(`${SongConvertUtils.changeDuration(nps.playTime)}`)
+          .fontSize(12)
+          .textAlign(TextAlign.Start)
+          .fontColor(Color.White)
+          .alignSelf(ItemAlign.Start)
+          .layoutWeight(1)
+
+        // 拖动进度条时，显示即将跳转的时间
+        Text(`${SongConvertUtils.changeDuration(this.sliderMovingTime)}`)
+          .fontSize(12)
+          .fontColor(Color.White)
+          .backgroundColor(Color.Gray)
+          // .borderRadius(Constants.RADIUS_CARD)
+          .textAlign(TextAlign.Center)
+          // .padding({ left: Constants.PADDING_EDGE_DEFAULT, right: Constants.PADDING_EDGE_DEFAULT })
+          .alignSelf(ItemAlign.Center)
+          .visibility(this.isMovingSlider ? Visibility.Visible : Visibility.Hidden)
+
+        // 总时间
+        Text(`${SongConvertUtils.changeDuration(nps.currentSong.duration)}`)
+          .fontSize(12)
+          .textAlign(TextAlign.End)
+          .fontColor(Color.White)
+          .alignSelf(ItemAlign.End)
+          .layoutWeight(1)
+      }
+      .padding({ left: 5, right: 5 })
+      .width('100%')
+    }
+    .width(wid)
+    .opacity(0.6)
   }
 
   @Builder PlaybackControl() {
     Row() {
       // 上一首
-      LightUpBorderRoundButton({
+      LightUpRoundedButton({
         icon: $r('sys.symbol.backward_end_fill'),
         customFontSize: 32,
         customFontColor: [Color.White],
@@ -139,10 +215,13 @@ export struct MainPage {
           color: '#ccffffff',
           radius: 36
         })
+        .backgroundColor(nps.isPaused ? undefined : '#aaffffff')
+        .backdropBlur(nps.isPaused ? undefined : 64)
+        .animation({duration: 1000, curve: Curve.Ease})
         .borderRadius(48)
 
       // 下一首
-      LightUpBorderRoundButton({
+      LightUpRoundedButton({
         icon: $r('sys.symbol.forward_end_fill'),
         customFontSize: 32,
         customFontColor: [Color.White],
@@ -168,7 +247,7 @@ export struct MainPage {
     .padding({left: 24, right: 24})
     .justifyContent(FlexAlign.SpaceAround)
     .clip(false)
-    .margin({bottom: this.gs.wd.bottom})
+    .margin({bottom: this.gs.wd.bottom === 0 ? 24 : this.gs.wd.bottom})
   }
 
   @Builder LyricArea() {
@@ -197,21 +276,40 @@ export struct MainPage {
     })
     .height('100%')
     .visualEffect(new hdsEffect.HdsEffectBuilder()
-      .shaderEffect({
-        effectType: hdsEffect.EffectType.UV_BACKGROUND_FLOW_LIGHT,
-        animation: {
-          duration: 5000,
-          iterations: -1,
-          autoPlay: true,
-          onFinish: ()=> {
-            console.info('Succeeded in finishing');
-          }
-        },
-        controller: this.controller,
+      // .shaderEffect({
+      //   effectType: hdsEffect.EffectType.UV_BACKGROUND_FLOW_LIGHT,
+      //   animation: {
+      //     duration: 5000,
+      //     iterations: -1,
+      //     autoPlay: true,
+      //     onFinish: ()=> {
+      //       console.info('Succeeded in finishing');
+      //     }
+      //   },
+      //   controller: this.controller,
+      // })
+      .pointLight({
+        illuminatedType: hdsEffect.PointLightIlluminatedType.BORDER_CONTENT
       })
       .buildEffect())
+    // .backgroundColor(Color.Pink)
   }
-
+  private handleSliderChange = (value: number, mode: SliderChangeMode) => {
+  this.getUIContext().animateTo({ duration: 500, curve: Curve.Smooth, }, () => {
+    if (mode == SliderChangeMode.Begin) {
+      this.isMovingSlider = true
+      this.sliderMovingTime = value
+      this.sliderThickness = 15
+    } else if (mode == SliderChangeMode.Moving) {
+      this.sliderMovingTime = value
+    } else if (mode == SliderChangeMode.End) {
+      nps.playTime = value
+      this.sliderThickness = 10
+      this.isMovingSlider = false
+      PlayControl.seekMusic(this.sliderMovingTime)
+    }
+  })
+}
   async handleLike() {
 
   }

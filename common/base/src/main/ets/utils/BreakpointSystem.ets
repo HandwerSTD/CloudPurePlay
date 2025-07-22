@@ -294,8 +294,9 @@ export class ResponsiveUtil {
     return bp == BreakpointTypeEnum.SM
   }
 
-  static chooseByWidth<T>(item: T[]) {
-    const breakpointOrder = ['sm', 'md', 'lg', 'xl']
+  static chooseByWidth<T>(item: T[], enableXS: boolean = false) {
+    let breakpointOrder = ['sm', 'md', 'lg', 'xl']
+    if (enableXS) breakpointOrder = ['xs'].concat(breakpointOrder)
     let wbp = GlobalStore.wbp
     return item[Math.min(breakpointOrder.indexOf(wbp), item.length-1)]
   }

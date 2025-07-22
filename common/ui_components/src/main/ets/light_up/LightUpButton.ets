@@ -84,6 +84,7 @@ export struct LightUpBorderRoundButton {
   @Param customFontColor: ResourceColor[] | undefined = undefined
   @Param customFontSize: number | undefined = undefined
   @Param customPadding: number | undefined = undefined
+  @Param customBorderOption: BorderOptions | undefined = undefined
 
   @Local intensity: number = 0
   @Local illuminatedType: hdsEffect.PointLightIlluminatedType = hdsEffect.PointLightIlluminatedType.BORDER_CONTENT
@@ -104,7 +105,7 @@ export struct LightUpBorderRoundButton {
         .fontColor(this.customFontColor ? this.customFontColor : [$r('sys.color.font_primary')])
         .hitTestBehavior(HitTestMode.Transparent)
     }
-    .border({
+    .border(this.customBorderOption ?? {
       radius: this.customFontSize ? this.customFontSize*2 : 48,
       width: 1,
       color: this.customFontColor ? this.customFontColor[0] : $r('sys.color.font_primary')
