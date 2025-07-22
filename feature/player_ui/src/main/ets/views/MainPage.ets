@@ -23,14 +23,14 @@ const LIGHT_TOP_BTN_LG: LightUpConfig = {
 }
 
 const LIGHT_PLAYBACK_BTN_MD: LightUpConfig = {
-  lightIntensity: 8,
-  lightHeight: 100,
+  lightIntensity: 2,
+  lightHeight: 300,
   lightBloom: 0,
 }
 
 const LIGHT_PLAYBACK_BTN_LG: LightUpConfig = {
   lightIntensity: 2,
-  lightHeight: 250,
+  lightHeight: 300,
   lightBloom: 0,
 }
 @ComponentV2
@@ -280,20 +280,17 @@ export struct MainPage {
     })
     .height('100%')
     .visualEffect(new hdsEffect.HdsEffectBuilder()
-      // .shaderEffect({
-      //   effectType: hdsEffect.EffectType.UV_BACKGROUND_FLOW_LIGHT,
-      //   animation: {
-      //     duration: 5000,
-      //     iterations: -1,
-      //     autoPlay: true,
-      //     onFinish: ()=> {
-      //       console.info('Succeeded in finishing');
-      //     }
-      //   },
-      //   controller: this.controller,
-      // })
-      .pointLight({
-        illuminatedType: hdsEffect.PointLightIlluminatedType.BORDER_CONTENT
+      .shaderEffect({
+        effectType: hdsEffect.EffectType.UV_BACKGROUND_FLOW_LIGHT,
+        animation: {
+          duration: 5000,
+          iterations: -1,
+          autoPlay: true,
+          onFinish: ()=> {
+            console.info('Succeeded in finishing');
+          }
+        },
+        controller: this.controller,
       })
       .buildEffect())
     // .backgroundColor(Color.Pink)
