@@ -7,12 +7,12 @@ import { hdsEffect } from "@kit.UIDesignKit"
 
 const nps = NowPlayingStore
 const LIGHT_TOP_BTN_SM: LightUpConfig = {
-  lightIntensity: 20,
-  lightHeight: 100,
+  lightIntensity: 3,
+  lightHeight: 200,
   lightBloom: 0
 }
 const LIGHT_TOP_BTN_MD: LightUpConfig = {
-  lightIntensity: 10,
+  lightIntensity: 3,
   lightHeight: 200,
   lightBloom: 0
 }
@@ -91,8 +91,12 @@ export struct MainPage {
           radius: this.getUIContext().vp2px(64),
           offsetY: this.getUIContext().vp2px(24)
         })
-        .scale({ x: nps.isPaused ? 0.8 : 0.9, y: nps.isPaused ? 0.8 : 0.9})
-        .animation({ curve: curves.springMotion(0.6, 0.5) })
+        // .scale({ x: nps.isPaused ? 0.8 : 0.9, y: nps.isPaused ? 0.8 : 0.9})
+        .margin(nps.isPaused ? ResponsiveUtil.chooseByWidth(['10%', '7%']) : 12)
+        .animation({ curve:
+          ResponsiveUtil.chooseByWidth(
+            [curves.springMotion(0.8,0.4), curves.springMotion(0.6, 0.5)])
+        })
         .visualEffect(new hdsEffect.HdsEffectBuilder().pointLight({
           illuminatedType: hdsEffect.PointLightIlluminatedType.BORDER_CONTENT
         }).buildEffect())
