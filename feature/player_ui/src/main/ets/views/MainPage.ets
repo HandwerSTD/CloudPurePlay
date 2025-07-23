@@ -1,4 +1,4 @@
-import { GlobalStore, NowPlayingStore, PlayControl, ResponsiveUtil } from "@handwer/base"
+import { FeaturedPlayUtils, GlobalStore, NowPlayingStore, PlayControl, ResponsiveUtil } from "@handwer/base"
 import { PLAYMODE, SongConvertUtils, Song_INITIAL } from "@handwer/cloud_api"
 import { LightUpRoundedButton, LightUpConfig, LightUpBorderRoundButton } from "@handwer/ui_components"
 import { ColorMetrics, curves, LengthMetrics } from "@kit.ArkUI"
@@ -79,12 +79,15 @@ export struct MainPage {
         primaryButtonBuilderWidth: LengthMetrics.vp(40),
         endButtons: [
           new ActionBarButton({
-            baseIcon: $r('sys.symbol.heart'),
+            baseIcon: $r('sys.symbol.heart_square_stack'),
             width: LengthMetrics.vp(40)
           }),
           new ActionBarButton({
             baseIcon: $r('sys.symbol.radio'),
-            width: LengthMetrics.vp(40)
+            width: LengthMetrics.vp(40),
+            onClick: () => {
+              FeaturedPlayUtils.playPersonalizedList()
+            }
           }),
           new ActionBarButton({
             baseIcon: $r('sys.symbol.house'),
@@ -488,13 +491,13 @@ export struct ImageCover {
         })
         // .scale({x: 0.95, y: 0.95})
         .foregroundEffect({
-          radius: 150
+          radius: 192
         })
         .onAreaChange((_, area) => {
           this.coverArea = area
           this.relocatePointLight()
         })
-        .borderRadius(24)
+        // .borderRadius(24)
         .opacity(0.7)
         .brightness(1.2)
         .saturate(3)

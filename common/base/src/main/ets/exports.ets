@@ -20,6 +20,7 @@ export * from './services/PlaybackController/play/user/playControl'
 export * from './services/PlaybackController/play/user/playListOp'
 export * from './services/PlaybackController/play/user/podcastOp'
 export * from './services/PlaybackController/play/user/songLike'
+export * from './services/PlaybackController/play/feature/FeaturedPlayUtils'
 export { default as NowPlayingStore } from './services/PlaybackController/play/NowPlayingStore'
 
 export * from './services/Network/UserManager'
