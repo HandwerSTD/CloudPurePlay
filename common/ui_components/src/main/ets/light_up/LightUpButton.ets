@@ -46,8 +46,8 @@ export struct LightUpRoundedButton {
         }
       }).buildEffect())
     .animation({
-      duration: 200,
-      curve: Curve.Ease
+      duration: 300,
+      curve: Curve.EaseInOut
     })
     .clickEffect({
       level: ClickEffectLevel.LIGHT

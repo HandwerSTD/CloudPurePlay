@@ -95,7 +95,8 @@ export struct MainPage {
           })
         ]
       })
-    }
+        .hitTestBehavior(this.isTopAreaExpand ? HitTestMode.Default : HitTestMode.Transparent)
+    }.hitTestBehavior(this.isTopAreaExpand ? HitTestMode.Default : HitTestMode.Transparent)
   }
   @Builder TopAreaActionButton_Normal() {
     Row({space: 24}) {
@@ -401,7 +402,7 @@ export struct ImageCover {
         })
         // .scale({x: 0.95, y: 0.95})
         .foregroundEffect({
-          radius: 128
+          radius: 150
         })
         .borderRadius(24)
         .opacity(0.7)
