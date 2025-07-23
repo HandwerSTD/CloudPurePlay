@@ -402,19 +402,19 @@ export struct ImageCover {
   nowPlay = NowPlayingStore
 
   @Builder PointLight() {
-    Column() {}.height(1).width(1)
+    Column() {}.height(20).width(20)
     .visualEffect(new hdsEffect.HdsEffectBuilder().pointLight({
       options: {
         color: Color.White,
-        intensity: 2,
-        height: 200
+        intensity: 0.7,
+        height: 150
       }
     }).buildEffect())
     .translate({
       x: this.pointLightX,
       y: this.pointLightY
     })
-    .animation({duration: 1000, curve: Curve.Linear})
+    .animation({duration: 2000})
 
   }
 
@@ -429,16 +429,16 @@ export struct ImageCover {
             this.pointLightX = -this.lightOffset; this.pointLightY = -this.lightOffset;
           break;
           case 1:
-            this.pointLightX = (this.coverArea!.width.valueOf() as number) + this.lightOffset
+            this.pointLightX = (this.coverArea!.width.valueOf() as number) //+ this.lightOffset
           break;
           case 2:
-            this.pointLightY = this.coverArea!.height.valueOf() as number + this.lightOffset
+            this.pointLightY = (this.coverArea!.width.valueOf() as number) //+ this.lightOffset
           break;
           case 3:
             this.pointLightX = -this.lightOffset;
           break;
         }
-      }, 1000)
+      }, 2000)
     } else {
       clearInterval(this.pointLightMoveIntervalHandler)
       this.pointLightMoveIntervalHandler = undefined
@@ -447,16 +447,17 @@ export struct ImageCover {
   relocatePointLight() {
     switch (this.pointLocation) {
       case 0:
-        this.pointLightX = 0; this.pointLightY = 0;
+        this.pointLightX = -this.lightOffset;
+        this.pointLightY = -this.lightOffset;
         break;
       case 1:
-        this.pointLightX = this.coverArea!.width.valueOf() as number
+        this.pointLightX = (this.coverArea!.width.valueOf() as number) + this.lightOffset
         break;
       case 2:
-        this.pointLightY = this.coverArea!.height.valueOf() as number
+        this.pointLightY = (this.coverArea!.width.valueOf() as number) + this.lightOffset
         break;
       case 3:
-        this.pointLightX = 0;
+        this.pointLightX = -this.lightOffset;
         break;
     }
   }
@@ -475,6 +476,10 @@ export struct ImageCover {
         .foregroundEffect({
           radius: 150
         })
+        .onAreaChange((_, area) => {
+          this.coverArea = area
+          this.relocatePointLight()
+        })
         .borderRadius(24)
         .opacity(0.7)
         .brightness(1.2)
@@ -491,16 +496,12 @@ export struct ImageCover {
         .borderRadius(20)
         .shadow(ShadowStyle.OUTER_DEFAULT_MD)
         .margin(nps.isPaused ? ResponsiveUtil.chooseByWidth(['10%', '7%']) : 12)
-        .onAreaChange((_, area) => {
-          this.coverArea = area
-          this.relocatePointLight()
-        })
         .animation({ curve:
         ResponsiveUtil.chooseByWidth(
           [curves.springMotion(0.8,0.4), curves.springMotion(0.6, 0.5)])
         })
         .visualEffect(new hdsEffect.HdsEffectBuilder().pointLight({
-          illuminatedType: hdsEffect.PointLightIlluminatedType.BORDER
+          illuminatedType: hdsEffect.PointLightIlluminatedType.BORDER_CONTENT
         }).buildEffect())
         .gesture(
           TapGesture({
