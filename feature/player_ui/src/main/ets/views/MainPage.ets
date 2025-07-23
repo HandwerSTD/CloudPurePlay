@@ -1,9 +1,9 @@
 import { GlobalStore, NowPlayingStore, PlayControl, ResponsiveUtil } from "@handwer/base"
 import { PLAYMODE, SongConvertUtils, Song_INITIAL } from "@handwer/cloud_api"
 import { LightUpRoundedButton, LightUpConfig, LightUpBorderRoundButton } from "@handwer/ui_components"
-import { curves } from "@kit.ArkUI"
+import { ColorMetrics, curves, LengthMetrics } from "@kit.ArkUI"
 import { ClickUtil } from "@pura/harmony-utils"
-import { hdsEffect } from "@kit.UIDesignKit"
+import { HdsActionBar, ActionBarButton, ActionBarStyle, hdsEffect } from "@kit.UIDesignKit"
 
 const nps = NowPlayingStore
 const LIGHT_TOP_BTN_SM: LightUpConfig = {
@@ -49,65 +49,99 @@ export struct MainPage {
       return nps.playMode === PLAYMODE.LOCAL ? nps.currentPic : nps.currentPic + '?param=512y512'
     }
   }
+  get topAreaExpandShouldHideNormal() {
+    return this.isTopAreaExpand && ResponsiveUtil.widthCheck(['xs','sm', 'md'])
+  }
   @Local sliderThickness: number = 10
   @Local isMovingSlider: boolean = false
   @Local sliderMovingTime: number = 0
 
-  @Builder TopArea() {
+  @Local isTopAreaExpand: boolean = false
+  @Builder TopAreaActionButton_ActionBar_PrimaryButton() {
+    LightUpRoundedButton({
+      lightUpConfig: ResponsiveUtil.chooseByWidth([LIGHT_TOP_BTN_SM, LIGHT_TOP_BTN_MD, LIGHT_TOP_BTN_LG]),
+      icon: $r('sys.symbol.star_planet'),
+      customBgColor: $r('sys.color.icon_fourth'),
+      clickAction: () => {
+        this.isTopAreaExpand = !this.isTopAreaExpand
+      },
+      customFontColor: [Color.White, Color.White]
+    })
+  }
+  @Builder TopAreaActionButton_ActionBar() {
+    Row() {
+      HdsActionBar({
+        isExpand: this.isTopAreaExpand!!,
+        primaryButtonBuilder: () => {
+          this.TopAreaActionButton_ActionBar_PrimaryButton()
+        },
+        primaryButtonBuilderWidth: LengthMetrics.vp(40),
+        endButtons: [
+          new ActionBarButton({
+            baseIcon: $r('sys.symbol.heart'),
+            width: LengthMetrics.vp(40)
+          }),
+          new ActionBarButton({
+            baseIcon: $r('sys.symbol.radio'),
+            width: LengthMetrics.vp(40)
+          }),
+          new ActionBarButton({
+            baseIcon: $r('sys.symbol.house'),
+            width: LengthMetrics.vp(40)
+          }),
+          new ActionBarButton({
+            baseIcon: $r('sys.symbol.speaker_wave_3'),
+            width: LengthMetrics.vp(40)
+          })
+        ]
+      })
+    }
+  }
+  @Builder TopAreaActionButton_Normal() {
     Row({space: 24}) {
       // Discover
-      LightUpRoundedButton({
-        lightUpConfig: ResponsiveUtil.chooseByWidth([LIGHT_TOP_BTN_SM, LIGHT_TOP_BTN_MD, LIGHT_TOP_BTN_LG]),
-        icon: $r('sys.symbol.planets'),
-        clickAction: () => {},
-        customFontColor: [Color.White, Color.White]
-      })
+      Blank()
 
       // Settings
       LightUpRoundedButton({
         lightUpConfig: ResponsiveUtil.chooseByWidth([LIGHT_TOP_BTN_SM, LIGHT_TOP_BTN_MD, LIGHT_TOP_BTN_LG]),
         icon: $r('sys.symbol.gearshape'),
+        customBgColor: $r('sys.color.icon_fourth'),
         clickAction: () => {
           this.consoleSheet = !this.consoleSheet
         },
         customFontColor: [Color.White, Color.White]
-      })
-    }.width('100%').padding({left: 24, right: 24, top: 24})
+      }).visibility(this.topAreaExpandShouldHideNormal ? Visibility.Hidden : Visibility.Visible)
+        .transition(TransitionEffect.OPACITY.animation({duration: 200}))
+    }.width('100%')
     .justifyContent(FlexAlign.SpaceBetween)
   }
 
+  @Builder TopArea() {
+    Stack() {
+      this.TopAreaActionButton_Normal()
+      this.TopAreaActionButton_ActionBar()
+    }.width('100%')
+    .padding(this.topAreaExpandShouldHideNormal ? {} : {left: 24, right: 24, top: 24})
+    .alignContent(this.topAreaExpandShouldHideNormal ? Alignment.Center : Alignment.Start)
+    .animation({curve: curves.springMotion()})
+  }
+
   @Builder CoverInfo() {
-    Column({space: 24}) {
+    Column() {
       // TODO: 考虑在播放时封面背后放一个点光源？
-      Image(this.nowPlayingCoverImg)
-        .aspectRatio(1)
-        .layoutWeight(nps.currentSong.id === 0 ? undefined : 1)
-        .constraintSize({
-          maxWidth: '100%'
+      Row() {
+        ImageCover({
+          nowPlayingCoverImg: this.nowPlayingCoverImg,
+          handleLike: () => {
+            this.handleLike()
+          }
         })
-        .borderRadius(20)
-        .shadow({
-          color: '#77000000',
-          radius: this.getUIContext().vp2px(64),
-          offsetY: this.getUIContext().vp2px(24)
-        })
-        // .scale({ x: nps.isPaused ? 0.8 : 0.9, y: nps.isPaused ? 0.8 : 0.9})
-        .margin(nps.isPaused ? ResponsiveUtil.chooseByWidth(['10%', '7%']) : 12)
-        .animation({ curve:
-          ResponsiveUtil.chooseByWidth(
-            [curves.springMotion(0.8,0.4), curves.springMotion(0.6, 0.5)])
-        })
-        .visualEffect(new hdsEffect.HdsEffectBuilder().pointLight({
-          illuminatedType: hdsEffect.PointLightIlluminatedType.BORDER_CONTENT
-        }).buildEffect())
-        .gesture(
-          TapGesture({
-            count: 2,
-          }).onAction(this.handleLike)
-        )
+      }.layoutWeight(1)
+      Blank().height(24)
       Text(nps.currentSong.name)
         .width('90%')
-        .textAlign(TextAlign.Center)
+        .textAlign(TextAlign.Start)
         .textOverflow({
           overflow: TextOverflow.MARQUEE
         })
@@ -115,6 +149,20 @@ export struct MainPage {
           start: true,
           fadeout: true
         })
+        .fontColor(Color.White).fontWeight(FontWeight.Bold)
+        .fontSize(24)
+      Text(nps.currentArtists)
+        .width('90%')
+        .textAlign(TextAlign.Start)
+        .textOverflow({
+          overflow: TextOverflow.MARQUEE
+        })
+        .marqueeOptions({
+          start: true,
+          fadeout: true
+        })
+        .fontColor(Color.White)
+      Blank().height(24)
 
       this.ProgressBar('90%')
     }
@@ -151,23 +199,41 @@ export struct MainPage {
 
       Row() {
         // 当前时间
-        Text(`${SongConvertUtils.changeDuration(nps.playTime)}`)
-          .fontSize(12)
-          .textAlign(TextAlign.Start)
-          .fontColor(Color.White)
-          .alignSelf(ItemAlign.Start)
+        Row(){
+          Text(`${SongConvertUtils.changeDuration(nps.playTime)}`)
+            .fontSize(12)
+            .textAlign(TextAlign.Start)
+            .fontColor(Color.White)
+            .alignSelf(ItemAlign.Start)
+          if (this.isMovingSlider) {
+            Text(' ')
+              .transition(TransitionEffect.OPACITY.animation({
+                duration: 300
+              }))
+              .fontSize(12)
+              .textAlign(TextAlign.Start)
+              .fontColor(Color.White)
+              .alignSelf(ItemAlign.Start)
+            SymbolGlyph($r('sys.symbol.arrow_right'))
+              .transition(TransitionEffect.OPACITY.animation({
+                duration: 300
+              }))
+              .fontSize(12)
+              .fontColor([Color.White])
+              .alignSelf(ItemAlign.Start)
+              .fontWeight(FontWeight.Bold)
+            Text(` ${SongConvertUtils.changeDuration(this.sliderMovingTime)}`)
+              .transition(TransitionEffect.OPACITY.animation({
+                duration: 300
+              }))
+              .fontSize(12)
+              .textAlign(TextAlign.Start)
+              .fontColor(Color.White)
+              .alignSelf(ItemAlign.Start)
+              .fontWeight(FontWeight.Bold)
+          }
+        }
           .layoutWeight(1)
-
-        // 拖动进度条时，显示即将跳转的时间
-        Text(`${SongConvertUtils.changeDuration(this.sliderMovingTime)}`)
-          .fontSize(12)
-          .fontColor(Color.White)
-          .backgroundColor(Color.Gray)
-          // .borderRadius(Constants.RADIUS_CARD)
-          .textAlign(TextAlign.Center)
-          // .padding({ left: Constants.PADDING_EDGE_DEFAULT, right: Constants.PADDING_EDGE_DEFAULT })
-          .alignSelf(ItemAlign.Center)
-          .visibility(this.isMovingSlider ? Visibility.Visible : Visibility.Hidden)
 
         // 总时间
         Text(`${SongConvertUtils.changeDuration(nps.currentSong.duration)}`)
@@ -219,7 +285,7 @@ export struct MainPage {
           color: '#ccffffff',
           radius: 36
         })
-        .backgroundColor(nps.isPaused ? undefined : '#aaffffff')
+        .backgroundColor(nps.isPaused ? undefined : '#66ffffff')
         .backdropBlur(nps.isPaused ? undefined : 64)
         .animation({duration: 1000, curve: Curve.Ease})
         .borderRadius(48)
@@ -238,6 +304,8 @@ export struct MainPage {
       })
     }.justifyContent(FlexAlign.SpaceEvenly)
     .width('100%')
+    .margin({bottom: ResponsiveUtil.widthCheck(['md']) ? 24 : 0})
+    .animation({duration: 300, curve: Curve.Ease})
   }
 
   // -----------------------------------------------
@@ -313,5 +381,58 @@ export struct MainPage {
 }
   async handleLike() {
 
+  }
+}
+
+
+@ComponentV2
+export struct ImageCover {
+  @Param @Require nowPlayingCoverImg: ResourceStr
+  @Param @Require handleLike: () => void = () => {}
+
+  build() {
+    Stack() {
+
+      Image(this.nowPlayingCoverImg)
+        .aspectRatio(1)
+        .layoutWeight(nps.currentSong.id === 0 ? undefined : 1)
+        .constraintSize({
+          maxWidth: '100%'
+        })
+        // .scale({x: 0.95, y: 0.95})
+        .foregroundEffect({
+          radius: 128
+        })
+        .borderRadius(24)
+        .opacity(0.7)
+        .brightness(1.2)
+        .saturate(3)
+        .translate({y: 24})
+
+
+      Image(this.nowPlayingCoverImg)
+        .aspectRatio(1)
+        .layoutWeight(nps.currentSong.id === 0 ? undefined : 1)
+        .constraintSize({
+          maxWidth: '100%'
+        })
+        .borderRadius(20)
+        .shadow(ShadowStyle.OUTER_DEFAULT_MD)
+        .margin(nps.isPaused ? ResponsiveUtil.chooseByWidth(['10%', '7%']) : 12)
+        .animation({ curve:
+        ResponsiveUtil.chooseByWidth(
+          [curves.springMotion(0.8,0.4), curves.springMotion(0.6, 0.5)])
+        })
+        .visualEffect(new hdsEffect.HdsEffectBuilder().pointLight({
+          illuminatedType: hdsEffect.PointLightIlluminatedType.BORDER_CONTENT
+        }).buildEffect())
+        .gesture(
+          TapGesture({
+            count: 2,
+          }).onAction(() => {
+            this.handleLike()
+          })
+        )
+    }
   }
 }
