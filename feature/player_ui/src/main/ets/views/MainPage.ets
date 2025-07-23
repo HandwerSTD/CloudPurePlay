@@ -4,6 +4,7 @@ import { LightUpRoundedButton, LightUpConfig, LightUpBorderRoundButton } from "@
 import { ColorMetrics, curves, LengthMetrics } from "@kit.ArkUI"
 import { ClickUtil } from "@pura/harmony-utils"
 import { HdsActionBar, ActionBarButton, ActionBarStyle, hdsEffect } from "@kit.UIDesignKit"
+import { cacheDownload } from "@kit.BasicServicesKit"
 
 const nps = NowPlayingStore
 const LIGHT_TOP_BTN_SM: LightUpConfig = {
@@ -460,6 +461,19 @@ export struct ImageCover {
         this.pointLightX = -this.lightOffset;
         break;
     }
+  }
+
+  @Monitor('nowPlayingCoverImg')
+  onImgChanged() {
+    if (typeof this.nowPlayingCoverImg === 'string') {
+      try {
+        cacheDownload.download(this.nowPlayingCoverImg as string, {})
+      } catch (e) {}
+    }
+  }
+
+  aboutToAppear(): void {
+    this.onImgChanged()
   }
 
   build() {
