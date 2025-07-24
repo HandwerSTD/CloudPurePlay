@@ -27,14 +27,15 @@ export class FeaturedPlayUtils {
       // ToastUtil.showToast('正在加载, 请稍后')
     }
   }
-  static async playHeartMode() {
+  static async playHeartMode(showToastCallback: (icon: ResourceStr, msg: string) => void) {
     const nps = NowPlayingStore
     const user = UserStore
     if(UserManager.isLogged) {
       if(!nps.isPlayerLoading) {
         try {
           nps.isPlayerLoading = true
-          // ToastUtil.showToast('开始播放心动歌单')
+          showToastCallback($r('sys.symbol.opticaldisc_badge_heart'), '开始播放心动歌单')
+
           await SongAPIUtils.setHeartMode(PlayQueueUtils.getCurrentSong().id, user.userPlaylists[0].id,
             (): Promise<void> => {
               return PlayQueueUtils.cleanQueue();
@@ -44,17 +45,16 @@ export class FeaturedPlayUtils {
             })
           await PlayControl.playQueue(0)
         } catch (e) {
-          // ToastUtil.showToast('获取心动歌单失败: ' + e.message)
+          showToastCallback($r('sys.symbol.opticaldisc_badge_heart'), '播放心动歌单失败')
         } finally {
           setTimeout(() => {
             nps.isPlayerLoading = false
           }, 1000)
         }
       } else {
-        // ToastUtil.showToast('正在加载, 请稍后')
       }
     } else {
-      // ToastUtil.showToast('请登录后再试')
+      showToastCallback($r('sys.symbol.person_head_on_circle'), '请登录后再试')
     }
   }
 }

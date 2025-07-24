@@ -1,9 +1,9 @@
 import { FeaturedPlayUtils, GlobalStore, NowPlayingStore, PlayControl, ResponsiveUtil } from "@handwer/base"
 import { PLAYMODE, SongConvertUtils, Song_INITIAL } from "@handwer/cloud_api"
-import { LightUpRoundedButton, LightUpConfig, LightUpBorderRoundButton } from "@handwer/ui_components"
+import { LightUpRoundedButton, LightUpConfig, LightUpBorderRoundButton, SnackBarUtils } from "@handwer/ui_components"
 import { ColorMetrics, curves, LengthMetrics } from "@kit.ArkUI"
 import { ClickUtil } from "@pura/harmony-utils"
-import { HdsActionBar, ActionBarButton, ActionBarStyle, hdsEffect } from "@kit.UIDesignKit"
+import { HdsActionBar, ActionBarButton, ActionBarStyle, hdsEffect, HdsSnackBar } from "@kit.UIDesignKit"
 import { cacheDownload } from "@kit.BasicServicesKit"
 import { LyricComponent } from "./LyricArea"
 
@@ -37,7 +37,7 @@ const LIGHT_PLAYBACK_BTN_LG: LightUpConfig = {
 }
 @ComponentV2
 export struct MainPage {
-
+  hdsSnackBar = new HdsSnackBar(this.getUIContext())
   gs = GlobalStore
 
   @Consumer('consoleSheet') consoleSheet: boolean = false
@@ -67,7 +67,7 @@ export struct MainPage {
       clickAction: () => {
         this.isTopAreaExpand = !this.isTopAreaExpand
       },
-      customFontColor: [Color.White, Color.White]
+      customFontColor: this.isTopAreaExpand ? [$r('sys.color.font_secondary')] : [Color.White, Color.White]
     })
   }
   // TODO：长按调整模式
@@ -84,7 +84,9 @@ export struct MainPage {
             baseIcon: $r('sys.symbol.opticaldisc_badge_heart'),
             width: LengthMetrics.vp(40),
             onClick: () => {
-              FeaturedPlayUtils.playHeartMode()
+              FeaturedPlayUtils.playHeartMode((icon, msg) => {
+                SnackBarUtils.showMessage(this.hdsSnackBar, icon, msg)
+              })
             }
           }),
           new ActionBarButton({
@@ -145,7 +147,8 @@ export struct MainPage {
           nowPlayingCoverImg: this.nowPlayingCoverImg,
           handleLike: () => {
             this.handleLike()
-          }
+          },
+          useLight: true
         })
       }.layoutWeight(1)
       Blank().height(24)
