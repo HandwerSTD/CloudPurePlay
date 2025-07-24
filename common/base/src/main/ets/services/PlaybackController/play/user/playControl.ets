@@ -1,7 +1,7 @@
 import {
   CycleMode,
   PlayConstants, Song, SongAPIUtils, SongConvertUtils, SongPlayResult, Song_INITIAL } from "@handwer/cloud_api"
-import { FileUtil, LogUtil, RandomUtil, ToastUtil } from "@pura/harmony-utils"
+import { EmitterUtil, FileUtil, LogUtil, RandomUtil, ToastUtil } from "@pura/harmony-utils"
 import { FileUtils } from "../../../../utils/FileUtil"
 import LyricUtils from "../../lyric/LyricUtils"
 import AudioCacheUtils from "../system/AudioCacheUtils"
@@ -16,6 +16,7 @@ import { UserManager } from "../../../Network/UserManager"
 import Settings, { PreferenceUtils } from "../../../Preferences/PreferenceUtils"
 import { SCPref } from "../../../../constants/PreferenceConstants"
 import { Logger } from "../../../../../../../Index"
+import { SCEmitter } from "../../../../exports"
 
 
 const TAG = '[playerControl] '
@@ -120,7 +121,7 @@ export class PlayControl {
           LyricUtils.setLyricString('')
         }
         NowPlayingStore.currentLyricIndex = 0
-        // EmitterUtil.post(EmitterConstants.EMITTER_LYRIC_UPDATE, 'Lyric Updated')
+        EmitterUtil.post(SCEmitter.LyricUpdate, 'Lyric Updated')
         // AVSession
         await AVSessionUtils.setMetadata(song, artistsString, picUrl)
         await AVSessionUtils.activate()

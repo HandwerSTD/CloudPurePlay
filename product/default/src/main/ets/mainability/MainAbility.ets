@@ -57,11 +57,13 @@ export default class MainAbility extends UIAbility {
   onForeground(): void {
     // Ability has brought to foreground
     hilog.info(DOMAIN, 'testTag', '%{public}s', 'Ability onForeground');
+    GlobalStore.isInForeground = true
   }
 
   onBackground(): void {
     // Ability has back to background
     hilog.info(DOMAIN, 'testTag', '%{public}s', 'Ability onBackground');
+    GlobalStore.isInForeground = false
   }
 
   async appStartUp(windowStage: window.WindowStage) {

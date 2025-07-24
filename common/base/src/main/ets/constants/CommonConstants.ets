@@ -16,3 +16,7 @@ export class SCDistKV {
   }
   static readonly targetInput = 'targetInput'
 }
+
+export class SCEmitter {
+  static readonly LyricUpdate = 1
+}

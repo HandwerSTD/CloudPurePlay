@@ -29,6 +29,8 @@ class GlobalStore {
   @Trace hbp: string = 'lg'
 
   @Trace appVersion: string = ''
+
+  @Trace isInForeground: boolean = true
 }
 
 export default GlobalStore.instance

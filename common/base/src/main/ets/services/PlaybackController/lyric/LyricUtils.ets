@@ -6,6 +6,7 @@ import { FileUtils } from "../../../utils/FileUtil"
 import { fileIo, ReadOptions } from "@kit.CoreFileKit"
 import { buffer } from "@kit.ArkTS"
 import NowPlayingStore from '../play/NowPlayingStore'
+import { SCEmitter } from "../../../exports"
 
 const TAG = '[LyricUtils] '
 
@@ -52,7 +53,7 @@ class LyricUtils {
       this.lyricObjects = [{ time: 0, content: '暂无歌词' }]
     } finally {
       NowPlayingStore.currentLyricIndex = 0
-      // EmitterUtil.post(EmitterConstants.EMITTER_LYRIC_UPDATE, 'Lyric Updated')
+      EmitterUtil.post(SCEmitter.LyricUpdate, 'Lyric Updated')
     }
   }
 

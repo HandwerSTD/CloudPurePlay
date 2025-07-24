@@ -5,6 +5,7 @@ import { ColorMetrics, curves, LengthMetrics } from "@kit.ArkUI"
 import { ClickUtil } from "@pura/harmony-utils"
 import { HdsActionBar, ActionBarButton, ActionBarStyle, hdsEffect } from "@kit.UIDesignKit"
 import { cacheDownload } from "@kit.BasicServicesKit"
+import { LyricComponent } from "./LyricArea"
 
 const nps = NowPlayingStore
 const LIGHT_TOP_BTN_SM: LightUpConfig = {
@@ -69,6 +70,7 @@ export struct MainPage {
       customFontColor: [Color.White, Color.White]
     })
   }
+  // TODO：长按调整模式
   @Builder TopAreaActionButton_ActionBar() {
     Row() {
       HdsActionBar({
@@ -79,14 +81,17 @@ export struct MainPage {
         primaryButtonBuilderWidth: LengthMetrics.vp(40),
         endButtons: [
           new ActionBarButton({
-            baseIcon: $r('sys.symbol.heart_square_stack'),
-            width: LengthMetrics.vp(40)
+            baseIcon: $r('sys.symbol.opticaldisc_badge_heart'),
+            width: LengthMetrics.vp(40),
+            onClick: () => {
+              FeaturedPlayUtils.playHeartMode()
+            }
           }),
           new ActionBarButton({
             baseIcon: $r('sys.symbol.radio'),
             width: LengthMetrics.vp(40),
             onClick: () => {
-              FeaturedPlayUtils.playPersonalizedList()
+              FeaturedPlayUtils.playPersonalizedFM()
             }
           }),
           new ActionBarButton({
@@ -328,7 +333,7 @@ export struct MainPage {
   }
 
   @Builder LyricArea() {
-
+    LyricComponent()
   }
 
   build() {
@@ -394,6 +399,7 @@ export struct MainPage {
 export struct ImageCover {
   @Param @Require nowPlayingCoverImg: ResourceStr
   @Param @Require handleLike: () => void = () => {}
+  @Param useLight: boolean = false
 
   readonly lightOffset = 0
 
@@ -406,24 +412,26 @@ export struct ImageCover {
   nowPlay = NowPlayingStore
 
   @Builder PointLight() {
-    Column() {}.height(20).width(20)
-    .visualEffect(new hdsEffect.HdsEffectBuilder().pointLight({
-      options: {
-        color: Color.White,
-        intensity: 0.7,
-        height: 150
-      }
-    }).buildEffect())
-    .translate({
-      x: this.pointLightX,
-      y: this.pointLightY
-    })
-    .animation({duration: 2000})
-
+    if (this.useLight) {
+      Column() {}.height(20).width(20)
+      .visualEffect(new hdsEffect.HdsEffectBuilder().pointLight({
+        options: {
+          color: Color.White,
+          intensity: 0.7,
+          height: 150
+        }
+      }).buildEffect())
+      .translate({
+        x: this.pointLightX,
+        y: this.pointLightY
+      })
+      .animation({duration: 2000})
+    }
   }
 
   @Monitor('nowPlay.isPaused', 'nowPlay.isPlaying')
   onPlayStateChange() {
+    if (!this.useLight) return
     if (this.nowPlay.isPlaying && !this.nowPlay.isPaused) {
       this.pointLightMoveIntervalHandler = setInterval(() => {
         this.pointLocation += 1;
@@ -449,6 +457,7 @@ export struct ImageCover {
     }
   }
   relocatePointLight() {
+    if (!this.useLight) return
     switch (this.pointLocation) {
       case 0:
         this.pointLightX = -this.lightOffset;
@@ -528,5 +537,12 @@ export struct ImageCover {
           })
         )
     }.alignContent(Alignment.TopStart)
+  }
+}
+
+@ComponentV2
+export struct LyricArea {
+  build() {
+
   }
 }

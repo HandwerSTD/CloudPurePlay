@@ -15,7 +15,7 @@ export * from './services/CrashSpider/SpiderMan';
 export { default as Settings, PreferenceUtils } from './services/Preferences/PreferenceUtils'
 export * from './constants/PreferenceConstants'
 
-export * from './services/PlaybackController/lyric/LyricUtils'
+export { default as LyricUtils } from './services/PlaybackController/lyric/LyricUtils'
 export * from './services/PlaybackController/play/user/playControl'
 export * from './services/PlaybackController/play/user/playListOp'
 export * from './services/PlaybackController/play/user/podcastOp'
