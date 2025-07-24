@@ -1,16 +1,15 @@
 import { GlobalStore, Logger, LyricUtils, NowPlayingStore, PlayControl, SCEmitter } from "@handwer/base"
 import { Lyric, LyricStyle, LyricStyle_INITIAL } from "@handwer/cloud_api"
 import { LazyData } from "@pie/lazy-data"
-import { LengthUnit } from "@kit.ArkUI"
+import { curves, LengthUnit } from "@kit.ArkUI"
 import { EmitterUtil } from "@pura/harmony-utils"
 
 const TAG = '[LyricArea]'
 
 @ComponentV2
 export struct LyricComponent {
-  currentLyricIndex = NowPlayingStore.currentLyricIndex
-  lyricStyle = NowPlayingStore.lyricStyle
-  isInForeground = GlobalStore.isInForeground
+  nps = NowPlayingStore
+  glb = GlobalStore
 
   @Local firstLoad: boolean = true
   @Local userScrolling: number = 0
@@ -18,13 +17,14 @@ export struct LyricComponent {
   @Local lyric: Lyric[] = []
   @Local isLoading: boolean = false
   @Local needUpdate: boolean = false
-  @Local dataSource: LazyData<Lyric> = new LazyData()
+  // @Local dataSource: LazyData<Lyric> = new LazyData()
   @Local newLyricEffect: boolean = true
 
   private scroller: Scroller = new Scroller()
 
+  @Monitor('glb.isInForeground')
   async onForegroundState() {
-    if(this.isInForeground === true && this.needUpdate) {
+    if(this.glb.isInForeground === true && this.needUpdate) {
       await this.refreshLyric()
       this.needUpdate = false
       this.ToCurrentLyric()
@@ -32,7 +32,7 @@ export struct LyricComponent {
   }
 
   async aboutToAppear(): Promise<void> {
-    await this.refreshLyric()
+    await this.getLyric()
     setTimeout(() => {
       this.scroller.scrollToIndex(NowPlayingStore.currentLyricIndex + 1, false, ScrollAlign.CENTER)
     }, 10)
@@ -40,10 +40,12 @@ export struct LyricComponent {
   }
 
   async refreshLyric() {
+    Logger.debug(TAG, `lyric loading`)
     this.userScrolling = 0
     this.needUpdate = true
     this.isLoading = true
     await this.getLyric()
+    Logger.debug(TAG, `lyric get complete`)
     setTimeout(() => {
       this.isLoading = false
       Logger.debug(TAG, `lyric load completed`)
@@ -67,13 +69,14 @@ export struct LyricComponent {
 
   async getLyric() {
     this.lyric = await LyricUtils.getLyricObjects()
-    this.dataSource.setData(this.lyric)
-    this.dataSource.notifyDataReload()
+    // this.dataSource.setData(this.lyric)
+    // this.dataSource.notifyDataReload()
   }
 
+  @Monitor('nps.currentLyricIndex')
   ToCurrentLyric() {
     if(!this.userScrolling && !this.isLoading) {
-      this.scroller.scrollToIndex(this.currentLyricIndex + 1, true, ScrollAlign.CENTER)
+      this.scroller.scrollToIndex(this.nps.currentLyricIndex + 1, true, ScrollAlign.CENTER)
     }
   }
 
@@ -82,16 +85,16 @@ export struct LyricComponent {
       if(!this.isLoading) {
         ListItem().height('50%')
         if(this.newLyricEffect) {
-          LazyForEach(this.dataSource, (item: Lyric, index) => {
+          ForEach(this.lyric, (item: Lyric, index) => {
             LyricLine({
-              lyricStyle: this.lyricStyle,
-              currentLyricIndex: this.currentLyricIndex,
+              lyricStyle: this.nps.lyricStyle,
+              currentLyricIndex: this.nps.currentLyricIndex,
               userScrolling: this.userScrolling!!,
               index: index,
               item: item
             })
               .offset({ y: this.Offset(index) })
-              .animation({
+              .animation(this.userScrolling ? {
                 delay: this.userScrolling ? 0 : this.Delay(index),
                 duration: this.userScrolling ? 0 : 600,
                 curve: Curve.Smooth,
@@ -100,32 +103,39 @@ export struct LyricComponent {
                   min: 60,
                   max: 90
                 }
+              } : {
+                curve: curves.springMotion(0.7, 0.6),
+                expectedFrameRateRange: {
+                  expected: 90,
+                  min: 60,
+                  max: 90
+                }
               })
               .padding({
                 bottom: !this.userScrolling
-                  ? (index >= this.currentLyricIndex ? this.lyricStyle.size : this.lyricStyle.size * 2)
-                  : this.lyricStyle.size * 2
+                  ? (index >= this.nps.currentLyricIndex ? this.nps.lyricStyle.size : this.nps.lyricStyle.size * 2)
+                  : this.nps.lyricStyle.size * 2
               })
               .animation({ duration: this.userScrolling ? 0 : 300, curve: Curve.Friction })
           })
         } else {
-          LazyForEach(this.dataSource, (item: Lyric, index) => {
-            LyricLine({
-              lyricStyle: this.lyricStyle,
-              currentLyricIndex: this.currentLyricIndex,
-              userScrolling: this.userScrolling!!,
-              index: index,
-              item: item
-            })
-              .padding({ bottom: this.lyricStyle.size * 2 })
-          })
+          // ForEach(this.lyric, (item: Lyric, index) => {
+          //   LyricLine({
+          //     lyricStyle: this.nps.lyricStyle,
+          //     currentLyricIndex: this.nps.currentLyricIndex,
+          //     userScrolling: this.userScrolling!!,
+          //     index: index,
+          //     item: item
+          //   })
+          //     .padding({ bottom: this.nps.lyricStyle.size * 2 })
+          // })
         }
         ListItem().height('50%')
       }
     }
     .cachedCount(3)
     .alignListItem(ListItemAlign.End)
-    .padding({ top: 30 })
+    .padding({ top: 30, left: this.nps.lyricStyle.align == 'start' ? 24 : 0 })
     .width('100%')
     .height('100%')
     .edgeEffect(EdgeEffect.Spring)
@@ -143,7 +153,11 @@ export struct LyricComponent {
       }
     })
     .onAppear(() => {
-      EmitterUtil.onSubscribe(SCEmitter.LyricUpdate, this.refreshLyric)
+      EmitterUtil.onSubscribe(SCEmitter.LyricUpdate,
+        () => {
+        Logger.debug(TAG, `lyric update triggered`)
+        this.refreshLyric()
+        })
     })
     .onDisAppear(() => {
       EmitterUtil.unSubscribe(SCEmitter.LyricUpdate)
@@ -152,15 +166,15 @@ export struct LyricComponent {
 
   Offset(index: number) {
     if(this.userScrolling) return 0
-    const LINE_SPACING = this.lyricStyle.size
-    const delta = index - this.currentLyricIndex
+    const LINE_SPACING = this.nps.lyricStyle.size
+    const delta = index - this.nps.currentLyricIndex
     let offset = delta > 0 ? delta * LINE_SPACING : 0
     return offset
   }
 
   Delay(index: number) {
     if(this.userScrolling) return 0
-    const delta = index - this.currentLyricIndex
+    const delta = index - this.nps.currentLyricIndex
     return Math.max(delta * 80, 0)
   }
 
@@ -175,18 +189,22 @@ struct LyricLine {
   @Param @Require userScrolling: number
   @Event $userScrolling: (val: number) => void = () => {}
 
+  get isOnPlay() {
+    return this.index == this.currentLyricIndex
+  }
+
   build() {
     Text(this.item.content)
       .width('100%')
-      .fontSize(this.lyricStyle.size)
-      .fontWeight(this.lyricStyle.weight)
+      .fontSize(this.isOnPlay ? this.lyricStyle.onPlaySize : this.lyricStyle.size)
+      .fontWeight(this.isOnPlay ? this.lyricStyle.onPlayWeight : this.lyricStyle.weight)
       .lineHeight(this.lyricStyle.size * 1.3)
       .fontColor(Color.White)
-      .opacity(this.index == this.currentLyricIndex ? 1 : 0.35)
+      .opacity(this.isOnPlay ? 1 : 0.35)
       .textAlign(this.lyricStyle.align === 'center' ? TextAlign.Center : TextAlign.Start)
       .clickEffect({ level: ClickEffectLevel.LIGHT, scale: 0.9 })
       .padding({ left: 20, right: 20 })
-      .scale(this.index === this.currentLyricIndex ?
+      .scale(this.isOnPlay ?
         { x: 1.0, y: 1.0, centerX: this.lyricStyle.align === 'center' ? '50%' : 0 } :
         { x: 0.9, y: 0.9, centerX: this.lyricStyle.align === 'center' ? '50%' : 0 })
       .onClick(() => {
@@ -196,7 +214,7 @@ struct LyricLine {
         }, 100)
       })
       .animation({
-        duration: 500,
+        duration: 600,
         curve: Curve.Smooth,
         expectedFrameRateRange: {
           expected: 90,

@@ -3,7 +3,11 @@
  */
 export interface LyricStyle {
   size: number
-  weight: number
+  weight: number | FontWeight
+
+  onPlaySize: number
+  onPlayWeight: number | FontWeight
+
   color: ResourceColor | string
   align: 'center' | 'start'
   mode: number // 0 - Normal, 1 - Translate, 2 - Roma
@@ -67,10 +71,12 @@ export const CacheSet_INITIAL: CacheSet = {
 }
 
 export const LyricStyle_INITIAL: LyricStyle = {
-  size: 20,
-  weight: 500,
+  size: 25,
+  weight: FontWeight.Bold,
+  onPlaySize: 28,
+  onPlayWeight: FontWeight.Bold,
   color: Color.White,
-  align: 'center',
+  align: 'start',
   mode: 0
 }
 
