@@ -30,6 +30,7 @@ export class UserManager {
       if (requestContext) {
         requestContext.cookie.cookie = UserSettings.get<string>(SCUser.cookie)
         requestContext.cookie.customCookie = UserSettings.get<string>(SCUser.customCookie)
+        CloudAPIConfigUtils.setRequestContext(requestContext)
       }
       const result = await LoginAPIUtils.getLoginStatus((val) => {
         store.user = val

@@ -191,6 +191,8 @@ export struct WebLogin {
           UserManager.setUserInfo(user)
           UserSettings.put(SCUser.user, user)
           UserSettings.put(SCUser.cookie, cookie)
+          UserManager.fetchAllUserData()
+
           Logger.debug(`Congrats!`)
         })
         return result
