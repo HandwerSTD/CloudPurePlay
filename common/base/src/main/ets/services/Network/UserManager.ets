@@ -1,7 +1,8 @@
-import { CloudAPIConfigUtils, LoginAPIUtils, User, User_INITIAL } from '@handwer/cloud_api'
+import { CloudAPIConfigUtils, LoginAPIUtils, User, User_INITIAL, PlayList, DjRadio, Album, TopListItem, PersonalListItem } from '@handwer/cloud_api'
 import { Logger } from '../../exports'
 import { PreferenceUtils } from '../Preferences/PreferenceUtils'
-import { default as store } from './UserStore'
+import { PlayListAPIUtils, DjAPIUtils, AlbumAPIUtils, TopListAPIUtils, SongAPIUtils } from '@handwer/cloud_api'
+import store from './UserStore'
 
 const TAG = '[UserManager]'
 
@@ -9,6 +10,12 @@ export enum SCUser {
   cookie = 1,
   user = 2,
   customCookie = 3,
+  userPlaylists = 4,
+  userDjRadioList = 5,
+  userSubAlbum = 6,
+  topLists = 7,
+  personalizedList = 8,
+  likeList = 9,
 }
 
 const UserSettings = new PreferenceUtils('UserSettings')
@@ -24,10 +31,16 @@ export class UserManager {
         requestContext.cookie.cookie = UserSettings.get<string>(SCUser.cookie)
         requestContext.cookie.customCookie = UserSettings.get<string>(SCUser.customCookie)
       }
-      await LoginAPIUtils.getLoginStatus((val) => {
+      const result = await LoginAPIUtils.getLoginStatus((val) => {
         store.user = val
         UserSettings.put(SCUser.user, val)
       })
+      Logger.debug(TAG, `Login result: ${result}`)
+      if (result) {
+        // 加载所有用户数据
+        UserManager.loadAllUserData()
+        UserManager.fetchAllUserData()
+      }
     }
   }
   static getCookie() {
@@ -39,6 +52,135 @@ export class UserManager {
   }
   static setUserInfo(user: User) {
     store.user = user
+  }
+
+  static async fetchAllUserData() {
+    // 歌单
+    const playListRes = await PlayListAPIUtils.getPlayLists(0, store.user)
+    store.userPlaylists = playListRes.playlist ?? []
+
+    // 电台
+    const djRes = await DjAPIUtils.getUserDjSubscribeList()
+    store.userDjRadioList = djRes.djRadios ?? []
+
+    // 收藏专辑
+    const albumRes = await AlbumAPIUtils.getUserSubscribedAlbum()
+    store.userSubAlbum = albumRes.data ?? []
+
+    // 排行榜
+    const topList = await TopListAPIUtils.getTopList()
+    store.topLists = topList ?? []
+
+    // 个性化推荐歌单
+    const personalized = await PlayListAPIUtils.getPersonalizedList()
+    store.personalizedList = personalized ?? []
+
+    // 喜欢列表
+    const likeList = await SongAPIUtils.getLikeList()
+    store.likeList = new Set(likeList ?? [])
+
+    // 持久化所有用户数据
+    UserManager.persistAllUserData()
+  }
+  static persistAllUserData() {
+    Logger.info(TAG, 'Persisting all user data to preferences')
+    
+    // 存储用户歌单
+    UserSettings.put(SCUser.userPlaylists, store.userPlaylists)
+    
+    // 存储用户电台列表
+    UserSettings.put(SCUser.userDjRadioList, store.userDjRadioList)
+    
+    // 存储用户收藏专辑
+    UserSettings.put(SCUser.userSubAlbum, store.userSubAlbum)
+    
+    // 存储排行榜
+    UserSettings.put(SCUser.topLists, store.topLists)
+    
+    // 存储个性化推荐歌单
+    UserSettings.put(SCUser.personalizedList, store.personalizedList)
+    
+    // 存储喜欢列表 (转换为数组格式存储)
+    UserSettings.put(SCUser.likeList, Array.from(store.likeList))
+  }
+  
+  static loadAllUserData() {
+    Logger.info(TAG, 'Loading all user data from preferences')
+    
+    // 加载用户歌单
+    const userPlaylists = UserSettings.get<PlayList[]>(SCUser.userPlaylists)
+    if (userPlaylists) {
+      store.userPlaylists = userPlaylists
+    }
+    
+    // 加载用户电台列表
+    const userDjRadioList = UserSettings.get<DjRadio[]>(SCUser.userDjRadioList)
+    if (userDjRadioList) {
+      store.userDjRadioList = userDjRadioList
+    }
+    
+    // 加载用户收藏专辑
+    const userSubAlbum = UserSettings.get<Album[]>(SCUser.userSubAlbum)
+    if (userSubAlbum) {
+      store.userSubAlbum = userSubAlbum
+    }
+    
+    // 加载排行榜
+    const topLists = UserSettings.get<TopListItem[]>(SCUser.topLists)
+    if (topLists) {
+      store.topLists = topLists
+    }
+    
+    // 加载个性化推荐歌单
+    const personalizedList = UserSettings.get<PersonalListItem[]>(SCUser.personalizedList)
+    if (personalizedList) {
+      store.personalizedList = personalizedList
+    }
+    
+    // 加载喜欢列表 (从数组格式转换为Set)
+    const likeList = UserSettings.get<string[]>(SCUser.likeList)
+    if (likeList && Array.isArray(likeList)) {
+      store.likeList = new Set(likeList)
+    }
+  }
+
+  static clearAllUserData() {
+    Logger.info(TAG, 'Clearing all user data from preferences')
+    
+    // 清除所有用户相关的存储数据
+    UserSettings.del(SCUser.user)
+    UserSettings.del(SCUser.cookie)
+    UserSettings.del(SCUser.customCookie)
+    UserSettings.del(SCUser.userPlaylists)
+    UserSettings.del(SCUser.userDjRadioList)
+    UserSettings.del(SCUser.userSubAlbum)
+    UserSettings.del(SCUser.topLists)
+    UserSettings.del(SCUser.personalizedList)
+    UserSettings.del(SCUser.likeList)
+    
+    // 重置store中的数据
+    store.user = User_INITIAL
+    store.userPlaylists = []
+    store.userDjRadioList = []
+    store.userSubAlbum = []
+    store.topLists = []
+    store.personalizedList = []
+    store.likeList = new Set()
+  }
+
+  // 便捷方法：单独更新用户歌单
+  static updateUserPlaylists() {
+    UserSettings.put(SCUser.userPlaylists, store.userPlaylists)
+  }
+
+  // 便捷方法：单独更新喜欢列表
+  static updateLikeList() {
+    UserSettings.put(SCUser.likeList, Array.from(store.likeList))
+  }
+
+  // 便捷方法：单独更新收藏专辑
+  static updateUserSubAlbum() {
+    UserSettings.put(SCUser.userSubAlbum, store.userSubAlbum)
   }
 }
 

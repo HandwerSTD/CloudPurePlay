@@ -1,9 +1,12 @@
 import { SongAPIUtils } from "@handwer/cloud_api"
+import { Logger } from "../../../../exports"
 import { UserManager } from "../../../Network/UserManager"
 import UserStore from "../../../Network/UserStore"
 import PlayQueueUtils from "../../queue/PlayQueueUtils"
 import NowPlayingStore from "../NowPlayingStore"
 import { PersonalFMState, PlayControl } from "../user/playControl"
+
+const TAG = '[FeaturedPlayUtils]'
 
 export class FeaturedPlayUtils {
   static async playPersonalizedFM() {
@@ -43,9 +46,11 @@ export class FeaturedPlayUtils {
             (queue): Promise<void> => {
               return PlayQueueUtils.queueAddArray(queue);
             })
+          Logger.debug(TAG, `set heart mode completed`)
           await PlayControl.playQueue(0)
         } catch (e) {
           showToastCallback($r('sys.symbol.opticaldisc_badge_heart'), '播放心动歌单失败')
+          Logger.error(TAG, `play heart mode failed: ${JSON.stringify(e)}`)
         } finally {
           setTimeout(() => {
             nps.isPlayerLoading = false
