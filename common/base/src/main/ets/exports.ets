@@ -23,7 +23,7 @@ export * from './services/PlaybackController/play/user/songLike'
 export * from './services/PlaybackController/play/feature/FeaturedPlayUtils'
 export { default as NowPlayingStore } from './services/PlaybackController/play/NowPlayingStore'
 
-export * from './services/Network/UserManager'
+export { default as UserSettings, UserManager, SCUser } from './services/Network/UserManager'
 export { default as UserStore } from './services/Network/UserStore'
 
 export * from './services/PlaybackController/queue/PlayQueueUtils'

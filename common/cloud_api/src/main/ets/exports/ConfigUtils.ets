@@ -19,4 +19,14 @@ export class CloudAPIConfigUtils {
   static checkValidConnection(param: checkValidUriParams) {
     return checkValidUrl(param)
   }
+  static setupCookie(cookie: string) {
+    let context = getNowRequestContext()
+    context.cookie.cookie = cookie
+    setupRequestContext(context)
+  }
+  static setupCustomCookie(cookie: string) {
+    let context = getNowRequestContext()
+    context.cookie.customCookie = cookie
+    setupRequestContext(context)
+  }
 }

@@ -4,12 +4,13 @@ import { PlayControl } from './PlaybackController/play/user/playControl'
 import AVPlayerUtils from './PlaybackController/play/system/AVPlayerUtils'
 import Settings from './Preferences/PreferenceUtils'
 import { CloudAPIConfigUtils, RealIP_INITIAL } from '@handwer/cloud_api'
+import { UserManager } from './Network/UserManager'
 
 export class ServiceInitUtils {
   static async init() {
     // API 请求初始化
     CloudAPIConfigUtils.setRequestContext({
-      baseUrl: 'http://139.9.223.233:3000/',
+      baseUrl: 'http://111.229.38.178:3333/',
       cookie: {},
       realIp: RealIP_INITIAL
     })
@@ -23,5 +24,7 @@ export class ServiceInitUtils {
     await playQueueUtils.init()
     // 初始化播放控制
     await PlayControl.init()
+    // 初始化用户信息
+    await UserManager.init()
   }
 }

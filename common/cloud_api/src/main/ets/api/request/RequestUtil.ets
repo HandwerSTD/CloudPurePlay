@@ -14,8 +14,8 @@ let currentContext: RequestContext | null = null
 export const setupRequestContext = (context: RequestContext) => {
   currentContext = context
 }
-export const getNowRequestContext = () => {
-  return currentContext
+export const getNowRequestContext = (): RequestContext => {
+  return JSON.parse(JSON.stringify(currentContext))
 }
 
 const instance = axios.create({
