@@ -373,6 +373,9 @@ export struct MainPage {
         },
         controller: this.controller,
       })
+      // .pointLight({
+      //   illuminatedType: hdsEffect.PointLightIlluminatedType.CONTENT
+      // })
       .buildEffect())
     // .backgroundColor(Color.Pink)
   }

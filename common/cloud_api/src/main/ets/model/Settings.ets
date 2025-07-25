@@ -5,7 +5,7 @@ export interface LyricStyle {
   size: number
   weight: number | FontWeight
 
-  onPlaySize: number
+  onNotPlayScale: number
   onPlayWeight: number | FontWeight
 
   color: ResourceColor | string
@@ -71,9 +71,9 @@ export const CacheSet_INITIAL: CacheSet = {
 }
 
 export const LyricStyle_INITIAL: LyricStyle = {
-  size: 25,
+  size: 28,
   weight: FontWeight.Bold,
-  onPlaySize: 28,
+  onNotPlayScale: 0.8,
   onPlayWeight: FontWeight.Bold,
   color: Color.White,
   align: 'start',

@@ -112,9 +112,9 @@ export struct LyricComponent {
                 }
               })
               .padding({
-                bottom: !this.userScrolling
+                bottom: (!this.userScrolling
                   ? (index >= this.nps.currentLyricIndex ? this.nps.lyricStyle.size : this.nps.lyricStyle.size * 2)
-                  : this.nps.lyricStyle.size * 2
+                  : this.nps.lyricStyle.size * 2) * 0.5
               })
               .animation({ duration: this.userScrolling ? 0 : 300, curve: Curve.Friction })
           })
@@ -144,8 +144,8 @@ export struct LyricComponent {
     .fadingEdge(true, {
       fadingEdgeLength: {
         unit: LengthUnit.PERCENT,
-        value: 40
-      }
+        value: 50
+      },
     })
     .onTouch((event: TouchEvent) => {
       if (event.type === TouchType.Move) {
@@ -192,14 +192,21 @@ struct LyricLine {
   get isOnPlay() {
     return this.index == this.currentLyricIndex
   }
+  get isAfterPlay() {
+    return this.index < this.currentLyricIndex
+  }
 
   build() {
     Text(this.item.content)
       .width('100%')
-      .fontSize(this.isOnPlay ? this.lyricStyle.onPlaySize : this.lyricStyle.size)
+      .fontSize(this.lyricStyle.size)
+      .scale({x: this.isOnPlay ? 1 :  this.lyricStyle.onNotPlayScale, y: this.isOnPlay ? 1 : this.lyricStyle.onNotPlayScale})
       .fontWeight(this.isOnPlay ? this.lyricStyle.onPlayWeight : this.lyricStyle.weight)
       .lineHeight(this.lyricStyle.size * 1.3)
       .fontColor(Color.White)
+      .foregroundEffect(this.isAfterPlay ? {
+        radius: 9
+      } : undefined)
       .opacity(this.isOnPlay ? 1 : 0.35)
       .textAlign(this.lyricStyle.align === 'center' ? TextAlign.Center : TextAlign.Start)
       .clickEffect({ level: ClickEffectLevel.LIGHT, scale: 0.9 })
