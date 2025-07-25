@@ -213,6 +213,10 @@ struct LyricLine {
           this.$userScrolling(0)
         }, 100)
       })
+      .textShadow(this.isOnPlay ? {
+        color: '#aaffffff',
+        radius: 12
+      } : undefined)
       .animation({
         duration: 600,
         curve: Curve.Smooth,
