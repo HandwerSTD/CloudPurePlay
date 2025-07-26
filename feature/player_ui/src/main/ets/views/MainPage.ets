@@ -25,13 +25,13 @@ const LIGHT_TOP_BTN_LG: LightUpConfig = {
 }
 
 const LIGHT_PLAYBACK_BTN_MD: LightUpConfig = {
-  lightIntensity: 2,
+  lightIntensity: 0.8,
   lightHeight: 300,
   lightBloom: 0,
 }
 
 const LIGHT_PLAYBACK_BTN_LG: LightUpConfig = {
-  lightIntensity: 2,
+  lightIntensity: 0.8,
   lightHeight: 300,
   lightBloom: 0,
 }
@@ -148,7 +148,8 @@ export struct MainPage {
           handleLike: () => {
             this.handleLike()
           },
-          useLight: true
+          useLight: true,
+          useCoverAmbBreathe: false
         })
       }.layoutWeight(1)
       Blank().height(24)
@@ -406,14 +407,19 @@ export struct ImageCover {
   @Param @Require nowPlayingCoverImg: ResourceStr
   @Param @Require handleLike: () => void = () => {}
   @Param useLight: boolean = false
+  @Param useCoverAmbBreathe: boolean = false
 
   readonly lightOffset = 0
+  readonly coverAmbDuration = 1500
 
   @Local pointLocation: number = 0
   @Local pointLightX: number = -this.lightOffset
   @Local pointLightY: number = -this.lightOffset
   @Local coverArea: Area | undefined = undefined
   pointLightMoveIntervalHandler?: number
+
+  @Local coverAmbLightOpacity: number = 0.9
+  coverAmbLightIntervalHandler?: number
 
   nowPlay = NowPlayingStore
 
@@ -437,29 +443,55 @@ export struct ImageCover {
 
   @Monitor('nowPlay.isPaused', 'nowPlay.isPlaying')
   onPlayStateChange() {
-    if (!this.useLight) return
     if (this.nowPlay.isPlaying && !this.nowPlay.isPaused) {
-      this.pointLightMoveIntervalHandler = setInterval(() => {
-        this.pointLocation += 1;
-        this.pointLocation %= 4;
-        switch (this.pointLocation) {
-          case 0:
-            this.pointLightX = -this.lightOffset; this.pointLightY = -this.lightOffset;
-          break;
-          case 1:
-            this.pointLightX = (this.coverArea!.width.valueOf() as number) //+ this.lightOffset
-          break;
-          case 2:
-            this.pointLightY = (this.coverArea!.width.valueOf() as number) //+ this.lightOffset
-          break;
-          case 3:
-            this.pointLightX = -this.lightOffset;
-          break;
-        }
-      }, 2000)
+      // 点光源移动
+      if (this.useLight) {
+        this.pointLightMoveIntervalHandler = setInterval(() => {
+          this.pointLocation += 1;
+          this.pointLocation %= 4;
+          switch (this.pointLocation) {
+            case 0:
+              this.pointLightX = -this.lightOffset;
+              this.pointLightY = -this.lightOffset;
+              break;
+            case 1:
+              this.pointLightX = (this.coverArea!.width.valueOf() as number) //+ this.lightOffset
+              break;
+            case 2:
+              this.pointLightY = (this.coverArea!.width.valueOf() as number) //+ this.lightOffset
+              break;
+            case 3:
+              this.pointLightX = -this.lightOffset;
+              break;
+          }
+        }, 2000)
+      }
+      // 封面发光呼吸效果
+      if (this.useCoverAmbBreathe) {
+        const cc = this.getUIContext()
+        this.coverAmbLightIntervalHandler = setInterval(() => {
+          if (this.coverAmbLightOpacity >= 0.7) {
+            cc.animateTo({
+              duration: this.coverAmbDuration,
+              // curve: Curve.FastOutSlowIn
+            }, () => {
+              this.coverAmbLightOpacity = 0.4
+            })
+          } else {
+            cc.animateTo({
+              duration: this.coverAmbDuration,
+              // curve: Curve.FastOutLinearIn
+            }, () => {
+              this.coverAmbLightOpacity = 0.9
+            })
+          }
+        }, this.coverAmbDuration)
+      }
     } else {
       clearInterval(this.pointLightMoveIntervalHandler)
       this.pointLightMoveIntervalHandler = undefined
+      clearInterval(this.coverAmbLightIntervalHandler)
+      this.coverAmbLightIntervalHandler = undefined
     }
   }
   relocatePointLight() {
@@ -513,8 +545,8 @@ export struct ImageCover {
           this.relocatePointLight()
         })
         // .borderRadius(24)
-        .opacity(0.7)
-        .brightness(1.2)
+        .opacity(this.coverAmbLightOpacity)
+        .brightness(1.3)
         .saturate(3)
         .translate({y: 24})
 
