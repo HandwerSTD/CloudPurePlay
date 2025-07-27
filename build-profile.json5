@@ -71,6 +71,10 @@
     {
       "name": "app_settings",
       "srcPath": "./feature/app_settings",
+    },
+    {
+      "name": "explore",
+      "srcPath": "./feature/explore",
     }
   ]
 }
