@@ -160,17 +160,19 @@ export struct ImageCover {
     }
     // 在真实封面发生切换时，先让下封面显示新真实封面
     this.nowPlayingCoverFakerUnder = this.nowPlayingCoverImg
-    // 此时上封面还是旧真实封面，让其发生透明过渡
+    // 此时上封面还是旧真实封面，让其发生透明过渡；关闭光效
     this.getUIContext().animateTo({
       duration: 1000
     }, () => {
       this.coverFakerVisibility = Visibility.None
+      this.coverAmbLightOpacity = 0
     })
     // 延迟一秒，待动画播完，切换（此时不可见的）上封面为真实封面，再切换为可见
     this.coverFakerTransitionHandler = setTimeout(() => {
       this.nowPlayingCoverFaker = this.nowPlayingCoverImg
       this.coverFakerVisibility = Visibility.Visible
       this.coverFakerTransitionHandler = undefined
+      this.coverAmbLightOpacity = 0.9
     }, 1000)
   }
 
@@ -178,26 +180,14 @@ export struct ImageCover {
     Stack() {
       this.PointLight()
 
-      Image(this.nowPlayingCoverImg)
-        .aspectRatio(1)
-        .layoutWeight(nps.currentSong.id === 0 ? undefined : 1)
-        .constraintSize({
-          maxWidth: '100%'
-        })
-        // .scale({x: 0.95, y: 0.95})
-        .foregroundEffect({
-          radius: 192
-        })
+      Image(this.nowPlayingCoverFaker)
         .onAreaChange((_, area) => {
           this.coverArea = area
           this.relocatePointLight()
         })
-        // .borderRadius(24)
+        .ImageLightShadowFaker()
         .opacity(this.coverAmbLightOpacity)
-        .brightness(1.3)
-        .saturate(3)
-        .translate({y: 24})
-        .transition(TransitionEffect.OPACITY.animation({duration: 1000}))
+        .animation({duration: 1000, curve: Curve.Ease})
 
 
       Stack() {
@@ -216,6 +206,23 @@ export struct ImageCover {
   }
 }
 
+@Extend(Image) function ImageLightShadowFaker() {
+  .aspectRatio(1)
+  .layoutWeight(nps.currentSong.id === 0 ? undefined : 1)
+  .constraintSize({
+    maxWidth: '100%'
+  })
+  // .scale({x: 0.95, y: 0.95})
+  .foregroundEffect({
+    radius: 192
+  })
+  // .borderRadius(24)
+  .brightness(1.3)
+  .saturate(3)
+  .translate({y: 24})
+  .transition(TransitionEffect.OPACITY.animation({duration: 1000}))
+}
+
 @Extend(Image) function ImageFaker(handleLike: () => void, useShadow: boolean = true) {
   .aspectRatio(1)
   .layoutWeight(nps.currentSong.id === 0 ? undefined : 1)
@@ -223,7 +230,7 @@ export struct ImageCover {
     maxWidth: '100%'
   })
   .borderRadius(20)
-  .shadow(ShadowStyle.OUTER_DEFAULT_MD)
+  .shadow(useShadow ? ShadowStyle.OUTER_DEFAULT_MD : undefined)
   .margin(nps.isPaused ? ResponsiveUtil.chooseByWidth(['10%', '7%']) : 12)
   .animation({ curve:
   ResponsiveUtil.chooseByWidth(
