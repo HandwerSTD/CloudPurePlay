@@ -1,7 +1,8 @@
-import { NowPlayingStore, ResponsiveUtil } from "@handwer/base"
+import { Logger, NowPlayingStore, ResponsiveUtil } from "@handwer/base"
 import { hdsEffect } from "@kit.UIDesignKit"
 import { curves } from "@kit.ArkUI"
 import { cacheDownload } from "@kit.BasicServicesKit"
+import { ClickUtil } from "@pura/harmony-utils"
 
 const nps = NowPlayingStore
 
@@ -23,6 +24,12 @@ export struct ImageCover {
 
   @Local coverAmbLightOpacity: number = 0.9
   coverAmbLightIntervalHandler?: number
+
+  @Local nowPlayingCoverFaker: ResourceStr | undefined = undefined
+  @Local nowPlayingCoverFakerUnder: ResourceStr | undefined = undefined
+  @Local coverFakerVisibility: Visibility = Visibility.Visible
+  coverFakerTransitionHandler: number | undefined = undefined
+  @Local useCoverFaker: boolean = true
 
   nowPlay = NowPlayingStore
 
@@ -126,7 +133,45 @@ export struct ImageCover {
   }
 
   aboutToAppear(): void {
+    // 初始化时，上封面下封面都显示真实封面
+    this.nowPlayingCoverFaker = this.nowPlayingCoverImg
+    this.nowPlayingCoverFakerUnder = this.nowPlayingCoverImg
     this.onImgChanged()
+  }
+
+  @Monitor('nowPlayingCoverImg')
+  onPlayingCoverChanged() {
+    // 如果已有正在切换的任务，进入快速切换模式一段时间，不再播放动画
+    if (this.coverFakerTransitionHandler || !this.useCoverFaker) {
+      clearTimeout(this.coverFakerTransitionHandler)
+      this.coverFakerTransitionHandler = undefined
+      this.getUIContext().animateTo({
+        duration: 0
+      }, () => {
+        this.coverFakerVisibility = Visibility.Visible
+        this.nowPlayingCoverFaker = this.nowPlayingCoverImg
+        this.nowPlayingCoverFakerUnder = this.nowPlayingCoverImg
+      })
+      this.useCoverFaker = false
+      ClickUtil.debounce(() => {
+        this.useCoverFaker = true
+      }, 2000, 'coverFakerDebounce')
+      return
+    }
+    // 在真实封面发生切换时，先让下封面显示新真实封面
+    this.nowPlayingCoverFakerUnder = this.nowPlayingCoverImg
+    // 此时上封面还是旧真实封面，让其发生透明过渡
+    this.getUIContext().animateTo({
+      duration: 1000
+    }, () => {
+      this.coverFakerVisibility = Visibility.None
+    })
+    // 延迟一秒，待动画播完，切换（此时不可见的）上封面为真实封面，再切换为可见
+    this.coverFakerTransitionHandler = setTimeout(() => {
+      this.nowPlayingCoverFaker = this.nowPlayingCoverImg
+      this.coverFakerVisibility = Visibility.Visible
+      this.coverFakerTransitionHandler = undefined
+    }, 1000)
   }
 
   build() {
@@ -152,17 +197,26 @@ export struct ImageCover {
         .brightness(1.3)
         .saturate(3)
         .translate({y: 24})
+        .transition(TransitionEffect.OPACITY.animation({duration: 1000}))
 
 
-      Image(this.nowPlayingCoverImg)
-        .ImageFaker(() => {
-          this.handleLike()
-        })
+      Stack() {
+        Image(this.nowPlayingCoverFakerUnder)
+          .ImageFaker(() => {
+            this.handleLike()
+          })
+        Image(this.nowPlayingCoverFaker)
+          .ImageFaker(() => {
+            this.handleLike()
+          }, false)
+          .opacity(this.coverFakerVisibility === Visibility.Visible ? 1 : 0 )
+          .animation(this.useCoverFaker ? {duration: 1000} : undefined)
+      }
     }.alignContent(Alignment.TopStart)
   }
 }
 
-@Extend(Image) function ImageFaker(handleLike: () => void) {
+@Extend(Image) function ImageFaker(handleLike: () => void, useShadow: boolean = true) {
   .aspectRatio(1)
   .layoutWeight(nps.currentSong.id === 0 ? undefined : 1)
   .constraintSize({
