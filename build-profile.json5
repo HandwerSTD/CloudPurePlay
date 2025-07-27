@@ -75,6 +75,10 @@
     {
       "name": "explore",
       "srcPath": "./feature/explore",
+    },
+    {
+      "name": "common_resources",
+      "srcPath": "./common/common_resources",
     }
   ]
 }

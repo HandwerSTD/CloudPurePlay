@@ -58,6 +58,18 @@
     {
       "name": "orange",
       "value": "Warm Orange"
+    },
+    {
+      "name": "start_playing_heart_mode_failed",
+      "value": "播放心动模式失败"
+    },
+    {
+      "name": "try_after_login",
+      "value": "请登录后再试"
+    },
+    {
+      "name": "start_playing_daily_songs",
+      "value": "开始播放每日推荐"
     }
   ]
 }

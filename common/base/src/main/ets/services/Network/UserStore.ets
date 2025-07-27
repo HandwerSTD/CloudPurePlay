@@ -1,4 +1,4 @@
-import { RequestCookieConfig, User, User_INITIAL } from '@handwer/cloud_api'
+import { DailyListSongs, RequestCookieConfig, User, User_INITIAL } from '@handwer/cloud_api'
 import { PlayList } from '@handwer/cloud_api'
 import { DjRadio, RecommendDjRadio } from '@handwer/cloud_api'
 import { Album } from '@handwer/cloud_api'
@@ -18,6 +18,8 @@ class UserStore {
   @Trace recommendedDj: RecommendDjRadio[] = []
   @Trace searchHistory: string[] = []
   @Trace likeList: Set<string> = new Set()
+
+  @Trace dailySongs?: DailyListSongs
 }
 
 export default new UserStore()

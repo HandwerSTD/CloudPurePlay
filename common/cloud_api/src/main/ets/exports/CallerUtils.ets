@@ -4,7 +4,7 @@ import { getComment } from '../api/commentApi';
 import { getUserDjSubscribeList, getDjPrograms, putDjRadioInQueue, getDjRadioList } from '../api/djApi';
 import { getLoginStatus, logOut } from '../api/loginApi';
 import { getLyric, getLyricString } from '../api/LyricApi';
-import { getPlayLists, getPlayListSongs, PlayListOperation, getCloudList, searchPlayLists, subscribePlayList, getPersonalizedList, deletePlayList, createPlayList } from '../api/playListApi';
+import { getPlayLists, getPlayListSongs, PlayListOperation, getCloudList, searchPlayLists, subscribePlayList, getPersonalizedList, deletePlayList, createPlayList, DailySongRes, PlayListsResult } from '../api/playListApi';
 import { getQrCode, checkQrLogin } from '../api/qrCodeApi';
 import { checkMusic, searchSongs, getSongUrl, getSongPicUrl, getDailySongs, getLikeList, likeMusic, setHeartMode, getPersonalFmSong } from '../api/songApi';
 import { getTopList } from '../api/topListApi';

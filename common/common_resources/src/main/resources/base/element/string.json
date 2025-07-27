@@ -1,0 +1,16 @@
+{
+  "string": [
+    {
+      "name": "page_show",
+      "value": "page from package"
+    },
+    {
+      "name": "start_playing_heart_mode",
+      "value": "开始播放心动模式"
+    },
+    {
+      "name": "start_playing_daily_songs_failed",
+      "value": "播放每日推荐失败"
+    }
+  ]
+}

@@ -83,6 +83,9 @@ export class UserManager {
     // 持久化所有用户数据
     UserManager.persistAllUserData()
   }
+  static async fetchDynamicData() {
+    const dailySongs = await SongAPIUtils.getDailySongs()
+  }
   static persistAllUserData() {
     Logger.info(TAG, 'Persisting all user data to preferences')
     

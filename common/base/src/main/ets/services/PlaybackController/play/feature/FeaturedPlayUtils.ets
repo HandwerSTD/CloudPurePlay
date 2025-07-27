@@ -1,4 +1,6 @@
-import { SongAPIUtils } from "@handwer/cloud_api"
+import { PlayQueue, SongAPIUtils } from "@handwer/cloud_api"
+import { DialogHelper } from "@pura/harmony-dialog"
+import { LogUtil } from "@pura/harmony-utils"
 import { Logger } from "../../../../exports"
 import { UserManager } from "../../../Network/UserManager"
 import UserStore from "../../../Network/UserStore"
@@ -30,14 +32,14 @@ export class FeaturedPlayUtils {
       // ToastUtil.showToast('正在加载, 请稍后')
     }
   }
-  static async playHeartMode(showToastCallback: (icon: ResourceStr, msg: string) => void) {
+  static async playHeartMode(showToastCallback: (icon: ResourceStr, msg: ResourceStr) => void) {
     const nps = NowPlayingStore
     const user = UserStore
     if(UserManager.isLogged) {
       if(!nps.isPlayerLoading) {
         try {
           nps.isPlayerLoading = true
-          showToastCallback($r('sys.symbol.opticaldisc_badge_heart'), '开始播放心动歌单')
+          showToastCallback($r('sys.symbol.opticaldisc_badge_heart'), $r('app.string.start_playing_heart_mode'))
 
           await SongAPIUtils.setHeartMode(PlayQueueUtils.getCurrentSong().id, user.userPlaylists[0].id,
             (): Promise<void> => {
@@ -49,7 +51,7 @@ export class FeaturedPlayUtils {
           Logger.debug(TAG, `set heart mode completed`)
           await PlayControl.playQueue(0)
         } catch (e) {
-          showToastCallback($r('sys.symbol.opticaldisc_badge_heart'), '播放心动歌单失败')
+          showToastCallback($r('sys.symbol.opticaldisc_badge_heart'), $r('app.string.start_playing_heart_mode_failed'))
           Logger.error(TAG, `play heart mode failed: ${JSON.stringify(e)}`)
         } finally {
           setTimeout(() => {
@@ -59,7 +61,49 @@ export class FeaturedPlayUtils {
       } else {
       }
     } else {
-      showToastCallback($r('sys.symbol.person_head_on_circle'), '请登录后再试')
+      showToastCallback($r('sys.symbol.person_head_on_circle'), $r('app.string.try_after_login'))
     }
+  }
+  static async playDailySongs(showToastCallback: (icon: ResourceStr, msg: ResourceStr) => void, todayIcon: ResourceStr) {
+
+    const loadSongs = async () => {
+      try {
+        let result = await SongAPIUtils.getDailySongs()
+        if(result.length < 3) { result = await SongAPIUtils.getDailySongs(false) }
+        return result
+      } catch (e) {
+        LogUtil.error(TAG, 'Error fetching songs: ', e)
+        return
+      } finally {
+      }
+    }
+
+    const id = DialogHelper.showLoadingDialog()
+
+    const list = await loadSongs()
+
+    DialogHelper.closeDialog(id)
+
+    const playSong = async (songIndex: number) => {
+      if (!list) {
+        showToastCallback(todayIcon, $r('app.string.start_playing_daily_songs_failed'))
+        return
+      }
+      try {
+        let queue: PlayQueue[] = list.map((item): PlayQueue => ({
+          playmode: 2,
+          song: item.song,
+          fileName: '',
+          picUrl: item.picUrl
+        }))
+        await PlayQueueUtils.cleanQueue()
+        await PlayQueueUtils.queueAddArray(queue)
+        PlayControl.playQueue(songIndex)
+        showToastCallback(todayIcon, $r('app.string.start_playing_daily_songs'))
+      } catch (e) {
+        showToastCallback(todayIcon, $r('app.string.start_playing_daily_songs_failed'))
+      }
+    }
+    await playSong(0)
   }
 }

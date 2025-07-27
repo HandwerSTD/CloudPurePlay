@@ -1,8 +1,9 @@
 import { FeaturedPlayUtils, GlobalStore, NowPlayingStore, PlayControl, ResponsiveUtil } from "@handwer/base"
 import { PLAYMODE, SongConvertUtils, Song_INITIAL } from "@handwer/cloud_api"
-import { LightUpRoundedButton, LightUpConfig, LightUpBorderRoundButton, SnackBarUtils } from "@handwer/ui_components"
+import { LightUpRoundedButton, LightUpConfig, LightUpBorderRoundButton, SnackBarUtils,
+  UIComponentUtils } from "@handwer/ui_components"
 import { ColorMetrics, curves, LengthMetrics } from "@kit.ArkUI"
-import { ClickUtil } from "@pura/harmony-utils"
+import { ClickUtil, DateUtil } from "@pura/harmony-utils"
 import { HdsActionBar, ActionBarButton, ActionBarStyle, hdsEffect, HdsSnackBar } from "@kit.UIDesignKit"
 import { cacheDownload } from "@kit.BasicServicesKit"
 import { LyricComponent } from "./LyricArea"
@@ -55,6 +56,11 @@ export struct MainPage {
   get topAreaExpandShouldHideNormal() {
     return this.isTopAreaExpand && ResponsiveUtil.widthCheck(['xs','sm', 'md'])
   }
+  get todayIcon() {
+    // const icon = 'sys.symbol.calendar_'+DateUtil.getTodayStr('dd')+'_a'
+    // const icon =
+    return UIComponentUtils.getTodayIcon()
+  }
   @Local sliderThickness: number = 10
   @Local isMovingSlider: boolean = false
   @Local sliderMovingTime: number = 0
@@ -91,6 +97,15 @@ export struct MainPage {
             }
           }),
           new ActionBarButton({
+            baseIcon: this.todayIcon,
+            width: LengthMetrics.vp(40),
+            onClick: () => {
+              FeaturedPlayUtils.playDailySongs((icon, msg) => {
+                SnackBarUtils.showMessage(this.hdsSnackBar, icon, msg)
+              }, this.todayIcon)
+            }
+          }),
+          new ActionBarButton({
             baseIcon: $r('sys.symbol.radio'),
             width: LengthMetrics.vp(40),
             onClick: () => {
@@ -101,10 +116,6 @@ export struct MainPage {
             baseIcon: $r('sys.symbol.house'),
             width: LengthMetrics.vp(40)
           }),
-          new ActionBarButton({
-            baseIcon: $r('sys.symbol.speaker_wave_3'),
-            width: LengthMetrics.vp(40)
-          })
         ]
       })
         .hitTestBehavior(this.isTopAreaExpand ? HitTestMode.Default : HitTestMode.Transparent)
