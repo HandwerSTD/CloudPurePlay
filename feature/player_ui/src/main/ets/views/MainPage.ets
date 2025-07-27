@@ -1,4 +1,4 @@
-import { FeaturedPlayUtils, GlobalStore, NowPlayingStore, PlayControl, ResponsiveUtil } from "@handwer/base"
+import { FeaturedPlayUtils, GlobalStore, Logger, NowPlayingStore, PlayControl, ResponsiveUtil } from "@handwer/base"
 import { PLAYMODE, SongConvertUtils, Song_INITIAL } from "@handwer/cloud_api"
 import { LightUpRoundedButton, LightUpConfig, LightUpBorderRoundButton, SnackBarUtils,
   UIComponentUtils } from "@handwer/ui_components"
@@ -64,6 +64,8 @@ export struct MainPage {
   @Local sliderThickness: number = 10
   @Local isMovingSlider: boolean = false
   @Local sliderMovingTime: number = 0
+
+  @Local backgroundFlowingColors: ResourceColor[] = []
 
   @Local isTopAreaExpand: boolean = false
   @Builder TopAreaActionButton_ActionBar_PrimaryButton() {
@@ -160,7 +162,15 @@ export struct MainPage {
             this.handleLike()
           },
           useLight: true,
-          useCoverAmbBreathe: false
+          useCoverAmbBreathe: false,
+          resetNewBackgroundColor: (colors) => {
+            this.backgroundFlowingColors = colors.map((val) => val.color)
+            Logger.debug(`try resetting flow colors: `, this.backgroundFlowingColors.toString())
+            this.controller.setEffectParams({
+              colorSource: this.backgroundFlowingColors
+            },)
+            this.controller.play()
+          }
         })
       }.layoutWeight(1)
       Blank().height(24)
@@ -329,7 +339,7 @@ export struct MainPage {
       })
     }.justifyContent(FlexAlign.SpaceEvenly)
     .width('100%')
-    .margin({bottom: ResponsiveUtil.widthCheck(['md']) ? 24 : 0})
+    .margin({bottom: ResponsiveUtil.widthCheck(['md']) ? 36 : 12})
     .animation({duration: 300, curve: Curve.Ease})
   }
 
@@ -375,6 +385,20 @@ export struct MainPage {
     .visualEffect(new hdsEffect.HdsEffectBuilder()
       .shaderEffect({
         effectType: hdsEffect.EffectType.UV_BACKGROUND_FLOW_LIGHT,
+        // params: {
+        //   // firstEdgeFlowLight: {
+        //   //   startPos: 0,
+        //   //   endPos: 1.0,
+        //   //   color: '#1AD0F1',
+        //   // },
+        //   // secondEdgeFlowLight: {
+        //   //   startPos: 0.5,
+        //   //   endPos: 1.5,
+        //   //   color: '#FFA4E5',
+        //   // },
+        //   colorSource: this.backgroundFlowingColors,
+        //   colorTarget: this.backgroundFlowingColors
+        // },
         animation: {
           duration: 5000,
           iterations: -1,

@@ -3,6 +3,7 @@ import { hdsEffect } from "@kit.UIDesignKit"
 import { curves } from "@kit.ArkUI"
 import { cacheDownload } from "@kit.BasicServicesKit"
 import { ClickUtil } from "@pura/harmony-utils"
+import { AlbumCoverColorUtils } from "../utils/AlbumCoverColorUtils"
 
 const nps = NowPlayingStore
 
@@ -12,6 +13,7 @@ export struct ImageCover {
   @Param @Require handleLike: () => void = () => {}
   @Param useLight: boolean = false
   @Param useCoverAmbBreathe: boolean = false
+  @Event resetNewBackgroundColor: (colors: ColorMetrics[]) => void
 
   readonly lightOffset = 0
   readonly coverAmbDuration = 1500
@@ -192,8 +194,15 @@ export struct ImageCover {
 
       Stack() {
         Image(this.nowPlayingCoverFakerUnder)
+          .id('coverFakerUnder')
           .ImageFaker(() => {
             this.handleLike()
+          })
+          .onComplete(() => {
+            ClickUtil.debounce(async () => {
+              const colors = await AlbumCoverColorUtils.getCoverColor()
+              this.resetNewBackgroundColor(colors)
+            }, 2000)
           })
         Image(this.nowPlayingCoverFaker)
           .ImageFaker(() => {

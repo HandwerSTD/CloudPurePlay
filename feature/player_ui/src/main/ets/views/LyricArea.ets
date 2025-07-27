@@ -135,7 +135,7 @@ export struct LyricComponent {
     }
     .cachedCount(3)
     .alignListItem(ListItemAlign.End)
-    .padding({ top: 30, left: this.nps.lyricStyle.align == 'start' ? 24 : 0 })
+    .padding({ top: 30, left: this.nps.lyricStyle.align == TextAlign.Start ? 24 : 0 })
     .width('100%')
     .height('100%')
     .edgeEffect(EdgeEffect.Spring)
@@ -208,12 +208,12 @@ struct LyricLine {
         radius: 9
       } : undefined)
       .opacity(this.isOnPlay ? 1 : 0.35)
-      .textAlign(this.lyricStyle.align === 'center' ? TextAlign.Center : TextAlign.Start)
+      .textAlign(this.lyricStyle.align)
       .clickEffect({ level: ClickEffectLevel.LIGHT, scale: 0.9 })
       .padding({ left: 20, right: 20 })
       .scale(this.isOnPlay ?
-        { x: 1.0, y: 1.0, centerX: this.lyricStyle.align === 'center' ? '50%' : 0 } :
-        { x: 0.9, y: 0.9, centerX: this.lyricStyle.align === 'center' ? '50%' : 0 })
+        { x: 1.0, y: 1.0, centerX: this.lyricStyle.align === TextAlign.Center ? '50%' : 0 } :
+        { x: 0.9, y: 0.9, centerX: this.lyricStyle.align === TextAlign.Center ? '50%' : 0 })
       .onClick(() => {
         PlayControl.seekMusic(this.item.time + 100)
         setTimeout(() => {

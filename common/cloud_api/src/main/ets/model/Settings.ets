@@ -9,7 +9,7 @@ export interface LyricStyle {
   onPlayWeight: number | FontWeight
 
   color: ResourceColor | string
-  align: 'center' | 'start'
+  align: TextAlign
   mode: number // 0 - Normal, 1 - Translate, 2 - Roma
 }
 
@@ -76,7 +76,7 @@ export const LyricStyle_INITIAL: LyricStyle = {
   onNotPlayScale: 0.8,
   onPlayWeight: FontWeight.Bold,
   color: Color.White,
-  align: 'start',
+  align: TextAlign.Center,
   mode: 0
 }
 
