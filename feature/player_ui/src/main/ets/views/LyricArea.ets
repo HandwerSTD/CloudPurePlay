@@ -221,7 +221,7 @@ struct LyricLine {
         }, 100)
       })
       .textShadow(this.isOnPlay ? {
-        color: '#aaffffff',
+        color: '#ccffffff',
         radius: 12
       } : undefined)
       .animation({
