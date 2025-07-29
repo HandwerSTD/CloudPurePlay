@@ -326,14 +326,15 @@ export class SongAPIUtils {
   }
   /**
    * 获取喜欢的歌曲ID列表
+   * @param user
    * @param statePersistent 按需求，可传入回调对返回的 string[] 进行持久化
    * @returns 喜欢的歌曲ID数组
    */
-  static async getLikeList(statePersistent?: (val: string[]) => void) {
-    return getLikeList(statePersistent);
+  static async getLikeList(user: User, statePersistent?: (val: string[]) => void) {
+    return getLikeList(user, statePersistent);
   }
   /**
-   * 喜欢/取消喜欢某首歌曲
+   * 喜欢某首歌曲（不喜欢请直接在红心歌单中删除）
    * @param id 歌曲ID
    * @returns 是否操作成功
    */

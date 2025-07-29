@@ -1,8 +1,11 @@
 import { CloudAPIConfigUtils, LoginAPIUtils, User, User_INITIAL, PlayList, DjRadio, Album, TopListItem, PersonalListItem } from '@handwer/cloud_api'
-import { Logger } from '../../exports'
+
 import { PreferenceUtils } from '../Preferences/PreferenceUtils'
 import { PlayListAPIUtils, DjAPIUtils, AlbumAPIUtils, TopListAPIUtils, SongAPIUtils } from '@handwer/cloud_api'
 import store from './UserStore'
+import Logger from '../../utils/Logger'
+import { SongLike } from '../PlaybackController/play/user/songLike'
+import NowPlayingStore from '../PlaybackController/play/NowPlayingStore'
 
 const TAG = '[UserManager]'
 
@@ -36,10 +39,12 @@ export class UserManager {
         store.user = val
         UserSettings.put(SCUser.user, val)
       })
-      Logger.debug(TAG, `Login result: ${result}`)
+      Logger.debug(TAG, `Login result: ${result}, user data = ${store.user.data.profile.nickname}`)
       if (result) {
         // 加载所有用户数据
         UserManager.loadAllUserData()
+        // 歌曲红心信息
+        SongLike.isThisSongLiked(NowPlayingStore.currentSong.id)
         UserManager.fetchAllUserData()
       }
     }
@@ -57,31 +62,42 @@ export class UserManager {
 
   static async fetchAllUserData() {
     // 歌单
-    const playListRes = await PlayListAPIUtils.getPlayLists(0, store.user)
-    store.userPlaylists = playListRes.playlist ?? []
+    await PlayListAPIUtils.getPlayLists(0, store.user, (val) => {
+      store.userPlaylists = val ?? store.userPlaylists
+      UserManager.updateUserPlaylists()
+    })
 
     // 电台
-    const djRes = await DjAPIUtils.getUserDjSubscribeList()
-    store.userDjRadioList = djRes.djRadios ?? []
+    await DjAPIUtils.getUserDjSubscribeList((val) => {
+      store.userDjRadioList = val ?? store.userDjRadioList
+      UserSettings.put(SCUser.userDjRadioList, store.userDjRadioList)
+    })
 
     // 收藏专辑
-    const albumRes = await AlbumAPIUtils.getUserSubscribedAlbum()
-    store.userSubAlbum = albumRes.data ?? []
+    await AlbumAPIUtils.getUserSubscribedAlbum((val) => {
+      store.userSubAlbum = val ?? store.userSubAlbum
+      UserManager.updateUserSubAlbum()
+    })
 
     // 排行榜
-    const topList = await TopListAPIUtils.getTopList()
-    store.topLists = topList ?? []
+    await TopListAPIUtils.getTopList((val) => {
+      store.topLists = val ?? store.topLists
+      UserSettings.put(SCUser.topLists, store.topLists)
+    })
 
     // 个性化推荐歌单
-    const personalized = await PlayListAPIUtils.getPersonalizedList()
-    store.personalizedList = personalized ?? []
+    await PlayListAPIUtils.getPersonalizedList((val) => {
+      store.personalizedList = val ?? store.personalizedList
+      UserSettings.put(SCUser.personalizedList, store.personalizedList)
+    })
 
     // 喜欢列表
-    const likeList = await SongAPIUtils.getLikeList()
-    store.likeList = new Set(likeList ?? [])
-
-    // 持久化所有用户数据
-    UserManager.persistAllUserData()
+    await SongAPIUtils.getLikeList(store.user, (val) => {
+      store.likeList = new Set(val ?? store.likeList)
+      // 再次重置歌曲红心信息
+      SongLike.isThisSongLiked(NowPlayingStore.currentSong.id)
+      UserManager.updateLikeList()
+    })
   }
   static async fetchDynamicData() {
     const dailySongs = await SongAPIUtils.getDailySongs()
@@ -186,6 +202,14 @@ export class UserManager {
   static updateUserSubAlbum() {
     UserSettings.put(SCUser.userSubAlbum, store.userSubAlbum)
   }
+
+  // static changeLikeStat(id: number, stat: boolean) {
+  //   if (stat) store.likeList.add(id.toString())
+  //   else store.likeList.delete(id.toString())
+  //   setTimeout(() => {
+  //     UserManager.updateLikeList()
+  //   })
+  // }
 }
 
 export default UserSettings

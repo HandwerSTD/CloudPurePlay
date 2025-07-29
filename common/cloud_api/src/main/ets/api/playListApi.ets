@@ -7,11 +7,9 @@ import {
   PlayListSong,
   PlayListSongsResult} from "../entities/PlayList"
 import { Song } from "../entities/Song"
-import { User, User_INITIAL } from "../entities/User"
-import { StorageConstants } from "../constants/StorageConstants"
+import { User } from "../entities/User"
 import commonRequest from "./request/RequestUtil"
 import { Personalized, PersonalListItem } from "../entities/Recommend"
-import { preferences } from "@kit.ArkData"
 
 export interface PlayListsResult {
   more:boolean

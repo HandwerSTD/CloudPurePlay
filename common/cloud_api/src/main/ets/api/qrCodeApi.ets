@@ -1,9 +1,7 @@
-import { LogUtil, ToastUtil } from "@pura/harmony-utils"
-import { StorageConstants } from "../constants/StorageConstants"
+import { ToastUtil } from "@pura/harmony-utils"
 import { SongConvertUtils } from "../functions/convert"
 import commonRequest, { getNowRequestContext, setupRequestContext } from "./request/RequestUtil"
 import { getLoginStatus } from "./loginApi"
-import { preferences } from "@kit.ArkData"
 import { User } from "../entities/User"
 
 interface GetQrCodeImg {

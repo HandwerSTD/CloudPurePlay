@@ -1,5 +1,7 @@
-import { FeaturedPlayUtils, GlobalStore, Logger, NowPlayingStore, PlayControl, ResponsiveUtil } from "@handwer/base"
-import { PLAYMODE, SongConvertUtils, Song_INITIAL } from "@handwer/cloud_api"
+import { FeaturedPlayUtils, GlobalStore, Logger, NowPlayingStore, PlayControl, ResponsiveUtil,
+  SongLike,
+  UserStore } from "@handwer/base"
+import { PLAYMODE, SongAPIUtils, SongConvertUtils, Song_INITIAL } from "@handwer/cloud_api"
 import { LightUpRoundedButton, LightUpConfig, LightUpBorderRoundButton, SnackBarUtils,
   UIComponentUtils } from "@handwer/ui_components"
 import { ColorMetrics, curves, LengthMetrics } from "@kit.ArkUI"
@@ -41,6 +43,7 @@ const LIGHT_PLAYBACK_BTN_LG: LightUpConfig = {
 export struct MainPage {
   hdsSnackBar = new HdsSnackBar(this.getUIContext())
   gs = GlobalStore
+  user = UserStore
 
   _nps = NowPlayingStore
 
@@ -62,6 +65,9 @@ export struct MainPage {
     // const icon = 'sys.symbol.calendar_'+DateUtil.getTodayStr('dd')+'_a'
     // const icon =
     return UIComponentUtils.getTodayIcon()
+  }
+  get isThisSongLiked() {
+    return nps.isLiked
   }
   @Local sliderThickness: number = 10
   @Local isMovingSlider: boolean = false
@@ -96,10 +102,10 @@ export struct MainPage {
         primaryButtonBuilderWidth: LengthMetrics.vp(40),
         startButtons: [
           new ActionBarButton({
-            baseIcon: $r('sys.symbol.radio'),
+            baseIcon: nps.isLiked ? $r('sys.symbol.heart_fill') : $r('sys.symbol.heart'),
             width: LengthMetrics.vp(40),
             onClick: () => {
-              FeaturedPlayUtils.playPersonalizedFM()
+              SongLike.likeThisSong()
             }
           }),
           new ActionBarButton({

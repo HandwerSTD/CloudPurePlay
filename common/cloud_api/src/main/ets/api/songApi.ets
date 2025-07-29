@@ -1,6 +1,6 @@
 import { LogUtil } from "@pura/harmony-utils"
 import { PlayConstants } from "../constants/PlayConstants"
-import { StorageConstants } from "../constants/StorageConstants"
+// import { StorageConstants } from "../constants/StorageConstants"
 import { HeartMode } from "../entities/Recommend"
 import { PlayQueue } from "../model/PlayQueue"
 import { QualityType, Song, SongDetail, Song_INITIAL, SongPlayResult, SongSearchResult } from "../entities/Song"
@@ -123,8 +123,7 @@ interface LikeListResponse {
  * @param uid
  * @returns
  */
-export const getLikeList = async (statePersistent?: (val: string[]) => void): Promise<string[]> => {
-  let user = await AppStorage.get(StorageConstants.USER) as User
+export const getLikeList = async (user: User, statePersistent?: (val: string[]) => void): Promise<string[]> => {
   let list:Array<string> = []
   const response = await commonRequest<LikeListResponse>({
     url: '/likelist',
@@ -133,10 +132,11 @@ export const getLikeList = async (statePersistent?: (val: string[]) => void): Pr
   try {
     const dataGot: string[] = response.ids as string[]
     list = dataGot
+    statePersistent?.(list)
   } catch (e) {
+    LogUtil.error('WARNING: get like list failed: ' + JSON.stringify(e))
   } finally {
     // AppStorage.setOrCreate(StorageConstants.USER_LIKELIST, list)
-    statePersistent?.(list)
     return list
   }
 }

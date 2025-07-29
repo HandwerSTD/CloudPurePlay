@@ -7,6 +7,7 @@ import {
 import { PlayerUI } from '@handwer/player_ui'
 import { promptAction } from '@kit.ArkUI'
 import { webview } from '@kit.ArkWeb'
+import { ToastUtil } from '@pura/harmony-utils'
 
 const TAG = '[Index]'
 
@@ -197,7 +198,7 @@ export struct WebLogin {
         })
         return result
       } else {
-        // ToastUtil.showToast('获取登录信息失败，请确认是否已在网页内登录！')
+        ToastUtil.showToast('获取登录信息失败，请确认是否已在网页内登录！')
         return false
       }
     } catch (error) {

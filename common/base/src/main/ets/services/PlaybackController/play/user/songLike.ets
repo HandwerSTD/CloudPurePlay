@@ -14,12 +14,13 @@ export class SongLike {
   static async isThisSongLiked(sid: number) {
     let isLiked: boolean = false
     try {
-      let likeList = UserStore.likeList
-      isLiked = likeList.has(sid.toString())
+      let likeList = Array.from(UserStore.likeList)
+      isLiked = JSON.stringify(likeList).includes(sid.toString())
     } catch (e) {
       LogUtil.error(TAG, 'isThisSongLiked Error: ' + e.message)
     } finally {
       NowPlayingStore.isLiked = isLiked
+      LogUtil.debug(TAG, `the song is liked: ${isLiked}`)
     }
   }
 
@@ -27,6 +28,7 @@ export class SongLike {
    * 喜欢当前歌曲
    */
   static async likeThisSong() {
+    const store = UserStore
     try {
       let isLogged: boolean = UserManager.isLogged
       let isLiked: boolean = NowPlayingStore.isLiked
@@ -35,15 +37,23 @@ export class SongLike {
       } else if(!isLiked) { // 未喜欢
         let currentSong = NowPlayingStore.currentSong
         const result = await SongAPIUtils.likeMusic(currentSong.id)
-        NowPlayingStore.isLiked = isLiked
-        SongAPIUtils.getLikeList()
+        NowPlayingStore.isLiked = !isLiked
+        // 喜欢列表
+        await SongAPIUtils.getLikeList(UserStore.user, (val) => {
+          if (val) store.likeList = new Set(val)
+          UserManager.updateLikeList()
+        })
         ToastUtil.showToast(result ? '已收藏至【我喜欢的音乐】' : '收藏失败')
       } else { // 已喜欢
         let currentSong = NowPlayingStore.currentSong
         let userPlayLists = UserStore.userPlaylists
         const result = await PlayListAPIUtils.PlayListOperation('del', userPlayLists[0].id, currentSong.id)
-        NowPlayingStore.isLiked = isLiked
-        SongAPIUtils.getLikeList()
+        NowPlayingStore.isLiked = !isLiked
+        // 喜欢列表
+        await SongAPIUtils.getLikeList(UserStore.user, (val) => {
+          store.likeList = new Set(val ?? store.likeList)
+          UserManager.updateLikeList()
+        })
         ToastUtil.showToast(result ? '取消喜欢当前歌曲' : '取消喜欢失败')
       }
     } catch (e) {

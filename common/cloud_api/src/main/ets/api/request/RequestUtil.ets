@@ -1,9 +1,5 @@
 import axios, { AxiosError, AxiosRequestConfig, AxiosResponse, InternalAxiosRequestConfig } from '@ohos/axios'
 import { LogUtil } from '@pura/harmony-utils'
-import Constants from '../../constants/Constants'
-import { StorageConstants } from '../../constants/StorageConstants'
-import { Api } from '../../entities/Api'
-import { RealIP } from '../../model/Settings'
 import { RequestContext } from './RequestContext'
 
 const TAG = 'RequestUtil'
@@ -58,7 +54,7 @@ instance.interceptors.request.use(async (request: InternalAxiosRequestConfig ) =
 instance.interceptors.response.use((response: AxiosResponse) => {
   return response
 }, (err: AxiosError) => {
-  LogUtil.error(TAG, `error: ${err?.status} + ${err?.message ?? ""}`)
+  LogUtil.error(TAG, `error: ${err?.status} + ${err?.message ?? ""} -> URL =  ${err.response?.config.url}`)
   return Promise.reject(err)
 })
 
@@ -67,8 +63,13 @@ interface ApiResponse<T> {
 }
 
 const commonRequest = async<T>(config: AxiosRequestConfig): Promise<T> => {
-  const response = await instance.request(config) as ApiResponse<T>
-  return response.data
+  try {
+    const response = await instance.request(config) as ApiResponse<T>
+    return response.data
+  } catch (e) {
+    LogUtil.error(TAG, `commonRequest got error: ${e.message ?? ""}, ${e.code ?? -1} for request ${config.url} with params ${JSON.stringify(config.params)}`)
+    throw Error(e)
+  }
 }
 
 export default commonRequest
