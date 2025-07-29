@@ -42,7 +42,7 @@ export struct ImageCover {
         options: {
           color: Color.White,
           intensity: 0.7,
-          height: 150
+          height: 200
         }
       }).buildEffect())
       .translate({

@@ -42,6 +42,8 @@ export struct MainPage {
   hdsSnackBar = new HdsSnackBar(this.getUIContext())
   gs = GlobalStore
 
+  _nps = NowPlayingStore
+
   @Consumer('consoleSheet') consoleSheet: boolean = false
 
   controller: hdsEffect.ShaderEffectController = new hdsEffect.ShaderEffectController()
@@ -64,6 +66,8 @@ export struct MainPage {
   @Local sliderThickness: number = 10
   @Local isMovingSlider: boolean = false
   @Local sliderMovingTime: number = 0
+  @Local shouldShowSlider: boolean = false
+  shouldShowSliderTimeoutHandler?: number
 
   @Local backgroundFlowingColors: ResourceColor[] = []
 
@@ -148,7 +152,7 @@ export struct MainPage {
       this.TopAreaActionButton_Normal()
       this.TopAreaActionButton_ActionBar()
     }.width('100%')
-    .padding(this.topAreaExpandShouldHideNormal ? {} : {left: 24, right: 24, top: 24})
+    .padding(this.topAreaExpandShouldHideNormal ? {} : {left: 24, right: 24, top: 12})
     .alignContent(this.topAreaExpandShouldHideNormal ? Alignment.Center : Alignment.Start)
     .animation({curve: curves.springMotion()})
   }
@@ -211,6 +215,9 @@ export struct MainPage {
       minHeight: 0,
       maxHeight: ResponsiveUtil.widthCheck(['sm', 'md']) ? '100%' : 500
     })
+    .onClick(() => {
+      this.showProgressBar()
+    })
   }
 
   @Builder ProgressBar(wid: Dimension) {
@@ -231,6 +238,7 @@ export struct MainPage {
         .showSteps(false)
         .showTips(false)
         .onChange(this.handleSliderChange)
+        .hitTestBehavior(!this.shouldShowSlider ? HitTestMode.None : HitTestMode.Default)
 
       Row() {
         // 当前时间
@@ -282,7 +290,12 @@ export struct MainPage {
       .width('100%')
     }
     .width(wid)
-    .opacity(0.6)
+    .height(this.shouldShowSlider || this.isMovingSlider ? undefined : 0)
+    .opacity(this.shouldShowSlider || this.isMovingSlider ? 0.7 : 0)
+    .animation({curve: curves.springMotion(0.6, 0.8)})
+    .onClick(() => {
+      this.showProgressBar()
+    })
   }
 
   @Builder PlaybackControl() {
@@ -410,28 +423,67 @@ export struct MainPage {
         controller: this.controller,
       })
       // .pointLight({
-      //   illuminatedType: hdsEffect.PointLightIlluminatedType.CONTENT
+      //   illuminatedType: hdsEffect.PointLightIlluminatedType.BORDER
       // })
       .buildEffect())
     // .backgroundColor(Color.Pink)
   }
+
   private handleSliderChange = (value: number, mode: SliderChangeMode) => {
-  this.getUIContext().animateTo({ duration: 500, curve: Curve.Smooth, }, () => {
-    if (mode == SliderChangeMode.Begin) {
-      this.isMovingSlider = true
-      this.sliderMovingTime = value
-      this.sliderThickness = 15
-    } else if (mode == SliderChangeMode.Moving) {
-      this.sliderMovingTime = value
-    } else if (mode == SliderChangeMode.End) {
-      nps.playTime = value
-      this.sliderThickness = 10
-      this.isMovingSlider = false
-      PlayControl.seekMusic(this.sliderMovingTime)
+    this.getUIContext().animateTo({ duration: 500, curve: Curve.Smooth, }, () => {
+      if (mode == SliderChangeMode.Begin) {
+        this.isMovingSlider = true
+        this.sliderMovingTime = value
+        this.sliderThickness = 15
+      } else if (mode == SliderChangeMode.Moving) {
+        this.sliderMovingTime = value
+      } else if (mode == SliderChangeMode.End) {
+        nps.playTime = value
+        this.sliderThickness = 10
+        this.isMovingSlider = false
+        PlayControl.seekMusic(this.sliderMovingTime)
+      }
+    })
+    if (mode == SliderChangeMode.End) {
+      this.showProgressBar()
     }
-  })
-}
+  }
   async handleLike() {
 
+  }
+
+  @Monitor('_nps.currentSong')
+  showProgressBar() {
+    const showProgressBarTime = 5000
+
+    if (this.shouldShowSliderTimeoutHandler) {
+      clearTimeout(this.shouldShowSliderTimeoutHandler)
+      this.shouldShowSliderTimeoutHandler = undefined
+    }
+    const context = this.getUIContext()
+    const curve = ResponsiveUtil.chooseByWidth(
+      [curves.springMotion(0.6, 0.8)])
+    if (!this.shouldShowSlider) {
+      context.animateTo({
+        curve: curve
+      }, () => {
+        this.shouldShowSlider = true
+      })
+      this.shouldShowSliderTimeoutHandler = setTimeout(() => {
+        this.getUIContext().animateTo({
+          curve: curve
+        }, () => {
+          this.shouldShowSlider = false
+        })
+      }, showProgressBarTime)
+    } else {
+      this.shouldShowSliderTimeoutHandler = setTimeout(() => {
+        this.getUIContext().animateTo({
+          curve: curve
+        }, () => {
+          this.shouldShowSlider = false
+        })
+      }, showProgressBarTime)
+    }
   }
 }
