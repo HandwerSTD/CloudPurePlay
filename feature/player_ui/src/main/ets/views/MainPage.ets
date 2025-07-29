@@ -72,6 +72,47 @@ export struct MainPage {
   @Local backgroundFlowingColors: ResourceColor[] = []
 
   @Local isTopAreaExpand: boolean = false
+
+  @Local isBottomAreaExpand: boolean = false
+
+  @Builder BottomAreaControlButton_ActionBar_ActionButton() {
+    LightUpRoundedButton({
+      lightUpConfig: ResponsiveUtil.chooseByWidth([LIGHT_TOP_BTN_SM, LIGHT_TOP_BTN_MD, LIGHT_TOP_BTN_LG]),
+      icon: $r('sys.symbol.AI_play'),
+      customBgColor: $r('sys.color.icon_fourth'),
+      clickAction: () => {
+        this.isBottomAreaExpand = !this.isBottomAreaExpand
+      },
+      customFontColor: this.isBottomAreaExpand ? [$r('sys.color.font_secondary')] : [Color.White, Color.White]
+    })
+  }
+  @Builder BottomAreaControlButton_ActionBar() {
+    Row() {
+      HdsActionBar({
+        isExpand: this.isBottomAreaExpand!!,
+        primaryButtonBuilder: () => {
+          this.BottomAreaControlButton_ActionBar_ActionButton()
+        },
+        primaryButtonBuilderWidth: LengthMetrics.vp(40),
+        startButtons: [
+          new ActionBarButton({
+            baseIcon: $r('sys.symbol.radio'),
+            width: LengthMetrics.vp(40),
+            onClick: () => {
+              FeaturedPlayUtils.playPersonalizedFM()
+            }
+          }),
+          new ActionBarButton({
+            baseIcon: $r('sys.symbol.house'),
+            width: LengthMetrics.vp(40)
+          }),
+        ]
+      })
+        .hitTestBehavior(this.isTopAreaExpand ? HitTestMode.Default : HitTestMode.Transparent)
+        .offset(this.isBottomAreaExpand ? undefined : {x: 5}) // 抵消掉自带边距
+    }.hitTestBehavior(this.isTopAreaExpand ? HitTestMode.Default : HitTestMode.Transparent)
+  }
+
   @Builder TopAreaActionButton_ActionBar_PrimaryButton() {
     LightUpRoundedButton({
       lightUpConfig: ResponsiveUtil.chooseByWidth([LIGHT_TOP_BTN_SM, LIGHT_TOP_BTN_MD, LIGHT_TOP_BTN_LG]),
@@ -125,12 +166,13 @@ export struct MainPage {
         ]
       })
         .hitTestBehavior(this.isTopAreaExpand ? HitTestMode.Default : HitTestMode.Transparent)
+        .offset(!this.topAreaExpandShouldHideNormal ? {x: -5} : undefined) // 这东西自带一个+5的边距，给它抵消掉
     }.hitTestBehavior(this.isTopAreaExpand ? HitTestMode.Default : HitTestMode.Transparent)
   }
   @Builder TopAreaActionButton_Normal() {
     Row({space: 24}) {
       // Discover
-      Blank()
+      Blank().width(40)
 
       // Settings
       LightUpRoundedButton({
@@ -157,27 +199,8 @@ export struct MainPage {
     .animation({curve: curves.springMotion()})
   }
 
-  @Builder CoverInfo() {
+  @Builder AuthorInfo() {
     Column() {
-      Row() {
-        ImageCover({
-          nowPlayingCoverImg: this.nowPlayingCoverImg,
-          handleLike: () => {
-            this.handleLike()
-          },
-          useLight: true,
-          useCoverAmbBreathe: false,
-          resetNewBackgroundColor: (colors) => {
-            this.backgroundFlowingColors = colors.map((val) => val.color)
-            Logger.debug(`try resetting flow colors: `, this.backgroundFlowingColors.toString())
-            this.controller.setEffectParams({
-              colorSource: this.backgroundFlowingColors
-            },)
-            this.controller.play()
-          }
-        })
-      }.layoutWeight(1)
-      Blank().height(24)
       Text(nps.currentSong.name)
         .width('90%')
         .textAlign(TextAlign.Start)
@@ -201,7 +224,40 @@ export struct MainPage {
           fadeout: true
         })
         .fontColor(Color.White)
-      Blank().height(24)
+    }.visibility(this.isBottomAreaExpand ? Visibility.Hidden : Visibility.Visible)
+    .padding({right: 40}) // 避让右边按钮
+    .transition(TransitionEffect.OPACITY.animation({duration: 200}))
+    .alignItems(HorizontalAlign.Start)
+  }
+
+  @Builder CoverInfo() {
+    Column() {
+      Row() {
+        ImageCover({
+          nowPlayingCoverImg: this.nowPlayingCoverImg,
+          handleLike: () => {
+            this.handleLike()
+          },
+          useLight: true,
+          useCoverAmbBreathe: false,
+          resetNewBackgroundColor: (colors) => {
+            this.backgroundFlowingColors = colors.map((val) => val.color)
+            Logger.debug(`try resetting flow colors: `, this.backgroundFlowingColors.toString())
+            this.controller.setEffectParams({
+              colorSource: this.backgroundFlowingColors
+            },)
+            this.controller.play()
+          }
+        })
+      }.layoutWeight(1)
+      // Blank().height(24)
+      Stack(){
+        this.AuthorInfo()
+        this.BottomAreaControlButton_ActionBar() // 这东西自带 margin，所以上下边距就不用要了
+      }//.width('100%').padding(this.isBottomAreaExpand ? undefined : {right: 24})
+      .alignContent(this.isBottomAreaExpand ? Alignment.Center : Alignment.End)
+      .animation({curve: curves.springMotion()})
+      // Blank().height(24)
 
       this.ProgressBar('90%')
     }
