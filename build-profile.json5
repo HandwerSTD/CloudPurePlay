@@ -66,7 +66,7 @@
     },
     {
       "name": "cloud_api",
-      "srcPath": "./common/cloud_api",
+      "srcPath": "./apis/cloud_api"
     },
     {
       "name": "app_settings",
