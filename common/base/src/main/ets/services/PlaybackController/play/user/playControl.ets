@@ -21,11 +21,13 @@ import { SCEmitter } from "../../../../exports"
 
 const TAG = '[playerControl] '
 
-export enum PersonalFMState {
+export enum SpecialPlayMode {
   DISABLED = -1,
-  DEFAULT = 0,
-  FAMILIAR = 1,
-  EXPLORE = 2
+  PERSONAL_FM_DEFAULT = 0,
+  PERSONAL_FM_FAMILIAR = 1,
+  PERSONAL_FM_EXPLORE = 2,
+  HEART_MODE = 3,
+  DAILY_LIST = 4
 }
 
 const playControlKV = new PreferenceUtils('PlayControl')
@@ -39,7 +41,7 @@ export class PlayControl {
     store.currentArtists = kv.get('CurrentArtists') ?? store.currentArtists
     store.currentPic = kv.get('CurrentImage') ?? store.currentPic
     store.playMode = kv.get('PlayMode') ?? store.playMode
-    store.isPersonalFMState = kv.get('isPersonalFMState') ?? store.isPersonalFMState
+    store.specialPlayMode = kv.get('isPersonalFMState') ?? store.specialPlayMode
     Logger.debug(TAG, `load store info = ${JSON.stringify(store)}`)
     await AVPlayerUtils.init()
     if (store.currentSong !== Song_INITIAL) {
@@ -296,6 +298,6 @@ export class PlayControl {
     playControlKV.put('CurrentArtists', artists)
     playControlKV.put('CurrentImage', imgUrl)
     playControlKV.put('CurrentQueueIndex', PlayQueueUtils.currentQueueIndex)
-    playControlKV.put('isPersonalFMState', NowPlayingStore.isPersonalFMState)
+    playControlKV.put('isPersonalFMState', NowPlayingStore.specialPlayMode)
   }
 }

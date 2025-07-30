@@ -4,7 +4,7 @@ import { FeaturedPlayUtils, GlobalStore, Logger, NowPlayingStore, PlayControl, R
 import { PLAYMODE, SongAPIUtils, SongConvertUtils, Song_INITIAL } from "@handwer/cloud_api"
 import { LightUpRoundedButton, LightUpConfig, LightUpBorderRoundButton, SnackBarUtils,
   UIComponentUtils } from "@handwer/ui_components"
-import { ColorMetrics, curves, LengthMetrics } from "@kit.ArkUI"
+import { ColorMetrics, curves, LengthMetrics, SymbolGlyphModifier } from "@kit.ArkUI"
 import { ClickUtil, DateUtil } from "@pura/harmony-utils"
 import { HdsActionBar, ActionBarButton, ActionBarStyle, hdsEffect, HdsSnackBar } from "@kit.UIDesignKit"
 import { cacheDownload } from "@kit.BasicServicesKit"
@@ -39,6 +39,12 @@ const LIGHT_PLAYBACK_BTN_LG: LightUpConfig = {
   lightHeight: 300,
   lightBloom: 0,
 }
+
+const TOP_BTN_HIGHLIGHT_SHADOW: ShadowOptions = {
+  color: '#33000000',
+  radius: 12
+}
+
 @ComponentV2
 export struct MainPage {
   hdsSnackBar = new HdsSnackBar(this.getUIContext())
@@ -101,6 +107,7 @@ export struct MainPage {
         startButtons: [
           new ActionBarButton({
             baseIcon: nps.isLiked ? $r('sys.symbol.heart_fill') : $r('sys.symbol.heart'),
+            baseIconSymbolGlyphModifier: nps.isLiked ? new SymbolGlyphModifier().fontColor([Color.Red]) : undefined,
             width: LengthMetrics.vp(40),
             onClick: () => {
               SongLike.likeThisSong((icon, msg) => {
@@ -143,6 +150,8 @@ export struct MainPage {
           new ActionBarButton({
             baseIcon: $r('sys.symbol.opticaldisc_badge_heart'),
             width: LengthMetrics.vp(40),
+            backgroundColor: nps.isHeartMode ? ColorMetrics.numeric(0xFFFFFFFF) : undefined,
+            baseIconSymbolGlyphModifier: nps.isHeartMode ? new SymbolGlyphModifier().fontColor([Color.Black]) : undefined,
             onClick: () => {
               FeaturedPlayUtils.playHeartMode((icon, msg) => {
                 SnackBarUtils.showMessage(this.hdsSnackBar, icon, msg)
@@ -152,6 +161,8 @@ export struct MainPage {
           new ActionBarButton({
             baseIcon: this.todayIcon,
             width: LengthMetrics.vp(40),
+            backgroundColor: nps.isDailyListMode ? ColorMetrics.numeric(0xFFFFFFFF) : undefined,
+            baseIconSymbolGlyphModifier: nps.isDailyListMode ? new SymbolGlyphModifier().fontColor([Color.Black]) : undefined,
             onClick: () => {
               FeaturedPlayUtils.playDailySongs((icon, msg) => {
                 SnackBarUtils.showMessage(this.hdsSnackBar, icon, msg)
@@ -161,6 +172,8 @@ export struct MainPage {
           new ActionBarButton({
             baseIcon: $r('sys.symbol.radio'),
             width: LengthMetrics.vp(40),
+            baseIconSymbolGlyphModifier: nps.isPersonalFM ? new SymbolGlyphModifier().fontColor([Color.Black]) : undefined,
+            backgroundColor: nps.isPersonalFM ? ColorMetrics.numeric(0xFFFFFFFF) : undefined,
             onClick: () => {
               FeaturedPlayUtils.playPersonalizedFM()
             }

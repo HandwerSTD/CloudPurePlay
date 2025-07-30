@@ -6,7 +6,7 @@ import { UserManager } from "../../../Network/UserManager"
 import UserStore from "../../../Network/UserStore"
 import PlayQueueUtils from "../../queue/PlayQueueUtils"
 import NowPlayingStore from "../NowPlayingStore"
-import { PersonalFMState, PlayControl } from "../user/playControl"
+import { SpecialPlayMode, PlayControl } from "../user/playControl"
 
 const TAG = '[FeaturedPlayUtils]'
 
@@ -17,7 +17,7 @@ export class FeaturedPlayUtils {
       nps.isPlayerLoading = true
       try {
         // AppStorage.setOrCreate(StorageConstants.IS_PERSONAL_FM, true)
-        nps.isPersonalFMState = PersonalFMState.DEFAULT
+        nps.specialPlayMode = SpecialPlayMode.PERSONAL_FM_DEFAULT
         await PlayQueueUtils.cleanQueue()
         // ToastUtil.showToast('开始播放私人FM')
         await PlayControl.playNext()
@@ -50,6 +50,7 @@ export class FeaturedPlayUtils {
             })
           Logger.debug(TAG, `set heart mode completed`)
           await PlayControl.playQueue(0)
+          nps.specialPlayMode = SpecialPlayMode.HEART_MODE
         } catch (e) {
           showToastCallback($r('sys.symbol.opticaldisc_badge_heart'), $r('app.string.start_playing_heart_mode_failed'))
           Logger.error(TAG, `play heart mode failed: ${JSON.stringify(e)}`)
@@ -65,7 +66,6 @@ export class FeaturedPlayUtils {
     }
   }
   static async playDailySongs(showToastCallback: (icon: ResourceStr, msg: ResourceStr) => void, todayIcon: ResourceStr) {
-
     const loadSongs = async () => {
       try {
         let result = await SongAPIUtils.getDailySongs()
@@ -100,6 +100,7 @@ export class FeaturedPlayUtils {
         await PlayQueueUtils.queueAddArray(queue)
         PlayControl.playQueue(songIndex)
         showToastCallback(todayIcon, $r('app.string.start_playing_daily_songs'))
+        NowPlayingStore.specialPlayMode = SpecialPlayMode.DAILY_LIST
       } catch (e) {
         showToastCallback(todayIcon, $r('app.string.start_playing_daily_songs_failed'))
       }

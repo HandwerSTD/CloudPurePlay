@@ -1,5 +1,5 @@
 import { LyricStyle, LyricStyle_INITIAL, PLAYMODE, Song, Song_INITIAL } from '@handwer/cloud_api'
-import { PersonalFMState } from './user/playControl'
+import { SpecialPlayMode as SpecialPlayMode } from './user/playControl'
 
 @ObservedV2
 class NowPlayingStore {
@@ -23,13 +23,21 @@ class NowPlayingStore {
   @Trace fileName: string = ''
   @Trace isLocalFile: boolean = false
 
-  @Trace isPersonalFMState: PersonalFMState = -1
+  @Trace specialPlayMode: SpecialPlayMode = -1
 
   get isPersonalFM(): boolean {
-    return this.isPersonalFMState !== PersonalFMState.DISABLED
+    return this.specialPlayMode === SpecialPlayMode.PERSONAL_FM_DEFAULT
+    || this.specialPlayMode === SpecialPlayMode.PERSONAL_FM_FAMILIAR
+    || this.specialPlayMode === SpecialPlayMode.PERSONAL_FM_EXPLORE
+  }
+  get isHeartMode(): boolean {
+    return this.specialPlayMode === SpecialPlayMode.HEART_MODE
+  }
+  get isDailyListMode(): boolean {
+    return this.specialPlayMode === SpecialPlayMode.DAILY_LIST
   }
   get personalFmMode() {
-    return this.isPersonalFMState
+    return this.specialPlayMode
   }
 }
 
