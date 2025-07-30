@@ -8,7 +8,7 @@ export class InstanceSwitcher {
   private constructor() {
   }
 
-  getInstance() {
+  static getInstance() {
     if (!InstanceSwitcher._instance) {
       InstanceSwitcher._instance = new InstanceSwitcher()
     }
@@ -16,4 +16,11 @@ export class InstanceSwitcher {
   }
 
   instanceType: INSTANCE_TYPE = INSTANCE_TYPE.CLOUD
+
+  static get InstanceType() {
+    return InstanceSwitcher.getInstance().instanceType
+  }
+  static set InstanceType(type: INSTANCE_TYPE) {
+    InstanceSwitcher.getInstance().instanceType = type
+  }
 }

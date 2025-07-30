@@ -9,3 +9,9 @@ export { SongAPIUtils as Cloud_SongAPIUtils } from '@handwer/cloud_api';
 export { TopListAPIUtils as Cloud_TopListAPIUtils } from '@handwer/cloud_api';
 
 export { User as CloudUser } from '@handwer/cloud_api' // 防止 structural typing
+
+export {
+  RequestContext as Cloud_RequestContext,
+  RequestCookieConfig as Cloud_RequestCookieConfig,
+  checkValidUriParams as Cloud_checkValidUriParams,
+  CloudAPIConfigUtils } from '@handwer/cloud_api'

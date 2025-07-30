@@ -2,7 +2,11 @@
  * ConfigUtils
  *
  */
-import { RequestContext, RequestCookieConfig } from "@handwer/cloud_api";
-import { checkValidUriParams, CloudAPIConfigUtils } from "@handwer/cloud_api";
 
-export { RequestContext, RequestCookieConfig, checkValidUriParams, CloudAPIConfigUtils }
+// Cloud API
+export {
+  Cloud_RequestContext,
+  Cloud_RequestCookieConfig,
+  Cloud_checkValidUriParams,
+  CloudAPIConfigUtils
+} from './cloud_api_adapter/CloudAPIExports'

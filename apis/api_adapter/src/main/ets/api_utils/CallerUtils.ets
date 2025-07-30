@@ -2,6 +2,7 @@
 import { User } from '../common_defs/entities/User';
 import { PlayQueue } from '../common_defs/model/PlayQueue';
 import { COMMENT_TYPE, COMMENT_SORT_TYPE } from '../common_defs/model/Enum';
+import { InstanceSwitcher, INSTANCE_TYPE } from '../api_switcher/InstanceSwitcher';
 import { Album, DjRadio, PlayList, PersonalListItem, TopListItem, AlbumInfoResult,
   SubAlbumResult, QualityType,
   SongPlayResult, Song, ArtistInfo,
@@ -24,7 +25,7 @@ import {
   Cloud_LyricAPIUtils,
   Cloud_PlayListAPIUtils,
   Cloud_SongAPIUtils,
-  Cloud_TopListAPIUtils } from './cloud_api_adapter_exports/CloudAPIExports';
+  Cloud_TopListAPIUtils } from './cloud_api_adapter/CloudAPIExports';
 
 export class AlbumAPIUtils {
   /**
@@ -33,7 +34,11 @@ export class AlbumAPIUtils {
    * @returns 专辑详细信息
    */
   static async getAlbumInfo(id: number): Promise<AlbumInfoResult> {
-    return Cloud_AlbumAPIUtils.getAlbumInfo(id);
+    if (InstanceSwitcher.InstanceType === INSTANCE_TYPE.CLOUD) {
+      return Cloud_AlbumAPIUtils.getAlbumInfo(id);
+    } else {
+      throw Error('API Unimplemented')
+    }
   }
   /**
    * 获取用户订阅的专辑
@@ -41,7 +46,11 @@ export class AlbumAPIUtils {
    * @returns 用户订阅的专辑数组
    */
   static async getUserSubscribedAlbum(statePersistent?: (val: Album[]) => void): Promise<SubAlbumResult> {
-    return Cloud_AlbumAPIUtils.getUserSubscribedAlbum(statePersistent);
+    if (InstanceSwitcher.InstanceType === INSTANCE_TYPE.CLOUD) {
+      return Cloud_AlbumAPIUtils.getUserSubscribedAlbum(statePersistent);
+    } else {
+      throw Error('API Unimplemented')
+    }
   }
   /**
    * 搜索专辑
@@ -49,7 +58,11 @@ export class AlbumAPIUtils {
    * @returns 匹配到的专辑数组
    */
   static async searchAlbums(keywords: string): Promise<Album[]> {
-    return Cloud_AlbumAPIUtils.searchAlbums(keywords);
+    if (InstanceSwitcher.InstanceType === INSTANCE_TYPE.CLOUD) {
+      return Cloud_AlbumAPIUtils.searchAlbums(keywords);
+    } else {
+      throw Error('API Unimplemented')
+    }
   }
 }
 
@@ -61,7 +74,11 @@ export class ArtistAPIUtils {
    * @returns 歌手详细信息
    */
   static async getArtistInfo(id: number): Promise<ArtistInfo> {
-    return Cloud_ArtistAPIUtils.getArtistInfo(id);
+    if (InstanceSwitcher.InstanceType === INSTANCE_TYPE.CLOUD) {
+      return Cloud_ArtistAPIUtils.getArtistInfo(id);
+    } else {
+      throw Error('API Unimplemented')
+    }
   }
 
   /**
@@ -71,7 +88,11 @@ export class ArtistAPIUtils {
    * @returns 匹配到的歌手数组
    */
   static async searchArtists(keywords: string, limit: number = 20): Promise<ArtistItem[]> {
-    return Cloud_ArtistAPIUtils.searchArtists(keywords, limit);
+    if (InstanceSwitcher.InstanceType === INSTANCE_TYPE.CLOUD) {
+      return Cloud_ArtistAPIUtils.searchArtists(keywords, limit);
+    } else {
+      throw Error('API Unimplemented')
+    }
   }
 }
 
@@ -94,7 +115,11 @@ export class CommentAPIUtils {
     sortType: COMMENT_SORT_TYPE,
     cursor?: number
   ): Promise<CommentResult> {
-    return Cloud_CommentAPIUtils.getComment(id, type, pageNo, pageSize, sortType, cursor);
+    if (InstanceSwitcher.InstanceType === INSTANCE_TYPE.CLOUD) {
+      return Cloud_CommentAPIUtils.getComment(id, type, pageNo, pageSize, sortType, cursor);
+    } else {
+      throw Error('API Unimplemented')
+    }
   }
 }
 
@@ -105,7 +130,11 @@ export class DjAPIUtils {
    * @returns 用户订阅的电台数组
    */
   static async getUserDjSubscribeList(statePersistent?: (val: DjRadio[]) => void): Promise<DjResult> {
-    return Cloud_DjAPIUtils.getUserDjSubscribeList(statePersistent);
+    if (InstanceSwitcher.InstanceType === INSTANCE_TYPE.CLOUD) {
+      return Cloud_DjAPIUtils.getUserDjSubscribeList(statePersistent);
+    } else {
+      throw Error('API Unimplemented')
+    }
   }
 
   /**
@@ -116,7 +145,11 @@ export class DjAPIUtils {
    * @returns 节目列表
    */
   static async getDjPrograms(rid: number, limit: number, offset: number): Promise<DjProgramResult> {
-    return Cloud_DjAPIUtils.getDjPrograms(rid, limit, offset);
+    if (InstanceSwitcher.InstanceType === INSTANCE_TYPE.CLOUD) {
+      return Cloud_DjAPIUtils.getDjPrograms(rid, limit, offset);
+    } else {
+      throw Error('API Unimplemented')
+    }
   }
 
   /**
@@ -139,15 +172,19 @@ export class DjAPIUtils {
     cleanQueue: () => Promise<void>,
     addToQueue: (queue: PlayQueue[]) => Promise<void>
   ): Promise<void> {
-    return Cloud_DjAPIUtils.putDjRadioInQueue(
-      rid,
-      trackCount,
-      limit,
-      offset,
-      first,
-      cleanQueue,
-      addToQueue
-    );
+    if (InstanceSwitcher.InstanceType === INSTANCE_TYPE.CLOUD) {
+      return Cloud_DjAPIUtils.putDjRadioInQueue(
+        rid,
+        trackCount,
+        limit,
+        offset,
+        first,
+        cleanQueue,
+        addToQueue
+      );
+    } else {
+      throw Error('API Unimplemented')
+    }
   }
 
   /**
@@ -156,7 +193,11 @@ export class DjAPIUtils {
    * @returns 匹配到的电台数组
    */
   static async getDjRadioList(keywords: string): Promise<DjRadio[]> {
-    return Cloud_DjAPIUtils.getDjRadioList(keywords);
+    if (InstanceSwitcher.InstanceType === INSTANCE_TYPE.CLOUD) {
+      return Cloud_DjAPIUtils.getDjRadioList(keywords);
+    } else {
+      throw Error('API Unimplemented')
+    }
   }
 }
 
@@ -167,7 +208,11 @@ export class LoginAPIUtils {
    * @returns 是否登录成功
    */
   static async getLoginStatus(statePersistent?: (val: User) => void): Promise<boolean> {
-    return Cloud_LoginAPIUtils.getLoginStatus(statePersistent);
+    if (InstanceSwitcher.InstanceType === INSTANCE_TYPE.CLOUD) {
+      return Cloud_LoginAPIUtils.getLoginStatus(statePersistent);
+    } else {
+      throw Error('API Unimplemented')
+    }
   }
 
   /**
@@ -176,7 +221,11 @@ export class LoginAPIUtils {
    * @returns 是否登出成功
    */
   static async logOut(statePersistent?: (val: User) => void): Promise<boolean> {
-    return Cloud_LoginAPIUtils.logOut(statePersistent);
+    if (InstanceSwitcher.InstanceType === INSTANCE_TYPE.CLOUD) {
+      return Cloud_LoginAPIUtils.logOut(statePersistent);
+    } else {
+      throw Error('API Unimplemented')
+    }
   }
 
   /**
@@ -184,7 +233,11 @@ export class LoginAPIUtils {
    * @returns str[0] 表示二维码的 key，str[1] 表示二维码图像链接
    */
   static async getQrCode(): Promise<string[]> {
-    return Cloud_LoginAPIUtils.getQrCode();
+    if (InstanceSwitcher.InstanceType === INSTANCE_TYPE.CLOUD) {
+      return Cloud_LoginAPIUtils.getQrCode();
+    } else {
+      throw Error('API Unimplemented')
+    }
   }
 
   /**
@@ -199,7 +252,11 @@ export class LoginAPIUtils {
     cookieSetter: (cookie: string) => void,
     loginStatePersistent?: (val: User) => void
   ): Promise<boolean> {
-    return Cloud_LoginAPIUtils.checkQrLogin(key, cookieSetter, loginStatePersistent);
+    if (InstanceSwitcher.InstanceType === INSTANCE_TYPE.CLOUD) {
+      return Cloud_LoginAPIUtils.checkQrLogin(key, cookieSetter, loginStatePersistent);
+    } else {
+      throw Error('API Unimplemented')
+    }
   }
 }
 
@@ -210,7 +267,11 @@ export class LyricAPIUtils {
    * @returns 歌词对象
    */
   static async getLyric(id: number): Promise<LyricResult> {
-    return Cloud_LyricAPIUtils.getLyric(id);
+    if (InstanceSwitcher.InstanceType === INSTANCE_TYPE.CLOUD) {
+      return Cloud_LyricAPIUtils.getLyric(id);
+    } else {
+      throw Error('API Unimplemented')
+    }
   }
 
   /**
@@ -219,7 +280,11 @@ export class LyricAPIUtils {
    * @returns 歌词文本
    */
   static async getLyricString(id: number): Promise<string> {
-    return Cloud_LyricAPIUtils.getLyricString(id);
+    if (InstanceSwitcher.InstanceType === INSTANCE_TYPE.CLOUD) {
+      return Cloud_LyricAPIUtils.getLyricString(id);
+    } else {
+      throw Error('API Unimplemented')
+    }
   }
 }
 
@@ -232,7 +297,11 @@ export class PlayListAPIUtils {
    * @returns 歌单列表
    */
   static async getPlayLists(offset: number, user: User, statePersistent?: (val: PlayList[]) => void): Promise<PlayListResult> {
-    return Cloud_PlayListAPIUtils.getPlayLists(offset, user as CloudUser, statePersistent);
+    if (InstanceSwitcher.InstanceType === INSTANCE_TYPE.CLOUD) {
+      return Cloud_PlayListAPIUtils.getPlayLists(offset, user as CloudUser, statePersistent);
+    } else {
+      throw Error('API Unimplemented')
+    }
   }
 
   /**
@@ -244,7 +313,11 @@ export class PlayListAPIUtils {
    * @returns 歌曲列表
    */
   static async getPlayListSongs(id: number, limit: number, offset: number, usetimestamp: boolean = true): Promise<PlayListSong[]> {
-    return Cloud_PlayListAPIUtils.getPlayListSongs(id, limit, offset, usetimestamp);
+    if (InstanceSwitcher.InstanceType === INSTANCE_TYPE.CLOUD) {
+      return Cloud_PlayListAPIUtils.getPlayListSongs(id, limit, offset, usetimestamp);
+    } else {
+      throw Error('API Unimplemented')
+    }
   }
 
   /**
@@ -255,7 +328,11 @@ export class PlayListAPIUtils {
    * @returns 是否操作成功
    */
   static async PlayListOperation(op: 'add' | 'del', pid: number, tracks: number): Promise<boolean> {
-    return Cloud_PlayListAPIUtils.PlayListOperation(op, pid, tracks);
+    if (InstanceSwitcher.InstanceType === INSTANCE_TYPE.CLOUD) {
+      return Cloud_PlayListAPIUtils.PlayListOperation(op, pid, tracks);
+    } else {
+      throw Error('API Unimplemented')
+    }
   }
 
   /**
@@ -265,7 +342,11 @@ export class PlayListAPIUtils {
    * @returns 匹配到的歌单列表
    */
   static async searchPlayLists(keywords: string, offset: number): Promise<PlayListsResult> {
-    return Cloud_PlayListAPIUtils.searchPlayLists(keywords, offset);
+    if (InstanceSwitcher.InstanceType === INSTANCE_TYPE.CLOUD) {
+      return Cloud_PlayListAPIUtils.searchPlayLists(keywords, offset);
+    } else {
+      throw Error('API Unimplemented')
+    }
   }
 
   /**
@@ -275,7 +356,11 @@ export class PlayListAPIUtils {
    * @returns 是否操作成功
    */
   static async subscribePlayList(id: number, mode: number): Promise<boolean> {
-    return Cloud_PlayListAPIUtils.subscribePlayList(id, mode);
+    if (InstanceSwitcher.InstanceType === INSTANCE_TYPE.CLOUD) {
+      return Cloud_PlayListAPIUtils.subscribePlayList(id, mode);
+    } else {
+      throw Error('API Unimplemented')
+    }
   }
 
   /**
@@ -284,7 +369,11 @@ export class PlayListAPIUtils {
    * @returns 推荐歌单列表
    */
   static async getPersonalizedList(statePersistent?: (val: PersonalListItem[]) => void): Promise<PersonalListItem[]> {
-    return Cloud_PlayListAPIUtils.getPersonalizedList(statePersistent);
+    if (InstanceSwitcher.InstanceType === INSTANCE_TYPE.CLOUD) {
+      return Cloud_PlayListAPIUtils.getPersonalizedList(statePersistent);
+    } else {
+      throw Error('API Unimplemented')
+    }
   }
 
   /**
@@ -293,7 +382,11 @@ export class PlayListAPIUtils {
    * @returns 是否删除成功
    */
   static async deletePlayList(id: number): Promise<boolean> {
-    return Cloud_PlayListAPIUtils.deletePlayList(id);
+    if (InstanceSwitcher.InstanceType === INSTANCE_TYPE.CLOUD) {
+      return Cloud_PlayListAPIUtils.deletePlayList(id);
+    } else {
+      throw Error('API Unimplemented')
+    }
   }
 
   /**
@@ -303,7 +396,11 @@ export class PlayListAPIUtils {
    * @returns 无
    */
   static async createPlayList(name: string, isPrivacy: boolean): Promise<void> {
-    return Cloud_PlayListAPIUtils.createPlayList(name, isPrivacy);
+    if (InstanceSwitcher.InstanceType === INSTANCE_TYPE.CLOUD) {
+      return Cloud_PlayListAPIUtils.createPlayList(name, isPrivacy);
+    } else {
+      throw Error('API Unimplemented')
+    }
   }
 }
 
@@ -314,7 +411,11 @@ export class SongAPIUtils {
    * @returns 是否可用
    */
   static async checkMusic(id: number): Promise<boolean> {
-    return Cloud_SongAPIUtils.checkMusic(id);
+    if (InstanceSwitcher.InstanceType === INSTANCE_TYPE.CLOUD) {
+      return Cloud_SongAPIUtils.checkMusic(id);
+    } else {
+      throw Error('API Unimplemented')
+    }
   }
 
   /**
@@ -325,7 +426,11 @@ export class SongAPIUtils {
    * @returns 匹配到的歌曲列表
    */
   static async searchSongs(keywords: string, offset: number, limit: number = 30): Promise<SearchReturn> {
-    return Cloud_SongAPIUtils.searchSongs(keywords, offset, limit);
+    if (InstanceSwitcher.InstanceType === INSTANCE_TYPE.CLOUD) {
+      return Cloud_SongAPIUtils.searchSongs(keywords, offset, limit);
+    } else {
+      throw Error('API Unimplemented')
+    }
   }
 
   /**
@@ -336,7 +441,11 @@ export class SongAPIUtils {
    * @returns 歌曲播放信息
    */
   static async getSongUrl(id: number, quality: QualityType, isLogged: boolean): Promise<SongPlayResult> {
-    return Cloud_SongAPIUtils.getSongUrl(id, quality, isLogged);
+    if (InstanceSwitcher.InstanceType === INSTANCE_TYPE.CLOUD) {
+      return Cloud_SongAPIUtils.getSongUrl(id, quality, isLogged);
+    } else {
+      throw Error('API Unimplemented')
+    }
   }
 
   /**
@@ -345,7 +454,11 @@ export class SongAPIUtils {
    * @returns 歌曲图片链接
    */
   static async getSongPicUrl(ids: number): Promise<string> {
-    return Cloud_SongAPIUtils.getSongPicUrl(ids);
+    if (InstanceSwitcher.InstanceType === INSTANCE_TYPE.CLOUD) {
+      return Cloud_SongAPIUtils.getSongPicUrl(ids);
+    } else {
+      throw Error('API Unimplemented')
+    }
   }
 
   /**
@@ -354,7 +467,11 @@ export class SongAPIUtils {
    * @returns 推荐歌曲列表
    */
   static async getDailySongs(useCookie: boolean = true): Promise<DailySongRes[]> {
-    return Cloud_SongAPIUtils.getDailySongs(useCookie);
+    if (InstanceSwitcher.InstanceType === INSTANCE_TYPE.CLOUD) {
+      return Cloud_SongAPIUtils.getDailySongs(useCookie);
+    } else {
+      throw Error('API Unimplemented')
+    }
   }
 
   /**
@@ -364,7 +481,11 @@ export class SongAPIUtils {
    * @returns 喜欢的歌曲ID数组
    */
   static async getLikeList(user: User, statePersistent?: (val: string[]) => void): Promise<string[]> {
-    return Cloud_SongAPIUtils.getLikeList(user as CloudUser, statePersistent);
+    if (InstanceSwitcher.InstanceType === INSTANCE_TYPE.CLOUD) {
+      return Cloud_SongAPIUtils.getLikeList(user as CloudUser, statePersistent);
+    } else {
+      throw Error('API Unimplemented')
+    }
   }
 
   /**
@@ -373,7 +494,11 @@ export class SongAPIUtils {
    * @returns 是否操作成功
    */
   static async likeMusic(id: number): Promise<boolean> {
-    return Cloud_SongAPIUtils.likeMusic(id);
+    if (InstanceSwitcher.InstanceType === INSTANCE_TYPE.CLOUD) {
+      return Cloud_SongAPIUtils.likeMusic(id);
+    } else {
+      throw Error('API Unimplemented')
+    }
   }
 
   /**
@@ -390,7 +515,11 @@ export class SongAPIUtils {
     cleanQueue: () => Promise<void>,
     addQueue: (queue: PlayQueue[]) => Promise<void>
   ): Promise<void> {
-    return Cloud_SongAPIUtils.setHeartMode(id, pid, cleanQueue, addQueue);
+    if (InstanceSwitcher.InstanceType === INSTANCE_TYPE.CLOUD) {
+      return Cloud_SongAPIUtils.setHeartMode(id, pid, cleanQueue, addQueue);
+    } else {
+      throw Error('API Unimplemented')
+    }
   }
 
   /**
@@ -399,7 +528,11 @@ export class SongAPIUtils {
    * @returns 歌曲对象
    */
   static async getPersonalFmSong(mode: number): Promise<Song> {
-    return Cloud_SongAPIUtils.getPersonalFmSong(mode);
+    if (InstanceSwitcher.InstanceType === INSTANCE_TYPE.CLOUD) {
+      return Cloud_SongAPIUtils.getPersonalFmSong(mode);
+    } else {
+      throw Error('API Unimplemented')
+    }
   }
 }
 
@@ -410,6 +543,10 @@ export class TopListAPIUtils {
    * @returns 排行榜列表
    */
   static async getTopList(statePersistent?: (val: TopListItem[]) => void): Promise<TopListItem[]> {
-    return Cloud_TopListAPIUtils.getTopList(statePersistent);
+    if (InstanceSwitcher.InstanceType === INSTANCE_TYPE.CLOUD) {
+      return Cloud_TopListAPIUtils.getTopList(statePersistent);
+    } else {
+      throw Error('API Unimplemented')
+    }
   }
 }
