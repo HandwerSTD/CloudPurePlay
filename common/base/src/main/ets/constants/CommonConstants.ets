@@ -20,3 +20,5 @@ export class SCDistKV {
 export class SCEmitter {
   static readonly LyricUpdate = 1
 }
+
+export type ShowToastCallback = (icon: ResourceStr, msg: ResourceStr) => void

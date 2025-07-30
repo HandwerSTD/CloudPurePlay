@@ -62,8 +62,6 @@ export struct MainPage {
     return this.isTopAreaExpand && ResponsiveUtil.widthCheck(['xs','sm', 'md'])
   }
   get todayIcon() {
-    // const icon = 'sys.symbol.calendar_'+DateUtil.getTodayStr('dd')+'_a'
-    // const icon =
     return UIComponentUtils.getTodayIcon()
   }
   get isThisSongLiked() {
@@ -105,7 +103,9 @@ export struct MainPage {
             baseIcon: nps.isLiked ? $r('sys.symbol.heart_fill') : $r('sys.symbol.heart'),
             width: LengthMetrics.vp(40),
             onClick: () => {
-              SongLike.likeThisSong()
+              SongLike.likeThisSong((icon, msg) => {
+                SnackBarUtils.showMessage(this.hdsSnackBar, icon, msg)
+              })
             }
           }),
           new ActionBarButton({

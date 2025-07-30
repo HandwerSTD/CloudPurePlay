@@ -1,5 +1,6 @@
 import { PlayList, PlayListAPIUtils, Song, SongAPIUtils } from "@handwer/cloud_api"
 import { LogUtil, ToastUtil } from "@pura/harmony-utils"
+import { ShowToastCallback } from "../../../../exports"
 import { UserManager } from "../../../Network/UserManager"
 import UserStore from "../../../Network/UserStore"
 import NowPlayingStore from "../NowPlayingStore"
@@ -27,7 +28,7 @@ export class SongLike {
   /**
    * 喜欢当前歌曲
    */
-  static async likeThisSong() {
+  static async likeThisSong(toastCallback?: ShowToastCallback) {
     const store = UserStore
     try {
       let isLogged: boolean = UserManager.isLogged
@@ -43,7 +44,7 @@ export class SongLike {
           if (val) store.likeList = new Set(val)
           UserManager.updateLikeList()
         })
-        ToastUtil.showToast(result ? '已收藏至【我喜欢的音乐】' : '收藏失败')
+        toastCallback?.($r('sys.symbol.heart_fill'), result ? '已收藏至【我喜欢的音乐】' : '收藏失败')
       } else { // 已喜欢
         let currentSong = NowPlayingStore.currentSong
         let userPlayLists = UserStore.userPlaylists
@@ -54,10 +55,11 @@ export class SongLike {
           store.likeList = new Set(val ?? store.likeList)
           UserManager.updateLikeList()
         })
-        ToastUtil.showToast(result ? '取消喜欢当前歌曲' : '取消喜欢失败')
+        toastCallback?.($r('sys.symbol.heart'), result ? '取消喜欢当前歌曲' : '取消喜欢失败')
       }
     } catch (e) {
       LogUtil.error(TAG, 'likeThisSong Error: ' + e.message)
+      toastCallback?.($r('sys.symbol.heart_slash'), '修改红心失败')
     }
   }
 }
