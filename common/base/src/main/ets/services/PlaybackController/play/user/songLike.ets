@@ -1,4 +1,4 @@
-import { PlayList, PlayListAPIUtils, Song, SongAPIUtils } from "@handwer/cloud_api"
+import { PlayList, PlayListAPIUtils, Song, SongAPIUtils } from "@handwer/api_adapter"
 import { LogUtil, ToastUtil } from "@pura/harmony-utils"
 import { ShowToastCallback } from "../../../../exports"
 import { UserManager } from "../../../Network/UserManager"

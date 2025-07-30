@@ -1,20 +1,30 @@
-import { getAlbumInfo, getUserSubscribedAlbum, searchAlbums } from '../api/albumApi';
-import { getArtistInfo, searchArtists } from '../api/artistApi';
-import { getComment } from '../api/commentApi';
-import { getUserDjSubscribeList, getDjPrograms, putDjRadioInQueue, getDjRadioList } from '../api/djApi';
-import { getLoginStatus, logOut } from '../api/loginApi';
-import { getLyric, getLyricString } from '../api/LyricApi';
-import { getPlayLists, getPlayListSongs, PlayListOperation, getCloudList, searchPlayLists, subscribePlayList, getPersonalizedList, deletePlayList, createPlayList, DailySongRes, PlayListsResult } from '../api/playListApi';
-import { getQrCode, checkQrLogin } from '../api/qrCodeApi';
-import { checkMusic, searchSongs, getSongUrl, getSongPicUrl, getDailySongs, getLikeList, likeMusic, setHeartMode, getPersonalFmSong } from '../api/songApi';
-import { getTopList } from '../api/topListApi';
-import { getDownloadInfo } from '../api/getDownloadInfo';
-import { User } from '../entities/User';
-import { PlayQueue } from '../model/PlayQueue';
-import { QualityType } from '../entities/Song';
-import { COMMENT_TYPE, COMMENT_SORT_TYPE } from '../model/Enum';
-import { preferences } from '@kit.ArkData';
-import { Album, DjRadio, PlayList, PersonalListItem, TopListItem } from './ExportedEntities';
+
+import { User } from '../common_defs/entities/User';
+import { PlayQueue } from '../common_defs/model/PlayQueue';
+import { COMMENT_TYPE, COMMENT_SORT_TYPE } from '../common_defs/model/Enum';
+import { Album, DjRadio, PlayList, PersonalListItem, TopListItem, AlbumInfoResult,
+  SubAlbumResult, QualityType,
+  SongPlayResult, Song, ArtistInfo,
+  CommentResult, LyricResult,
+  PlayListsResult,
+  PlayListSong,
+  PlayListResult,
+  ArtistItem,
+  DjResult,
+  DjProgramResult,
+  SearchReturn,
+  DailySongRes} from '../common_defs/ExportedEntities';
+import {
+  CloudUser,
+  Cloud_AlbumAPIUtils,
+  Cloud_ArtistAPIUtils,
+  Cloud_CommentAPIUtils,
+  Cloud_DjAPIUtils,
+  Cloud_LoginAPIUtils,
+  Cloud_LyricAPIUtils,
+  Cloud_PlayListAPIUtils,
+  Cloud_SongAPIUtils,
+  Cloud_TopListAPIUtils } from './cloud_api_adapter_exports/CloudAPIExports';
 
 export class AlbumAPIUtils {
   /**
@@ -22,26 +32,27 @@ export class AlbumAPIUtils {
    * @param id 专辑ID
    * @returns 专辑详细信息
    */
-  static async getAlbumInfo(id: number) {
-    return getAlbumInfo(id);
+  static async getAlbumInfo(id: number): Promise<AlbumInfoResult> {
+    return Cloud_AlbumAPIUtils.getAlbumInfo(id);
   }
   /**
    * 获取用户订阅的专辑
    * @param statePersistent 按需求，可传入回调对返回的 Album[] 进行持久化
    * @returns 用户订阅的专辑数组
    */
-  static async getUserSubscribedAlbum(statePersistent?: (val: Album[]) => void) {
-    return getUserSubscribedAlbum(statePersistent);
+  static async getUserSubscribedAlbum(statePersistent?: (val: Album[]) => void): Promise<SubAlbumResult> {
+    return Cloud_AlbumAPIUtils.getUserSubscribedAlbum(statePersistent);
   }
   /**
    * 搜索专辑
    * @param keywords 搜索关键字
    * @returns 匹配到的专辑数组
    */
-  static async searchAlbums(keywords: string) {
-    return searchAlbums(keywords);
+  static async searchAlbums(keywords: string): Promise<Album[]> {
+    return Cloud_AlbumAPIUtils.searchAlbums(keywords);
   }
 }
+
 
 export class ArtistAPIUtils {
   /**
@@ -49,17 +60,18 @@ export class ArtistAPIUtils {
    * @param id 歌手ID
    * @returns 歌手详细信息
    */
-  static async getArtistInfo(id: number) {
-    return getArtistInfo(id);
+  static async getArtistInfo(id: number): Promise<ArtistInfo> {
+    return Cloud_ArtistAPIUtils.getArtistInfo(id);
   }
+
   /**
    * 搜索歌手
    * @param keywords 搜索关键字
    * @param limit 返回数量，默认20
    * @returns 匹配到的歌手数组
    */
-  static async searchArtists(keywords: string, limit: number = 20) {
-    return searchArtists(keywords, limit);
+  static async searchArtists(keywords: string, limit: number = 20): Promise<ArtistItem[]> {
+    return Cloud_ArtistAPIUtils.searchArtists(keywords, limit);
   }
 }
 
@@ -74,14 +86,17 @@ export class CommentAPIUtils {
    * @param cursor 游标（可选）
    * @returns 评论数据
    */
-  static async getComment(id: number, type: COMMENT_TYPE, pageNo: number = 1, pageSize: number = 30, sortType: COMMENT_SORT_TYPE, cursor?: number) {
-    return getComment(id, type, pageNo, pageSize, sortType, cursor);
+  static async getComment(
+    id: number,
+    type: COMMENT_TYPE,
+    pageNo: number = 1,
+    pageSize: number = 30,
+    sortType: COMMENT_SORT_TYPE,
+    cursor?: number
+  ): Promise<CommentResult> {
+    return Cloud_CommentAPIUtils.getComment(id, type, pageNo, pageSize, sortType, cursor);
   }
 }
-
-/**
- * DjAPIUtils 提供对电台（播客 Podcast）的支持，不是私人 FM，私人 FM 请使用 SongAPIUtils
- */
 
 export class DjAPIUtils {
   /**
@@ -89,9 +104,10 @@ export class DjAPIUtils {
    * @param statePersistent 按需求，可传入回调对返回的 DjRadio[] 进行持久化
    * @returns 用户订阅的电台数组
    */
-  static async getUserDjSubscribeList(statePersistent?: (val: DjRadio[]) => void) {
-    return getUserDjSubscribeList(statePersistent);
+  static async getUserDjSubscribeList(statePersistent?: (val: DjRadio[]) => void): Promise<DjResult> {
+    return Cloud_DjAPIUtils.getUserDjSubscribeList(statePersistent);
   }
+
   /**
    * 获取电台节目列表
    * @param rid 电台ID
@@ -99,9 +115,10 @@ export class DjAPIUtils {
    * @param offset 偏移量
    * @returns 节目列表
    */
-  static async getDjPrograms(rid: number, limit: number, offset: number) {
-    return getDjPrograms(rid, limit, offset);
+  static async getDjPrograms(rid: number, limit: number, offset: number): Promise<DjProgramResult> {
+    return Cloud_DjAPIUtils.getDjPrograms(rid, limit, offset);
   }
+
   /**
    * 将电台节目加入播放队列
    * @param rid 电台ID
@@ -121,16 +138,25 @@ export class DjAPIUtils {
     first: boolean = true,
     cleanQueue: () => Promise<void>,
     addToQueue: (queue: PlayQueue[]) => Promise<void>
-  ) {
-    return putDjRadioInQueue(rid, trackCount, limit, offset, first, cleanQueue, addToQueue);
+  ): Promise<void> {
+    return Cloud_DjAPIUtils.putDjRadioInQueue(
+      rid,
+      trackCount,
+      limit,
+      offset,
+      first,
+      cleanQueue,
+      addToQueue
+    );
   }
+
   /**
    * 搜索电台
    * @param keywords 搜索关键字
    * @returns 匹配到的电台数组
    */
-  static async getDjRadioList(keywords: string) {
-    return getDjRadioList(keywords);
+  static async getDjRadioList(keywords: string): Promise<DjRadio[]> {
+    return Cloud_DjAPIUtils.getDjRadioList(keywords);
   }
 }
 
@@ -140,25 +166,27 @@ export class LoginAPIUtils {
    * @param statePersistent 按需求，可传入回调对返回的 User 进行持久化
    * @returns 是否登录成功
    */
-  static async getLoginStatus(statePersistent?: (val: User) => void) {
-    return getLoginStatus(statePersistent);
+  static async getLoginStatus(statePersistent?: (val: User) => void): Promise<boolean> {
+    return Cloud_LoginAPIUtils.getLoginStatus(statePersistent);
   }
+
   /**
    * 登出
    * @param statePersistent 按需求，可传入回调对返回的 User 进行持久化
    * @returns 是否登出成功
    */
-  static async logOut(statePersistent?: (val: User) => void) {
-    return logOut(statePersistent);
+  static async logOut(statePersistent?: (val: User) => void): Promise<boolean> {
+    return Cloud_LoginAPIUtils.logOut(statePersistent);
   }
 
   /**
    * 获取二维码图像
    * @returns str[0] 表示二维码的 key，str[1] 表示二维码图像链接
    */
-  static async getQrCode() {
-    return getQrCode();
+  static async getQrCode(): Promise<string[]> {
+    return Cloud_LoginAPIUtils.getQrCode();
   }
+
   /**
    * 在二维码扫描之后检查二维码扫描结果（可定时轮询或用户手动查询）
    * @param key 刚刚获取的二维码的 key
@@ -170,8 +198,8 @@ export class LoginAPIUtils {
     key: string,
     cookieSetter: (cookie: string) => void,
     loginStatePersistent?: (val: User) => void
-  ) {
-    return checkQrLogin(key, cookieSetter, loginStatePersistent);
+  ): Promise<boolean> {
+    return Cloud_LoginAPIUtils.checkQrLogin(key, cookieSetter, loginStatePersistent);
   }
 }
 
@@ -181,20 +209,19 @@ export class LyricAPIUtils {
    * @param id 歌曲ID
    * @returns 歌词对象
    */
-  static async getLyric(id: number) {
-    return getLyric(id);
+  static async getLyric(id: number): Promise<LyricResult> {
+    return Cloud_LyricAPIUtils.getLyric(id);
   }
+
   /**
    * 获取歌词字符串
    * @param id 歌曲ID
    * @returns 歌词文本
    */
-  static async getLyricString(id: number) {
-    return getLyricString(id);
+  static async getLyricString(id: number): Promise<string> {
+    return Cloud_LyricAPIUtils.getLyricString(id);
   }
 }
-
-export { DailySongRes } from '../api/playListApi'
 
 export class PlayListAPIUtils {
   /**
@@ -204,9 +231,10 @@ export class PlayListAPIUtils {
    * @param statePersistent 按需求，可传入回调对返回的 PlayList[] 进行持久化
    * @returns 歌单列表
    */
-  static async getPlayLists(offset: number, user: User, statePersistent?: (val: PlayList[]) => void) {
-    return getPlayLists(offset, user, statePersistent);
+  static async getPlayLists(offset: number, user: User, statePersistent?: (val: PlayList[]) => void): Promise<PlayListResult> {
+    return Cloud_PlayListAPIUtils.getPlayLists(offset, user as CloudUser, statePersistent);
   }
+
   /**
    * 获取歌单内歌曲列表
    * @param id 歌单ID
@@ -215,9 +243,10 @@ export class PlayListAPIUtils {
    * @param usetimestamp 是否带时间戳，默认true
    * @returns 歌曲列表
    */
-  static async getPlayListSongs(id: number, limit: number, offset: number, usetimestamp: boolean = true) {
-    return getPlayListSongs(id, limit, offset, usetimestamp);
+  static async getPlayListSongs(id: number, limit: number, offset: number, usetimestamp: boolean = true): Promise<PlayListSong[]> {
+    return Cloud_PlayListAPIUtils.getPlayListSongs(id, limit, offset, usetimestamp);
   }
+
   /**
    * 歌单操作（添加/删除歌曲）
    * @param op 操作类型 'add' 或 'del'
@@ -225,51 +254,48 @@ export class PlayListAPIUtils {
    * @param tracks 歌曲ID
    * @returns 是否操作成功
    */
-  static async PlayListOperation(op: 'add' | 'del', pid: number, tracks: number) {
-    return PlayListOperation(op, pid, tracks);
+  static async PlayListOperation(op: 'add' | 'del', pid: number, tracks: number): Promise<boolean> {
+    return Cloud_PlayListAPIUtils.PlayListOperation(op, pid, tracks);
   }
-  /**
-   * 获取云盘歌曲列表
-   * @param offset 偏移量
-   * @returns 云盘歌曲列表
-   */
-  static async getCloudList(offset: number) {
-    return getCloudList(offset);
-  }
+
   /**
    * 搜索歌单
    * @param keywords 搜索关键字
    * @param offset 偏移量
    * @returns 匹配到的歌单列表
    */
-  static async searchPlayLists(keywords: string, offset: number) {
-    return searchPlayLists(keywords, offset);
+  static async searchPlayLists(keywords: string, offset: number): Promise<PlayListsResult> {
+    return Cloud_PlayListAPIUtils.searchPlayLists(keywords, offset);
   }
+
   /**
    * 收藏/取消收藏歌单
    * @param id 歌单ID
    * @param mode 1为收藏，2为取消收藏
    * @returns 是否操作成功
    */
-  static async subscribePlayList(id: number, mode: number) {
-    return subscribePlayList(id, mode);
+  static async subscribePlayList(id: number, mode: number): Promise<boolean> {
+    return Cloud_PlayListAPIUtils.subscribePlayList(id, mode);
   }
+
   /**
    * 获取个性化推荐歌单
    * @param statePersistent 按需求，可传入回调对返回的 PersonalListItem[] 进行持久化
    * @returns 推荐歌单列表
    */
-  static async getPersonalizedList(statePersistent?: (val: PersonalListItem[]) => void) {
-    return getPersonalizedList(statePersistent);
+  static async getPersonalizedList(statePersistent?: (val: PersonalListItem[]) => void): Promise<PersonalListItem[]> {
+    return Cloud_PlayListAPIUtils.getPersonalizedList(statePersistent);
   }
+
   /**
    * 删除歌单
    * @param id 歌单ID
    * @returns 是否删除成功
    */
-  static async deletePlayList(id: number) {
-    return deletePlayList(id);
+  static async deletePlayList(id: number): Promise<boolean> {
+    return Cloud_PlayListAPIUtils.deletePlayList(id);
   }
+
   /**
    * 创建歌单（暂不可用）
    * @param name 歌单名称
@@ -277,11 +303,9 @@ export class PlayListAPIUtils {
    * @returns 无
    */
   static async createPlayList(name: string, isPrivacy: boolean): Promise<void> {
-    return createPlayList(name, isPrivacy);
+    return Cloud_PlayListAPIUtils.createPlayList(name, isPrivacy);
   }
 }
-
-export { SearchReturn } from '../api/songApi'
 
 export class SongAPIUtils {
   /**
@@ -289,9 +313,10 @@ export class SongAPIUtils {
    * @param id 歌曲ID
    * @returns 是否可用
    */
-  static async checkMusic(id: number) {
-    return checkMusic(id);
+  static async checkMusic(id: number): Promise<boolean> {
+    return Cloud_SongAPIUtils.checkMusic(id);
   }
+
   /**
    * 搜索歌曲
    * @param keywords 搜索关键字
@@ -299,9 +324,10 @@ export class SongAPIUtils {
    * @param limit 返回数量，默认30
    * @returns 匹配到的歌曲列表
    */
-  static async searchSongs(keywords: string, offset: number, limit: number = 30) {
-    return searchSongs(keywords, offset, limit);
+  static async searchSongs(keywords: string, offset: number, limit: number = 30): Promise<SearchReturn> {
+    return Cloud_SongAPIUtils.searchSongs(keywords, offset, limit);
   }
+
   /**
    * 获取歌曲播放URL
    * @param id 歌曲ID
@@ -309,42 +335,47 @@ export class SongAPIUtils {
    * @param isLogged 是否已登录
    * @returns 歌曲播放信息
    */
-  static async getSongUrl(id: number, quality: QualityType, isLogged: boolean) {
-    return getSongUrl(id, quality, isLogged);
+  static async getSongUrl(id: number, quality: QualityType, isLogged: boolean): Promise<SongPlayResult> {
+    return Cloud_SongAPIUtils.getSongUrl(id, quality, isLogged);
   }
+
   /**
    * 获取歌曲图片URL
    * @param ids 歌曲ID
    * @returns 歌曲图片链接
    */
-  static async getSongPicUrl(ids: number) {
-    return getSongPicUrl(ids);
+  static async getSongPicUrl(ids: number): Promise<string> {
+    return Cloud_SongAPIUtils.getSongPicUrl(ids);
   }
+
   /**
    * 获取每日推荐歌曲
    * @param useCookie 是否使用cookie，默认true
    * @returns 推荐歌曲列表
    */
-  static async getDailySongs(useCookie: boolean = true) {
-    return getDailySongs(useCookie);
+  static async getDailySongs(useCookie: boolean = true): Promise<DailySongRes[]> {
+    return Cloud_SongAPIUtils.getDailySongs(useCookie);
   }
+
   /**
    * 获取喜欢的歌曲ID列表
    * @param user
    * @param statePersistent 按需求，可传入回调对返回的 string[] 进行持久化
    * @returns 喜欢的歌曲ID数组
    */
-  static async getLikeList(user: User, statePersistent?: (val: string[]) => void) {
-    return getLikeList(user, statePersistent);
+  static async getLikeList(user: User, statePersistent?: (val: string[]) => void): Promise<string[]> {
+    return Cloud_SongAPIUtils.getLikeList(user as CloudUser, statePersistent);
   }
+
   /**
    * 喜欢某首歌曲（不喜欢请直接在红心歌单中删除）
    * @param id 歌曲ID
    * @returns 是否操作成功
    */
-  static async likeMusic(id: number) {
-    return likeMusic(id);
+  static async likeMusic(id: number): Promise<boolean> {
+    return Cloud_SongAPIUtils.likeMusic(id);
   }
+
   /**
    * 设置心动模式
    * @param id 歌曲ID
@@ -358,16 +389,17 @@ export class SongAPIUtils {
     pid: number,
     cleanQueue: () => Promise<void>,
     addQueue: (queue: PlayQueue[]) => Promise<void>
-  ) {
-    return setHeartMode(id, pid, cleanQueue, addQueue);
+  ): Promise<void> {
+    return Cloud_SongAPIUtils.setHeartMode(id, pid, cleanQueue, addQueue);
   }
+
   /**
    * 获取私人FM歌曲
    * @param mode 模式
    * @returns 歌曲对象
    */
-  static async getPersonalFmSong(mode: number) {
-    return getPersonalFmSong(mode);
+  static async getPersonalFmSong(mode: number): Promise<Song> {
+    return Cloud_SongAPIUtils.getPersonalFmSong(mode);
   }
 }
 
@@ -377,22 +409,7 @@ export class TopListAPIUtils {
    * @param statePersistent 按需求，可传入回调对返回的 TopListItem[] 进行持久化
    * @returns 排行榜列表
    */
-  static async getTopList(statePersistent?: (val: TopListItem[]) => void) {
-    return getTopList(statePersistent);
+  static async getTopList(statePersistent?: (val: TopListItem[]) => void): Promise<TopListItem[]> {
+    return Cloud_TopListAPIUtils.getTopList(statePersistent);
   }
 }
-
-export class GetDownloadInfoAPIUtils {
-  /**
-   * 获取下载信息
-   * @param id 歌曲ID
-   * @param quality 音质类型
-   * @param isLogged 是否已登录
-   * @returns 下载信息
-   */
-  static async getDownloadInfo(id: string, quality: QualityType, isLogged: boolean) {
-    return getDownloadInfo(id, quality, isLogged);
-  }
-}
-
-export * from '../functions/convert'

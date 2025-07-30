@@ -1,4 +1,4 @@
-import { DjAPIUtils, PlayQueue } from "@handwer/cloud_api"
+import { DjAPIUtils, PlayQueue } from "@handwer/api_adapter"
 import { LogUtil, ToastUtil } from "@pura/harmony-utils"
 import playQueueUtils from "../../queue/PlayQueueUtils"
 import NowPlayingStore from "../NowPlayingStore"

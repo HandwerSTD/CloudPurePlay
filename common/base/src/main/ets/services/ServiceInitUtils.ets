@@ -3,7 +3,7 @@ import AudioCacheUtils from './PlaybackController/play/system/AudioCacheUtils'
 import { PlayControl } from './PlaybackController/play/user/playControl'
 import AVPlayerUtils from './PlaybackController/play/system/AVPlayerUtils'
 import Settings from './Preferences/PreferenceUtils'
-import { CloudAPIConfigUtils, RealIP_INITIAL } from '@handwer/cloud_api'
+import { CloudAPIConfigUtils, RealIP_INITIAL } from '@handwer/api_adapter'
 import { UserManager } from './Network/UserManager'
 
 export class ServiceInitUtils {

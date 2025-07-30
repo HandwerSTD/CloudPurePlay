@@ -1,4 +1,4 @@
-import { PlayQueue, SongAPIUtils } from "@handwer/cloud_api"
+import { PlayQueue, SongAPIUtils } from "@handwer/api_adapter"
 import { DialogHelper } from "@pura/harmony-dialog"
 import { LogUtil } from "@pura/harmony-utils"
 import { Logger } from "../../../../exports"

@@ -1,6 +1,6 @@
 import { Lrc_INITIAL, Lyric,
   LyricAPIUtils,
-  LyricResult, LyricResult_INITIAL, LyricStyle, Song } from "@handwer/cloud_api"
+  LyricResult, LyricResult_INITIAL, LyricStyle, Song } from "@handwer/api_adapter"
 import { EmitterUtil, LogUtil } from "@pura/harmony-utils"
 import { FileUtils } from "../../../utils/FileUtil"
 import { fileIo, ReadOptions } from "@kit.CoreFileKit"

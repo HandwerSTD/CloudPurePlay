@@ -1,4 +1,4 @@
-import { Song, Song_INITIAL } from "@handwer/cloud_api";
+import { Song, Song_INITIAL } from "@handwer/api_adapter";
 import { avSession } from "@kit.AVSessionKit";
 import { LogUtil } from "@pura/harmony-utils";
 import LyricUtils from "../../lyric/LyricUtils";

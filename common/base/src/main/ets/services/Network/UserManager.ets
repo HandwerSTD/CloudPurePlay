@@ -1,7 +1,6 @@
-import { CloudAPIConfigUtils, LoginAPIUtils, User, User_INITIAL, PlayList, DjRadio, Album, TopListItem, PersonalListItem } from '@handwer/cloud_api'
-
+import { CloudAPIConfigUtils, LoginAPIUtils, User, User_INITIAL, PlayList, DjRadio, Album, TopListItem, PersonalListItem } from '@handwer/api_adapter'
 import { PreferenceUtils } from '../Preferences/PreferenceUtils'
-import { PlayListAPIUtils, DjAPIUtils, AlbumAPIUtils, TopListAPIUtils, SongAPIUtils } from '@handwer/cloud_api'
+import { PlayListAPIUtils, DjAPIUtils, AlbumAPIUtils, TopListAPIUtils, SongAPIUtils } from '@handwer/api_adapter'
 import store from './UserStore'
 import Logger from '../../utils/Logger'
 import { SongLike } from '../PlaybackController/play/user/songLike'

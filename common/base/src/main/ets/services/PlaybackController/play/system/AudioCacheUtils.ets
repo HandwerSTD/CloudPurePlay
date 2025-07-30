@@ -1,4 +1,4 @@
-import { CacheSet, CacheSet_INITIAL } from "@handwer/cloud_api";
+import { CacheSet, CacheSet_INITIAL } from "@handwer/api_adapter";
 import { LogUtil } from "@pura/harmony-utils";
 import { MCMediaCache } from "@sj/mediacache";
 import { SCPref } from "../../../../constants/PreferenceConstants";

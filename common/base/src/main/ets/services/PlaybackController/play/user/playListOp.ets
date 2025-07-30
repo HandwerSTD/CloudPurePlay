@@ -1,4 +1,4 @@
-import { PlayListSong, PlayQueue, PlayingPlayList } from "@handwer/cloud_api"
+import { PlayListSong, PlayQueue, PlayingPlayList } from "@handwer/api_adapter"
 import { LogUtil, ToastUtil } from "@pura/harmony-utils"
 import PlayQueueUtils from "../../queue/PlayQueueUtils"
 import { PlayControl } from "./playControl"

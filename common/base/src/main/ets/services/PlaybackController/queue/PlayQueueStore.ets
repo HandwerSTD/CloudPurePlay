@@ -1,4 +1,4 @@
-import { CycleMode, PlayQueue, Song, Song_INITIAL } from "@handwer/cloud_api"
+import { CycleMode, PlayQueue, Song, Song_INITIAL } from "@handwer/api_adapter"
 import { PreferenceUtils } from "../../Preferences/PreferenceUtils"
 
 @ObservedV2

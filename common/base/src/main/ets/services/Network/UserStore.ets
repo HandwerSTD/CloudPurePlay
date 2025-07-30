@@ -1,8 +1,8 @@
-import { DailyListSongs, RequestCookieConfig, User, User_INITIAL } from '@handwer/cloud_api'
-import { PlayList } from '@handwer/cloud_api'
-import { DjRadio, RecommendDjRadio } from '@handwer/cloud_api'
-import { Album } from '@handwer/cloud_api'
-import { TopListItem, PersonalListItem } from '@handwer/cloud_api'
+import { DailyListSongs, RequestCookieConfig, User, User_INITIAL } from '@handwer/api_adapter'
+import { PlayList } from '@handwer/api_adapter'
+import { DjRadio, RecommendDjRadio } from '@handwer/api_adapter'
+import { Album } from '@handwer/api_adapter'
+import { TopListItem, PersonalListItem } from '@handwer/api_adapter'
 
 @ObservedV2
 class UserStore {

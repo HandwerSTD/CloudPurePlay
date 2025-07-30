@@ -1,4 +1,4 @@
-import { LyricStyle, LyricStyle_INITIAL, PLAYMODE, Song, Song_INITIAL } from '@handwer/cloud_api'
+import { LyricStyle, LyricStyle_INITIAL, PLAYMODE, Song, Song_INITIAL } from '@handwer/api_adapter'
 import { SpecialPlayMode as SpecialPlayMode } from './user/playControl'
 
 @ObservedV2

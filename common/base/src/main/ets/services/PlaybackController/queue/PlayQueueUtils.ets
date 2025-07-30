@@ -1,4 +1,4 @@
-import { CycleMode, PlayQueue, Song } from '@handwer/cloud_api'
+import { CycleMode, PlayQueue, Song } from '@handwer/api_adapter'
 import { EmitterUtil, LogUtil } from '@pura/harmony-utils'
 import { playQueueStore, playQueueKV } from './PlayQueueStore'
 
