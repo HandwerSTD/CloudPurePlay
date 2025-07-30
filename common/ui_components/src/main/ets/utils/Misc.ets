@@ -72,4 +72,10 @@ export class UIComponentUtils {
         return $r('sys.symbol.calendar')
     }
   }
+  static getQueueCycleModeIcon(cycleMode: number) {
+    if (cycleMode === 0) return $r('sys.symbol.order_play')
+    if (cycleMode === 1) return $r('sys.symbol.repeat_1')
+    if (cycleMode === 2) return $r('sys.symbol.repeat')
+    return $r('sys.symbol.shuffle')
+  }
 }

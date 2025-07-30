@@ -121,9 +121,9 @@ class PlayQueueUtils {
     return playQueueStore.getCurrentSong()
   }
 
-  changeCycleMode(mode: CycleMode) {
-    playQueueStore.cycleMode = mode
-    playQueueKV.put(SCQueueKV.cycleMode, mode)
+  changeCycleMode(mode?: CycleMode) {
+    playQueueStore.cycleMode = mode ?? (playQueueStore.cycleMode + 1) % 4
+    playQueueKV.put(SCQueueKV.cycleMode, playQueueStore.cycleMode)
   }
 }
 

@@ -1,4 +1,7 @@
-import { FeaturedPlayUtils, GlobalStore, Logger, NowPlayingStore, PlayControl, ResponsiveUtil,
+import { FeaturedPlayUtils, GlobalStore, Logger, NowPlayingStore, PlayControl,
+  PlayQueueStore,
+  PlayQueueUtils,
+  ResponsiveUtil,
   SongLike,
   UserStore } from "@handwer/base"
 import { PLAYMODE, SongAPIUtils, SongConvertUtils, Song_INITIAL } from "@handwer/cloud_api"
@@ -38,11 +41,6 @@ const LIGHT_PLAYBACK_BTN_LG: LightUpConfig = {
   lightIntensity: 0.8,
   lightHeight: 300,
   lightBloom: 0,
-}
-
-const TOP_BTN_HIGHLIGHT_SHADOW: ShadowOptions = {
-  color: '#33000000',
-  radius: 12
 }
 
 @ComponentV2
@@ -113,10 +111,17 @@ export struct MainPage {
               SongLike.likeThisSong((icon, msg) => {
                 SnackBarUtils.showMessage(this.hdsSnackBar, icon, msg)
               })
+            },
+          }),
+          new ActionBarButton({
+            baseIcon: UIComponentUtils.getQueueCycleModeIcon(PlayQueueStore.cycleMode),
+            width: LengthMetrics.vp(40),
+            onClick: () => {
+              PlayQueueUtils.changeCycleMode()
             }
           }),
           new ActionBarButton({
-            baseIcon: $r('sys.symbol.house'),
+            baseIcon: $r('sys.symbol.list_interrupt'),
             width: LengthMetrics.vp(40)
           }),
         ]
@@ -381,6 +386,7 @@ export struct MainPage {
         customFontSize: 32,
         customFontColor: [Color.White],
         clickAction: () => {
+          this.isBottomAreaExpand = false
           ClickUtil.throttle(() => {
             PlayControl.playPre()
           }, 500)
@@ -396,6 +402,7 @@ export struct MainPage {
         customFontColor: [Color.White],
         customBgColor: Color.Transparent,
         clickAction: () => {
+          this.isBottomAreaExpand = false
           if(nps.isPaused) {
             PlayControl.resumeMusic()
           } else {
@@ -419,6 +426,7 @@ export struct MainPage {
         customFontSize: 32,
         customFontColor: [Color.White],
         clickAction: () => {
+          this.isBottomAreaExpand = false
           ClickUtil.throttle(() => {
             PlayControl.playNext()
           }, 500)
