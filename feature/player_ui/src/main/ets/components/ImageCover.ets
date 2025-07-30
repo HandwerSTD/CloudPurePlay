@@ -1,4 +1,4 @@
-import { Logger, NowPlayingStore, ResponsiveUtil } from "@handwer/base"
+import { Logger, NowPlayingStore, PlayQueueUtils, ResponsiveUtil } from "@handwer/base"
 import { hdsEffect } from "@kit.UIDesignKit"
 import { curves } from "@kit.ArkUI"
 import { cacheDownload } from "@kit.BasicServicesKit"
@@ -131,6 +131,13 @@ export struct ImageCover {
       try {
         cacheDownload.download(this.nowPlayingCoverImg as string, {})
       } catch (e) {}
+      // 预加载下一个封面
+      try {
+        const nxtPic = PlayQueueUtils.peekNextSong()?.picUrl
+        if (nxtPic) cacheDownload.download(nxtPic, {})
+      } catch (e) {
+        Logger.warn(`preload next cover pic failed: ${JSON.stringify(e)}`)
+      }
     }
   }
 

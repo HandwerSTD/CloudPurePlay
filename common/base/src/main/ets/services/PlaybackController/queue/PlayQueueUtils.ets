@@ -121,6 +121,13 @@ class PlayQueueUtils {
     return playQueueStore.getCurrentSong()
   }
 
+  peekNextSong(): PlayQueue | undefined {
+    if (playQueueStore.currentQueueIndex < playQueueStore.queue.length - 1) {
+      return this.getQueueElement(this.currentQueueIndex+1)
+    }
+    return undefined
+  }
+
   changeCycleMode(mode?: CycleMode) {
     playQueueStore.cycleMode = mode ?? (playQueueStore.cycleMode + 1) % 4
     playQueueKV.put(SCQueueKV.cycleMode, playQueueStore.cycleMode)
