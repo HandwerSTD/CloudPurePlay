@@ -1,5 +1,5 @@
 import { GlobalStore, Logger, LyricUtils, NowPlayingStore, PlayControl, SCEmitter } from "@handwer/base"
-import { Lyric, LyricStyle, LyricStyle_INITIAL } from "@handwer/cloud_api"
+import { Lyric, LyricStyle, LyricStyle_INITIAL } from "@handwer/api_adapter"
 import { LazyData } from "@pie/lazy-data"
 import { curves, LengthUnit } from "@kit.ArkUI"
 import { EmitterUtil } from "@pura/harmony-utils"

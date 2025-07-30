@@ -3,7 +3,7 @@ import { GlobalStore, Logger, PlayControl, PlayListOp, SCPref, SCUser, Settings,
   UserSettings } from '@handwer/base'
 import {
   AlbumAPIUtils,
-  CloudAPIConfigUtils, LoginAPIUtils, RealIP_INITIAL, SongAPIUtils, User } from '@handwer/cloud_api'
+  CloudAPIConfigUtils, LoginAPIUtils, RealIP_INITIAL, SongAPIUtils, User } from '@handwer/api_adapter'
 import { PlayerUI } from '@handwer/player_ui'
 import { promptAction } from '@kit.ArkUI'
 import { webview } from '@kit.ArkWeb'

@@ -3,17 +3,18 @@ import AudioCacheUtils from './PlaybackController/play/system/AudioCacheUtils'
 import { PlayControl } from './PlaybackController/play/user/playControl'
 import AVPlayerUtils from './PlaybackController/play/system/AVPlayerUtils'
 import Settings from './Preferences/PreferenceUtils'
-import { CloudAPIConfigUtils, RealIP_INITIAL } from '@handwer/api_adapter'
+import { CloudAPIConfigUtils, Cloud_RequestContext, RealIP_INITIAL } from '@handwer/api_adapter'
 import { UserManager } from './Network/UserManager'
 
 export class ServiceInitUtils {
   static async init() {
     // API 请求初始化
-    CloudAPIConfigUtils.setRequestContext({
+    const reqContext: Cloud_RequestContext = {
       baseUrl: 'http://111.229.38.178:3333/',
       cookie: {},
-      realIp: RealIP_INITIAL
-    })
+      realIp: {toggle: false, realIp: RealIP_INITIAL.realIp}
+    }
+    CloudAPIConfigUtils.setRequestContext(reqContext)
     // 初始化全局设置
     Settings.init()
     // 初始化播放器

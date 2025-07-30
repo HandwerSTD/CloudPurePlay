@@ -7,7 +7,7 @@
   "license": "Apache-2.0",
   "dependencies": {
     '@handwer/base': 'file:../../common/base',
-    '@handwer/cloud_api': "file:../../apis/cloud_api",
+    '@handwer/api_adapter': "file:../../apis/api_adapter",
     '@handwer/ui_components': "file:../../common/ui_components"
   }
 }

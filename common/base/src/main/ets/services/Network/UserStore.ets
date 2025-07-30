@@ -1,4 +1,4 @@
-import { DailyListSongs, RequestCookieConfig, User, User_INITIAL } from '@handwer/api_adapter'
+import { DailyListSongs, Cloud_RequestCookieConfig, User, User_INITIAL } from '@handwer/api_adapter'
 import { PlayList } from '@handwer/api_adapter'
 import { DjRadio, RecommendDjRadio } from '@handwer/api_adapter'
 import { Album } from '@handwer/api_adapter'
@@ -7,7 +7,7 @@ import { TopListItem, PersonalListItem } from '@handwer/api_adapter'
 @ObservedV2
 class UserStore {
   @Trace user: User = User_INITIAL
-  @Trace cookieSettings: RequestCookieConfig = {}
+  @Trace cookieSettings: Cloud_RequestCookieConfig = {}
   @Trace realIp: string = ''
 
   @Trace userPlaylists: PlayList[] = []

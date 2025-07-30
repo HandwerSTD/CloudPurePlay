@@ -1,6 +1,6 @@
 import {
   CycleMode,
-  PlayConstants, Song, SongAPIUtils, SongConvertUtils, SongPlayResult, Song_INITIAL } from "@handwer/api_adapter"
+  PlayConstants, Song, SongAPIUtils, SongPlayResult, Song_INITIAL } from "@handwer/api_adapter"
 import { EmitterUtil, FileUtil, LogUtil, RandomUtil, ToastUtil } from "@pura/harmony-utils"
 import { FileUtils } from "../../../../utils/FileUtil"
 import LyricUtils from "../../lyric/LyricUtils"
@@ -17,6 +17,7 @@ import Settings, { PreferenceUtils } from "../../../Preferences/PreferenceUtils"
 import { SCPref } from "../../../../constants/PreferenceConstants"
 import { Logger } from "../../../../../../../Index"
 import { SCEmitter } from "../../../../exports"
+import { SongConvertUtils } from "../../convert"
 
 
 const TAG = '[playerControl] '
