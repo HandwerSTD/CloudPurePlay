@@ -79,6 +79,10 @@
     {
       "name": "common_resources",
       "srcPath": "./common/common_resources",
+    },
+    {
+      "name": "api_adapter",
+      "srcPath": "./apis/api_adapter",
     }
   ]
 }
