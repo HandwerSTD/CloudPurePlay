@@ -6,7 +6,7 @@ import { FeaturedPlayUtils, GlobalStore, Logger, NowPlayingStore, PlayControl,
   SongLike,
   UserStore } from "@handwer/base"
 import { PLAYMODE, SongAPIUtils, Song_INITIAL } from "@handwer/api_adapter"
-import { LightUpRoundedButton, LightUpConfig, LightUpBorderRoundButton, SnackBarUtils,
+import { LightUpRoundedButton, LightUpConfig, OverrideLightUpStat, LightUpBorderRoundButton, SnackBarUtils,
   UIComponentUtils } from "@handwer/ui_components"
 import { ColorMetrics, curves, LengthMetrics, SymbolGlyphModifier } from "@kit.ArkUI"
 import { ClickUtil, DateUtil } from "@pura/harmony-utils"
@@ -92,6 +92,7 @@ export struct MainPage {
       clickAction: () => {
         this.isBottomAreaExpand = !this.isBottomAreaExpand
       },
+      overrideLightUpStat: this.isBottomAreaExpand ? OverrideLightUpStat.ALWAYS_ENABLED : OverrideLightUpStat.NO_OVERRIDE,
       customFontColor: this.isBottomAreaExpand ? [$r('sys.color.font_secondary')] : [Color.White, Color.White]
     })
   }
@@ -140,6 +141,7 @@ export struct MainPage {
       clickAction: () => {
         this.isTopAreaExpand = !this.isTopAreaExpand
       },
+      overrideLightUpStat: this.isTopAreaExpand ? OverrideLightUpStat.ALWAYS_ENABLED : OverrideLightUpStat.NO_OVERRIDE,
       customFontColor: this.isTopAreaExpand ? [$r('sys.color.font_secondary')] : [Color.White, Color.White]
     })
   }

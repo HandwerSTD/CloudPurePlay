@@ -1,5 +1,5 @@
 import { hdsEffect } from '@kit.UIDesignKit'
-import { LightUpConfig, LightUpDefaultConfig } from './LightUpConfig'
+import { LightUpConfig, LightUpDefaultConfig, OverrideLightUpStat } from './LightUpConfig'
 import { curves } from '@kit.ArkUI'
 
 @ComponentV2
@@ -11,17 +11,33 @@ export struct LightUpRoundedButton {
   @Param customBgColor: ResourceColor | undefined = undefined
   @Param customFontColor: ResourceColor[] | undefined = undefined
   @Param customFontSize: number | undefined = undefined
+  @Param overrideLightUpStat: OverrideLightUpStat = OverrideLightUpStat.NO_OVERRIDE
 
   @Local intensity: number = 0
   @Local illuminatedType: hdsEffect.PointLightIlluminatedType = hdsEffect.PointLightIlluminatedType.BORDER_CONTENT
 
-  @Monitor('intensity')
+  @Monitor('intensity', 'overrideLightUpStat')
   onLightUp() {
-    if (this.intensity > 0) {
+    if (this.finalIntensity > 0) {
       this.illuminatedType = hdsEffect.PointLightIlluminatedType.BORDER
     } else {
       this.illuminatedType = hdsEffect.PointLightIlluminatedType.BORDER_CONTENT
     }
+  }
+
+  get targetIntensity() {
+    return (this.lightUpConfig.lightIntensity ?? LightUpDefaultConfig.lightIntensity!)
+  }
+  get finalIntensity() {
+    if (this.overrideLightUpStat === OverrideLightUpStat.NO_OVERRIDE) return this.intensity
+    if (this.overrideLightUpStat === OverrideLightUpStat.ALWAYS_DISABLED) return 0
+    return this.targetIntensity
+  }
+  get buttonBgColor() {
+    if (this.finalIntensity > 0) {
+      return Color.White
+    }
+    return this.customBgColor ? this.customBgColor : $r('sys.color.comp_background_secondary')
   }
 
   build() {
@@ -31,7 +47,7 @@ export struct LightUpRoundedButton {
         .fontColor(this.customFontColor ? this.customFontColor : [$r('sys.color.font_primary')])
         .hitTestBehavior(HitTestMode.Transparent)
     }.borderRadius(this.customFontSize ? this.customFontSize*2 : 48)
-    .backgroundColor(this.customBgColor ? this.customBgColor : $r('sys.color.comp_background_secondary'))
+    .backgroundColor(this.buttonBgColor)
     .padding(8)
     .aspectRatio(1)
     .visualEffect(new hdsEffect.HdsEffectBuilder()
@@ -40,7 +56,7 @@ export struct LightUpRoundedButton {
         illuminatedType: this.illuminatedType,
         options: {
           color: Color.White,
-          intensity: this.intensity,
+          intensity: this.finalIntensity,
           height: this.lightUpConfig.lightHeight ?? LightUpDefaultConfig.lightHeight,
           bloom: this.lightUpConfig.lightBloom ?? 0
         }
@@ -58,14 +74,14 @@ export struct LightUpRoundedButton {
     })
     .onTouch((event) => {
       if (event.type === TouchType.Down) {
-        this.intensity = (this.lightUpConfig.lightIntensity ?? LightUpDefaultConfig.lightIntensity!)
+        this.intensity = this.targetIntensity
       } else if (event.type === TouchType.Up || event.type === TouchType.Cancel) {
         this.intensity = 0
       }
     })
     .onHover((is) => {
       if (is) {
-        this.intensity = (this.lightUpConfig.lightIntensity ?? LightUpDefaultConfig.lightIntensity!)
+        this.intensity = this.targetIntensity
       } else {
         this.intensity = 0
       }
