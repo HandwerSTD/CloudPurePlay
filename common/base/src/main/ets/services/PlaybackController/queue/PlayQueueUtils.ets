@@ -65,12 +65,14 @@ class PlayQueueUtils {
     }
   }
 
-  async queueDelete(index: number) {
+  async queueDelete(index: number, goToFront: boolean = false) {
     try {
       playQueueStore.queue.splice(index, 1)
       playQueueKV.put(SCQueueKV.queue, playQueueStore.queue)
       if (index < playQueueStore.currentQueueIndex) {
         this.setIndex(playQueueStore.currentQueueIndex - 1)
+      } else {
+        if (goToFront) this.setIndex(0)
       }
     } catch (e) {
       LogUtil.error(TAG, '删除失败 delete queue element error: ' + e.message())

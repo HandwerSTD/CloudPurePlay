@@ -11,6 +11,7 @@ export struct LightUpRoundedButton {
   @Param customBgColor: ResourceColor | undefined = undefined
   @Param customFontColor: ResourceColor[] | undefined = undefined
   @Param customFontSize: number | undefined = undefined
+  @Param customFontWeight: FontWeight | undefined = undefined
   @Param overrideLightUpStat: OverrideLightUpStat = OverrideLightUpStat.NO_OVERRIDE
 
   @Local intensity: number = 0
@@ -43,6 +44,7 @@ export struct LightUpRoundedButton {
   build() {
     Button() {
       SymbolGlyph(this.icon)
+        .fontWeight(this.customFontWeight)
         .fontSize(this.customFontSize ? this.customFontSize: 24)
         .fontColor(this.customFontColor ? this.customFontColor : [$r('sys.color.font_primary')])
         .hitTestBehavior(HitTestMode.Transparent)

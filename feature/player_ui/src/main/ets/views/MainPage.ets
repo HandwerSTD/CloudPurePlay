@@ -90,7 +90,7 @@ export struct MainPage {
   // ----------------------------------------
 
 
-  @Builder BottomAreaControlButton_ActionBar_ActionButton() {
+  @Builder BottomAreaControlButton_ActionBar_PrimaryButton() {
     LightUpRoundedButton({
       lightUpConfig: ResponsiveUtil.chooseByWidth([LIGHT_TOP_BTN_SM, LIGHT_TOP_BTN_MD, LIGHT_TOP_BTN_LG]),
       icon: $r('sys.symbol.AI_play'),
@@ -99,7 +99,7 @@ export struct MainPage {
         this.isBottomAreaExpand = !this.isBottomAreaExpand
       },
       overrideLightUpStat: this.isBottomAreaExpand ? OverrideLightUpStat.ALWAYS_ENABLED : OverrideLightUpStat.NO_OVERRIDE,
-      customFontColor: this.isBottomAreaExpand ? [$r('sys.color.font_secondary')] : [Color.White, Color.White]
+      customFontColor: this.isBottomAreaExpand ? [Color.Black] : [Color.White, Color.White]
     })
   }
   @Builder BottomAreaControlButton_ActionBar() {
@@ -107,7 +107,7 @@ export struct MainPage {
       HdsActionBar({
         isExpand: this.isBottomAreaExpand!!,
         primaryButtonBuilder: () => {
-          this.BottomAreaControlButton_ActionBar_ActionButton()
+          this.BottomAreaControlButton_ActionBar_PrimaryButton()
         },
         primaryButtonBuilderWidth: LengthMetrics.vp(40),
         startButtons: [
@@ -148,7 +148,7 @@ export struct MainPage {
         this.isTopAreaExpand = !this.isTopAreaExpand
       },
       overrideLightUpStat: this.isTopAreaExpand ? OverrideLightUpStat.ALWAYS_ENABLED : OverrideLightUpStat.NO_OVERRIDE,
-      customFontColor: this.isTopAreaExpand ? [$r('sys.color.font_secondary')] : [Color.White, Color.White]
+      customFontColor: this.isTopAreaExpand ? [Color.Black] : [Color.White, Color.White]
     })
   }
   // TODO：长按调整模式

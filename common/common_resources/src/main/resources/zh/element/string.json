@@ -11,6 +11,10 @@
     {
       "name": "play_queue",
       "value": "播放队列"
+    },
+    {
+      "name": "play_queue_total_num",
+      "value": "共 %d 首歌"
     }
   ]
 }
