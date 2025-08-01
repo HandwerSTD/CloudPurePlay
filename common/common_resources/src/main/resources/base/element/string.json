@@ -11,6 +11,10 @@
     {
       "name": "start_playing_daily_songs_failed",
       "value": "播放每日推荐失败"
+    },
+    {
+      "name": "play_queue",
+      "value": "播放队列"
     }
   ]
 }

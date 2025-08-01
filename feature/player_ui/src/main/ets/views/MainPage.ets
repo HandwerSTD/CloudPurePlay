@@ -2,6 +2,7 @@ import { FeaturedPlayUtils, GlobalStore, Logger, NowPlayingStore, PlayControl,
   PlayQueueStore,
   PlayQueueUtils,
   ResponsiveUtil,
+  SCApp,
   SongConvertUtils,
   SongLike,
   UserStore } from "@handwer/base"
@@ -14,6 +15,7 @@ import { HdsActionBar, ActionBarButton, ActionBarStyle, hdsEffect, HdsSnackBar }
 import { cacheDownload } from "@kit.BasicServicesKit"
 import { LyricComponent } from "./LyricArea"
 import { ImageCover } from "../components/ImageCover"
+import { PlayQueueView, PlayQueueViewBuilder } from "./PlayQueueView"
 
 const nps = NowPlayingStore
 const LIGHT_TOP_BTN_SM: LightUpConfig = {
@@ -53,6 +55,7 @@ export struct MainPage {
   _nps = NowPlayingStore
 
   @Consumer('consoleSheet') consoleSheet: boolean = false
+  @Provider(SCApp.playQueueSheet) showQueueSheet: boolean = false
 
   controller: hdsEffect.ShaderEffectController = new hdsEffect.ShaderEffectController()
 
@@ -83,6 +86,9 @@ export struct MainPage {
   @Local isTopAreaExpand: boolean = false
 
   @Local isBottomAreaExpand: boolean = false
+
+  // ----------------------------------------
+
 
   @Builder BottomAreaControlButton_ActionBar_ActionButton() {
     LightUpRoundedButton({
@@ -255,6 +261,16 @@ export struct MainPage {
     .padding({right: 40}) // 避让右边按钮
     .transition(TransitionEffect.OPACITY.animation({duration: 200}))
     .alignItems(HorizontalAlign.Start)
+    .bindSheet(this.showQueueSheet!!, PlayQueueViewBuilder, {
+      showClose: false,
+      scrollSizeMode: ScrollSizeMode.CONTINUOUS,
+      preferType: SheetType.SIDE,
+      blurStyle: BlurStyle.BACKGROUND_REGULAR,
+      backgroundColor: $r('app.color.ui_sheet_bg_col')
+    })
+    .onClick(() => {
+      this.showQueueSheet = !this.showQueueSheet
+    })
   }
 
   @Builder CoverInfo() {
@@ -513,6 +529,7 @@ export struct MainPage {
       // })
       .buildEffect())
     // .backgroundColor(Color.Pink)
+
   }
 
   private handleSliderChange = (value: number, mode: SliderChangeMode) => {

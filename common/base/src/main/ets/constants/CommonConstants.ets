@@ -22,3 +22,7 @@ export class SCEmitter {
 }
 
 export type ShowToastCallback = (icon: ResourceStr, msg: ResourceStr) => void
+
+export class SCApp {
+  static readonly playQueueSheet = 'playQueue'
+}
