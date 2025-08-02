@@ -7,7 +7,6 @@ import { hdsEffect } from "@kit.UIDesignKit"
 @ComponentV2
 export struct PlayQueueView {
   pq = PlayQueueStore
-  whiteTextMod = new TextModifier().fontColor(Color.White)
 
   scroller = new Scroller()
 
@@ -84,7 +83,7 @@ export struct PlayQueueSingleItem {
       .visualEffect(new hdsEffect.HdsEffectBuilder().pointLight({
         options: {
           color: Color.White,
-          intensity: 0.5,
+          intensity: 1,
           height: 100
         }
       }).buildEffect())

@@ -245,3 +245,36 @@ export struct ImageCover {
     })
   )
 }
+
+@ComponentV2
+export struct ImageCoverThumbnail {
+  @Param @Require nowPlayingCoverImg: ResourceStr
+  @Param radius: number = 10
+
+  build() {
+    Stack() {
+      Image(this.nowPlayingCoverImg)
+        .aspectRatio(1)
+        .layoutWeight(nps.currentSong.id === 0 ? undefined : 1)
+        .margin(nps.isPaused ? ResponsiveUtil.chooseByWidth(['10%', '7%']) : 12)
+        .constraintSize({
+          maxWidth: '100%'
+        })
+        .draggable(false)
+        .foregroundEffect({
+          radius: 48
+        })
+        .scale({x: 0.8, y: 0.8})
+        .translate({y: 15})
+        .brightness(1.3)
+        .saturate(3)
+        .opacity(0.7)
+      Image(this.nowPlayingCoverImg)
+        .borderRadius(this.radius)
+        .draggable(false)
+        .ImageFaker(() => {
+        })
+        .borderRadius(this.radius)
+    }
+  }
+}

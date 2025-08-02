@@ -1,13 +1,16 @@
 import { GlobalStore, Logger, LyricUtils, NowPlayingStore, PlayControl, SCEmitter } from "@handwer/base"
 import { Lyric, LyricStyle, LyricStyle_INITIAL } from "@handwer/api_adapter"
 import { LazyData } from "@pie/lazy-data"
-import { curves, LengthUnit } from "@kit.ArkUI"
+import { curves, LengthUnit, TextModifier } from "@kit.ArkUI"
 import { EmitterUtil } from "@pura/harmony-utils"
+import text from "@ohos.graphics.text"
 
 const TAG = '[LyricArea]'
 
 @ComponentV2
 export struct LyricComponent {
+  @Param miniMode: boolean = false
+
   nps = NowPlayingStore
   glb = GlobalStore
 
@@ -87,12 +90,14 @@ export struct LyricComponent {
         if(this.newLyricEffect) {
           ForEach(this.lyric, (item: Lyric, index) => {
             LyricLine({
+              miniMode: this.miniMode,
               lyricStyle: this.nps.lyricStyle,
               currentLyricIndex: this.nps.currentLyricIndex,
               userScrolling: this.userScrolling!!,
               index: index,
               item: item
             })
+              .clip(false)
               .offset({ y: this.Offset(index) })
               .animation(this.userScrolling ? {
                 delay: this.userScrolling ? 0 : this.Delay(index),
@@ -112,9 +117,10 @@ export struct LyricComponent {
                 }
               })
               .padding({
-                bottom: (!this.userScrolling
+                bottom: ((!this.userScrolling
                   ? (index >= this.nps.currentLyricIndex ? this.nps.lyricStyle.size : this.nps.lyricStyle.size * 2)
-                  : this.nps.lyricStyle.size * 2) * 0.5
+                  : this.nps.lyricStyle.size * 2) * 0.5)
+                //+(this.miniMode ? 10 : 0)
               })
               .animation({ duration: this.userScrolling ? 0 : 300, curve: Curve.Friction })
           })
@@ -141,7 +147,7 @@ export struct LyricComponent {
     .edgeEffect(EdgeEffect.Spring)
     .listDirection(Axis.Vertical)
     .scrollBar(BarState.Off)
-    .fadingEdge(true, {
+    .fadingEdge(!this.miniMode, {
       fadingEdgeLength: {
         unit: LengthUnit.PERCENT,
         value: 50
@@ -182,12 +188,15 @@ export struct LyricComponent {
 
 @ComponentV2
 struct LyricLine {
+  @Param miniMode: boolean = false
   @Param index: number = 0
   @Param item: Lyric = { time: 0, content: '' }
   @Param currentLyricIndex: number = 0
   @Param lyricStyle: LyricStyle = LyricStyle_INITIAL
   @Param @Require userScrolling: number
   @Event $userScrolling: (val: number) => void = () => {}
+
+  @Local mod: AttributeModifier<TextAttribute> | undefined = new TextModifier()
 
   get isOnPlay() {
     return this.index == this.currentLyricIndex
@@ -196,10 +205,26 @@ struct LyricLine {
     return this.index < this.currentLyricIndex
   }
 
+  @Monitor('miniMode')
+  onMiniMode() {
+    if (this.miniMode) {
+      this.mod = new MTM()
+    } else {
+      this.mod = new TextModifier()
+    }
+  }
+
+  aboutToAppear(): void {
+    this.onMiniMode()
+  }
+
   build() {
     Text(this.item.content)
       .width('100%')
       .fontSize(this.lyricStyle.size)
+      // MINI MODE OVERFLOW
+      .attributeModifier(this.mod)
+      // --------------------
       .scale({x: this.isOnPlay ? 1 :  this.lyricStyle.onNotPlayScale, y: this.isOnPlay ? 1 : this.lyricStyle.onNotPlayScale})
       .fontWeight(this.isOnPlay ? this.lyricStyle.onPlayWeight : this.lyricStyle.weight)
       .lineHeight(this.lyricStyle.size * 1.3)
@@ -215,6 +240,7 @@ struct LyricLine {
         { x: 1.0, y: 1.0, centerX: this.lyricStyle.align === TextAlign.Center ? '50%' : 0 } :
         { x: 0.9, y: 0.9, centerX: this.lyricStyle.align === TextAlign.Center ? '50%' : 0 })
       .onClick(() => {
+        if (this.miniMode) return // MINI MODE no click
         PlayControl.seekMusic(this.item.time + 100)
         setTimeout(() => {
           this.$userScrolling(0)
@@ -222,8 +248,9 @@ struct LyricLine {
       })
       .textShadow(this.isOnPlay ? {
         color: '#ccffffff',
-        radius: 12
+        radius: 12 + (this.miniMode ? -6 : 0)
       } : undefined)
+      .clip(false)
       .animation({
         duration: 600,
         curve: Curve.Smooth,
@@ -233,5 +260,14 @@ struct LyricLine {
           max: 90
         }
       })
+  }
+}
+
+
+class MTM implements AttributeModifier<TextAttribute> {
+  applyNormalAttribute(instance: TextAttribute): void {
+    instance.maxLines(1)
+      .textOverflow({overflow: TextOverflow.MARQUEE})
+      .marqueeOptions({start: true, fadeout: true})
   }
 }

@@ -14,7 +14,7 @@ import { ClickUtil, DateUtil } from "@pura/harmony-utils"
 import { HdsActionBar, ActionBarButton, ActionBarStyle, hdsEffect, HdsSnackBar } from "@kit.UIDesignKit"
 import { cacheDownload } from "@kit.BasicServicesKit"
 import { LyricComponent } from "./LyricArea"
-import { ImageCover } from "../components/ImageCover"
+import { ImageCover, ImageCoverThumbnail } from "../components/ImageCover"
 import { PlayQueueView, PlayQueueViewBuilder } from "./PlayQueueView"
 
 const nps = NowPlayingStore
@@ -56,9 +56,14 @@ export struct MainPage {
 
   @Consumer('consoleSheet') consoleSheet: boolean = false
   @Provider(SCApp.playQueueSheet) showQueueSheet: boolean = false
+  @Provider(SCApp.exploreSheet) showExplore: boolean = false
 
   controller: hdsEffect.ShaderEffectController = new hdsEffect.ShaderEffectController()
 
+  get swiperHeight(): Length | undefined {
+    if (!this.showExplore) return '100%'
+    return 100
+  }
   get nowPlayingCoverImg() {
     if (nps.currentSong === Song_INITIAL) {
       return $r('sys.media.Celia')
@@ -194,7 +199,12 @@ export struct MainPage {
           }),
           new ActionBarButton({
             baseIcon: $r('sys.symbol.house'),
-            width: LengthMetrics.vp(40)
+            width: LengthMetrics.vp(40),
+            onClick: () => {
+              this.showExplore = true
+              this.isTopAreaExpand = false
+              this.isBottomAreaExpand = false
+            }
           }),
         ]
       })
@@ -261,13 +271,6 @@ export struct MainPage {
     .padding({right: 40}) // 避让右边按钮
     .transition(TransitionEffect.OPACITY.animation({duration: 200}))
     .alignItems(HorizontalAlign.Start)
-    .bindSheet(this.showQueueSheet!!, PlayQueueViewBuilder, {
-      showClose: false,
-      scrollSizeMode: ScrollSizeMode.CONTINUOUS,
-      preferType: SheetType.SIDE,
-      blurStyle: BlurStyle.BACKGROUND_REGULAR,
-      backgroundColor: $r('app.color.ui_sheet_bg_col')
-    })
     .onClick(() => {
       this.showQueueSheet = !this.showQueueSheet
     })
@@ -473,14 +476,129 @@ export struct MainPage {
   }
 
   @Builder LyricArea() {
-    LyricComponent()
+    LyricComponent({
+      miniMode: this.showExplore
+    })
+      .translate(this.showExplore ? {y: -10} : undefined)
+  }
+
+  // -----------------------------------------------
+
+  @Builder NowPlayingArea_Bar() {
+    Row() {
+      ImageCoverThumbnail({
+        nowPlayingCoverImg: this.nowPlayingCoverImg
+      })
+        .onClick(() => {
+          this.showExplore = false
+        })
+      this.AuthorInfo_Bar()
+      this.PlaybackButton_Bar()
+    }.width('100%')
+    .padding({left: ResponsiveUtil.chooseByWidth([12, 12, 24]),
+      right: 24,
+      top: 8, bottom: 8})
+  }
+  @Builder AuthorInfo_Bar() {
+    Column() {
+      Text(nps.currentSong.name)
+        .textAlign(TextAlign.Start)
+        .textOverflow({
+          overflow: TextOverflow.MARQUEE
+        })
+        .marqueeOptions({
+          start: true,
+          fadeout: true
+        })
+        .fontColor(Color.White).fontWeight(FontWeight.Bold)
+        .fontSize(24)
+      Text(nps.currentArtists)
+        .textAlign(TextAlign.Start)
+        .textOverflow({
+          overflow: TextOverflow.MARQUEE
+        })
+        .marqueeOptions({
+          start: true,
+          fadeout: true
+        })
+        .fontColor(Color.White)
+    }.layoutWeight(1)
+    .alignItems(HorizontalAlign.Start)
+    .onClick(() => {
+      this.showQueueSheet = !this.showQueueSheet
+    })
+  }
+  @Builder PlaybackButton_Bar() {
+    Row({space: 12}) {
+      // 上一首
+      LightUpRoundedButton({
+        icon: $r('sys.symbol.backward_end_fill'),
+        customFontSize: 20,
+        customFontColor: [Color.White],
+        clickAction: () => {
+          this.isBottomAreaExpand = false
+          ClickUtil.throttle(() => {
+            PlayControl.playPre()
+          }, 500)
+        },
+        lightUpConfig: ResponsiveUtil.chooseByWidth([LIGHT_PLAYBACK_BTN_MD,LIGHT_PLAYBACK_BTN_MD,LIGHT_PLAYBACK_BTN_LG])
+      })
+        .visibility(ResponsiveUtil.chooseByWidth([Visibility.None, Visibility.None, Visibility.Visible]))
+
+      // 播放
+      LightUpBorderRoundButton({
+        icon: nps.isPaused ? $r('sys.symbol.play_fill') : $r('sys.symbol.pause_fill'),
+        customFontSize: 20,
+        customFontColor: [Color.White],
+        customBgColor: Color.Transparent,
+        clickAction: () => {
+          this.isBottomAreaExpand = false
+          if(nps.isPaused) {
+            PlayControl.resumeMusic()
+          } else {
+            PlayControl.pauseMusic()
+          }
+        },
+        lightUpConfig: ResponsiveUtil.chooseByWidth([LIGHT_PLAYBACK_BTN_MD,LIGHT_PLAYBACK_BTN_MD,LIGHT_PLAYBACK_BTN_LG])
+      })
+        .shadow({
+          color: '#ccffffff',
+          radius: 36
+        })
+        .backgroundColor(nps.isPaused ? undefined : '#66ffffff')
+        .backdropBlur(nps.isPaused ? undefined : 64)
+        .animation({duration: 1000, curve: Curve.Ease})
+        .borderRadius(48)
+
+      // 下一首
+      LightUpRoundedButton({
+        icon: $r('sys.symbol.forward_end_fill'),
+        customFontSize: 20,
+        customFontColor: [Color.White],
+        clickAction: () => {
+          this.isBottomAreaExpand = false
+          ClickUtil.throttle(() => {
+            PlayControl.playNext()
+          }, 500)
+        },
+        lightUpConfig: ResponsiveUtil.chooseByWidth([LIGHT_PLAYBACK_BTN_MD,LIGHT_PLAYBACK_BTN_MD,LIGHT_PLAYBACK_BTN_LG])
+      })
+    }
+    .margin({ left: 24})
+    .animation({duration: 300, curve: Curve.Ease})
   }
 
   build() {
     Row() {
       Column() {
         Swiper() {
-          this.NowPlayingArea()
+          if (!this.showExplore) {
+            // Normal
+            this.NowPlayingArea()
+          } else {
+            // Bottom Bar
+            this.NowPlayingArea_Bar()
+          }
           this.LyricArea()
         }.vertical(false)
         .displayCount(ResponsiveUtil.widthCheck(['md','lg','xl']) ? 2 : 1)
@@ -488,9 +606,18 @@ export struct MainPage {
         .animation({
           curve: curves.springMotion()
         })
-        .width('100%').height('100%')
-      }
+        .width('100%').height(this.swiperHeight)
+        .animation({curve: curves.springMotion(0.6, 0.8)})
+      }.justifyContent(FlexAlign.End)
       .width('100%')
+      .height('100%')
+      .bindSheet(this.showQueueSheet!!, PlayQueueViewBuilder, {
+        showClose: false,
+        scrollSizeMode: ScrollSizeMode.CONTINUOUS,
+        preferType: SheetType.SIDE,
+        blurStyle: BlurStyle.BACKGROUND_REGULAR,
+        backgroundColor: $r('app.color.ui_sheet_bg_col')
+      })
     }
     .padding({
       top: this.gs.wd.top,
