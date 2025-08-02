@@ -227,7 +227,7 @@ export struct MainPage {
       this.TopAreaActionButton_Normal()
       this.TopAreaActionButton_ActionBar()
     }.width('100%')
-    .padding(this.topAreaExpandShouldHideNormal ? {} : {left: 24, right: 24, top: 12})
+    .padding(this.topAreaExpandShouldHideNormal ? {} : {left: 24, right: 24})
     .alignContent(this.topAreaExpandShouldHideNormal ? Alignment.Center : Alignment.Start)
     .animation({curve: curves.springMotion()})
   }

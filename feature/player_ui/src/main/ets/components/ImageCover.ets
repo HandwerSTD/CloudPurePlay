@@ -16,22 +16,22 @@ export struct ImageCover {
   @Event resetNewBackgroundColor: (colors: ColorMetrics[]) => void
 
   readonly lightOffset = 0
-  readonly coverAmbDuration = 1500
-
   @Local pointLocation: number = 0
   @Local pointLightX: number = -this.lightOffset
   @Local pointLightY: number = -this.lightOffset
   @Local coverArea: Area | undefined = undefined
   pointLightMoveIntervalHandler?: number
 
-  @Local coverAmbLightOpacity: number = 0.9
-  coverAmbLightIntervalHandler?: number
+  @Local coverAmbLightOpacity: number = 1
 
   @Local nowPlayingCoverFaker: ResourceStr | undefined = undefined
   @Local nowPlayingCoverFakerUnder: ResourceStr | undefined = undefined
   @Local coverFakerVisibility: Visibility = Visibility.Visible
   coverFakerTransitionHandler: number | undefined = undefined
   @Local useCoverFaker: boolean = true
+
+  // 预留接口，封面打光可以亮起，暂时没找到合适的交互
+  @Local onCoverAmbLightUp: boolean = false
 
   nowPlay = NowPlayingStore
 
@@ -78,32 +78,9 @@ export struct ImageCover {
           }
         }, 2000)
       }
-      // 封面发光呼吸效果
-      if (this.useCoverAmbBreathe) {
-        const cc = this.getUIContext()
-        this.coverAmbLightIntervalHandler = setInterval(() => {
-          if (this.coverAmbLightOpacity >= 0.7) {
-            cc.animateTo({
-              duration: this.coverAmbDuration,
-              // curve: Curve.FastOutSlowIn
-            }, () => {
-              this.coverAmbLightOpacity = 0.4
-            })
-          } else {
-            cc.animateTo({
-              duration: this.coverAmbDuration,
-              // curve: Curve.FastOutLinearIn
-            }, () => {
-              this.coverAmbLightOpacity = 0.9
-            })
-          }
-        }, this.coverAmbDuration)
-      }
     } else {
       clearInterval(this.pointLightMoveIntervalHandler)
       this.pointLightMoveIntervalHandler = undefined
-      clearInterval(this.coverAmbLightIntervalHandler)
-      this.coverAmbLightIntervalHandler = undefined
     }
   }
   relocatePointLight() {
@@ -190,6 +167,7 @@ export struct ImageCover {
       this.PointLight()
 
       Image(this.nowPlayingCoverFaker)
+        .draggable(false)
         .onAreaChange((_, area) => {
           this.coverArea = area
           this.relocatePointLight()
@@ -197,10 +175,13 @@ export struct ImageCover {
         .ImageLightShadowFaker()
         .opacity(this.coverAmbLightOpacity)
         .animation({duration: 1000, curve: Curve.Ease})
+        .brightness(this.onCoverAmbLightUp ? 1.6 : 1.3)
+        .animation({duration: 500})
 
 
       Stack() {
         Image(this.nowPlayingCoverFakerUnder)
+          .draggable(false)
           .id('coverFakerUnder')
           .ImageFaker(() => {
             this.handleLike()
@@ -212,12 +193,13 @@ export struct ImageCover {
             }, 2000)
           })
         Image(this.nowPlayingCoverFaker)
+          .draggable(false)
           .ImageFaker(() => {
             this.handleLike()
           }, false)
           .opacity(this.coverFakerVisibility === Visibility.Visible ? 1 : 0 )
           .animation(this.useCoverFaker ? {duration: 1000} : undefined)
-      }
+      }.hitTestBehavior(HitTestMode.Transparent)
     }.alignContent(Alignment.TopStart)
   }
 }

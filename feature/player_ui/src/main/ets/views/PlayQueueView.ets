@@ -33,7 +33,12 @@ export struct PlayQueueView {
                 TransitionEffect.OPACITY.animation({duration: 300}),
                 TransitionEffect.OPACITY.animation({duration: 300})))
               .onClick(() => {
-                PlayControl.playQueue(index)
+                if (this.pq.currentQueueIndex !== index) {
+                  PlayControl.playQueue(index)
+                }
+              })
+              .clickEffect({
+                level: ClickEffectLevel.LIGHT
               })
             })
             ListItem().height(GlobalStore.wd.bottom)
@@ -189,7 +194,7 @@ export struct PlayQueueSingleItem {
             })
         },
         lightUpConfig: {
-          lightIntensity: 0.8,
+          lightIntensity: 2,
           lightHeight: 150
         }
       })
@@ -198,7 +203,7 @@ export struct PlayQueueSingleItem {
     } : {left: 6, right: 12, top: 6, bottom: 6})
     // .animation({curve: this.moveSpring})
     .margin({left: 6, right: 6, top: 6, bottom: 6})
-    .borderRadius(36)
+    .borderRadius(16)
     .visualEffect(new hdsEffect.HdsEffectBuilder().pointLight({
       illuminatedType: this.isNowPlaying ? hdsEffect.PointLightIlluminatedType.BORDER : hdsEffect.PointLightIlluminatedType.NONE
     }).buildEffect())
@@ -213,7 +218,7 @@ export struct PlayQueueSingleItem {
     Stack({alignContent: Alignment.Start}) {
       this.PointLight()
       this.MainArea()
-    }
+    }.hoverEffect(HoverEffect.Highlight)
   }
 }
 
