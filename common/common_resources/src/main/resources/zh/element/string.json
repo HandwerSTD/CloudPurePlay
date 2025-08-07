@@ -15,6 +15,10 @@
     {
       "name": "play_queue_total_num",
       "value": "共 %d 首歌"
+    },
+    {
+      "name": "My_Music_Library",
+      "value": "我的音乐库"
     }
   ]
 }

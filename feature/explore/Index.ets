@@ -1,1 +1,1 @@
-export { MainPage } from './src/main/ets/components/MainPage';
+export { ExplorePageBuilder } from './src/main/ets/components/MainPage';

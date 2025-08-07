@@ -26,4 +26,5 @@ export type ShowToastCallback = (icon: ResourceStr, msg: ResourceStr) => void
 export class SCApp {
   static readonly playQueueSheet = 'playQueue'
   static exploreSheet: string = 'exploreSheet'
+  static explorePageStack: string = 'explorePageStack'
 }

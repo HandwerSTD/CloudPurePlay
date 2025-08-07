@@ -1,9 +1,15 @@
 {
-  "name": "explore",
+  "name": "@handwer/explore",
   "version": "1.0.0",
   "description": "Please describe the basic information.",
   "main": "Index.ets",
   "author": "",
   "license": "Apache-2.0",
-  "dependencies": {}
+  "dependencies": {
+    '@handwer/base': 'file:../../common/base',
+    '@handwer/api_adapter': "file:../../apis/api_adapter",
+    '@handwer/ui_components': "file:../../common/ui_components",
+    '@handwer/common_resources': "file:../../common/common_resources",
+    '@handwer/music_library': "file:../music_library"
+  }
 }

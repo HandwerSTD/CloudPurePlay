@@ -15,6 +15,7 @@ import { HdsActionBar, ActionBarButton, hdsEffect, HdsSnackBar } from "@kit.UIDe
 import { LyricComponent } from "./LyricArea"
 import { ImageCover, ImageCoverThumbnail } from "../components/ImageCover"
 import { PlayQueueViewBuilder } from "./PlayQueueView"
+import { ExplorePageBuilder } from "@handwer/explore"
 
 const nps = NowPlayingStore
 const LIGHT_TOP_BTN_SM: LightUpConfig = {
@@ -90,6 +91,8 @@ export struct MainPage {
   @Local isTopAreaExpand: boolean = false
 
   @Local isBottomAreaExpand: boolean = false
+
+  @Local explorePageOpacity: number = 0
 
   // ----------------------------------------
 
@@ -606,9 +609,28 @@ export struct MainPage {
     .animation({duration: 300, curve: Curve.Ease})
   }
 
+  // ------------------------
+
+  @Builder ExplorePageShell() {
+    Column() {
+      Column() {
+        ExplorePageBuilder()
+      }.clip(true)
+      .borderRadius(24)
+      .backgroundColor($r('sys.color.comp_background_secondary'))
+      // .backdropBlur(64) // 背景本身就是模糊的了，多加一层没意义
+      .width('100%').height('100%')
+    }.width('100%').padding({left: 12, right: 12, bottom: 4})
+    .layoutWeight(1)
+    .opacity(this.explorePageOpacity)
+    .animation({duration: 300})
+  }
+
   build() {
     Row() {
       Column() {
+        this.ExplorePageShell()
+
         Swiper() {
           if (!this.showExplore) {
             // Normal
@@ -714,6 +736,15 @@ export struct MainPage {
           this.shouldShowSlider = false
         })
       }, showProgressBarTime)
+    }
+  }
+
+  @Monitor('showExplore')
+  onExplorePage() {
+    if (this.showExplore) {
+      this.explorePageOpacity = 1
+    } else {
+      this.explorePageOpacity = 0
     }
   }
 }

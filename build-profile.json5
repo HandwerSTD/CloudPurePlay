@@ -83,6 +83,10 @@
     {
       "name": "api_adapter",
       "srcPath": "./apis/api_adapter",
+    },
+    {
+      "name": "music_library",
+      "srcPath": "./feature/music_library",
     }
   ]
 }
