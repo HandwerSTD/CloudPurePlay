@@ -12,6 +12,7 @@ export struct LightUpRoundedButton {
   @Param customFontColor: ResourceColor[] | undefined = undefined
   @Param customFontSize: number | undefined = undefined
   @Param customFontWeight: FontWeight | undefined = undefined
+  @Param customPadding: Length | undefined = undefined
   @Param overrideLightUpStat: OverrideLightUpStat = OverrideLightUpStat.NO_OVERRIDE
 
   @Local intensity: number = 0
@@ -50,7 +51,7 @@ export struct LightUpRoundedButton {
         .hitTestBehavior(HitTestMode.Transparent)
     }.borderRadius(this.customFontSize ? this.customFontSize*2 : 48)
     .backgroundColor(this.buttonBgColor)
-    .padding(8)
+    .padding(this.customPadding ?? 8)
     .aspectRatio(1)
     .visualEffect(new hdsEffect.HdsEffectBuilder()
       .pressShadow(this.intensity > 0 ? hdsEffect.PressShadowType.BLEND_GRADIENT : 0)

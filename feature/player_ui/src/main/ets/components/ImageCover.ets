@@ -13,7 +13,7 @@ export struct ImageCover {
   @Param @Require handleLike: () => void = () => {}
   @Param useLight: boolean = false
   @Param useCoverAmbBreathe: boolean = false
-  @Event resetNewBackgroundColor: (colors: ColorMetrics[]) => void
+  @Event resetNewBackgroundColor: (colors: ResourceColor[]) => void
 
   readonly lightOffset = 0
   @Local pointLocation: number = 0

@@ -16,6 +16,14 @@ export class AlbumCoverColorUtils {
         result.push(ColorMetrics.rgba(val.red, val.green, val.blue, val.alpha))
       }
     })
-    return result
+    return result.map((val): string => AlbumCoverColorUtils.RGBA2HEX(val))
+  }
+  static RGBA2HEX(color: ColorMetrics) {
+    const to16 = (num: number): string => {
+      if (num.toString(16).length === 1) return '0'+num.toString(16)
+      return num.toString(16)
+    }
+
+    return '#' +  to16(color.red) + to16(color.green) + to16(color.blue)
   }
 }

@@ -6,16 +6,15 @@ import { FeaturedPlayUtils, GlobalStore, Logger, NowPlayingStore, PlayControl,
   SongConvertUtils,
   SongLike,
   UserStore } from "@handwer/base"
-import { PLAYMODE, SongAPIUtils, Song_INITIAL } from "@handwer/api_adapter"
-import { LightUpRoundedButton, LightUpConfig, OverrideLightUpStat, LightUpBorderRoundButton, SnackBarUtils,
+import { PLAYMODE, Song_INITIAL } from "@handwer/api_adapter"
+import { LightUpRoundedButton, LightUpConfig, LightUpDefaultConfig, OverrideLightUpStat, LightUpBorderRoundButton, SnackBarUtils,
   UIComponentUtils } from "@handwer/ui_components"
 import { ColorMetrics, curves, LengthMetrics, SymbolGlyphModifier } from "@kit.ArkUI"
-import { ClickUtil, DateUtil } from "@pura/harmony-utils"
-import { HdsActionBar, ActionBarButton, ActionBarStyle, hdsEffect, HdsSnackBar } from "@kit.UIDesignKit"
-import { cacheDownload } from "@kit.BasicServicesKit"
+import { ClickUtil } from "@pura/harmony-utils"
+import { HdsActionBar, ActionBarButton, hdsEffect, HdsSnackBar } from "@kit.UIDesignKit"
 import { LyricComponent } from "./LyricArea"
 import { ImageCover, ImageCoverThumbnail } from "../components/ImageCover"
-import { PlayQueueView, PlayQueueViewBuilder } from "./PlayQueueView"
+import { PlayQueueViewBuilder } from "./PlayQueueView"
 
 const nps = NowPlayingStore
 const LIGHT_TOP_BTN_SM: LightUpConfig = {
@@ -86,7 +85,7 @@ export struct MainPage {
   @Local shouldShowSlider: boolean = false
   shouldShowSliderTimeoutHandler?: number
 
-  @Local backgroundFlowingColors: ResourceColor[] = []
+  @Local backgroundFlowingColors: ResourceColor[] = [Color.Black, Color.Blue, Color.Pink]
 
   @Local isTopAreaExpand: boolean = false
 
@@ -96,16 +95,35 @@ export struct MainPage {
 
 
   @Builder BottomAreaControlButton_ActionBar_PrimaryButton() {
-    LightUpRoundedButton({
-      lightUpConfig: ResponsiveUtil.chooseByWidth([LIGHT_TOP_BTN_SM, LIGHT_TOP_BTN_MD, LIGHT_TOP_BTN_LG]),
-      icon: $r('sys.symbol.AI_play'),
-      customBgColor: $r('sys.color.icon_fourth'),
-      clickAction: () => {
-        this.isBottomAreaExpand = !this.isBottomAreaExpand
-      },
-      overrideLightUpStat: this.isBottomAreaExpand ? OverrideLightUpStat.ALWAYS_ENABLED : OverrideLightUpStat.NO_OVERRIDE,
-      customFontColor: this.isBottomAreaExpand ? [Color.Black] : [Color.White, Color.White]
-    })
+    Stack({alignContent: Alignment.BottomEnd}){
+      LightUpRoundedButton({
+        lightUpConfig: ResponsiveUtil.chooseByWidth([LIGHT_TOP_BTN_SM, LIGHT_TOP_BTN_MD, LIGHT_TOP_BTN_LG]),
+        icon: $r('sys.symbol.AI_play'),
+        customBgColor: $r('sys.color.icon_fourth'),
+        clickAction: () => {
+          this.isBottomAreaExpand = !this.isBottomAreaExpand
+        },
+        overrideLightUpStat: this.isBottomAreaExpand ? OverrideLightUpStat.ALWAYS_ENABLED : OverrideLightUpStat.NO_OVERRIDE,
+        customFontColor: this.isBottomAreaExpand ? [Color.Black] : [Color.White, Color.White]
+      })
+      LightUpRoundedButton({
+        icon: $r('sys.symbol.heart_fill'),
+        customFontColor: [Color.Red],
+        customFontSize: 12,
+        customPadding: 4,
+        overrideLightUpStat: OverrideLightUpStat.ALWAYS_ENABLED,
+        clickAction: () => {
+          this.isBottomAreaExpand = !this.isBottomAreaExpand
+        },
+        lightUpConfig: {
+          lightIntensity: 1,
+          lightHeight: 60
+        }
+      })
+        .visibility(this.isThisSongLiked && !this.isBottomAreaExpand ? Visibility.Visible : Visibility.None)
+        // .transition(TransitionEffect.OPACITY.animation({duration: 200}))
+        .translate({x: 6, y: 6})
+    }
   }
   @Builder BottomAreaControlButton_ActionBar() {
     Row() {
@@ -287,7 +305,7 @@ export struct MainPage {
           useLight: true,
           useCoverAmbBreathe: false,
           resetNewBackgroundColor: (colors) => {
-            this.backgroundFlowingColors = colors.map((val) => val.color)
+            this.backgroundFlowingColors = colors
             Logger.debug(`try resetting flow colors: `, this.backgroundFlowingColors.toString())
             this.controller.setEffectParams({
               colorSource: this.backgroundFlowingColors
@@ -627,20 +645,6 @@ export struct MainPage {
     .visualEffect(new hdsEffect.HdsEffectBuilder()
       .shaderEffect({
         effectType: hdsEffect.EffectType.UV_BACKGROUND_FLOW_LIGHT,
-        // params: {
-        //   // firstEdgeFlowLight: {
-        //   //   startPos: 0,
-        //   //   endPos: 1.0,
-        //   //   color: '#1AD0F1',
-        //   // },
-        //   // secondEdgeFlowLight: {
-        //   //   startPos: 0.5,
-        //   //   endPos: 1.5,
-        //   //   color: '#FFA4E5',
-        //   // },
-        //   colorSource: this.backgroundFlowingColors,
-        //   colorTarget: this.backgroundFlowingColors
-        // },
         animation: {
           duration: 5000,
           iterations: -1,
@@ -651,11 +655,7 @@ export struct MainPage {
         },
         controller: this.controller,
       })
-      // .pointLight({
-      //   illuminatedType: hdsEffect.PointLightIlluminatedType.BORDER
-      // })
       .buildEffect())
-    // .backgroundColor(Color.Pink)
 
   }
 
