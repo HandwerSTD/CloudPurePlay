@@ -56,7 +56,7 @@ export struct MainPage {
 
   @Consumer('consoleSheet') consoleSheet: boolean = false
   @Provider(SCApp.playQueueSheet) showQueueSheet: boolean = false
-  @Provider(SCApp.exploreSheet) showExplore: boolean = false
+  @Provider(SCApp.exploreSheet) showExplore: boolean = true
 
   controller: hdsEffect.ShaderEffectController = new hdsEffect.ShaderEffectController()
 
@@ -92,7 +92,7 @@ export struct MainPage {
 
   @Local isBottomAreaExpand: boolean = false
 
-  @Local explorePageOpacity: number = 0
+  @Local explorePageOpacity: number = 1
 
   // ----------------------------------------
 

@@ -16,16 +16,16 @@ export const HDS_TITLE_CONFIG_STYLE: TitleBarStyleOptions = { // 设置Hds导航
     },
     contentStyle: { // 标题栏内容区样式设置，包括标题区域，菜单区域，返回按钮区域
       titleStyle: {
-        mainTitleColor: $r('sys.color.font_primary'),
-        subTitleColor: $r('sys.color.font_secondary')
+        mainTitleColor: $r('sys.color.font_on_primary'),
+        subTitleColor: $r('sys.color.font_on_secondary')
       },
       menuStyle: {
         backgroundColor: $r('sys.color.comp_background_tertiary'),
-        iconColor: $r('sys.color.icon_primary')
+        iconColor: $r('sys.color.icon_on_primary')
       },
       backIconStyle: {
         backgroundColor: $r('sys.color.comp_background_tertiary'),
-        iconColor: $r('sys.color.icon_primary')
+        iconColor: $r('sys.color.icon_on_primary')
       }
     }
   },
@@ -35,16 +35,16 @@ export const HDS_TITLE_CONFIG_STYLE: TitleBarStyleOptions = { // 设置Hds导航
     },
     contentStyle: {
       titleStyle: {
-        mainTitleColor: $r('sys.color.font_primary'),
-        subTitleColor: $r('sys.color.font_secondary')
+        mainTitleColor: $r('sys.color.font_on_primary'),
+        subTitleColor: $r('sys.color.font_on_secondary')
       },
       menuStyle: {
         backgroundColor: $r('sys.color.comp_background_tertiary'),
-        iconColor: $r('sys.color.icon_primary')
+        iconColor: $r('sys.color.icon_on_primary')
       },
       backIconStyle: {
         backgroundColor: $r('sys.color.comp_background_tertiary'),
-        iconColor: $r('sys.color.icon_primary')
+        iconColor: $r('sys.color.icon_on_primary')
       }
     }
   }

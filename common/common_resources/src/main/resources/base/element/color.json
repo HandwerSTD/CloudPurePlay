@@ -3,6 +3,10 @@
     {
       "name": "ui_sheet_bg_col",
       "value": "#66ffffff"
+    },
+    {
+      "name": "common_card_item_background",
+      "value": "#88ffffff"
     }
   ]
 }

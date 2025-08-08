@@ -41,10 +41,13 @@ export struct MainPage {
       Column() {
         Navigation(this.pageStack) {
           MusicLibrary()
+            .height('100%')
         }.navDestination(this.pageMap)
         .mode(NavigationMode.Stack)
+        .hideTitleBar(true)
+        .height('100%')
       }
-      .width('100%')
+      .width('100%').height('100%')
     }
     .height('100%')
   }

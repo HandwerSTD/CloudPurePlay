@@ -84,7 +84,7 @@ export struct LightUpRoundedButton {
     })
     .onHover((is) => {
       if (is) {
-        this.intensity = this.targetIntensity
+        this.intensity = this.targetIntensity/2
       } else {
         this.intensity = 0
       }

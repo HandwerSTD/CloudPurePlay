@@ -23,6 +23,10 @@
     {
       "name": "My_Music_Library",
       "value": "我的音乐库"
+    },
+    {
+      "name": "api_switch_from_what",
+      "value": "来自 %s"
     }
   ]
 }

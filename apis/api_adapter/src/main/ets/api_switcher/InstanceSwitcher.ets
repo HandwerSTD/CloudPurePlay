@@ -3,6 +3,11 @@ export enum INSTANCE_TYPE {
   CLOUD
 }
 
+const InstanceTypeName: Record<INSTANCE_TYPE, string> = {
+  0: "WebDAV",
+  1: "CloudAPI"
+}
+
 export class InstanceSwitcher {
   static _instance?: InstanceSwitcher
   private constructor() {
@@ -22,5 +27,8 @@ export class InstanceSwitcher {
   }
   static set InstanceType(type: INSTANCE_TYPE) {
     InstanceSwitcher.getInstance().instanceType = type
+  }
+  static get InstanceTypeName() {
+    return InstanceTypeName[InstanceSwitcher.InstanceType]
   }
 }
