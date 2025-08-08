@@ -8,7 +8,8 @@ import { FeaturedPlayUtils, GlobalStore, Logger, NowPlayingStore, PlayControl,
   UserStore } from "@handwer/base"
 import { PLAYMODE, Song_INITIAL } from "@handwer/api_adapter"
 import { LightUpRoundedButton, LightUpConfig, LightUpDefaultConfig, OverrideLightUpStat, LightUpBorderRoundButton, SnackBarUtils,
-  UIComponentUtils } from "@handwer/ui_components"
+  UIComponentUtils,
+  LightUpContainer} from "@handwer/ui_components"
 import { ColorMetrics, curves, LengthMetrics, SymbolGlyphModifier } from "@kit.ArkUI"
 import { ClickUtil } from "@pura/harmony-utils"
 import { HdsActionBar, ActionBarButton, hdsEffect, HdsSnackBar } from "@kit.UIDesignKit"
@@ -609,6 +610,12 @@ export struct MainPage {
     .animation({duration: 300, curve: Curve.Ease})
   }
 
+  @Builder LightUpProgress() {
+    Row() {
+      LightUpProgressBar()
+    }.width('100%').padding({left: 12+25, right: 12+25})
+  }
+
   // ------------------------
 
   @Builder ExplorePageShell() {
@@ -618,9 +625,12 @@ export struct MainPage {
       }.clip(true)
       .borderRadius(24)
       .backgroundColor($r('sys.color.comp_background_secondary'))
+      .visualEffect(new hdsEffect.HdsEffectBuilder().pointLight({
+        illuminatedType: hdsEffect.PointLightIlluminatedType.BORDER
+      }).buildEffect())
       // .backdropBlur(64) // 背景本身就是模糊的了，多加一层没意义
       .width('100%').height('100%')
-    }.width('100%').padding({left: 12, right: 12, bottom: 4})
+    }.width('100%').padding({left: 12, right: 12})
     .layoutWeight(1)
     .opacity(this.explorePageOpacity)
     .animation({duration: 300})
@@ -630,7 +640,9 @@ export struct MainPage {
     Row() {
       Column() {
         this.ExplorePageShell()
-
+        if (this.showExplore) {
+          this.LightUpProgress()
+        }
         Swiper() {
           if (!this.showExplore) {
             // Normal
@@ -667,6 +679,9 @@ export struct MainPage {
     .visualEffect(new hdsEffect.HdsEffectBuilder()
       .shaderEffect({
         effectType: hdsEffect.EffectType.UV_BACKGROUND_FLOW_LIGHT,
+        params: {
+          colorSource: [Color.Black, Color.Blue, Color.Pink]
+        },
         animation: {
           duration: 5000,
           iterations: -1,
@@ -745,6 +760,60 @@ export struct MainPage {
       this.explorePageOpacity = 1
     } else {
       this.explorePageOpacity = 0
+    }
+  }
+}
+
+@ComponentV2
+struct LightUpProgressBar {
+
+  @Local totalWidth: number = 0
+
+  nps = NowPlayingStore
+
+  get blankLeftWidth() {
+    return (nps.playTime / nps.currentSong.duration) * this.totalWidth
+  }
+
+  @Local intensity: number = 0
+
+  aboutToAppear(): void {
+    setTimeout(() => {
+      this.onLightUpdate()
+    }, 1000)
+  }
+  @Monitor('nps.isPaused')
+  onLightUpdate() {
+    if (this.nps.isPaused) {
+      this.intensity = 0
+    } else {
+      this.intensity = 2
+    }
+  }
+
+  build() {
+    Stack() {
+      // Row().width('100%').height(1).backgroundColor('#88ffffff')
+      Row() {
+        Blank().width(this.blankLeftWidth)
+        Column() {}.width(5).height(5).translate({y: -2.5})
+        .backgroundColor(Color.White)
+        .shadow({
+          color: '#aaffffff',
+          radius: 4
+        })
+        .borderRadius(10)
+        .visualEffect(new hdsEffect.HdsEffectBuilder().pointLight({
+          options: {
+            intensity: this.intensity,
+            height: 90
+          }
+        }).buildEffect())
+        .animation({duration: 300})
+      }.width('100%').justifyContent(FlexAlign.Start)
+      .onAreaChange((_, nw) => {
+        this.totalWidth = nw.width.valueOf() as number
+      })
     }
   }
 }

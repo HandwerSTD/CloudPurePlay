@@ -8,6 +8,7 @@ export struct LightUpContainer {
 
   @Param lightAlignment: Alignment = Alignment.Center
   @Param overrideLightUpStat: OverrideLightUpStat = OverrideLightUpStat.NO_OVERRIDE
+  // @Param restrictLightBorder: boolean = false
   @Param lightAnimationParam: AnimateParam = {
     duration: 300, curve: Curve.EaseInOut
   }
@@ -40,7 +41,6 @@ export struct LightUpContainer {
       }.height(1).width(1).visualEffect(new hdsEffect.HdsEffectBuilder()
         .pressShadow(this.intensity > 0 ? hdsEffect.PressShadowType.BLEND_GRADIENT : 0)
         .pointLight({
-          illuminatedType: this.illuminatedType,
           options: {
             color: Color.White,
             intensity: this.finalIntensity,

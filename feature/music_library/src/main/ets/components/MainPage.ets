@@ -16,8 +16,11 @@ export struct MainPage {
         .draggable(false)
         .shadow(ShadowStyle.OUTER_DEFAULT_XS)
         .visualEffect(new hdsEffect.HdsEffectBuilder().pointLight({
-          illuminatedType: hdsEffect.PointLightIlluminatedType.BORDER_CONTENT
-        }).pressShadow(hdsEffect.PressShadowType.BLEND_GRADIENT).buildEffect())
+          illuminatedType: hdsEffect.PointLightIlluminatedType.BORDER
+        }).buildEffect())
+        .clickEffect({
+          level: ClickEffectLevel.HEAVY
+        })
       Text(list.name)
         .margin(12).maxLines(1).textOverflow({overflow: TextOverflow.Ellipsis})
         .fontSize(12).fontWeight(FontWeight.Bold)
@@ -50,7 +53,7 @@ export struct MainPage {
       GridItem() {
         LightUpContainer({
           lightUpConfig: {
-            lightIntensity: 2,
+            lightIntensity: 1,
             lightHeight: 240,
           },
           child: () => {
