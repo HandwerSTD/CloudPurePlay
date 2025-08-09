@@ -5,6 +5,7 @@ import { FeaturedPlayUtils, GlobalStore, Logger, NowPlayingStore, PlayControl,
   SCApp,
   SongConvertUtils,
   SongLike,
+  ThemeManager,
   UserStore } from "@handwer/base"
 import { PLAYMODE, Song_INITIAL } from "@handwer/api_adapter"
 import { LightUpRoundedButton, LightUpConfig, LightUpDefaultConfig, OverrideLightUpStat, LightUpBorderRoundButton, SnackBarUtils,
@@ -679,9 +680,9 @@ export struct MainPage {
     .visualEffect(new hdsEffect.HdsEffectBuilder()
       .shaderEffect({
         effectType: hdsEffect.EffectType.UV_BACKGROUND_FLOW_LIGHT,
-        params: {
-          colorSource: [Color.Black, Color.Blue, Color.Pink]
-        },
+        // params: {
+        //   [Color.Black, Color.Blue, Color.Pink]
+        // },
         animation: {
           duration: 5000,
           iterations: -1,

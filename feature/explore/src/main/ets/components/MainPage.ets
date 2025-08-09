@@ -1,7 +1,7 @@
 import { SCApp } from "@handwer/base"
 import { HDS_TITLE_CONFIG_STYLE } from "@handwer/ui_components"
 import { HdsNavigation, HdsNavigationTitleMode, HdsNavigationAttribute, hdsEffect } from "@kit.UIDesignKit"
-import { MusicLibrary } from '@handwer/music_library'
+import { MusicLibrary, PlaylistDetail } from '@handwer/music_library'
 
 // 参数供参考：
 // Grid() {
@@ -33,6 +33,8 @@ export struct MainPage {
   @Builder pageMap(name: string) {
     if (name === 'MusicLibrary') {
       MusicLibrary()
+    } else if (name === 'PlaylistDetail') {
+      PlaylistDetail()
     }
   }
 

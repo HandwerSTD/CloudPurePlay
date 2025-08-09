@@ -1,15 +1,21 @@
 import { InstanceSwitcher, PlayList } from "@handwer/api_adapter"
-import { ResponsiveUtil, UserStore } from "@handwer/base"
+import { ResponsiveUtil, SCApp, UserStore } from "@handwer/base"
 import { HDS_TITLE_CONFIG_STYLE, LightUpContainer } from "@handwer/ui_components"
 import { hdsEffect, HdsNavigation, HdsNavigationAttribute, HdsNavigationTitleMode } from "@kit.UIDesignKit"
 import { LengthMetrics } from "@kit.ArkUI"
+import { generatePageParams_PlayListDetail } from "../views/PlaylistDetail"
+
+export function genId_MusicLibraryPlaylist(id: string) {
+  return 'MusicLibraryPlaylist_'+id
+}
 
 @ComponentV2
 export struct MainPage {
+  @Consumer(SCApp.explorePageStack) pageStack: NavPathStack = new NavPathStack()
   @Local gridColumnNum: number = 4
   user = UserStore
 
-  @Builder PlayList_SingleItem(list: PlayList) {
+  @Builder PlayList_SingleItem(list: PlayList, index: number) {
     Column() {
       Image(list.coverImgUrl).borderRadius(12)
       // .margin({left:12, right: 12, top: 12})
@@ -25,7 +31,10 @@ export struct MainPage {
         .margin(12).maxLines(1).textOverflow({overflow: TextOverflow.Ellipsis})
         .fontSize(12).fontWeight(FontWeight.Bold)
         .fontColor($r('sys.color.font_on_primary'))
-    }//.borderRadius(12).clip(true)
+    }
+    .onClick(() => {
+      this.onPlayListItemClicked(index)
+    })//.borderRadius(12).clip(true)
     // .backgroundColor($r('app.color.common_card_item_background'))
     // .shadow(ShadowStyle.OUTER_DEFAULT_SM)
   }
@@ -49,7 +58,7 @@ export struct MainPage {
   }
 
   @Builder MyPlayList() {
-    ForEach(this.user.userPlaylists, (list: PlayList) => {
+    ForEach(this.user.userPlaylists, (list: PlayList, index) => {
       GridItem() {
         LightUpContainer({
           lightUpConfig: {
@@ -57,7 +66,7 @@ export struct MainPage {
             lightHeight: 240,
           },
           child: () => {
-            this.PlayList_SingleItem(list)
+            this.PlayList_SingleItem(list, index)
           }
         })
       }
@@ -97,9 +106,20 @@ export struct MainPage {
             }
           }
         }).titleMode(HdsNavigationTitleMode.FREE).mode(NavigationMode.Stack)
+        .backgroundColor(Color.Transparent)
       }
       .width('100%').height('100%')
     }
     .height('100%')
+  }
+
+  onPlayListItemClicked(index: number) {
+    const params = generatePageParams_PlayListDetail(this.user.userPlaylists[index])
+    this.getUIContext().animateTo({duration: 500}, () => {
+      this.pageStack.pushPath({
+        name: 'PlaylistDetail',
+        param: params
+      }, true)
+    })
   }
 }
