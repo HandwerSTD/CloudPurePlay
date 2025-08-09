@@ -1,0 +1,48 @@
+@ComponentV2
+export struct ImageCover {
+  @Param @Require nowPlayingCoverImg: ResourceStr
+
+  build() {
+    Stack() {
+      Image(this.nowPlayingCoverImg)
+        .draggable(false)
+        .ImageLightShadowFaker()
+        .opacity(0.8)
+        .animation({ duration: 1000, curve: Curve.Ease })
+        .brightness(1.3)
+        .animation({ duration: 500 })
+
+      Stack() {
+        Image(this.nowPlayingCoverImg)
+          .draggable(false)
+          .ImageFaker()
+      }.hitTestBehavior(HitTestMode.Transparent)
+    }.alignContent(Alignment.TopStart)
+  }
+}
+@Extend(Image) function ImageLightShadowFaker() {
+  .aspectRatio(1)
+  .layoutWeight(1)
+  .constraintSize({
+    maxWidth: '100%'
+  })
+  // .scale({x: 0.95, y: 0.95})
+  .foregroundEffect({
+    radius: 192
+  })
+  // .borderRadius(24)
+  .brightness(1.3)
+  .saturate(3)
+  .translate({y: 24})
+  .transition(TransitionEffect.OPACITY.animation({duration: 1000}))
+}
+
+@Extend(Image) function ImageFaker() {
+  .aspectRatio(1)
+  .layoutWeight(1)
+  .constraintSize({
+    maxWidth: '100%'
+  })
+  .borderRadius(20)
+  .shadow(ShadowStyle.OUTER_DEFAULT_MD)
+}

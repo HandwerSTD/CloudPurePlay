@@ -2,7 +2,7 @@ import axios, { AxiosError, AxiosRequestConfig, AxiosResponse, InternalAxiosRequ
 import { LogUtil } from '@pura/harmony-utils'
 import { RequestContext } from './RequestContext'
 
-const TAG = 'RequestUtil'
+const TAG = 'RequestUtil '
 
 
 let currentContext: RequestContext | null = null
@@ -54,7 +54,7 @@ instance.interceptors.request.use(async (request: InternalAxiosRequestConfig ) =
 instance.interceptors.response.use((response: AxiosResponse) => {
   return response
 }, (err: AxiosError) => {
-  LogUtil.error(TAG, `error: ${err?.status} + ${err?.message ?? ""} -> URL =  ${err.response?.config.url}`)
+  LogUtil.error(TAG, `error: ${err?.status} + ${err?.message ?? ""} -> URL = ${err.response?.config.url}, baseURL = ${err.response?.config.baseURL}`)
   return Promise.reject(err)
 })
 

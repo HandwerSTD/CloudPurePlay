@@ -10,7 +10,7 @@ export class ServiceInitUtils {
   static async init() {
     // API 请求初始化
     const reqContext: Cloud_RequestContext = {
-      baseUrl: 'http://111.229.38.178:3333/',
+      baseUrl: 'http://ncmapi.chenlvin.cc:80/',
       cookie: {},
       realIp: {toggle: false, realIp: RealIP_INITIAL.realIp}
     }
