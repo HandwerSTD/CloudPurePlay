@@ -1,6 +1,6 @@
 import { PlayList, PlayList_INITIAL } from "@handwer/api_adapter";
 import { ResponsiveUtil, SCApp } from "@handwer/base";
-import { HdsNavDestination, HdsNavDestinationAttribute, HdsNavDestinationTitleMode } from "@kit.UIDesignKit";
+import { hdsEffect, HdsNavDestination, HdsNavDestinationAttribute, HdsNavDestinationTitleMode } from "@kit.UIDesignKit";
 import { genId_MusicLibraryPlaylist } from "../components/MusicLibrary_MainPage";
 
 @ComponentV2
@@ -26,7 +26,14 @@ export struct PlaylistDetail {
     }.onReady((context) => {
       this.playListInfo = (context.pathInfo.param as Record<string, Object>)['playListInfo'] as PlayList
     })
-    .backgroundColor(Color.Transparent)
+    .visualEffect(new hdsEffect.HdsEffectBuilder().shaderEffect({
+      effectType: hdsEffect.EffectType.UV_BACKGROUND_FLOW_LIGHT,
+      animation: {
+        duration: 5000,
+        iterations: -1
+      }
+    }).buildEffect())
+    // .backgroundBlurStyle(BlurStyle.BACKGROUND_THIN)
   }
 }
 

@@ -106,7 +106,14 @@ export struct MainPage {
             }
           }
         }).titleMode(HdsNavigationTitleMode.FREE).mode(NavigationMode.Stack)
-        .backgroundColor(Color.Transparent)
+
+        .visualEffect(new hdsEffect.HdsEffectBuilder().shaderEffect({
+          effectType: hdsEffect.EffectType.UV_BACKGROUND_FLOW_LIGHT,
+          animation: {
+            duration: 5000,
+            iterations: -1
+          }
+        }).buildEffect())
       }
       .width('100%').height('100%')
     }
@@ -115,11 +122,11 @@ export struct MainPage {
 
   onPlayListItemClicked(index: number) {
     const params = generatePageParams_PlayListDetail(this.user.userPlaylists[index])
-    this.getUIContext().animateTo({duration: 500}, () => {
+    // this.getUIContext().animateTo({duration: 500}, () => {
       this.pageStack.pushPath({
         name: 'PlaylistDetail',
         param: params
       }, true)
-    })
+    // })
   }
 }

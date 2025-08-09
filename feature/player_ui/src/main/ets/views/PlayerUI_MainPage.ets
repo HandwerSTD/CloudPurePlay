@@ -625,6 +625,7 @@ export struct MainPage {
         ExplorePageBuilder()
       }.clip(true)
       .borderRadius(24)
+      .shadow(ShadowStyle.OUTER_FLOATING_SM)
       .backgroundColor($r('sys.color.comp_background_secondary'))
       .visualEffect(new hdsEffect.HdsEffectBuilder().pointLight({
         illuminatedType: hdsEffect.PointLightIlluminatedType.BORDER
@@ -759,8 +760,10 @@ export struct MainPage {
   onExplorePage() {
     if (this.showExplore) {
       this.explorePageOpacity = 1
+      this.controller.pause()
     } else {
       this.explorePageOpacity = 0
+      this.controller.play()
     }
   }
 }
