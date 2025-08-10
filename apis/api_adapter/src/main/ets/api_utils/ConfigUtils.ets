@@ -9,4 +9,4 @@ export {
   Cloud_RequestCookieConfig,
   Cloud_checkValidUriParams,
   CloudAPIConfigUtils
-} from './cloud_api_adapter/CloudAPIExports'
+} from './cloud_api_adapter/CloudAPI_ConfigExports'

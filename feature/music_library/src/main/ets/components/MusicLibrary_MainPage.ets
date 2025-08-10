@@ -1,8 +1,9 @@
 import { InstanceSwitcher, PlayList } from "@handwer/api_adapter"
 import { ResponsiveUtil, SCApp, UserStore } from "@handwer/base"
 import { HDS_TITLE_CONFIG_STYLE, LightUpContainer } from "@handwer/ui_components"
-import { hdsEffect, HdsNavigation, HdsNavigationAttribute, HdsNavigationTitleMode } from "@kit.UIDesignKit"
-import { LengthMetrics } from "@kit.ArkUI"
+import { hdsEffect, HdsNavigation, HdsNavigationAttribute, HdsNavigationTitleMode,
+  IconStyleMode } from "@kit.UIDesignKit"
+import { IconType, LengthMetrics } from "@kit.ArkUI"
 import { generatePageParams_PlayListDetail } from "../views/PlaylistDetail"
 
 export function genId_MusicLibraryPlaylist(id: string) {
@@ -12,6 +13,7 @@ export function genId_MusicLibraryPlaylist(id: string) {
 @ComponentV2
 export struct MainPage {
   @Consumer(SCApp.explorePageStack) pageStack: NavPathStack = new NavPathStack()
+  @Consumer(SCApp.settingsSheet) settingsSheet: boolean = false
   @Local gridColumnNum: number = 4
   user = UserStore
 
@@ -103,10 +105,20 @@ export struct MainPage {
           content: {
             title: {
               mainTitle: $r('app.string.My_Music_Library'),
+            },
+            menu: {
+              value: [{
+                content: {
+                  icon: $r('sys.symbol.gearshape'),
+                  type: IconStyleMode.NORMAL,
+                  action: () => {
+                    this.settingsSheet = !this.settingsSheet
+                  }
+                },
+              }]
             }
-          }
+          },
         }).titleMode(HdsNavigationTitleMode.FREE).mode(NavigationMode.Stack)
-
         .visualEffect(new hdsEffect.HdsEffectBuilder().shaderEffect({
           effectType: hdsEffect.EffectType.UV_BACKGROUND_FLOW_LIGHT,
           animation: {

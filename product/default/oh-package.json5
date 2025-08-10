@@ -8,7 +8,8 @@
   "dependencies": {
     '@handwer/base': "file:../../common/base",
     '@handwer/api_adapter': "file:../../apis/api_adapter",
-    '@handwer/player_ui': "file:../../feature/player_ui"
+    '@handwer/player_ui': "file:../../feature/player_ui",
+    '@handwer/app_settings': "file:../../feature/app_settings"
   }
 }
 

@@ -39,6 +39,22 @@
     {
       "name": "common_play_button_play_num",
       "value": "播放 %d 首"
+    },
+    {
+      "name": "data_source",
+      "value": "音乐数据源"
+    },
+    {
+      "name": "about_this_app",
+      "value": "关于此应用"
+    },
+    {
+      "name": "join_group",
+      "value": "加入交流群"
+    },
+    {
+      "name": "opening_group",
+      "value": "打开中…"
     }
   ]
 }

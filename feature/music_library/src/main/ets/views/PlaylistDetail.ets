@@ -76,13 +76,13 @@ export struct PlaylistDetail {
   @Builder PlayListItemTrailing(song: PlayListSong) {
     Row() {
       LightUpRoundedButton({
-        icon: this.isSongLiked(song) ? $r('sys.symbol.heart_fill') : $r('sys.symbol.heart'),
+        icon: !this.isSongLiked(song) ?  $r('sys.symbol.heart') : $r('sys.symbol.heart_fill'),
         clickAction: () => {
           SongLike.likeSong(song.id, (icon, msg) => {
             SnackBarUtils.showMessage(this.snack, icon, msg)
           })
         },
-        customFontColor: [this.isSongLiked(song) ? Color.Red : Color.White],
+        customFontColor: [!this.isSongLiked(song) ? Color.White : Color.Red],
         customBgColor: Color.Transparent,
         lightUpConfig: {
           lightIntensity: 2,

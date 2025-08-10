@@ -27,4 +27,6 @@ export class SCApp {
   static readonly playQueueSheet = 'playQueue'
   static exploreSheet: string = 'exploreSheet'
   static explorePageStack: string = 'explorePageStack'
+  static settingsSheet: string = 'settingsSheet'
+  static settingsPageStack: string = 'settingsPageStack'
 }

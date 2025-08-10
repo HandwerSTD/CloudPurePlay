@@ -56,7 +56,7 @@ export struct MainPage {
 
   _nps = NowPlayingStore
 
-  @Consumer('consoleSheet') consoleSheet: boolean = false
+  @Consumer(SCApp.settingsSheet) consoleSheet: boolean = false
   @Provider(SCApp.playQueueSheet) showQueueSheet: boolean = false
   @Provider(SCApp.exploreSheet) showExplore: boolean = true
 
@@ -221,12 +221,9 @@ export struct MainPage {
             }
           }),
           new ActionBarButton({
-            baseIcon: $r('sys.symbol.house'),
+            baseIcon: $r('sys.symbol.speaker_wave_3'),
             width: LengthMetrics.vp(40),
             onClick: () => {
-              this.showExplore = true
-              this.isTopAreaExpand = false
-              this.isBottomAreaExpand = false
             }
           }),
         ]
@@ -243,10 +240,12 @@ export struct MainPage {
       // Settings
       LightUpRoundedButton({
         lightUpConfig: ResponsiveUtil.chooseByWidth([LIGHT_TOP_BTN_SM, LIGHT_TOP_BTN_MD, LIGHT_TOP_BTN_LG]),
-        icon: $r('sys.symbol.gearshape'),
+        icon: $r('sys.symbol.house'),
         customBgColor: $r('sys.color.icon_fourth'),
         clickAction: () => {
-          this.consoleSheet = !this.consoleSheet
+          this.showExplore = true
+          this.isTopAreaExpand = false
+          this.isBottomAreaExpand = false
         },
         customFontColor: [Color.White, Color.White]
       }).visibility(this.topAreaExpandShouldHideNormal ? Visibility.Hidden : Visibility.Visible)
