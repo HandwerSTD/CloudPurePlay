@@ -8,11 +8,22 @@ import NowPlayingStore from "../NowPlayingStore"
 const TAG = '[songLike] '
 
 export class SongLike {
+  static isSongLiked(sid: number) {
+    let isLiked: boolean = false
+    try {
+      let likeList = Array.from(UserStore.likeList)
+      isLiked = JSON.stringify(likeList).includes(sid.toString())
+    } catch (e) {
+      LogUtil.error(TAG, 'isThisSongLiked Error: ' + e.message)
+    }
+    return isLiked;
+  }
+
   /**
    * 判断当前歌曲是否被喜欢
    * @param sid
    */
-  static async isThisSongLiked(sid: number) {
+  static isThisSongLiked(sid: number) {
     let isLiked: boolean = false
     try {
       let likeList = Array.from(UserStore.likeList)
@@ -60,6 +71,44 @@ export class SongLike {
     } catch (e) {
       LogUtil.error(TAG, 'likeThisSong Error: ' + e.message)
       toastCallback?.($r('sys.symbol.heart_slash'), '修改红心失败')
+    }
+  }
+
+
+  /**
+   * 喜欢当前歌曲
+   */
+  static async likeSong(sid: number, toastCallback?: ShowToastCallback) {
+    const store = UserStore
+    try {
+      let isLogged: boolean = UserManager.isLogged
+      let isLiked: boolean = SongLike.isSongLiked(sid)
+      if (!isLogged) {
+        return
+      } else if(!isLiked) { // 未喜欢
+        const result = await SongAPIUtils.likeMusic(sid)
+        // 喜欢列表
+        await SongAPIUtils.getLikeList(UserStore.user, (val) => {
+          if (val) store.likeList = new Set(val)
+          UserManager.updateLikeList()
+        })
+        toastCallback?.($r('sys.symbol.heart_fill'), result ? '已收藏至【我喜欢的音乐】' : '收藏失败')
+      } else { // 已喜欢
+        let currentSong = NowPlayingStore.currentSong
+        let userPlayLists = UserStore.userPlaylists
+        const result = await PlayListAPIUtils.PlayListOperation('del', userPlayLists[0].id, currentSong.id)
+        // 喜欢列表
+        await SongAPIUtils.getLikeList(UserStore.user, (val) => {
+          store.likeList = new Set(val ?? store.likeList)
+          UserManager.updateLikeList()
+        })
+        toastCallback?.($r('sys.symbol.heart'), result ? '取消喜欢当前歌曲' : '取消喜欢失败')
+      }
+    } catch (e) {
+      LogUtil.error(TAG, 'likeThisSong Error: ' + e.message)
+      toastCallback?.($r('sys.symbol.heart_slash'), '修改红心失败')
+    } finally {
+      SongLike.isThisSongLiked(NowPlayingStore.currentSong.id)
     }
   }
 }

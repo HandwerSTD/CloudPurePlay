@@ -1,0 +1,46 @@
+import { Song } from '@handwer/api_adapter'
+import { SongConvertUtils } from '@handwer/base'
+import { ImageCoverThumbnail } from '../exports'
+
+@ComponentV2
+export struct InListSongItem {
+  @Param @Require songName: string
+  @Param @Require songArtist: string
+  @Param coverInfo: ResourceStr | undefined = undefined
+
+  @Param @Require onPlay: () => void
+  @BuilderParam trailing?: () => void
+
+  build() {
+    Row() {
+      if (this.coverInfo) {
+        ImageCoverThumbnail({
+          nowPlayingCoverImg: this.coverInfo
+        }).margin({left: 12, right: 12})
+      }
+      Column({space: 12}) {
+        Text(this.songName).fontSize(16).fontWeight(FontWeight.Bold)
+          .songText()
+        Text(this.songArtist)
+          .fontColor($r('sys.color.font_secondary')).fontSize(14)
+          .songText()
+      }.alignItems(HorizontalAlign.Start).layoutWeight(1)
+      if (this.trailing) {
+        this.trailing();
+      }
+    }.height(56).width('100%').justifyContent(FlexAlign.Start)
+    .padding({left: 12, right: 12})
+    .onClick(() => {
+      this.onPlay()
+    })
+    .clickEffect({
+      level: ClickEffectLevel.MIDDLE
+    })
+  }
+}
+
+@Extend(Text) function songText() {
+  // .layoutWeight(1)
+  .textOverflow({overflow: TextOverflow.Ellipsis})
+  .fontColor(Color.White)
+}

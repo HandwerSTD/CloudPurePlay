@@ -7,6 +7,10 @@
     {
       "name": "common_card_item_background",
       "value": "#88ffffff"
+    },
+    {
+      "name": "play_list_single_item_bg",
+      "value": "#33ffffff"
     }
   ]
 }

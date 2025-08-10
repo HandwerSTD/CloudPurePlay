@@ -174,3 +174,94 @@ export struct LightUpBorderRoundButton {
 
   }
 }
+
+
+@ComponentV2
+export struct LightUpCommonButton {
+  @Param @Require clickAction: () => void
+  @Param @Require lightUpConfig: LightUpConfig
+  @BuilderParam child: () => void
+
+  @Param customBgColor: ResourceColor | undefined = undefined
+  @Param customPadding: Padding | number | undefined = undefined
+  @Param customBorderRadius: Length | undefined = 500 // infinity
+  @Param overrideLightUpStat: OverrideLightUpStat = OverrideLightUpStat.NO_OVERRIDE
+  @Param useBorder: boolean = false
+
+  @Local intensity: number = 0
+  @Local illuminatedType: hdsEffect.PointLightIlluminatedType = hdsEffect.PointLightIlluminatedType.BORDER_CONTENT
+
+  @Monitor('intensity', 'overrideLightUpStat')
+  onLightUp() {
+    if (this.finalIntensity > 0) {
+      this.illuminatedType = hdsEffect.PointLightIlluminatedType.BORDER
+    } else {
+      this.illuminatedType = hdsEffect.PointLightIlluminatedType.BORDER_CONTENT
+    }
+  }
+
+  get targetIntensity() {
+    return (this.lightUpConfig.lightIntensity ?? LightUpDefaultConfig.lightIntensity!)
+  }
+  get finalIntensity() {
+    if (this.overrideLightUpStat === OverrideLightUpStat.NO_OVERRIDE) return this.intensity
+    if (this.overrideLightUpStat === OverrideLightUpStat.ALWAYS_DISABLED) return 0
+    return this.targetIntensity
+  }
+  get buttonBgColor() {
+    if (this.finalIntensity > 0) {
+      return Color.White
+    }
+    return this.customBgColor ? this.customBgColor : $r('sys.color.comp_background_secondary')
+  }
+
+  build() {
+    Button() {
+      this.child()
+    }.borderRadius(this.customBorderRadius)
+    .border({
+      radius: this.customBorderRadius,
+      width: this.useBorder ? 1 : 0,
+      color: Color.White
+    })
+    .backgroundColor(this.buttonBgColor)
+    .padding(this.customPadding ?? 12)
+    .visualEffect(new hdsEffect.HdsEffectBuilder()
+      .pressShadow(this.intensity > 0 ? hdsEffect.PressShadowType.BLEND_GRADIENT : 0)
+      .pointLight({
+        illuminatedType: this.illuminatedType,
+        options: {
+          color: Color.White,
+          intensity: this.finalIntensity,
+          height: this.lightUpConfig.lightHeight ?? LightUpDefaultConfig.lightHeight,
+          bloom: this.lightUpConfig.lightBloom ?? 0
+        }
+      }).buildEffect())
+    .animation({
+      duration: 300,
+      curve: Curve.EaseInOut
+    })
+    .clickEffect({
+      level: ClickEffectLevel.LIGHT
+    })
+    //-------------------------------------
+    .onClick(() => {
+      this.clickAction()
+    })
+    .onTouch((event) => {
+      if (event.type === TouchType.Down) {
+        this.intensity = this.targetIntensity
+      } else if (event.type === TouchType.Up || event.type === TouchType.Cancel) {
+        this.intensity = 0
+      }
+    })
+    .onHover((is) => {
+      if (is) {
+        this.intensity = this.targetIntensity/2
+      } else {
+        this.intensity = 0
+      }
+    })
+
+  }
+}

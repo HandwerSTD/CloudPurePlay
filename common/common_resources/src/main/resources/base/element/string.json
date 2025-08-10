@@ -27,6 +27,18 @@
     {
       "name": "api_switch_from_what",
       "value": "来自 %s"
+    },
+    {
+      "name": "start_playing_le_NAME_ge_",
+      "value": "开始播放《%s》"
+    },
+    {
+      "name": "start_playing_list_failed",
+      "value": "播放列表失败"
+    },
+    {
+      "name": "common_play_button",
+      "value": "播放"
     }
   ]
 }

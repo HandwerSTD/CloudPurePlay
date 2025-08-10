@@ -1,4 +1,4 @@
-import { CycleMode, PlayQueue, Song } from '@handwer/api_adapter'
+import { CycleMode, PlayList, PlayListSong, PLAYMODE, PlayQueue, Song } from '@handwer/api_adapter'
 import { EmitterUtil, LogUtil } from '@pura/harmony-utils'
 import { playQueueStore, playQueueKV } from './PlayQueueStore'
 
@@ -133,6 +133,24 @@ class PlayQueueUtils {
   changeCycleMode(mode?: CycleMode) {
     playQueueStore.cycleMode = mode ?? (playQueueStore.cycleMode + 1) % 4
     playQueueKV.put(SCQueueKV.cycleMode, playQueueStore.cycleMode)
+  }
+
+  makeQueueByPlaylist(list: PlayListSong[]) {
+    let queue: PlayQueue[] = list.map((item): PlayQueue => ({
+      playmode: PLAYMODE.PLAYLIST,
+      song: {
+        id: item.id,
+        name: item.name,
+        artists: item.ar,
+        album: item.al,
+        duration: item.dt,
+        fee: item.fee,
+        alias: []
+      },
+      fileName: '',
+      picUrl: item.al.picUrl
+    }))
+    return queue
   }
 }
 
