@@ -14,6 +14,7 @@ export struct LightUpRoundedButton {
   @Param customFontWeight: FontWeight | undefined = undefined
   @Param customPadding: Length | undefined = undefined
   @Param overrideLightUpStat: OverrideLightUpStat = OverrideLightUpStat.NO_OVERRIDE
+  @Param useAnimationToAll: boolean = false
 
   @Local intensity: number = 0
   @Local illuminatedType: hdsEffect.PointLightIlluminatedType = hdsEffect.PointLightIlluminatedType.BORDER_CONTENT
@@ -53,6 +54,10 @@ export struct LightUpRoundedButton {
     .backgroundColor(this.buttonBgColor)
     .padding(this.customPadding ?? 8)
     .aspectRatio(1)
+    .animation({
+      duration: this.useAnimationToAll ? 300 : 0,
+      curve: Curve.EaseInOut
+    })
     .visualEffect(new hdsEffect.HdsEffectBuilder()
       .pressShadow(this.intensity > 0 ? hdsEffect.PressShadowType.BLEND_GRADIENT : 0)
       .pointLight({

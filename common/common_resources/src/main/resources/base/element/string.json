@@ -39,6 +39,10 @@
     {
       "name": "common_play_button",
       "value": "播放"
+    },
+    {
+      "name": "common_play_button_play_num",
+      "value": "播放 %d 首"
     }
   ]
 }
