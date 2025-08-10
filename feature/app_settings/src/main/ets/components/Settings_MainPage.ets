@@ -5,6 +5,7 @@ import { HdsNavigation, HdsNavigationAttribute, HdsNavigationTitleMode } from "@
 import { hdsEffect, HdsSnackBar } from "@kit.UIDesignKit";
 import { common, OpenLinkOptions } from '@kit.AbilityKit';
 import { DataSourceSettings } from "../views/DataSourceSettings";
+import { AboutPage } from "../views/AboutPage";
 
 @ComponentV2
 export struct MainPage {
@@ -22,11 +23,13 @@ export struct MainPage {
       DataSourceSettings()
     } else if (name === 'Main') {
       this.Main()
+    } else if (name === 'AboutPage') {
+      AboutPage()
     }
   }
 
   @Builder DataSource() {
-    Column({space: 12}) {
+    Column() {
       LightUpLinedContainer({ lightUpConfig: {lightIntensity: 1, lightHeight: 120 }}) {
         CommonListItem({
           icon: $r('sys.symbol.play_circle_badge_music_note'),
@@ -43,7 +46,7 @@ export struct MainPage {
   }
 
   @Builder AboutApp() {
-    Column({space: 12}) {
+    Column() {
       LightUpLinedContainer({ lightUpConfig: {lightIntensity: 1, lightHeight: 120 }}) {
         CommonListItem({
           icon: $r('sys.symbol.doc_plaintext_and_pencil'),
@@ -59,6 +62,9 @@ export struct MainPage {
           icon: $r('sys.symbol.info_circle'),
           title: $r('app.string.about_this_app'),
         })
+          .onClick(() => {
+            this.pushPage('AboutPage', {})
+          })
       }
     }.backgroundColor($r('app.color.play_list_single_item_bg'))
     .borderRadius(20)

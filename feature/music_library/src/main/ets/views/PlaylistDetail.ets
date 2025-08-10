@@ -20,6 +20,7 @@ const TAG = '[PlaylistDetail]'
 
 @ComponentV2
 export struct PlaylistDetail {
+  @Local pageOpacity: number = 1;
   snack = new HdsSnackBar(this.getUIContext())
 
   nps = NowPlayingStore
@@ -236,17 +237,19 @@ export struct PlaylistDetail {
     .titleBar({
       style: HDS_TITLE_CONFIG_STYLE
     })
-    .visualEffect(new hdsEffect.HdsEffectBuilder().shaderEffect({
-      effectType: hdsEffect.EffectType.UV_BACKGROUND_FLOW_LIGHT,
-      animation: {
-        duration: 5000,
-        iterations: -1
-      }
-    }).buildEffect())
     .onAreaChange((_, nw) => {
       this.gridCount = ResponsiveUtil.chooseByWidth([1,2])
       this.fullWindowSizeArea = nw
     })
+    .backgroundColor(Color.Transparent)
+    .onShown(() => {
+      this.pageOpacity = 1
+    })
+    .onWillHide(() => {
+      this.pageOpacity = 0
+    })
+    .opacity(this.pageOpacity)
+    .animation({duration: ResponsiveUtil.chooseByWidth([300, 200, 200])})
     // .backgroundBlurStyle(BlurStyle.BACKGROUND_THIN)
   }
 

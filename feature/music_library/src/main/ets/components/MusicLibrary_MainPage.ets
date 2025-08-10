@@ -12,9 +12,11 @@ export function genId_MusicLibraryPlaylist(id: string) {
 
 @ComponentV2
 export struct MainPage {
+  @Consumer(SCApp.exploreSheet) exploreSheet: boolean = false
   @Consumer(SCApp.explorePageStack) pageStack: NavPathStack = new NavPathStack()
   @Consumer(SCApp.settingsSheet) settingsSheet: boolean = false
   @Local gridColumnNum: number = 4
+  @Local pageOpacity: number = 1
   user = UserStore
 
   @Builder PlayList_SingleItem(list: PlayList, index: number) {
@@ -76,60 +78,68 @@ export struct MainPage {
   }
 
   build() {
-    Row() {
-      Column() {
-        HdsNavigation() {
-          Grid() {
-            GridItem().height($r('sys.float.ohos_id_navigation_bar_height_emphasize'))
+    NavDestination() {
+      Row() {
+        Column() {
+          HdsNavigation() {
+            Grid() {
+              GridItem().height($r('sys.float.ohos_id_navigation_bar_height_emphasize'))
+                .columnStart(0).columnEnd(this.gridColumnNum-1)
+              GridItem() {
+                this.UserCard()
+              }
               .columnStart(0).columnEnd(this.gridColumnNum-1)
-            GridItem() {
-              this.UserCard()
-            }
-            .columnStart(0).columnEnd(this.gridColumnNum-1)
-            this.MyPlayList()
-          }.width('100%')
-          .fadingEdge(true, {
-            fadingEdgeLength: LengthMetrics.percent(10)
-          }).edgeEffect(EdgeEffect.Spring, {alwaysEnabled: true})
-          .padding({left: 12, right: 12})
-          // .expandSafeArea([SafeAreaType.SYSTEM])
-          .columnsTemplate(new Array(this.gridColumnNum).fill('1fr').join(' '))
-          // .animation({duration: 300})
-          .rowsGap(36).columnsGap(24)
-          .clip(false)
-          .onAreaChange((_, nw) => {
-            this.gridColumnNum = ResponsiveUtil.chooseByWidth([2,4,6])
-          })
-        }.width('100%').height('100%').titleBar({
-          style: HDS_TITLE_CONFIG_STYLE,
-          content: {
-            title: {
-              mainTitle: $r('app.string.My_Music_Library'),
+              this.MyPlayList()
+            }.width('100%')
+            .fadingEdge(true, {
+              fadingEdgeLength: LengthMetrics.percent(10)
+            }).edgeEffect(EdgeEffect.Spring, {alwaysEnabled: true})
+            .padding({left: 12, right: 12})
+            // .expandSafeArea([SafeAreaType.SYSTEM])
+            .columnsTemplate(new Array(this.gridColumnNum).fill('1fr').join(' '))
+            // .animation({duration: 300})
+            .rowsGap(36).columnsGap(24)
+            .clip(false)
+            .onAreaChange((_, nw) => {
+              this.gridColumnNum = ResponsiveUtil.chooseByWidth([2,4,6])
+            })
+          }.width('100%').height('100%').titleBar({
+            style: HDS_TITLE_CONFIG_STYLE,
+            content: {
+              title: {
+                mainTitle: $r('app.string.My_Music_Library'),
+              },
+              menu: {
+                value: [{
+                  content: {
+                    icon: $r('sys.symbol.gearshape'),
+                    type: IconStyleMode.NORMAL,
+                    action: () => {
+                      this.settingsSheet = !this.settingsSheet
+                    }
+                  },
+                }]
+              }
             },
-            menu: {
-              value: [{
-                content: {
-                  icon: $r('sys.symbol.gearshape'),
-                  type: IconStyleMode.NORMAL,
-                  action: () => {
-                    this.settingsSheet = !this.settingsSheet
-                  }
-                },
-              }]
-            }
-          },
-        }).titleMode(HdsNavigationTitleMode.FREE).mode(NavigationMode.Stack)
-        .visualEffect(new hdsEffect.HdsEffectBuilder().shaderEffect({
-          effectType: hdsEffect.EffectType.UV_BACKGROUND_FLOW_LIGHT,
-          animation: {
-            duration: 5000,
-            iterations: -1
-          }
-        }).buildEffect())
+          }).titleMode(HdsNavigationTitleMode.FREE).mode(NavigationMode.Stack)
+        }
+        .width('100%').height('100%')
       }
-      .width('100%').height('100%')
-    }
-    .height('100%')
+      .height('100%')
+    }.hideTitleBar(true)
+    .backgroundColor(Color.Transparent)
+    .onShown(() => {
+      this.pageOpacity = 1
+    })
+    .onWillHide(() => {
+      this.pageOpacity = 0
+    })
+    .onBackPressed(() => {
+      this.exploreSheet = false;
+      return true;
+    })
+    .opacity(this.pageOpacity)
+    .animation({duration: ResponsiveUtil.chooseByWidth([300, 200, 200])})
   }
 
   onPlayListItemClicked(index: number) {

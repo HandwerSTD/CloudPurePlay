@@ -55,6 +55,14 @@
     {
       "name": "opening_group",
       "value": "打开中…"
+    },
+    {
+      "name": "app_name",
+      "value": "云净听"
+    },
+    {
+      "name": "about_info",
+      "value": "由 Handwer 用 ❤️ 开发"
     }
   ]
 }

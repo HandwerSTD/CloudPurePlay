@@ -30,6 +30,10 @@ import { MusicLibrary, PlaylistDetail } from '@handwer/music_library'
 export struct MainPage {
   @Provider(SCApp.explorePageStack) pageStack: NavPathStack = new NavPathStack()
 
+  aboutToAppear(): void {
+    this.pageStack.pushPathByName('MusicLibrary', [], false)
+  }
+
   @Builder pageMap(name: string) {
     if (name === 'MusicLibrary') {
       MusicLibrary()
@@ -42,8 +46,7 @@ export struct MainPage {
     Row() {
       Column() {
         Navigation(this.pageStack) {
-          MusicLibrary()
-            .height('100%')
+          // empty
         }.navDestination(this.pageMap)
         .mode(NavigationMode.Stack)
         .hideTitleBar(true)

@@ -309,12 +309,12 @@ export struct MainPage {
           useLight: true,
           useCoverAmbBreathe: false,
           resetNewBackgroundColor: (colors) => {
-            this.backgroundFlowingColors = colors
-            Logger.debug(`try resetting flow colors: `, this.backgroundFlowingColors.toString())
-            this.controller.setEffectParams({
-              colorSource: this.backgroundFlowingColors
-            },)
-            this.controller.play()
+            // this.backgroundFlowingColors = colors
+            // Logger.debug(`try resetting flow colors: `, this.backgroundFlowingColors.toString())
+            // this.controller.setEffectParams({
+            //   colorSource: this.backgroundFlowingColors
+            // },)
+            // this.controller.play()
           }
         })
       }.layoutWeight(1)
@@ -759,10 +759,10 @@ export struct MainPage {
   onExplorePage() {
     if (this.showExplore) {
       this.explorePageOpacity = 1
-      this.controller.pause()
+      // this.controller.pause()
     } else {
       this.explorePageOpacity = 0
-      this.controller.play()
+      // this.controller.play()
     }
   }
 }
