@@ -96,8 +96,9 @@ export struct MainPage {
 
   @Local explorePageOpacity: number = 1
 
-  // ----------------------------------------
+  @Local dark: boolean = false
 
+  // ----------------------------------------
 
   @Builder BottomAreaControlButton_ActionBar_PrimaryButton() {
     Stack({alignContent: Alignment.BottomEnd}){
@@ -224,6 +225,8 @@ export struct MainPage {
             baseIcon: $r('sys.symbol.speaker_wave_3'),
             width: LengthMetrics.vp(40),
             onClick: () => {
+              this.dark = !this.dark
+              console.log(this.dark ? 'dark' : 'light')
             }
           }),
         ]
@@ -638,63 +641,80 @@ export struct MainPage {
   }
 
   build() {
-    Row() {
+    Stack() {
       Column() {
-        this.ExplorePageShell()
-        if (this.showExplore) {
-          this.LightUpProgress()
+        if (GlobalStore.isDarkMode) {
+          Column().width('100%').height('100%')
+            .visualEffect(new hdsEffect.HdsEffectBuilder()
+              .shaderEffect({
+                effectType: hdsEffect.EffectType.UV_BACKGROUND_FLOW_LIGHT,
+                params: {
+                  colorSource: [Color.Black, Color.Blue, Color.Pink],
+                },
+                // animation: {
+                //   duration: 5000,
+                //   autoPlay: true,
+                //   iterations: -1
+                // }
+              })
+              .buildEffect())
+            .transition(TransitionEffect.OPACITY.animation({duration: 2000}))
+        } else {
+          Column().width('100%').height('100%')
+            .visualEffect(new hdsEffect.HdsEffectBuilder()
+              .shaderEffect({
+                effectType: hdsEffect.EffectType.UV_BACKGROUND_FLOW_LIGHT,
+                // controller: this.controller,
+                // animation: {
+                //   duration: 5000,
+                //   autoPlay: true,
+                //   iterations: -1
+                // }
+              })
+              .buildEffect())
+            .transition(TransitionEffect.OPACITY.animation({duration: 2000}))
         }
-        Swiper() {
-          if (!this.showExplore) {
-            // Normal
-            this.NowPlayingArea()
-          } else {
-            // Bottom Bar
-            this.NowPlayingArea_Bar()
+      }.width('100%').height('100%')
+      Row() {
+        Column() {
+          this.ExplorePageShell()
+          if (this.showExplore) {
+            this.LightUpProgress()
           }
-          this.LyricArea()
-        }.vertical(false)
-        .displayCount(ResponsiveUtil.widthCheck(['md','lg','xl']) ? 2 : 1)
-        .indicator(false)
-        .animation({
-          curve: curves.springMotion()
+          Swiper() {
+            if (!this.showExplore) {
+              // Normal
+              this.NowPlayingArea()
+            } else {
+              // Bottom Bar
+              this.NowPlayingArea_Bar()
+            }
+            this.LyricArea()
+          }.vertical(false)
+          .displayCount(ResponsiveUtil.widthCheck(['md','lg','xl']) ? 2 : 1)
+          .indicator(false)
+          .animation({
+            curve: curves.springMotion()
+          })
+          .width('100%').height(this.swiperHeight)
+          .animation({curve: curves.springMotion(0.6, 0.8)})
+        }.justifyContent(FlexAlign.End)
+        .width('100%')
+        .height('100%')
+        .bindSheet(this.showQueueSheet!!, PlayQueueViewBuilder, {
+          showClose: false,
+          scrollSizeMode: ScrollSizeMode.CONTINUOUS,
+          preferType: SheetType.SIDE,
+          blurStyle: BlurStyle.BACKGROUND_REGULAR,
+          backgroundColor: $r('app.color.ui_sheet_bg_col')
         })
-        .width('100%').height(this.swiperHeight)
-        .animation({curve: curves.springMotion(0.6, 0.8)})
-      }.justifyContent(FlexAlign.End)
-      .width('100%')
+      }
+      .padding({
+        top: this.gs.wd.top,
+        // bottom: this.gs.wd.bottom
+      })
       .height('100%')
-      .bindSheet(this.showQueueSheet!!, PlayQueueViewBuilder, {
-        showClose: false,
-        scrollSizeMode: ScrollSizeMode.CONTINUOUS,
-        preferType: SheetType.SIDE,
-        blurStyle: BlurStyle.BACKGROUND_REGULAR,
-        backgroundColor: $r('app.color.ui_sheet_bg_col')
-      })
     }
-    .padding({
-      top: this.gs.wd.top,
-      // bottom: this.gs.wd.bottom
-    })
-    .height('100%')
-    .visualEffect(new hdsEffect.HdsEffectBuilder()
-      .shaderEffect({
-        effectType: hdsEffect.EffectType.UV_BACKGROUND_FLOW_LIGHT,
-        // params: {
-        //   [Color.Black, Color.Blue, Color.Pink]
-        // },
-        animation: {
-          duration: 5000,
-          iterations: -1,
-          autoPlay: true,
-          onFinish: ()=> {
-            console.info('Succeeded in finishing');
-          }
-        },
-        controller: this.controller,
-      })
-      .buildEffect())
-
   }
 
   private handleSliderChange = (value: number, mode: SliderChangeMode) => {

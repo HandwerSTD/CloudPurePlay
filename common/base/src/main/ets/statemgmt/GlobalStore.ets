@@ -31,6 +31,8 @@ class GlobalStore {
   @Trace appVersion: string = ''
 
   @Trace isInForeground: boolean = true
+
+  @Trace isDarkMode: boolean = false
 }
 
 export default GlobalStore.instance

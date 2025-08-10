@@ -1,4 +1,4 @@
-import { AbilityConstant, bundleManager, ConfigurationConstant, UIAbility, Want } from '@kit.AbilityKit';
+import { AbilityConstant, bundleManager, Configuration, ConfigurationConstant, UIAbility, Want } from '@kit.AbilityKit';
 import { hilog } from '@kit.PerformanceAnalysisKit';
 import { window } from '@kit.ArkUI';
 import {
@@ -18,6 +18,7 @@ export default class MainAbility extends UIAbility {
     hilog.info(DOMAIN, 'testTag', '%{public}s', 'Ability onCreate');
     // Logger
     Logger.setLogStorage(LogStorage.instance())
+    GlobalStore.isDarkMode = (this.context.config.colorMode === ConfigurationConstant.ColorMode.COLOR_MODE_DARK)
   }
 
   onDestroy(): void {
@@ -64,6 +65,10 @@ export default class MainAbility extends UIAbility {
     // Ability has back to background
     hilog.info(DOMAIN, 'testTag', '%{public}s', 'Ability onBackground');
     GlobalStore.isInForeground = false
+  }
+
+  onConfigurationUpdate(newConfig: Configuration): void {
+    GlobalStore.isDarkMode = (newConfig.colorMode === ConfigurationConstant.ColorMode.COLOR_MODE_DARK)
   }
 
   async appStartUp(windowStage: window.WindowStage) {
