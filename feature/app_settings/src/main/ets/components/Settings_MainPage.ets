@@ -84,8 +84,6 @@ export struct MainPage {
           }.padding({left: 12, right: 12})
         }
         .width('100%').height('100%')
-        .backgroundColor($r('app.color.ui_sheet_bg_col'))
-        .backgroundBlurStyle(BlurStyle.BACKGROUND_ULTRA_THICK)
       }.titleBar({
         style: HDS_TITLE_CONFIG_STYLE,
         content: {
@@ -95,9 +93,6 @@ export struct MainPage {
         }
       })
       .titleMode(HdsNavigationTitleMode.MINI)
-      .visibility(this.pageOpacity == 1 ? Visibility.Visible : Visibility.None)
-      .transition(TransitionEffect.translate({x: '-50%'}).animation({duration: 300})
-        .combine(TransitionEffect.OPACITY.animation({duration: 300})))
     }.onBackPressed(() => {
       this.consoleSheet = false
       return true
@@ -105,6 +100,11 @@ export struct MainPage {
     .onShown(() => {
       this.pageOpacity = 1
     })
+    .onWillHide(() => {
+      this.pageOpacity = 0
+    })
+    .opacity(this.pageOpacity)
+    .animation({duration: 300})
   }
 
   build() {
@@ -123,7 +123,6 @@ export struct MainPage {
 
   pushPage(name: string, params: Record<string, Object>) {
     this.pageStack.pushPathByName(name, params, true)
-    this.pageOpacity = 0
   }
 }
 function startQQGroupAbility(context: common.UIAbilityContext, groupNum: number) {

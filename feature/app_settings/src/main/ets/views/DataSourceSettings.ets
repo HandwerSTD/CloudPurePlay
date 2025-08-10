@@ -1,10 +1,21 @@
 import { CloudAPI_Console, User } from "@handwer/api_adapter"
 import { UserManager, UserSettings, SCUser } from "@handwer/base"
+import { HdsNavDestination, HdsNavDestinationAttribute } from "@kit.UIDesignKit"
 
 @ComponentV2
 export struct DataSourceSettings {
+  @Local pageOpacity: number = 1
   build() {
-    CloudAPI_Source()
+    HdsNavDestination() {
+    }.backgroundColor(Color.Transparent)
+    .onShown(() => {
+      this.pageOpacity = 1
+    })
+    .onWillHide(() => {
+      this.pageOpacity = 0
+    })
+    .opacity(this.pageOpacity)
+    .animation({duration: 300})
   }
 }
 
@@ -20,6 +31,5 @@ export function CloudAPI_Source() {
       }
     })
   }.title('CloudAPI')
-  .backgroundColor($r('app.color.ui_sheet_bg_col'))
-  .backgroundBlurStyle(BlurStyle.BACKGROUND_ULTRA_THICK)
+  .backgroundColor(Color.Transparent)
 }

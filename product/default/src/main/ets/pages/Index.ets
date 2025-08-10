@@ -30,7 +30,8 @@ struct Index {
     }
     .bindSheet(this.consoleSheet!!, this.testConsole, {
       preferType: SheetType.CENTER,
-      backgroundColor: Color.Transparent,
+      backgroundColor: $r('app.color.ui_sheet_bg_col'),
+      blurStyle: BlurStyle.BACKGROUND_THICK,
       showClose: false
     })
     .height('100%')
