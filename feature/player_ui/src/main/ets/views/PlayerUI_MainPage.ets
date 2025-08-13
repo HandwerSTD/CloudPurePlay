@@ -839,13 +839,10 @@ struct LightUpProgressBar {
     Stack() {
       // Row().width('100%').height(1).backgroundColor('#88ffffff')
       Row() {
-        Blank().width(this.blankLeftWidth)
+        Blank().width(this.blankLeftWidth).animation({duration: 100})
+
         Column() {}.width(5).height(5).translate({y: -2.5})
         .backgroundColor(Color.White)
-        .shadow({
-          color: '#aaffffff',
-          radius: 4
-        })
         .borderRadius(10)
         .visualEffect(new hdsEffect.HdsEffectBuilder().pointLight({
           options: {
@@ -853,6 +850,7 @@ struct LightUpProgressBar {
             height: 90
           }
         }).buildEffect())
+        .opacity(this.intensity === 0 ? 0.5 : 1)
         .animation({duration: 300})
       }.width('100%').justifyContent(FlexAlign.Start)
       .onAreaChange((_, nw) => {

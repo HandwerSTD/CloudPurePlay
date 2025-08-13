@@ -1,10 +1,11 @@
 import { InstanceSwitcher, PlayList } from "@handwer/api_adapter"
 import { ResponsiveUtil, SCApp, UserStore } from "@handwer/base"
-import { HDS_TITLE_CONFIG_STYLE, LightUpContainer } from "@handwer/ui_components"
+import { HDS_TITLE_CONFIG_STYLE, LightUpContainer, LightUpRoundedButton, LightUpDefaultConfig } from "@handwer/ui_components"
 import { hdsEffect, HdsNavigation, HdsNavigationAttribute, HdsNavigationTitleMode,
   IconStyleMode } from "@kit.UIDesignKit"
-import { IconType, LengthMetrics } from "@kit.ArkUI"
+import { curves, IconType, LengthMetrics } from "@kit.ArkUI"
 import { generatePageParams_PlayListDetail } from "../views/PlaylistDetail"
+import { MusicLibrarySearchView } from "../views/SearchView"
 
 export function genId_MusicLibraryPlaylist(id: string) {
   return 'MusicLibraryPlaylist_'+id
@@ -18,6 +19,8 @@ export struct MainPage {
   @Local gridColumnNum: number = 4
   @Local pageOpacity: number = 1
   user = UserStore
+
+  @Local showSearchPage: boolean = false
 
   @Builder PlayList_SingleItem(list: PlayList, index: number) {
     Column() {
@@ -77,53 +80,95 @@ export struct MainPage {
     })
   }
 
+  @Builder MusicLibraryMainPage() {
+    Column() {
+      HdsNavigation() {
+        Grid() {
+          GridItem().height($r('sys.float.ohos_id_navigation_bar_height_emphasize'))
+            .columnStart(0).columnEnd(this.gridColumnNum-1)
+          GridItem() {
+            this.UserCard()
+          }
+          .columnStart(0).columnEnd(this.gridColumnNum-1)
+          this.MyPlayList()
+        }.width('100%')
+        .fadingEdge(true, {
+          fadingEdgeLength: LengthMetrics.percent(10)
+        }).edgeEffect(EdgeEffect.Spring, {alwaysEnabled: true})
+        .padding({left: 12, right: 12})
+        // .expandSafeArea([SafeAreaType.SYSTEM])
+        .columnsTemplate(new Array(this.gridColumnNum).fill('1fr').join(' '))
+        // .animation({duration: 300})
+        .rowsGap(36).columnsGap(24)
+        .clip(false)
+        .onAreaChange((_, nw) => {
+          this.gridColumnNum = ResponsiveUtil.chooseByWidth([2,4,6])
+        })
+      }.width('100%').height('100%').titleBar({
+        style: HDS_TITLE_CONFIG_STYLE,
+        content: {
+          title: {
+            mainTitle: $r('app.string.My_Music_Library'),
+          },
+          menu: {
+            value: [{
+              content: {
+                icon: $r('sys.symbol.magnifyingglass'),
+                type: IconStyleMode.NORMAL,
+                action: () => {
+                  this.showSearchPage = !this.showSearchPage
+                }
+              },
+            },{
+              content: {
+                icon: $r('sys.symbol.gearshape'),
+                type: IconStyleMode.NORMAL,
+                action: () => {
+                  this.settingsSheet = !this.settingsSheet
+                }
+              },
+            }]
+          }
+        },
+      }).titleMode(HdsNavigationTitleMode.FREE).mode(NavigationMode.Stack)
+    }
+    .width('100%').height('100%')
+    .foregroundEffect({
+      radius: this.showSearchPage ? 128 : 0
+    })
+    .animation({duration: 300})
+    .translate(this.showSearchPage ? {
+      y: '15%'
+    } : undefined)
+    .animation({curve: curves.springMotion(0.6, 0.7)})
+  }
+  @Builder MusicLibrarySearch() {
+    if (this.showSearchPage) {
+      Column() {
+        MusicLibrarySearchView({
+          closeSearch: () => {
+            this.showSearchPage = false
+          },
+          openPlaylist: (playlist) => {
+            const params = generatePageParams_PlayListDetail(playlist)
+            this.pageStack.pushPath({
+              name: 'PlaylistDetail',
+              param: params
+            }, true)
+          }
+        })
+      }.width('100%').height('100%')
+      .transition(TransitionEffect.OPACITY.animation({duration: 500}))
+    }
+  }
+
   build() {
     NavDestination() {
       Row() {
-        Column() {
-          HdsNavigation() {
-            Grid() {
-              GridItem().height($r('sys.float.ohos_id_navigation_bar_height_emphasize'))
-                .columnStart(0).columnEnd(this.gridColumnNum-1)
-              GridItem() {
-                this.UserCard()
-              }
-              .columnStart(0).columnEnd(this.gridColumnNum-1)
-              this.MyPlayList()
-            }.width('100%')
-            .fadingEdge(true, {
-              fadingEdgeLength: LengthMetrics.percent(10)
-            }).edgeEffect(EdgeEffect.Spring, {alwaysEnabled: true})
-            .padding({left: 12, right: 12})
-            // .expandSafeArea([SafeAreaType.SYSTEM])
-            .columnsTemplate(new Array(this.gridColumnNum).fill('1fr').join(' '))
-            // .animation({duration: 300})
-            .rowsGap(36).columnsGap(24)
-            .clip(false)
-            .onAreaChange((_, nw) => {
-              this.gridColumnNum = ResponsiveUtil.chooseByWidth([2,4,6])
-            })
-          }.width('100%').height('100%').titleBar({
-            style: HDS_TITLE_CONFIG_STYLE,
-            content: {
-              title: {
-                mainTitle: $r('app.string.My_Music_Library'),
-              },
-              menu: {
-                value: [{
-                  content: {
-                    icon: $r('sys.symbol.gearshape'),
-                    type: IconStyleMode.NORMAL,
-                    action: () => {
-                      this.settingsSheet = !this.settingsSheet
-                    }
-                  },
-                }]
-              }
-            },
-          }).titleMode(HdsNavigationTitleMode.FREE).mode(NavigationMode.Stack)
+        Stack() {
+          this.MusicLibraryMainPage()
+          this.MusicLibrarySearch()
         }
-        .width('100%').height('100%')
       }
       .height('100%')
     }.hideTitleBar(true)
@@ -135,6 +180,10 @@ export struct MainPage {
       this.pageOpacity = 0
     })
     .onBackPressed(() => {
+      if (this.showSearchPage) {
+        this.showSearchPage = false;
+        return true;
+      }
       this.exploreSheet = false;
       return true;
     })
