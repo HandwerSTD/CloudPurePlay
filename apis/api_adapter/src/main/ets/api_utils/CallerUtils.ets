@@ -390,14 +390,28 @@ export class PlayListAPIUtils {
   }
 
   /**
-   * 创建歌单（暂不可用）
+   * 创建歌单
    * @param name 歌单名称
    * @param isPrivacy 是否私密
-   * @returns 无
+   * @returns 是否创建成功
    */
-  static async createPlayList(name: string, isPrivacy: boolean): Promise<void> {
+  static async createPlayList(name: string, isPrivacy: boolean): Promise<boolean> {
     if (InstanceSwitcher.InstanceType === INSTANCE_TYPE.CLOUD) {
-      return Cloud_PlayListAPIUtils.createPlayList(name, isPrivacy);
+      // return Cloud_PlayListAPIUtils.createPlayList(name, isPrivacy);
+      return false;
+    } else {
+      throw Error('API Unimplemented')
+    }
+  }
+
+  /**
+   * 重命名歌单
+   * @param pid 歌单ID
+   * @param newName 新名称
+   */
+  static async renamePlaylist(pid: number, newName: string): Promise<boolean> {
+    if (InstanceSwitcher.InstanceType === INSTANCE_TYPE.CLOUD) {
+      return false;
     } else {
       throw Error('API Unimplemented')
     }

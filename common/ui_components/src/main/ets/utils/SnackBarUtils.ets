@@ -1,7 +1,7 @@
 import { HdsSnackBar } from "@kit.UIDesignKit";
 
 export class SnackBarUtils {
-  static async showMessage(snackbar: HdsSnackBar, icon: ResourceStr, message: ResourceStr, sub_msg?: ResourceStr, duration?: number) {
+  static showMessage(snackbar: HdsSnackBar, icon: ResourceStr, message: ResourceStr, sub_msg?: ResourceStr, duration?: number) {
     snackbar.show({
       icon: icon
     }, {

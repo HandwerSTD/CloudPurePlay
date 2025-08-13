@@ -19,6 +19,7 @@ export class SCDistKV {
 
 export class SCEmitter {
   static readonly LyricUpdate = 1
+  static readonly PlaylistContentUpdate = 2
 }
 
 export type ShowToastCallback = (icon: ResourceStr, msg: ResourceStr) => void
@@ -29,4 +30,9 @@ export class SCApp {
   static explorePageStack: string = 'explorePageStack'
   static settingsSheet: string = 'settingsSheet'
   static settingsPageStack: string = 'settingsPageStack'
+  static showAddToPlaylistSheet = 'showAddToPlaylistSheet'
+}
+
+export class SCGlobal {
+  static readonly addToPlaylistSongData = 'addToPlaylistSongData'
 }

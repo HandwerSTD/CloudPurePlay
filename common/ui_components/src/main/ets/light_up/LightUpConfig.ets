@@ -10,6 +10,8 @@ export const LightUpDefaultConfig: LightUpConfig = {
   lightBloom: 0
 }
 
+export const LightUpLinedDefaultConfig: LightUpConfig = {lightIntensity: 1, lightHeight: 120 }
+
 export enum OverrideLightUpStat {
   NO_OVERRIDE,
   ALWAYS_DISABLED,

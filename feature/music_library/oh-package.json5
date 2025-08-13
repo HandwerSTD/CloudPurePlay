@@ -9,6 +9,6 @@
     '@handwer/base': 'file:../../common/base',
     '@handwer/api_adapter': "file:../../apis/api_adapter",
     '@handwer/ui_components': "file:../../common/ui_components",
-    '@handwer/common_resources': "file:../../common/common_resources"
+    '@handwer/common_resources': "file:../../common/common_resources",
   }
 }

@@ -1,22 +1,46 @@
 import {
   Album_INITIAL,
-  PlayList, PlayListAPIUtils, PlayListSong, PlayList_INITIAL, SongAPIUtils } from "@handwer/api_adapter";
-import { Logger, NowPlayingStore,
+  PlayList, PlayListAPIUtils, PlayListSong, PlayList_INITIAL,
+  PLAYMODE,
+  SongAPIUtils } from "@handwer/api_adapter";
+import {
+  GlobalContext,
+  GlobalStore,
+  Logger,
+  NowPlayingStore,
   PlayControl,
+  PlaylistContentUpdateInfo,
   PlayQueueUtils,
-  ResponsiveUtil, SCApp, SongConvertUtils, SongLike,
+  ResponsiveUtil, SCApp,
+  SCEmitter,
+  SCGlobal,
+  SongConvertUtils, SongLike,
   SpecialPlayMode,
   UserStore } from "@handwer/base";
-import { HDS_TITLE_CONFIG_STYLE, ImageCover, InListSongItem,
+import {
+  CommonListItem,
+  HDS_TITLE_CONFIG_STYLE, ImageCover, InListSongItem,
   LightUpCommonButton,
+  LightUpLinedContainer,
   LightUpRoundedButton,
-  SnackBarUtils } from "@handwer/ui_components";
+  LightUpLinedDefaultConfig,
+  SnackBarUtils,
+  DialogUtils} from "@handwer/ui_components";
 import { hdsEffect, HdsNavDestination, HdsNavDestinationAttribute, HdsNavDestinationTitleMode,
   HdsSnackBar } from "@kit.UIDesignKit";
 import { LazyData } from "@pie/lazy-data";
 import { LengthMetrics } from "@kit.ArkUI";
+import { DialogHelper } from "@pura/harmony-dialog";
+import { PlaylistSongViewModel } from "../viewmodels/PlaylistDetailViewmodel";
+import { EmitterUtil } from "@pura/harmony-utils";
+import { JSON } from "@kit.ArkTS";
 
 const TAG = '[PlaylistDetail]'
+
+export interface PlaylistDetail_PopReturn {
+  removed?: boolean,
+  renamed?: string
+}
 
 @ComponentV2
 export struct PlaylistDetail {
@@ -28,20 +52,26 @@ export struct PlaylistDetail {
   hasMore: boolean = true;
   currentOffset: number = 0;
   @Consumer(SCApp.explorePageStack) pageStack: NavPathStack = new NavPathStack()
+  @Consumer(SCApp.showAddToPlaylistSheet) showAddToPlaylistSheet: boolean = false
 
   @Local playListInfo: PlayList = PlayList_INITIAL
   @Local fullPlayListDetail: PlayListSong[] = []
-  @Local fullPlayListDataSource: LazyData<PlayListSong> = new LazyData()
+  @Local fullPlayListDataSource: LazyData<PlaylistSongViewModel> = new LazyData()
   @Local gridCount: number = 1
   @Local fullWindowSizeArea: Area | undefined = undefined
 
   @Local shouldLightSourceOff: boolean = false
 
+  @Local showPlaylistOperationSheet: boolean = false
+
+
   async onStart() {
     this.fullPlayListDetail = new Array(Math.min(100, this.playListInfo.trackCount)).fill({
       name: '', id: 0, al: Album_INITIAL, dt: 0, ar: [], fee: 0
     } as PlayListSong)
-    this.fullPlayListDataSource.setData(this.fullPlayListDetail)
+    this.fullPlayListDataSource.setData(
+      PlaylistSongViewModel.fromPlaylistData(this.fullPlayListDetail)
+    )
     this.fullPlayListDataSource.notifyDataReload()
     await this.loadSongs(200, 0)
     await this.loadSongs(this.playListInfo.trackCount - 200, 200)
@@ -49,7 +79,7 @@ export struct PlaylistDetail {
 
   shouldThisSongLightedUp(index: number): boolean {
     const checkId = (index: number) => {
-      return this.fullPlayListDetail[index].id === this.nps.currentSong.id
+      return this.fullPlayListDetail[index]?.id === this.nps.currentSong.id
     }
     const checkSm = () => {
       return checkId(index)
@@ -93,6 +123,106 @@ export struct PlaylistDetail {
     }.margin({left: 12, right: 12})
   }
 
+  @Builder PlayListItemContextMenu(song: PlayListSong) {
+    Column() {
+      LightUpLinedContainer({lightUpConfig: LightUpLinedDefaultConfig}) {
+        CommonListItem({
+          icon: $r('sys.symbol.list_interrupt'),
+          title: $r('app.string.add_next_play')
+        })
+          .onClick(() => {
+            PlayQueueUtils.queueAdd(PLAYMODE.SINGLE, SongConvertUtils.PlaylistSong2NormalSong(song), SongConvertUtils.getArtists(song.ar), '', song.al.picUrl)
+          })
+      }
+      LightUpLinedContainer({lightUpConfig: LightUpLinedDefaultConfig}) {
+        CommonListItem({
+          icon: $r('sys.symbol.add_songlist'),
+          title: $r('app.string.add_song_to_list')
+        })
+          .onClick(() => {
+            this.addSongToList(song)
+          })
+      }
+      LightUpLinedContainer({lightUpConfig: LightUpLinedDefaultConfig}) {
+        CommonListItem({
+          icon: $r('sys.symbol.trash'),
+          title: $r('app.string.remove_song_from_list')
+        })
+          .onClick(() => {
+            this.removeSongFromPlaylist(song)
+          })
+      }
+    }.borderRadius(24).margin(2)
+    .visualEffect(new hdsEffect.HdsEffectBuilder().pointLight({
+      illuminatedType: hdsEffect.PointLightIlluminatedType.BORDER
+    }).buildEffect())
+  }
+
+  @Builder TopAreaPlayButton_PlaylistOpSheet() {
+    Column() {
+      LightUpLinedContainer({lightUpConfig: LightUpLinedDefaultConfig}) {
+        CommonListItem({
+          icon: $r('sys.symbol.pencil_and_card'),
+          title: $r('app.string.common_rename')
+        })
+          .onClick(() => {
+          })
+      }
+      LightUpLinedContainer({lightUpConfig: LightUpLinedDefaultConfig}) {
+        CommonListItem({
+          icon: $r('sys.symbol.trash'),
+          title: $r('app.string.remove_list')
+        })
+          .onClick(() => {
+            this.removePlaylist()
+          })
+      }
+    }.borderRadius(24).margin({left: 12, right: 12})
+    .visualEffect(new hdsEffect.HdsEffectBuilder().pointLight({
+      illuminatedType: hdsEffect.PointLightIlluminatedType.BORDER
+    }).buildEffect())
+  }
+
+  @Builder TopAreaPlayButton() {
+    Row({space: 12}) {
+      LightUpCommonButton({
+        clickAction: () => {
+          this.playFullList()
+        },
+        lightUpConfig: { lightIntensity: 1, lightHeight: 240},
+        customPadding: 16,
+        useBorder: true
+      }) {
+        Row({space: 12}) {
+          SymbolGlyph($r('sys.symbol.play_fill')).fontColor([Color.White]).fontWeight(FontWeight.Bold)
+          Text($r('app.string.common_play_button_play_num', this.playListInfo.trackCount)).fontColor(Color.White)
+        }
+      }
+      Row() {
+        LightUpCommonButton({
+          clickAction: () => {
+            this.showPlaylistOperationSheet = !this.showPlaylistOperationSheet
+          },
+          lightUpConfig: { lightIntensity: 1, lightHeight: 240},
+          customPadding: 16,
+          useBorder: true
+        }) {
+          Row() {
+            SymbolGlyph($r('sys.symbol.more')).fontColor([Color.White]).fontWeight(FontWeight.Bold)
+          }.aspectRatio(1)
+        }
+      }
+      .bindSheet(this.showPlaylistOperationSheet!!, this.TopAreaPlayButton_PlaylistOpSheet(), {
+        title: {
+          title: $r('app.string.playlist_operations')
+        },
+        backgroundColor: $r('app.color.ui_sheet_bg_col'),
+        blurStyle: BlurStyle.BACKGROUND_THICK,
+        height: SheetSize.FIT_CONTENT
+      })
+    }
+  }
+
   //--------------------------
 
   @Builder TopArea() {
@@ -107,19 +237,7 @@ export struct PlaylistDetail {
       Text(this.playListInfo.name)
         .fontWeight(FontWeight.Bold).fontSize(24).fontColor(Color.White)
         .margin({left: 24, right: 24}).textAlign(TextAlign.Center)
-      LightUpCommonButton({
-        clickAction: () => {
-          this.playFullList()
-        },
-        lightUpConfig: { lightIntensity: 1, lightHeight: 240},
-        customPadding: 16,
-        useBorder: true
-      }) {
-        Row({space: 12}) {
-          SymbolGlyph($r('sys.symbol.play_fill')).fontColor([Color.White]).fontWeight(FontWeight.Bold)
-          Text($r('app.string.common_play_button_play_num', this.playListInfo.trackCount)).fontColor(Color.White)
-        }
-      }
+      this.TopAreaPlayButton()
     }.padding({top: 24, bottom: 24})
     .layoutWeight(ResponsiveUtil.wLgXl() ? 1 : undefined)
   }
@@ -139,7 +257,7 @@ export struct PlaylistDetail {
       }
 
       // Songs
-        LazyForEach(this.fullPlayListDataSource, (song: PlayListSong, index) => {
+        LazyForEach(this.fullPlayListDataSource, (song: PlaylistSongViewModel, index) => {
           GridItem() {
             Stack({alignContent: Alignment.Center }) {
               // 点光源
@@ -149,7 +267,7 @@ export struct PlaylistDetail {
                   }.height(1).width(1)
                   .visualEffect(new hdsEffect.HdsEffectBuilder().pointLight({
                     options: {
-                      height: song.id === this.nps.currentSong.id && !this.shouldLightSourceOff ? 100 : 0,
+                      height: song.s.id === this.nps.currentSong.id && !this.shouldLightSourceOff ? 100 : 0,
                       intensity: 1
                     }
                   }).buildEffect())
@@ -161,31 +279,45 @@ export struct PlaylistDetail {
               Column() {
                 Column() {
                   InListSongItem({
-                    songName: song.name,
-                    songArtist: SongConvertUtils.getArtists(song.ar),
+                    songName: song.s.name,
+                    coverInfo: song.s.al.picUrl,
+                    songArtist: SongConvertUtils.getArtists(song.s.ar),
                     onPlay: () => {
                       this.playFullList(index)
                     },
                     trailing: () => {
-                      this.PlayListItemTrailing(song)
+                      this.PlayListItemTrailing(song.s)
                     }
                   })
                 }
-                  .backgroundColor(song.id === this.nps.currentSong.id ? $r('app.color.play_list_single_item_bg') : undefined)
+                  .backgroundColor(song.s.id === this.nps.currentSong.id ? $r('app.color.play_list_single_item_bg') : undefined)
                   .visualEffect(new hdsEffect.HdsEffectBuilder().pointLight({
                     illuminatedType: this.shouldThisSongLightedUp(index) ? hdsEffect.PointLightIlluminatedType.BORDER : hdsEffect.PointLightIlluminatedType.NONE,
                   }).buildEffect()).padding(ResponsiveUtil.chooseByWidth([6,12,12]))
                   .borderRadius(20)
+                  .bindContextMenu(song.showMenu!!, this.PlayListItemContextMenu(song.s), {
+                    backgroundBlurStyle: BlurStyle.BACKGROUND_THICK,
+                    hapticFeedbackMode: HapticFeedbackMode.AUTO
+                  })
+                  .gesture(LongPressGesture().onAction(() => {
+                    song.showMenu = true
+                  }))
+                  .onMouse((event) => {
+                    if (event.button === MouseButton.Right) {
+                      song.showMenu
+                    }
+                  })
               }
             }
           }
           .visibility(this.isLoading ? Visibility.Hidden : Visibility.Visible)
           .transition(TransitionEffect.OPACITY.animation({duration: 300}))
-        }, (item: PlayListSong, index) => item.name + index)
+        }, (item: PlaylistSongViewModel, index) => item.s.name + index)
     }.columnsTemplate(this.gridCount === 1 ? '1fr' : '1fr 1fr')
     .columnsGap(12).rowsGap(12)
     .edgeEffect(EdgeEffect.Spring, {alwaysEnabled: true}).padding({left: 12, right: 12})
     .backToTop(true)
+    .cachedCount(this.gridCount * 6)
     .fadingEdge(true, {
       fadingEdgeLength: LengthMetrics.percent(10)
     })
@@ -218,6 +350,7 @@ export struct PlaylistDetail {
   @Builder PortraitPage() {
       this.PlayList()
   }
+
   build() {
     HdsNavDestination() {
       Column() {
@@ -230,9 +363,13 @@ export struct PlaylistDetail {
     }.onReady((context) => {
       this.playListInfo = (context.pathInfo.param as Record<string, Object>)['playListInfo'] as PlayList
       this.onStart()
+      EmitterUtil.onSubscribe(SCEmitter.PlaylistContentUpdate, (data: PlaylistContentUpdateInfo) => {
+        this.onReceivePlayListSongUpdate(data)
+      })
     })
     .onWillDisappear(() => {
       this.shouldLightSourceOff = true
+      EmitterUtil.unSubscribe(SCEmitter.PlaylistContentUpdate)
     })
     .titleBar({
       style: HDS_TITLE_CONFIG_STYLE
@@ -240,6 +377,8 @@ export struct PlaylistDetail {
     .onAreaChange((_, nw) => {
       this.gridCount = ResponsiveUtil.chooseByWidth([1,2])
       this.fullWindowSizeArea = nw
+      // close when change type
+      this.showPlaylistOperationSheet = false
     })
     .backgroundColor(Color.Transparent)
     .onShown(() => {
@@ -253,6 +392,31 @@ export struct PlaylistDetail {
     // .backgroundBlurStyle(BlurStyle.BACKGROUND_THIN)
   }
 
+  onReceivePlayListSongUpdate(data: PlaylistContentUpdateInfo) {
+    if (data.pid === this.playListInfo.id) {
+      if (data.operation === 'add' || data.operation == undefined) {
+        // add song
+        this.fullPlayListDetail.unshift(data.songInfo)
+        this.fullPlayListDataSource.insertData(new PlaylistSongViewModel(data.songInfo))
+        this.fullPlayListDataSource.notifyDataReload()
+        this.playListInfo.playCount = this.fullPlayListDetail.length
+      } else {
+        // remove song
+        const index = this.fullPlayListDetail.findIndex((val) => val.id === data.songId)
+        if (index !== -1) {
+          this.fullPlayListDetail.splice(index, 1)
+          this.fullPlayListDataSource.setData(PlaylistSongViewModel.fromPlaylistData(this.fullPlayListDetail))
+          this.fullPlayListDataSource.notifyDataReload()
+        }
+      }
+      this.updateThisPlaylistInfo()
+    }
+  }
+  updateThisPlaylistInfo() {
+    const newInfo = JSON.parse(JSON.stringify(this.playListInfo)) as PlayList
+    newInfo.playCount = this.fullPlayListDetail.length
+    this.playListInfo = newInfo
+  }
 
   async loadSongs(limit: number, offset: number): Promise<void> {
     if (!this.hasMore) return // 直接返回
@@ -267,7 +431,9 @@ export struct PlaylistDetail {
       } else {
         this.fullPlayListDetail.push(...result) // 合并歌曲列表
       }
-      this.fullPlayListDataSource.setData(this.fullPlayListDetail)
+      this.fullPlayListDataSource.setData(
+        PlaylistSongViewModel.fromPlaylistData(this.fullPlayListDetail)
+      )
       this.fullPlayListDataSource.notifyDataReload()
       this.currentOffset += limit <= 1000 ? limit : 1000
       if (this.fullPlayListDetail.length >= this.playListInfo.trackCount) {
@@ -288,6 +454,11 @@ export struct PlaylistDetail {
   }
 
   async playFullList(songIndex?: number) {
+    if (songIndex) {
+      if (this.fullPlayListDetail[songIndex].id === NowPlayingStore.currentSong.id) {
+        return;
+      }
+    }
     try {
       const playName = (songIndex ? this.fullPlayListDetail[songIndex].name : this.playListInfo.name)
       SnackBarUtils.showMessage(this.snack, $r('sys.symbol.music_note_list'), $r('app.string.start_playing_le_NAME_ge_', playName))
@@ -300,6 +471,69 @@ export struct PlaylistDetail {
       Logger.error(TAG, `play full list failed: ${JSON.stringify(e)}`)
       SnackBarUtils.showMessage(this.snack, $r('sys.symbol.music_note_list'), $r('app.string.start_playing_list_failed'))
     }
+  }
+
+  removePlaylist() {
+    const onAccept = () => {
+      PlayListAPIUtils.deletePlayList(this.playListInfo.id)
+        .then((res) => {
+          if (res) {
+            this.pageStack.pop({
+              removed: true
+            } as PlaylistDetail_PopReturn)
+            SnackBarUtils.showMessage(GlobalStore.globalSnack!, $r('sys.symbol.trash'), $r('app.string.remove_list_success'))
+          } else {
+            SnackBarUtils.showMessage(this.snack, $r('sys.symbol.trash'), $r('app.string.remove_list_failed'))
+          }
+        })
+    }
+
+    DialogUtils.showAlertDialog(this.getUIContext(),
+      $r('app.string.remove_list'),
+      $r('app.string.remove_list_alert_content'),
+      () => {},
+      () => {
+        onAccept()
+      }
+    )
+  }
+
+  renamePlaylist() {
+    DialogUtils.showTextInputDialog($r('app.string.common_rename'), this.playListInfo.name, (result) => {
+      this.playListInfo.name = result
+      PlayListAPIUtils.renamePlaylist(this.playListInfo.id, result)
+        .then((res) => {
+          if (res) {
+            const data = UserStore.userPlaylists.find((val) => {
+              return val.id === this.playListInfo.id
+            })
+            if (data) data.name = result
+          } else {
+            SnackBarUtils.showMessage(this.snack, $r('sys.symbol.pencil_and_card'), $r('app.string.rename_failed'))
+          }
+        })
+    })
+  }
+
+  removeSongFromPlaylist(song: PlayListSong) {
+    const index = this.fullPlayListDetail.indexOf(song)
+    PlayListAPIUtils.PlayListOperation("del", this.playListInfo.id, song.id)
+      .then((res) => {
+        if (res) {
+          SnackBarUtils.showMessage(this.snack, $r('sys.symbol.trash'), $r('app.string.remove_song_success'))
+          this.fullPlayListDetail.splice(index, 1)
+          this.fullPlayListDataSource.deleteData(index)
+          this.fullPlayListDataSource.notifyDataReload()
+          this.updateThisPlaylistInfo()
+        } else {
+          SnackBarUtils.showMessage(this.snack, $r('sys.symbol.trash'), $r('app.string.remove_song_failed'))
+        }
+      })
+  }
+
+  addSongToList(song: PlayListSong) {
+    GlobalContext.getContext().setObject(SCGlobal.addToPlaylistSongData, SongConvertUtils.PlaylistSong2NormalSong(song))
+    this.showAddToPlaylistSheet = true
   }
 }
 

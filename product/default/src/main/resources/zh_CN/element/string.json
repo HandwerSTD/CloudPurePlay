@@ -14,6 +14,10 @@
     },
     {"name": "internet_permission_reason", "value": "需要网络访问权限以实现数据获取"},
     {"name": "network_info_reason", "value": "需要检测网络连接状态"},
-    {"name": "background_permission_reason", "value": "需要后台持续运行以完成同步任务"}
+    {"name": "background_permission_reason", "value": "需要后台持续运行以完成同步任务"},
+    {
+      "name": "vibrate_perm",
+      "value": "需要振动权限以提供更真实的触感反馈"
+    }
   ]
 }

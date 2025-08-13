@@ -1,8 +1,11 @@
-import { FeaturedPlayUtils, GlobalStore, Logger, NowPlayingStore, PlayControl,
+import { FeaturedPlayUtils,
+  GlobalContext,
+  GlobalStore, Logger, NowPlayingStore, PlayControl,
   PlayQueueStore,
   PlayQueueUtils,
   ResponsiveUtil,
   SCApp,
+  SCGlobal,
   SongConvertUtils,
   SongLike,
   ThemeManager,
@@ -10,7 +13,8 @@ import { FeaturedPlayUtils, GlobalStore, Logger, NowPlayingStore, PlayControl,
 import { PLAYMODE, Song_INITIAL } from "@handwer/api_adapter"
 import { LightUpRoundedButton, LightUpConfig, LightUpDefaultConfig, OverrideLightUpStat, LightUpBorderRoundButton, SnackBarUtils,
   UIComponentUtils,
-  LightUpContainer} from "@handwer/ui_components"
+  LightUpContainer,
+  AddToPlaylistSheet} from "@handwer/ui_components"
 import { ColorMetrics, curves, LengthMetrics, SymbolGlyphModifier } from "@kit.ArkUI"
 import { ClickUtil } from "@pura/harmony-utils"
 import { HdsActionBar, ActionBarButton, hdsEffect, HdsSnackBar } from "@kit.UIDesignKit"
@@ -59,6 +63,7 @@ export struct MainPage {
   @Consumer(SCApp.settingsSheet) consoleSheet: boolean = false
   @Provider(SCApp.playQueueSheet) showQueueSheet: boolean = false
   @Provider(SCApp.exploreSheet) showExplore: boolean = true
+  @Provider(SCApp.showAddToPlaylistSheet) showAddToPlaylistSheet: boolean = false
 
   controller: hdsEffect.ShaderEffectController = new hdsEffect.ShaderEffectController()
 
@@ -96,9 +101,12 @@ export struct MainPage {
 
   @Local explorePageOpacity: number = 1
 
-  @Local dark: boolean = false
 
   // ----------------------------------------
+
+  @Builder addToPlaylistSheet() {
+    AddToPlaylistSheet()
+  }
 
   @Builder BottomAreaControlButton_ActionBar_PrimaryButton() {
     Stack({alignContent: Alignment.BottomEnd}){
@@ -158,8 +166,11 @@ export struct MainPage {
             }
           }),
           new ActionBarButton({
-            baseIcon: $r('sys.symbol.list_interrupt'),
-            width: LengthMetrics.vp(40)
+            baseIcon: $r('sys.symbol.add_songlist'),
+            width: LengthMetrics.vp(40),
+            onClick: () => {
+              this.showAddToPlaylist()
+            }
           }),
         ]
       })
@@ -225,8 +236,7 @@ export struct MainPage {
             baseIcon: $r('sys.symbol.speaker_wave_3'),
             width: LengthMetrics.vp(40),
             onClick: () => {
-              this.dark = !this.dark
-              console.log(this.dark ? 'dark' : 'light')
+
             }
           }),
         ]
@@ -709,6 +719,12 @@ export struct MainPage {
           backgroundColor: $r('app.color.ui_sheet_bg_col')
         })
       }
+      .bindSheet(this.showAddToPlaylistSheet!!, this.addToPlaylistSheet(), {
+        showClose: false,
+        backgroundColor: $r('app.color.ui_sheet_bg_col'),
+        blurStyle: BlurStyle.BACKGROUND_THICK,
+        preferType: SheetType.CENTER
+      })
       .padding({
         top: this.gs.wd.top,
         // bottom: this.gs.wd.bottom
@@ -784,6 +800,11 @@ export struct MainPage {
       this.explorePageOpacity = 0
       // this.controller.play()
     }
+  }
+
+  showAddToPlaylist() {
+    GlobalContext.getContext().setObject(SCGlobal.addToPlaylistSongData, nps.currentSong)
+    this.showAddToPlaylistSheet = true
   }
 }
 

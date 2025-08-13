@@ -287,6 +287,66 @@
     {
       "name": "lyric",
       "value": "歌词"
+    },
+    {
+      "name": "remove_list",
+      "value": "删除歌单"
+    },
+    {
+      "name": "playlist_operations",
+      "value": "歌单操作"
+    },
+    {
+      "name": "common_rename",
+      "value": "重命名"
+    },
+    {
+      "name": "remove_list_failed",
+      "value": "删除歌单失败"
+    },
+    {
+      "name": "remove_list_success",
+      "value": "删除歌单成功"
+    },
+    {
+      "name": "remove_list_alert_content",
+      "value": "确定要删除此歌单吗？此操作不可逆。"
+    },
+    {
+      "name": "rename_failed",
+      "value": "重命名失败"
+    },
+    {
+      "name": "add_next_play",
+      "value": "下一首播放"
+    },
+    {
+      "name": "remove_song_from_list",
+      "value": "从歌单中移除"
+    },
+    {
+      "name": "common_success_placeholder",
+      "value": "%s成功"
+    },
+    {
+      "name": "remove_song_failed",
+      "value": "删除歌曲失败"
+    },
+    {
+      "name": "add_song_to_list",
+      "value": "加入歌单"
+    },
+    {
+      "name": "add_song_to_list_success",
+      "value": "添加到歌单成功"
+    },
+    {
+      "name": "add_song_to_list_failed",
+      "value": "添加到歌单失败"
+    },
+    {
+      "name": "add_song_to_list_failed_reason",
+      "value": "网络原因或歌曲已存在"
     }
   ]
 }

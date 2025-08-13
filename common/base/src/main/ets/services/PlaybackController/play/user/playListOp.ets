@@ -1,9 +1,20 @@
-import { PlayListSong, PlayQueue, PlayingPlayList } from "@handwer/api_adapter"
-import { LogUtil, ToastUtil } from "@pura/harmony-utils"
+import { PlayListSong, PlayQueue, PlayingPlayList, PlayListAPIUtils, Song } from "@handwer/api_adapter"
+import { EmitterUtil, LogUtil, ToastUtil } from "@pura/harmony-utils"
+import { SCEmitter } from "../../../../constants/CommonConstants"
+import { UserManager } from "../../../Network/UserManager"
+import UserStore from "../../../Network/UserStore"
+import { SongConvertUtils } from "../../convert"
 import PlayQueueUtils from "../../queue/PlayQueueUtils"
 import { PlayControl } from "./playControl"
 
 const TAG = '[playListOp] '
+
+export interface PlaylistContentUpdateInfo {
+  pid: number,
+  songId: number,
+  songInfo: PlayListSong,
+  operation: 'add' | 'del' | undefined
+}
 
 export class PlayListOp {
   static async playListToQueue(playlist: PlayListSong[], index: number) {
@@ -38,5 +49,24 @@ export class PlayListOp {
       count: -1
     }
     // AppStorage.setOrCreate(StorageConstants.LAST_PLAYED_LIST, playInfo)
+  }
+
+  static async addSongToPlaylist(playlistId: number, song: Song): Promise<boolean> {
+    const result = await PlayListAPIUtils.PlayListOperation('add', playlistId, song.id)
+    if (result) {
+      // notify
+      EmitterUtil.post(SCEmitter.PlaylistContentUpdate, {
+        pid: playlistId,
+        songId: song.id,
+        songInfo: SongConvertUtils.NormalSong2PlaylistSong(song)
+      } as PlaylistContentUpdateInfo)
+      // add count
+      const res = UserStore.userPlaylists.find((val) => val.id === playlistId)
+      if (res) {
+        res.playCount++;
+      }
+      UserManager.fetchUserPlaylists()
+      return true
+    } else return false
   }
 }

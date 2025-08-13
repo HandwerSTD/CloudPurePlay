@@ -1,7 +1,7 @@
 import { DistributionSyncResult } from "../services/DistributionMgr/DistributionUtils"
 import { SingleDeviceViewModel } from "../services/DistributionMgr/DistributionViewModels"
-import { BreakpointInfo } from "../utils/BreakpointSystem"
 import { WindowAvoidanceData } from "../utils/WindowUtil"
+import { HdsSnackBar } from "@kit.UIDesignKit"
 
 @ObservedV2
 class GlobalStore {
@@ -33,6 +33,8 @@ class GlobalStore {
   @Trace isInForeground: boolean = true
 
   @Trace isDarkMode: boolean = false
+
+  globalSnack?: HdsSnackBar
 }
 
 export default GlobalStore.instance

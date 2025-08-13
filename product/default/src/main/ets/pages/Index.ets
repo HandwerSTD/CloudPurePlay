@@ -11,6 +11,7 @@ import { promptAction } from '@kit.ArkUI'
 import { webview } from '@kit.ArkWeb'
 import { ToastUtil } from '@pura/harmony-utils'
 import { SettingsMainPage } from '@handwer/app_settings'
+import { HdsSnackBar } from '@kit.UIDesignKit'
 
 const TAG = '[Index]'
 
@@ -36,5 +37,8 @@ struct Index {
     })
     .height('100%')
     .width('100%')
+    .onAppear(() => {
+      this.gs.globalSnack = new HdsSnackBar(this.getUIContext())
+    })
   }
 }

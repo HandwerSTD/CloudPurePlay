@@ -59,6 +59,10 @@
           "abilities": ["MainAbility"],
           "when": "always"
         }
+      },
+      {
+        "name": "ohos.permission.VIBRATE",
+        "reason": "$string:vibrate_perm"
       }
     ],
     "extensionAbilities": [

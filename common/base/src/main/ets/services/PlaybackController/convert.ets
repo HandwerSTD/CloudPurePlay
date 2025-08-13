@@ -1,4 +1,4 @@
-import { Song, Artist } from "@handwer/api_adapter"
+import { Song, Artist, PlayListSong } from "@handwer/api_adapter"
 import { LogUtil } from "@pura/harmony-utils"
 import { util } from "@kit.ArkTS"
 import { fileIo } from "@kit.CoreFileKit"
@@ -143,5 +143,27 @@ export class SongConvertUtils {
       return (num / 10_000).toFixed(1).replace(/\.0$/, '') + '万'
     }
     return num.toString()
+  }
+
+  static PlaylistSong2NormalSong(item: PlayListSong) {
+    return {
+      id: item.id,
+      name: item.name,
+      artists: item.ar,
+      album: item.al,
+      duration: item.dt,
+      fee: item.fee,
+      alias: []
+    } as Song
+  }
+  static NormalSong2PlaylistSong(item: Song) {
+    return {
+      id: item.id,
+      name: item.name,
+      ar: item.artists,
+      al: item.album,
+      dt: item.duration,
+      fee: item.fee,
+    } as PlayListSong
   }
 }

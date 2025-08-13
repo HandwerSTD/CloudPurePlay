@@ -1,6 +1,6 @@
 import { PlayList, PlayListAPIUtils, Song, SongAPIUtils } from "@handwer/api_adapter"
-import { LogUtil, ToastUtil } from "@pura/harmony-utils"
-import { ShowToastCallback } from "../../../../exports"
+import { EmitterUtil, LogUtil, ToastUtil } from "@pura/harmony-utils"
+import { PlaylistContentUpdateInfo, SCEmitter, ShowToastCallback, SongConvertUtils } from "../../../../exports"
 import { UserManager } from "../../../Network/UserManager"
 import UserStore from "../../../Network/UserStore"
 import NowPlayingStore from "../NowPlayingStore"
@@ -37,7 +37,7 @@ export class SongLike {
   }
 
   /**
-   * 喜欢当前歌曲
+   * 喜欢当前歌曲，并触发歌单刷新
    */
   static async likeThisSong(toastCallback?: ShowToastCallback) {
     const store = UserStore
@@ -53,7 +53,7 @@ export class SongLike {
         // 喜欢列表
         await SongAPIUtils.getLikeList(UserStore.user, (val) => {
           if (val) store.likeList = new Set(val)
-          UserManager.updateLikeList()
+          UserManager.persistLikeList()
         })
         toastCallback?.($r('sys.symbol.heart_fill'), result ? '已收藏至【我喜欢的音乐】' : '收藏失败')
       } else { // 已喜欢
@@ -64,19 +64,27 @@ export class SongLike {
         // 喜欢列表
         await SongAPIUtils.getLikeList(UserStore.user, (val) => {
           store.likeList = new Set(val ?? store.likeList)
-          UserManager.updateLikeList()
+          UserManager.persistLikeList()
         })
         toastCallback?.($r('sys.symbol.heart'), result ? '取消喜欢当前歌曲' : '取消喜欢失败')
       }
+      EmitterUtil.post(SCEmitter.PlaylistContentUpdate, {
+        pid: UserStore.userPlaylists[0].id,
+        songId: NowPlayingStore.currentSong.id,
+        songInfo: SongConvertUtils.NormalSong2PlaylistSong(NowPlayingStore.currentSong),
+        operation: !isLiked ? 'add' : 'del' // 曾经未喜欢，就是加歌曲
+      } as PlaylistContentUpdateInfo)
     } catch (e) {
       LogUtil.error(TAG, 'likeThisSong Error: ' + e.message)
       toastCallback?.($r('sys.symbol.heart_slash'), '修改红心失败')
+    } finally {
+      UserManager.fetchUserPlaylists()
     }
   }
 
 
   /**
-   * 喜欢当前歌曲
+   * 从歌单页面喜欢当前歌曲，不触发歌单刷新
    */
   static async likeSong(sid: number, toastCallback?: ShowToastCallback) {
     const store = UserStore
@@ -90,25 +98,26 @@ export class SongLike {
         // 喜欢列表
         await SongAPIUtils.getLikeList(UserStore.user, (val) => {
           if (val) store.likeList = new Set(val)
-          UserManager.updateLikeList()
+          UserManager.persistLikeList()
         })
         toastCallback?.($r('sys.symbol.heart_fill'), result ? '已收藏至【我喜欢的音乐】' : '收藏失败')
       } else { // 已喜欢
         let currentSong = NowPlayingStore.currentSong
         let userPlayLists = UserStore.userPlaylists
-        const result = await PlayListAPIUtils.PlayListOperation('del', userPlayLists[0].id, currentSong.id)
+        const result = await PlayListAPIUtils.PlayListOperation('del', userPlayLists[0].id, sid)
         // 喜欢列表
         await SongAPIUtils.getLikeList(UserStore.user, (val) => {
           store.likeList = new Set(val ?? store.likeList)
-          UserManager.updateLikeList()
+          UserManager.persistLikeList()
         })
-        toastCallback?.($r('sys.symbol.heart'), result ? '取消喜欢当前歌曲' : '取消喜欢失败')
+        toastCallback?.($r('sys.symbol.heart'), result ? '取消喜欢歌曲' : '取消喜欢失败')
       }
     } catch (e) {
       LogUtil.error(TAG, 'likeThisSong Error: ' + e.message)
       toastCallback?.($r('sys.symbol.heart_slash'), '修改红心失败')
     } finally {
       SongLike.isThisSongLiked(NowPlayingStore.currentSong.id)
+      UserManager.fetchUserPlaylists()
     }
   }
 }

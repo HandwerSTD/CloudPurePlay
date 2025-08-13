@@ -2,6 +2,7 @@ import { Song } from '@handwer/api_adapter'
 import { SongConvertUtils } from '@handwer/base'
 import { ImageCoverThumbnail } from '../exports'
 
+@ReusableV2
 @ComponentV2
 export struct InListSongItem {
   @Param @Require songName: string
@@ -13,11 +14,12 @@ export struct InListSongItem {
 
   build() {
     Row() {
-      if (this.coverInfo) {
-        ImageCoverThumbnail({
-          nowPlayingCoverImg: this.coverInfo
-        }).margin({left: 12, right: 12})
-      }
+      // if (this.coverInfo) {
+      //   ImageCoverThumbnail({
+      //     nowPlayingCoverImg: this.coverInfo
+      //   }).margin({left: 12, right: 12})
+      //     // .transition(TransitionEffect.OPACITY.animation({duration: 300}))
+      // }
       Column({space: 12}) {
         Text(this.songName).fontSize(16).fontWeight(FontWeight.Bold)
           .songText()
@@ -43,4 +45,6 @@ export struct InListSongItem {
   // .layoutWeight(1)
   .textOverflow({overflow: TextOverflow.Ellipsis})
   .fontColor(Color.White)
+  .maxLines(2)
+  .textOverflow({overflow: TextOverflow.Ellipsis})
 }

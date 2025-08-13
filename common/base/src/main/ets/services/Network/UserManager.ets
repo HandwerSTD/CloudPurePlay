@@ -63,7 +63,7 @@ export class UserManager {
     // 歌单
     await PlayListAPIUtils.getPlayLists(0, store.user, (val) => {
       store.userPlaylists = val ?? store.userPlaylists
-      UserManager.updateUserPlaylists()
+      UserManager.persistUserPlaylists()
     })
 
     // 电台
@@ -75,7 +75,7 @@ export class UserManager {
     // 收藏专辑
     await AlbumAPIUtils.getUserSubscribedAlbum((val) => {
       store.userSubAlbum = val ?? store.userSubAlbum
-      UserManager.updateUserSubAlbum()
+      UserManager.persistUserSubAlbum()
     })
 
     // 排行榜
@@ -95,7 +95,7 @@ export class UserManager {
       store.likeList = new Set(val ?? store.likeList)
       // 再次重置歌曲红心信息
       SongLike.isThisSongLiked(NowPlayingStore.currentSong.id)
-      UserManager.updateLikeList()
+      UserManager.persistLikeList()
     })
   }
   static async fetchDynamicData() {
@@ -187,18 +187,26 @@ export class UserManager {
     store.likeList = new Set()
   }
 
+  static async fetchUserPlaylists() {
+    // 歌单
+    await PlayListAPIUtils.getPlayLists(0, store.user, (val) => {
+      store.userPlaylists = val ?? store.userPlaylists
+      UserManager.persistUserPlaylists()
+    })
+  }
+
   // 便捷方法：单独更新用户歌单
-  static updateUserPlaylists() {
+  static persistUserPlaylists() {
     UserSettings.put(SCUser.userPlaylists, store.userPlaylists)
   }
 
   // 便捷方法：单独更新喜欢列表
-  static updateLikeList() {
+  static persistLikeList() {
     UserSettings.put(SCUser.likeList, Array.from(store.likeList))
   }
 
   // 便捷方法：单独更新收藏专辑
-  static updateUserSubAlbum() {
+  static persistUserSubAlbum() {
     UserSettings.put(SCUser.userSubAlbum, store.userSubAlbum)
   }
 
