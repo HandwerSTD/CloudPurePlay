@@ -1,4 +1,4 @@
-import { PlayList } from "@handwer/api_adapter"
+import { Album, PlayList } from "@handwer/api_adapter"
 import { LightUpContainer } from "@handwer/ui_components"
 import { hdsEffect } from "@kit.UIDesignKit"
 import { LengthMetrics } from "@kit.ArkUI"
@@ -6,12 +6,14 @@ import { ResponsiveUtil, UserStore } from "@handwer/base"
 
 @ComponentV2
 export struct MusicLibrarySearchView {
+  @Param isSearchAlbum: boolean = false
   @Event openPlaylist: (playlist: PlayList) => void
   @Event closeSearch: () => void
   @Local searchContent: string = ''
   @Local gridColumnNum: number = 4
 
   @Local searchPlaylists: PlayList[] = []
+  @Local searchAlbums: Album[] = []
 
   @Builder PlayList_SingleItem(list: PlayList, index: number) {
     Column() {
@@ -61,6 +63,54 @@ export struct MusicLibrarySearchView {
       })
     }
   }
+  @Builder Album_SingleItem(list: Album, index: number) {
+    Column() {
+      Image(list.picUrl).borderRadius(12)
+      // .margin({left:12, right: 12, top: 12})
+        .draggable(false)
+        .shadow(ShadowStyle.OUTER_DEFAULT_XS)
+        .visualEffect(new hdsEffect.HdsEffectBuilder().pointLight({
+          illuminatedType: hdsEffect.PointLightIlluminatedType.BORDER
+        }).buildEffect())
+        .clickEffect({
+          level: ClickEffectLevel.HEAVY
+        })
+      Text(list.name)
+        .margin(12).maxLines(1).textOverflow({overflow: TextOverflow.Ellipsis})
+        .fontSize(12).fontWeight(FontWeight.Bold)
+        .fontColor($r('sys.color.font_on_primary'))
+    }
+    .onClick(() => {
+      this.onPlayListItemClicked(index)
+    })
+    .transition(TransitionEffect.OPACITY.animation({duration: 300}))
+  }
+  @Builder MyAlbum() {
+    if (this.searchAlbums.length === 0) {
+      GridItem() {
+        Column() {
+          Text($r('app.string.common_empty_content'))
+            .fontColor(Color.White)
+            .fontSize($r('sys.float.ohos_id_tip_font_size'))
+        }
+      }.height('50%')
+      .columnStart(0).columnEnd(this.gridColumnNum-1)
+    } else {
+      ForEach(this.searchAlbums, (list: Album, index) => {
+        GridItem() {
+          LightUpContainer({
+            lightUpConfig: {
+              lightIntensity: 1,
+              lightHeight: 240,
+            },
+            child: () => {
+              this.Album_SingleItem(list, index)
+            }
+          })
+        }
+      })
+    }
+  }
 
   @Builder Placeholder() {
     Column() {
@@ -74,7 +124,11 @@ export struct MusicLibrarySearchView {
       this.Placeholder()
     } else {
       Grid() {
-        this.MyPlayList()
+        if (this.isSearchAlbum) {
+          this.MyAlbum()
+        } else {
+          this.MyPlayList()
+        }
       }.width('100%')
       .layoutWeight(1)
       .fadingEdge(true, {
@@ -129,12 +183,29 @@ export struct MusicLibrarySearchView {
     this.openPlaylist(this.searchPlaylists[index])
   }
   onSearch() {
-    if (this.searchContent === '') {
-      this.searchPlaylists = []
+    const searchAlbum = () => {
+      if (this.searchContent === '') {
+        this.searchAlbums = []
+      } else {
+        this.searchAlbums = UserStore.userSubAlbum.filter((val) => {
+          return val.name.includes(this.searchContent)
+        })
+      }
+    }
+    const searchList = () => {
+      if (this.searchContent === '') {
+        this.searchPlaylists = []
+      } else {
+        this.searchPlaylists = UserStore.userPlaylists.filter((val) => {
+          return val.name.includes(this.searchContent)
+        })
+      }
+    }
+
+    if (this.isSearchAlbum) {
+      searchAlbum()
     } else {
-      this.searchPlaylists = UserStore.userPlaylists.filter((val) => {
-        return val.name.includes(this.searchContent)
-      })
+      searchList()
     }
   }
 }

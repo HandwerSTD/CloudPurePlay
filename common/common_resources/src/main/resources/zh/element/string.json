@@ -379,6 +379,10 @@
     {
       "name": "unsubscribe_alert_content",
       "value": "确定要取消订阅吗？"
+    },
+    {
+      "name": "remove_album",
+      "value": "删除专辑"
     }
   ]
 }

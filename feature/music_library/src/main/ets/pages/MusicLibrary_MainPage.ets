@@ -3,7 +3,9 @@ import { ResponsiveUtil, SCApp, UserManager, UserStore } from "@handwer/base"
 import { HDS_TITLE_CONFIG_STYLE, LightUpContainer, LightUpRoundedButton, LightUpDefaultConfig,
   WithAnimationFAB,
   DialogUtils,
-  SnackBarUtils} from "@handwer/ui_components"
+  SnackBarUtils, OverrideLightUpStat,
+  LightUpCommonButton,
+  LightUpIconTextButton} from "@handwer/ui_components"
 import { hdsEffect, HdsNavigation, HdsNavigationAttribute, HdsNavigationTitleMode,
   HdsSnackBar,
   IconStyleMode } from "@kit.UIDesignKit"
@@ -11,6 +13,8 @@ import { curves, IconType, LengthMetrics } from "@kit.ArkUI"
 import { generatePageParams_PlayListDetail, PlaylistDetail_PopReturn } from "../views/PlaylistDetail"
 import { MusicLibrarySearchView } from "../views/SearchView"
 import { DialogHelper } from "@pura/harmony-dialog"
+import { AlbumGridList } from "../views/AlbumGridList"
+import { LazyData } from "@pie/lazy-data"
 
 export function genId_MusicLibraryPlaylist(id: string) {
   return 'MusicLibraryPlaylist_'+id
@@ -26,6 +30,9 @@ export struct MainPage {
   user = UserStore
   snack = new HdsSnackBar(this.getUIContext())
 
+  @Local playlistDataSource: LazyData<PlayList> = new LazyData<PlayList>()
+
+  @Local showAlbum: boolean = false
   @Local showSearchPage: boolean = false
   @Local modifyPlaylist: boolean = false
 
@@ -75,35 +82,68 @@ export struct MainPage {
   //-------------------------
 
   @Builder UserCard() {
-    Row() {
-      Image(this.user.user.data.profile.avatarUrl)
-        .height(64).width(64).aspectRatio(1)
-        .borderRadius(32)
-      Blank().width(12)
-      Column() {
-        Text(this.user.user.data.profile.nickname).fontSize(20).fontWeight(FontWeight.Bold)
-        Text($r('app.string.api_switch_from_what', InstanceSwitcher.InstanceTypeName))
-      }.layoutWeight(1).height(64).justifyContent(FlexAlign.SpaceAround)
-      .alignItems(HorizontalAlign.Start)
-    }.width('100%').padding(ResponsiveUtil.chooseByWidth([12, 12, 24])).borderRadius(20)
-    .backgroundColor($r('app.color.common_card_item_background'))
-    .shadow(ShadowStyle.OUTER_FLOATING_SM)
+    Column() {
+      Row() {
+        Image(this.user.user.data.profile.avatarUrl)
+          .height(64).width(64).aspectRatio(1)
+          .borderRadius(32)
+        Blank().width(12)
+        Column() {
+          Text(this.user.user.data.profile.nickname).fontSize(20).fontWeight(FontWeight.Bold)
+          Text($r('app.string.api_switch_from_what', InstanceSwitcher.InstanceTypeName))
+        }.layoutWeight(1).height(64).justifyContent(FlexAlign.SpaceAround)
+        .alignItems(HorizontalAlign.Start)
+        Row() {
+          LightUpIconTextButton({
+            icon: this.showAlbum ? $r('sys.symbol.opticaldisc') : $r('sys.symbol.heart_square_stack'),
+            title: this.showAlbum ? $r('app.string.Album') : $r('app.string.Playlist'),
+            lightUpConfig: LightUpDefaultConfig,
+            clickAction: () => {
+              this.showAlbum = !this.showAlbum
+            }
+          })
+        }.justifyContent(FlexAlign.End)
+      }.width('100%').padding(ResponsiveUtil.chooseByWidth([12, 12, 24])).borderRadius(20)
+      .backgroundColor($r('app.color.common_card_item_background'))
+      .shadow(ShadowStyle.OUTER_FLOATING_SM)
+      .margin({top: 24, bottom: 24})
+    }.padding({left: 12, right: 12})
   }
 
   @Builder MyPlayList() {
-    ForEach(this.user.userPlaylists, (list: PlayList, index) => {
-      GridItem() {
-        LightUpContainer({
-          lightUpConfig: {
-            lightIntensity: 1,
-            lightHeight: 240,
-          },
-          child: () => {
-            this.PlayList_SingleItem(list, index)
-          }
-        })
-      }
+    List({space: 36}) {
+      LazyForEach(this.playlistDataSource, (list: PlayList, index) => {
+        ListItem() {
+          LightUpContainer({
+            lightUpConfig: {
+              lightIntensity: 1,
+              lightHeight: 240,
+            },
+            child: () => {
+              this.PlayList_SingleItem(list, index)
+            }
+          })
+        }
+      }, (val: PlayList, index) => `${val.id}_${val.coverImgUrl}_${val.name}_${val.trackCount}_${index}`)
+    }.width('100%')
+    .nestedScroll({
+      scrollForward: NestedScrollMode.PARENT_FIRST,
+      scrollBackward: NestedScrollMode.PARENT_FIRST
     })
+    .padding({left: 12, right: 12})
+    // .expandSafeArea([SafeAreaType.SYSTEM])
+    // .columnsTemplate(new Array(this.gridColumnNum).fill('1fr').join(' '))
+    // .animation({duration: 300})
+    .lanes(this.gridColumnNum, 24)
+    // .rowsGap(36).columnsGap(24)
+    .clip(false)
+    .onAreaChange((_, nw) => {
+      this.gridColumnNum = ResponsiveUtil.chooseByWidth([2,4,6])
+    })
+    .visibility(!this.showAlbum ? Visibility.Visible : Visibility.None)
+    .transition(TransitionEffect.OPACITY
+      .combine(TransitionEffect.translate({ y: 24 }))
+      .animation({ duration: 500, curve: Curve.Friction}))
   }
 
   @Builder AddButton() {
@@ -125,31 +165,33 @@ export struct MainPage {
     }
   }
 
+  @Builder Content() {
+    Scroll() {
+      Column() {
+        Blank().height($r('sys.float.ohos_id_navigation_bar_height_emphasize'))
+        this.UserCard()
+        Column() {
+            this.MyPlayList()
+            AlbumGridList()
+              .width('100%')
+              .visibility(this.showAlbum ? Visibility.Visible : Visibility.None)
+              .transition(TransitionEffect.OPACITY
+                .combine(TransitionEffect.translate({ y: 24 }))
+                .animation({ duration: 500, curve: Curve.Friction}))
+        }
+        .width('100%')
+      }
+    }.edgeEffect(EdgeEffect.Spring, {alwaysEnabled: true})
+    .fadingEdge(true, {
+      fadingEdgeLength: LengthMetrics.percent(10)
+    })
+  }
+
   @Builder MusicLibraryMainPage() {
     Column() {
       HdsNavigation() {
         Stack({alignContent: Alignment.BottomEnd}) {
-          Grid() {
-            GridItem().height($r('sys.float.ohos_id_navigation_bar_height_emphasize'))
-              .columnStart(0).columnEnd(this.gridColumnNum-1)
-            GridItem() {
-              this.UserCard()
-            }
-            .columnStart(0).columnEnd(this.gridColumnNum-1)
-            this.MyPlayList()
-          }.width('100%')
-          .fadingEdge(true, {
-            fadingEdgeLength: LengthMetrics.percent(10)
-          }).edgeEffect(EdgeEffect.Spring, {alwaysEnabled: true})
-          .padding({left: 12, right: 12})
-          // .expandSafeArea([SafeAreaType.SYSTEM])
-          .columnsTemplate(new Array(this.gridColumnNum).fill('1fr').join(' '))
-          // .animation({duration: 300})
-          .rowsGap(36).columnsGap(24)
-          .clip(false)
-          .onAreaChange((_, nw) => {
-            this.gridColumnNum = ResponsiveUtil.chooseByWidth([2,4,6])
-          })
+          this.Content()
           this.AddButton()
         }.width('100%').height('100%')
       }.width('100%').height('100%').titleBar({
@@ -202,6 +244,7 @@ export struct MainPage {
     if (this.showSearchPage) {
       Column() {
         MusicLibrarySearchView({
+          isSearchAlbum: this.showAlbum,
           closeSearch: () => {
             this.showSearchPage = false
           },
@@ -212,6 +255,16 @@ export struct MainPage {
       }.width('100%').height('100%')
       .transition(TransitionEffect.OPACITY.animation({duration: 500}))
     }
+  }
+
+  aboutToAppear(): void {
+    this.setData()
+  }
+
+  @Monitor('user.userPlaylists')
+  setData() {
+    this.playlistDataSource.setData(this.user.userPlaylists)
+    this.playlistDataSource.notifyDataReload()
   }
 
   build() {

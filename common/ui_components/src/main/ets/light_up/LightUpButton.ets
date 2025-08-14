@@ -271,3 +271,25 @@ export struct LightUpCommonButton {
 
   }
 }
+
+@ComponentV2
+export struct LightUpIconTextButton {
+  @Param @Require clickAction: () => void
+  @Param @Require lightUpConfig: LightUpConfig
+  @Param @Require icon: Resource
+  @Param @Require title: ResourceStr
+
+  build() {
+    LightUpCommonButton({
+      clickAction: this.clickAction,
+      lightUpConfig: { lightIntensity: 1, lightHeight: 240},
+      customPadding: 16,
+      useBorder: true
+    }) {
+      Row({space: 12}) {
+        SymbolGlyph(this.icon).fontColor([Color.White]).fontWeight(FontWeight.Bold)
+        Text(this.title).fontColor(Color.White)
+      }
+    }
+  }
+}
