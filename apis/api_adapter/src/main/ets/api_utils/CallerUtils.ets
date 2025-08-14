@@ -410,7 +410,7 @@ export class PlayListAPIUtils {
    */
   static async renamePlaylist(pid: number, newName: string): Promise<boolean> {
     if (InstanceSwitcher.InstanceType === INSTANCE_TYPE.CLOUD) {
-      return false;
+      return Cloud_PlayListAPIUtils.renamePlayList(newName, pid)
     } else {
       throw Error('API Unimplemented')
     }

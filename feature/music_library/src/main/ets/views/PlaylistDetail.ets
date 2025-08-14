@@ -507,6 +507,10 @@ export struct PlaylistDetail {
               $r('app.string.remove_list_failed'));
           }
         })
+        .catch(() => {
+          SnackBarUtils.showMessage(GlobalStore.globalSnack!, $r('sys.symbol.trash'),
+            $r('app.string.remove_list_failed'));
+        })
         .finally(() => {
           DialogHelper.closeDialog(id)
         })
@@ -526,6 +530,10 @@ export struct PlaylistDetail {
             SnackBarUtils.showMessage(this.snack, $r('sys.symbol.heart_square_stack'),
               $r('app.string.unsubscribe_failed'));
           }
+        })
+        .catch(() => {
+          SnackBarUtils.showMessage(this.snack, $r('sys.symbol.heart_square_stack'),
+            $r('app.string.unsubscribe_failed'));
         })
         .finally(() => {
           DialogHelper.closeDialog(id)
@@ -571,6 +579,9 @@ export struct PlaylistDetail {
             SnackBarUtils.showMessage(this.snack, $r('sys.symbol.pencil_and_card'), $r('app.string.rename_failed'))
           }
         })
+        .catch(() => {
+          SnackBarUtils.showMessage(this.snack, $r('sys.symbol.pencil_and_card'), $r('app.string.rename_failed'))
+        })
     })
   }
 
@@ -587,6 +598,9 @@ export struct PlaylistDetail {
         } else {
           SnackBarUtils.showMessage(this.snack, $r('sys.symbol.trash'), $r('app.string.remove_song_failed'))
         }
+      })
+      .catch(() => {
+        SnackBarUtils.showMessage(this.snack, $r('sys.symbol.trash'), $r('app.string.remove_song_failed'))
       })
   }
 

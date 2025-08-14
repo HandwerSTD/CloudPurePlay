@@ -58,5 +58,8 @@ export struct AddToPlaylistSheet {
           SnackBarUtils.showMessage(GlobalStore.globalSnack!, $r('sys.symbol.add_songlist'), $r('app.string.add_song_to_list_failed'), $r('app.string.add_song_to_list_failed_reason'))
         }
       })
+      .catch(() => {
+        SnackBarUtils.showMessage(GlobalStore.globalSnack!, $r('sys.symbol.add_songlist'), $r('app.string.add_song_to_list_failed'), $r('app.string.add_song_to_list_failed_reason'))
+      })
   }
 }

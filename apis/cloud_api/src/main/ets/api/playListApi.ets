@@ -185,3 +185,23 @@ export async function createPlayList(name: string, isPrivacy: boolean): Promise<
   ToastUtil.showToast(response?.message)
   return false
 }
+
+interface renameResponse {
+  code: number
+  message: string
+}
+
+/**
+ * 创建歌单
+ * @param name
+ * @param isPrivacy
+ */
+export async function renamePlayList(name: string, pid: number): Promise<boolean> {
+  const response = await commonRequest<renameResponse>({
+    url: '/playlist/name/update',
+    params: { id: pid, name: name, timestamp: new Date().getTime() }
+  })
+  if(response.code === 200) return true
+  ToastUtil.showToast(response?.message)
+  return false
+}

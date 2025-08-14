@@ -4,7 +4,8 @@ import { getComment } from '../api/commentApi';
 import { getUserDjSubscribeList, getDjPrograms, putDjRadioInQueue, getDjRadioList } from '../api/djApi';
 import { getLoginStatus, logOut } from '../api/loginApi';
 import { getLyric, getLyricString } from '../api/LyricApi';
-import { getPlayLists, getPlayListSongs, PlayListOperation, getCloudList, searchPlayLists, subscribePlayList, getPersonalizedList, deletePlayList, createPlayList, DailySongRes, PlayListsResult } from '../api/playListApi';
+import { getPlayLists, getPlayListSongs, PlayListOperation, getCloudList, searchPlayLists, subscribePlayList, getPersonalizedList, deletePlayList, createPlayList, DailySongRes, PlayListsResult,
+  renamePlayList } from '../api/playListApi';
 import { getQrCode, checkQrLogin } from '../api/qrCodeApi';
 import { checkMusic, searchSongs, getSongUrl, getSongPicUrl, getDailySongs, getLikeList, likeMusic, setHeartMode, getPersonalFmSong } from '../api/songApi';
 import { getTopList } from '../api/topListApi';
@@ -278,6 +279,15 @@ export class PlayListAPIUtils {
    */
   static async createPlayList(name: string, isPrivacy: boolean): Promise<boolean> {
     return createPlayList(name, isPrivacy);
+  }
+  /**
+   * 重命名歌单
+   * @param name 歌单名称
+   * @param pid 歌单编号
+   * @returns 无
+   */
+  static async renamePlayList(name: string, pid: number): Promise<boolean> {
+    return renamePlayList(name, pid);
   }
 }
 

@@ -265,6 +265,11 @@ export struct MainPage {
           return
         }
       })
+      .catch(() => {
+        SnackBarUtils.showMessage(this.snack, $r('sys.symbol.notepad_badge_plus'),
+          $r('app.string.create_new_playlist_failed'));
+        return
+      })
       .finally(() => {
         DialogHelper.closeDialog(id)
         this.modifyPlaylist = false
@@ -287,6 +292,10 @@ export struct MainPage {
               $r('app.string.remove_list_failed'));
           }
         })
+        .catch(() => {
+          SnackBarUtils.showMessage(this.snack, $r('sys.symbol.trash'),
+            $r('app.string.remove_list_failed'));
+        })
         .finally(() => {
           DialogHelper.closeDialog(id)
         })
@@ -303,6 +312,10 @@ export struct MainPage {
             SnackBarUtils.showMessage(this.snack, $r('sys.symbol.heart_square_stack'),
               $r('app.string.unsubscribe_failed'));
           }
+        })
+        .catch(() => {
+          SnackBarUtils.showMessage(this.snack, $r('sys.symbol.heart_square_stack'),
+            $r('app.string.unsubscribe_failed'));
         })
         .finally(() => {
           DialogHelper.closeDialog(id)
