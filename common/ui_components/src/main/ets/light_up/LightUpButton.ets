@@ -1,6 +1,7 @@
 import { hdsEffect } from '@kit.UIDesignKit'
 import { LightUpConfig, LightUpDefaultConfig, OverrideLightUpStat } from './LightUpConfig'
 import { curves } from '@kit.ArkUI'
+import { ThemeManager } from '@handwer/base'
 
 @ComponentV2
 export struct LightUpRoundedButton {

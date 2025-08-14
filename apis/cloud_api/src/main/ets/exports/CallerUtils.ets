@@ -271,12 +271,12 @@ export class PlayListAPIUtils {
     return deletePlayList(id);
   }
   /**
-   * 创建歌单（暂不可用）
+   * 创建歌单
    * @param name 歌单名称
    * @param isPrivacy 是否私密
    * @returns 无
    */
-  static async createPlayList(name: string, isPrivacy: boolean): Promise<void> {
+  static async createPlayList(name: string, isPrivacy: boolean): Promise<boolean> {
     return createPlayList(name, isPrivacy);
   }
 }

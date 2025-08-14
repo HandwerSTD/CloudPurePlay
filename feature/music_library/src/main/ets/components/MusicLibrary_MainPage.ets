@@ -1,11 +1,16 @@
-import { InstanceSwitcher, PlayList } from "@handwer/api_adapter"
-import { ResponsiveUtil, SCApp, UserStore } from "@handwer/base"
-import { HDS_TITLE_CONFIG_STYLE, LightUpContainer, LightUpRoundedButton, LightUpDefaultConfig } from "@handwer/ui_components"
+import { InstanceSwitcher, PlayList, PlayListAPIUtils } from "@handwer/api_adapter"
+import { ResponsiveUtil, SCApp, UserManager, UserStore } from "@handwer/base"
+import { HDS_TITLE_CONFIG_STYLE, LightUpContainer, LightUpRoundedButton, LightUpDefaultConfig,
+  WithAnimationFAB,
+  DialogUtils,
+  SnackBarUtils} from "@handwer/ui_components"
 import { hdsEffect, HdsNavigation, HdsNavigationAttribute, HdsNavigationTitleMode,
+  HdsSnackBar,
   IconStyleMode } from "@kit.UIDesignKit"
 import { curves, IconType, LengthMetrics } from "@kit.ArkUI"
-import { generatePageParams_PlayListDetail } from "../views/PlaylistDetail"
+import { generatePageParams_PlayListDetail, PlaylistDetail_PopReturn } from "../views/PlaylistDetail"
 import { MusicLibrarySearchView } from "../views/SearchView"
+import { DialogHelper } from "@pura/harmony-dialog"
 
 export function genId_MusicLibraryPlaylist(id: string) {
   return 'MusicLibraryPlaylist_'+id
@@ -19,28 +24,49 @@ export struct MainPage {
   @Local gridColumnNum: number = 4
   @Local pageOpacity: number = 1
   user = UserStore
+  snack = new HdsSnackBar(this.getUIContext())
 
   @Local showSearchPage: boolean = false
+  @Local modifyPlaylist: boolean = false
+
+  isPlaylistCreated(list: PlayList) {
+    return list.userId === this.user.userId
+  }
 
   @Builder PlayList_SingleItem(list: PlayList, index: number) {
     Column() {
-      Image(list.coverImgUrl).borderRadius(12)
-      // .margin({left:12, right: 12, top: 12})
-        .draggable(false)
-        .shadow(ShadowStyle.OUTER_DEFAULT_XS)
-        .visualEffect(new hdsEffect.HdsEffectBuilder().pointLight({
-          illuminatedType: hdsEffect.PointLightIlluminatedType.BORDER
-        }).buildEffect())
-        .clickEffect({
-          level: ClickEffectLevel.HEAVY
-        })
-      Text(list.name)
-        .margin(12).maxLines(1).textOverflow({overflow: TextOverflow.Ellipsis})
-        .fontSize(12).fontWeight(FontWeight.Bold)
-        .fontColor($r('sys.color.font_on_primary'))
+      Stack({alignContent: Alignment.BottomEnd}) {
+        Image(list.coverImgUrl).borderRadius(12)
+        // .margin({left:12, right: 12, top: 12})
+          .draggable(false)
+          .shadow(ShadowStyle.OUTER_DEFAULT_XS)
+          .visualEffect(new hdsEffect.HdsEffectBuilder().pointLight({
+            illuminatedType: hdsEffect.PointLightIlluminatedType.BORDER
+          }).buildEffect())
+          .clickEffect({
+            level: ClickEffectLevel.HEAVY
+          })
+        if (this.modifyPlaylist) {
+          SymbolGlyph(this.isPlaylistCreated(list) ? $r('sys.symbol.xmark') : $r('sys.symbol.heart_square_stack_fill'))
+            .margin({right: 12, bottom: 12})
+            .padding(4)
+            .fontColor([$r('sys.color.font_primary')])
+            .backgroundBlurStyle(BlurStyle.COMPONENT_THICK)
+            .borderRadius(24)
+            .transition(TransitionEffect.translate({x:-4}).animation({curve: curves.springMotion()}).combine(TransitionEffect.OPACITY.animation({duration: 300})))
+        }
+      }
+        Text(list.name)
+          .margin(12).maxLines(1).textOverflow({overflow: TextOverflow.Ellipsis})
+          .fontSize(12).fontWeight(FontWeight.Bold)
+          .fontColor($r('sys.color.font_on_primary'))
     }
     .onClick(() => {
-      this.onPlayListItemClicked(index)
+      if (this.modifyPlaylist) {
+        this.onRemovePlaylist(index)
+      } else {
+        this.onPlayListItemClicked(index)
+      }
     })//.borderRadius(12).clip(true)
     // .backgroundColor($r('app.color.common_card_item_background'))
     // .shadow(ShadowStyle.OUTER_DEFAULT_SM)
@@ -80,30 +106,52 @@ export struct MainPage {
     })
   }
 
+  @Builder AddButton() {
+    if (this.modifyPlaylist) {
+      Column() {
+        LightUpContainer({
+          lightUpConfig: LightUpDefaultConfig
+        }) {
+          WithAnimationFAB({
+            icon: $r('sys.symbol.plus'),
+            clickAction: () => {
+              DialogUtils.showTextInputDialog($r('app.string.create_new_playlist'), '', (res) => {
+                this.onCreateNewPlaylist(res)
+              })
+            }
+          })
+        }
+      }.margin({right: 24, bottom: 24})
+    }
+  }
+
   @Builder MusicLibraryMainPage() {
     Column() {
       HdsNavigation() {
-        Grid() {
-          GridItem().height($r('sys.float.ohos_id_navigation_bar_height_emphasize'))
+        Stack({alignContent: Alignment.BottomEnd}) {
+          Grid() {
+            GridItem().height($r('sys.float.ohos_id_navigation_bar_height_emphasize'))
+              .columnStart(0).columnEnd(this.gridColumnNum-1)
+            GridItem() {
+              this.UserCard()
+            }
             .columnStart(0).columnEnd(this.gridColumnNum-1)
-          GridItem() {
-            this.UserCard()
-          }
-          .columnStart(0).columnEnd(this.gridColumnNum-1)
-          this.MyPlayList()
-        }.width('100%')
-        .fadingEdge(true, {
-          fadingEdgeLength: LengthMetrics.percent(10)
-        }).edgeEffect(EdgeEffect.Spring, {alwaysEnabled: true})
-        .padding({left: 12, right: 12})
-        // .expandSafeArea([SafeAreaType.SYSTEM])
-        .columnsTemplate(new Array(this.gridColumnNum).fill('1fr').join(' '))
-        // .animation({duration: 300})
-        .rowsGap(36).columnsGap(24)
-        .clip(false)
-        .onAreaChange((_, nw) => {
-          this.gridColumnNum = ResponsiveUtil.chooseByWidth([2,4,6])
-        })
+            this.MyPlayList()
+          }.width('100%')
+          .fadingEdge(true, {
+            fadingEdgeLength: LengthMetrics.percent(10)
+          }).edgeEffect(EdgeEffect.Spring, {alwaysEnabled: true})
+          .padding({left: 12, right: 12})
+          // .expandSafeArea([SafeAreaType.SYSTEM])
+          .columnsTemplate(new Array(this.gridColumnNum).fill('1fr').join(' '))
+          // .animation({duration: 300})
+          .rowsGap(36).columnsGap(24)
+          .clip(false)
+          .onAreaChange((_, nw) => {
+            this.gridColumnNum = ResponsiveUtil.chooseByWidth([2,4,6])
+          })
+          this.AddButton()
+        }.width('100%').height('100%')
       }.width('100%').height('100%').titleBar({
         style: HDS_TITLE_CONFIG_STYLE,
         content: {
@@ -117,6 +165,14 @@ export struct MainPage {
                 type: IconStyleMode.NORMAL,
                 action: () => {
                   this.showSearchPage = !this.showSearchPage
+                }
+              },
+            },{
+              content: {
+                icon: this.modifyPlaylist ? $r('sys.symbol.square_and_pencil_fill') : $r('sys.symbol.square_and_pencil'),
+                type: IconStyleMode.NORMAL,
+                action: () => {
+                  this.modifyPlaylist = !this.modifyPlaylist
                 }
               },
             },{
@@ -150,11 +206,7 @@ export struct MainPage {
             this.showSearchPage = false
           },
           openPlaylist: (playlist) => {
-            const params = generatePageParams_PlayListDetail(playlist)
-            this.pageStack.pushPath({
-              name: 'PlaylistDetail',
-              param: params
-            }, true)
+            this.onPushPlaylist(playlist)
           }
         })
       }.width('100%').height('100%')
@@ -180,6 +232,10 @@ export struct MainPage {
       this.pageOpacity = 0
     })
     .onBackPressed(() => {
+      if (this.modifyPlaylist) {
+        this.modifyPlaylist = false;
+        return true;
+      }
       if (this.showSearchPage) {
         this.showSearchPage = false;
         return true;
@@ -192,12 +248,100 @@ export struct MainPage {
   }
 
   onPlayListItemClicked(index: number) {
-    const params = generatePageParams_PlayListDetail(this.user.userPlaylists[index])
-    // this.getUIContext().animateTo({duration: 500}, () => {
-      this.pageStack.pushPath({
-        name: 'PlaylistDetail',
-        param: params
-      }, true)
-    // })
+    this.onPushPlaylist(this.user.userPlaylists[index])
+  }
+
+  onCreateNewPlaylist(res: string) {
+    const id = DialogHelper.showLoadingDialog()
+    PlayListAPIUtils.createPlayList(res, false)
+      .then((res): Promise<void> | undefined => {
+        if (res) {
+          SnackBarUtils.showMessage(this.snack, $r('sys.symbol.notepad_badge_plus'),
+            $r('app.string.create_new_playlist_success'));
+          return UserManager.fetchUserPlaylists();
+        } else {
+          SnackBarUtils.showMessage(this.snack, $r('sys.symbol.notepad_badge_plus'),
+            $r('app.string.create_new_playlist_failed'));
+          return
+        }
+      })
+      .finally(() => {
+        DialogHelper.closeDialog(id)
+        this.modifyPlaylist = false
+      })
+  }
+
+  onRemovePlaylist(index: number) {
+    const play = this.user.userPlaylists[index]
+
+    const remove = () => {
+      const id = DialogHelper.showLoadingDialog()
+      PlayListAPIUtils.deletePlayList(play.id)
+        .then((res) => {
+          if (res) {
+            SnackBarUtils.showMessage(this.snack, $r('sys.symbol.trash'),
+              $r('app.string.remove_list_success'));
+            this.user.userPlaylists.splice(index, 1)
+          } else {
+            SnackBarUtils.showMessage(this.snack, $r('sys.symbol.trash'),
+              $r('app.string.remove_list_failed'));
+          }
+        })
+        .finally(() => {
+          DialogHelper.closeDialog(id)
+        })
+    }
+    const unsub = () => {
+      const id = DialogHelper.showLoadingDialog()
+      PlayListAPIUtils.subscribePlayList(play.id, 2)
+        .then((res) => {
+          if (res) {
+            SnackBarUtils.showMessage(this.snack, $r('sys.symbol.heart_square_stack'),
+              $r('app.string.unsubscribe_success'));
+            this.user.userPlaylists.splice(index, 1)
+          } else {
+            SnackBarUtils.showMessage(this.snack, $r('sys.symbol.heart_square_stack'),
+              $r('app.string.unsubscribe_failed'));
+          }
+        })
+        .finally(() => {
+          DialogHelper.closeDialog(id)
+        })
+    }
+
+    if (this.isPlaylistCreated(play)) {
+      DialogUtils.showAlertDialog(
+        this.getUIContext(),
+        $r('app.string.remove_list'), $r('app.string.remove_list_alert_content'), () => {},
+        () => {
+          remove()
+        })
+    } else {
+      DialogUtils.showAlertDialog(
+        this.getUIContext(),
+        $r('app.string.unsubscribe'), $r('app.string.unsubscribe_alert_content'), () => {},
+        () => {
+          unsub()
+        })
+    }
+  }
+
+  onPushPlaylist(playlist: PlayList) {
+    const params = generatePageParams_PlayListDetail(playlist)
+    const handlePop = (val: PopInfo) => {
+      const result = val.result as PlaylistDetail_PopReturn
+      if (result.removed) {
+        const p = this.user.userPlaylists.findIndex((v) => v.id === playlist.id)
+        if (p !== -1) this.user.userPlaylists.splice(p, 1)
+      }
+    }
+
+    this.pageStack.pushPath({
+      name: 'PlaylistDetail',
+      param: params,
+      onPop: (val) => {
+        handlePop(val)
+      }
+    }, true)
   }
 }

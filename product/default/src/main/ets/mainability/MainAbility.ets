@@ -82,6 +82,7 @@ export default class MainAbility extends UIAbility {
       config.loading_fontColor = $r('sys.color.font_primary')
       config.loading_loadColor = $r('sys.color.font_primary')
       config.loading_borderRadius = 24
+      config.cornerRadius = 24
       config.autoCancel = false
       config.backCancel = false
     })

@@ -351,6 +351,34 @@
     {
       "name": "common_empty_content",
       "value": "无内容"
+    },
+    {
+      "name": "create_new_playlist",
+      "value": "新建歌单"
+    },
+    {
+      "name": "create_new_playlist_success",
+      "value": "创建新歌单成功"
+    },
+    {
+      "name": "create_new_playlist_failed",
+      "value": "创建新歌单失败"
+    },
+    {
+      "name": "unsubscribe_success",
+      "value": "取消订阅成功"
+    },
+    {
+      "name": "unsubscribe_failed",
+      "value": "取消订阅失败"
+    },
+    {
+      "name": "unsubscribe",
+      "value": "取消订阅"
+    },
+    {
+      "name": "unsubscribe_alert_content",
+      "value": "确定要取消订阅吗？"
     }
   ]
 }

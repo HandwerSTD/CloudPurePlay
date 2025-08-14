@@ -125,6 +125,7 @@ export struct LightUpLinedContainer {
           .animation(this.lightAnimationParam)
         })
       }.width('100%').justifyContent(FlexAlign.SpaceBetween)
+      .hitTestBehavior(HitTestMode.None)
 
       this.child()
     }.alignContent(this.lightAlignment)

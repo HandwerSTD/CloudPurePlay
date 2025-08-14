@@ -20,6 +20,13 @@ class UserStore {
   @Trace likeList: Set<string> = new Set()
 
   @Trace dailySongs?: DailyListSongs
+
+  get userId() {
+    return this.user.data.profile.userId
+  }
+  get userNickname() {
+    return this.user.data.profile.nickname
+  }
 }
 
 export default new UserStore()

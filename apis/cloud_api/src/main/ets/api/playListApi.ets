@@ -166,11 +166,22 @@ export const deletePlayList = async (id: number): Promise<boolean> => {
   return false
 }
 
+interface createResponse {
+  code: number
+  message: string
+}
+
 /**
- * 创建歌单 —— 不可用
+ * 创建歌单
  * @param name
  * @param isPrivacy
  */
-export async function createPlayList(name: string, isPrivacy: boolean) {
-  //   const url: string = `${rootUrl}/playlist/create?name=${encodeURIComponent(name)}${isPrivacy ? '&privacy=10' : ''}&timestamp=${new Date().getTime()}`
+export async function createPlayList(name: string, isPrivacy: boolean): Promise<boolean> {
+  const response = await commonRequest<createResponse>({
+    url: '/playlist/create',
+    params: { name: name, privacy: isPrivacy ? 10 : 0 , timestamp: new Date().getTime() }
+  })
+  if(response.code === 200) return true
+  ToastUtil.showToast(response?.message)
+  return false
 }

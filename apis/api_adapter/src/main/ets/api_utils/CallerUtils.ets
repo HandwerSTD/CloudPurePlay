@@ -397,8 +397,7 @@ export class PlayListAPIUtils {
    */
   static async createPlayList(name: string, isPrivacy: boolean): Promise<boolean> {
     if (InstanceSwitcher.InstanceType === INSTANCE_TYPE.CLOUD) {
-      // return Cloud_PlayListAPIUtils.createPlayList(name, isPrivacy);
-      return false;
+      return Cloud_PlayListAPIUtils.createPlayList(name, isPrivacy);
     } else {
       throw Error('API Unimplemented')
     }

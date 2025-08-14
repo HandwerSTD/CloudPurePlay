@@ -26,7 +26,9 @@ import {
   LightUpLinedDefaultConfig,
   SnackBarUtils,
   DialogUtils} from "@handwer/ui_components";
-import { hdsEffect, HdsNavDestination, HdsNavDestinationAttribute, HdsNavDestinationTitleMode,
+import { hdsEffect, HdsNavDestination, HdsNavDestinationAttribute, HdsNavigationAttribute,
+  HdsNavigation,
+  HdsNavigationTitleMode,
   HdsSnackBar } from "@kit.UIDesignKit";
 import { LazyData } from "@pie/lazy-data";
 import { LengthMetrics } from "@kit.ArkUI";
@@ -38,8 +40,7 @@ import { JSON } from "@kit.ArkTS";
 const TAG = '[PlaylistDetail]'
 
 export interface PlaylistDetail_PopReturn {
-  removed?: boolean,
-  renamed?: string
+  removed?: boolean
 }
 
 @ComponentV2
@@ -159,28 +160,45 @@ export struct PlaylistDetail {
   }
 
   @Builder TopAreaPlayButton_PlaylistOpSheet() {
-    Column() {
-      LightUpLinedContainer({lightUpConfig: LightUpLinedDefaultConfig}) {
-        CommonListItem({
-          icon: $r('sys.symbol.pencil_and_card'),
-          title: $r('app.string.common_rename')
-        })
-          .onClick(() => {
-          })
+    HdsNavigation() {
+      List() {
+        ListItem().height($r('sys.float.ohos_id_navigation_bar_height'))
+          .margin({bottom: 12})
+        ListItem() {
+          Column() {
+            LightUpLinedContainer({lightUpConfig: LightUpLinedDefaultConfig}) {
+              CommonListItem({
+                icon: $r('sys.symbol.pencil_and_card'),
+                title: $r('app.string.common_rename')
+              })
+                .onClick(() => {
+                  this.renamePlaylist()
+                })
+            }
+            LightUpLinedContainer({lightUpConfig: LightUpLinedDefaultConfig}) {
+              CommonListItem({
+                icon: $r('sys.symbol.trash'),
+                title: $r('app.string.remove_list')
+              })
+                .onClick(() => {
+                  this.onRemovePlaylist()
+                })
+            }
+          }.borderRadius(24).margin({left: 12, right: 12})
+          .visualEffect(new hdsEffect.HdsEffectBuilder().pointLight({
+            illuminatedType: hdsEffect.PointLightIlluminatedType.BORDER
+          }).buildEffect())
+        }
       }
-      LightUpLinedContainer({lightUpConfig: LightUpLinedDefaultConfig}) {
-        CommonListItem({
-          icon: $r('sys.symbol.trash'),
-          title: $r('app.string.remove_list')
-        })
-          .onClick(() => {
-            this.removePlaylist()
-          })
+    }.titleBar({
+      style: HDS_TITLE_CONFIG_STYLE,
+      content: {
+        title: {
+          mainTitle: $r('app.string.playlist_operations')
+        }
       }
-    }.borderRadius(24).margin({left: 12, right: 12})
-    .visualEffect(new hdsEffect.HdsEffectBuilder().pointLight({
-      illuminatedType: hdsEffect.PointLightIlluminatedType.BORDER
-    }).buildEffect())
+    }).titleMode(HdsNavigationTitleMode.MINI)
+    .mode(NavigationMode.Stack)
   }
 
   @Builder TopAreaPlayButton() {
@@ -213,12 +231,10 @@ export struct PlaylistDetail {
         }
       }
       .bindSheet(this.showPlaylistOperationSheet!!, this.TopAreaPlayButton_PlaylistOpSheet(), {
-        title: {
-          title: $r('app.string.playlist_operations')
-        },
         backgroundColor: $r('app.color.ui_sheet_bg_col'),
         blurStyle: BlurStyle.BACKGROUND_THICK,
-        height: SheetSize.FIT_CONTENT
+        preferType: SheetType.CENTER,
+        showClose: false
       })
     }
   }
@@ -377,8 +393,6 @@ export struct PlaylistDetail {
     .onAreaChange((_, nw) => {
       this.gridCount = ResponsiveUtil.chooseByWidth([1,2])
       this.fullWindowSizeArea = nw
-      // close when change type
-      this.showPlaylistOperationSheet = false
     })
     .backgroundColor(Color.Transparent)
     .onShown(() => {
@@ -473,41 +487,86 @@ export struct PlaylistDetail {
     }
   }
 
-  removePlaylist() {
-    const onAccept = () => {
-      PlayListAPIUtils.deletePlayList(this.playListInfo.id)
+
+  onRemovePlaylist() {
+    const play = this.playListInfo
+
+    const remove = () => {
+      const id = DialogHelper.showLoadingDialog()
+      PlayListAPIUtils.deletePlayList(play.id)
         .then((res) => {
           if (res) {
+            SnackBarUtils.showMessage(GlobalStore.globalSnack!, $r('sys.symbol.trash'),
+              $r('app.string.remove_list_success'));
+            this.showPlaylistOperationSheet = false
             this.pageStack.pop({
               removed: true
             } as PlaylistDetail_PopReturn)
-            SnackBarUtils.showMessage(GlobalStore.globalSnack!, $r('sys.symbol.trash'), $r('app.string.remove_list_success'))
           } else {
-            SnackBarUtils.showMessage(this.snack, $r('sys.symbol.trash'), $r('app.string.remove_list_failed'))
+            SnackBarUtils.showMessage(GlobalStore.globalSnack!, $r('sys.symbol.trash'),
+              $r('app.string.remove_list_failed'));
           }
+        })
+        .finally(() => {
+          DialogHelper.closeDialog(id)
+        })
+    }
+    const unsub = () => {
+      const id = DialogHelper.showLoadingDialog()
+      PlayListAPIUtils.subscribePlayList(play.id, 2)
+        .then((res) => {
+          if (res) {
+            SnackBarUtils.showMessage(this.snack, $r('sys.symbol.heart_square_stack'),
+              $r('app.string.unsubscribe_success'));
+            this.showPlaylistOperationSheet = false
+            this.pageStack.pop({
+              removed: true
+            } as PlaylistDetail_PopReturn)
+          } else {
+            SnackBarUtils.showMessage(this.snack, $r('sys.symbol.heart_square_stack'),
+              $r('app.string.unsubscribe_failed'));
+          }
+        })
+        .finally(() => {
+          DialogHelper.closeDialog(id)
         })
     }
 
-    DialogUtils.showAlertDialog(this.getUIContext(),
-      $r('app.string.remove_list'),
-      $r('app.string.remove_list_alert_content'),
-      () => {},
-      () => {
-        onAccept()
-      }
-    )
+    if (play.userId === UserStore.userId) {
+      DialogUtils.showAlertDialog(
+        this.getUIContext(),
+        $r('app.string.remove_list'), $r('app.string.remove_list_alert_content'), () => {},
+        () => {
+          remove()
+        })
+    } else {
+      DialogUtils.showAlertDialog(
+        this.getUIContext(),
+        $r('app.string.unsubscribe'), $r('app.string.unsubscribe_alert_content'), () => {},
+        () => {
+          unsub()
+        })
+    }
   }
 
   renamePlaylist() {
     DialogUtils.showTextInputDialog($r('app.string.common_rename'), this.playListInfo.name, (result) => {
-      this.playListInfo.name = result
+      if (result === '' || result === this.playListInfo.name) return
       PlayListAPIUtils.renamePlaylist(this.playListInfo.id, result)
         .then((res) => {
           if (res) {
-            const data = UserStore.userPlaylists.find((val) => {
-              return val.id === this.playListInfo.id
-            })
-            if (data) data.name = result
+            // this page
+            let np = JSON.parse(JSON.stringify(this.playListInfo)) as PlayList
+            np.name = result
+            this.playListInfo = np
+
+            // global
+            const p = UserStore.userPlaylists.findIndex((v) => v.id === this.playListInfo.id)
+            if (p !== -1) {
+              let np = JSON.parse(JSON.stringify(UserStore.userPlaylists[p])) as PlayList
+              np.name = result
+              UserStore.userPlaylists[p] = np
+            }
           } else {
             SnackBarUtils.showMessage(this.snack, $r('sys.symbol.pencil_and_card'), $r('app.string.rename_failed'))
           }

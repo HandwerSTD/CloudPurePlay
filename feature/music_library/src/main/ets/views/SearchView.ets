@@ -1,6 +1,6 @@
 import { PlayList } from "@handwer/api_adapter"
 import { LightUpContainer } from "@handwer/ui_components"
-import { hdsEffect, HdsNavigation, HdsNavigationTitleMode } from "@kit.UIDesignKit"
+import { hdsEffect } from "@kit.UIDesignKit"
 import { LengthMetrics } from "@kit.ArkUI"
 import { ResponsiveUtil, UserStore } from "@handwer/base"
 
@@ -44,6 +44,7 @@ export struct MusicLibrarySearchView {
             .fontSize($r('sys.float.ohos_id_tip_font_size'))
         }
       }.height('50%')
+      .columnStart(0).columnEnd(this.gridColumnNum-1)
     } else {
       ForEach(this.searchPlaylists, (list: PlayList, index) => {
         GridItem() {
