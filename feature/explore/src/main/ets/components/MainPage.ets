@@ -1,6 +1,4 @@
 import { SCApp } from "@handwer/base"
-import { HDS_TITLE_CONFIG_STYLE } from "@handwer/ui_components"
-import { HdsNavigation, HdsNavigationTitleMode, HdsNavigationAttribute, hdsEffect } from "@kit.UIDesignKit"
 import { AlbumDetail, MusicLibrary, PlaylistDetail } from '@handwer/music_library'
 
 

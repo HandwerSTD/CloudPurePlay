@@ -21,6 +21,7 @@ export interface checkValidUriParams {
  * @returns
  */
 export async function checkValidUrl(params: checkValidUriParams): Promise<boolean> {
+  let result = false
   try {
     params.setChecking(true)
     const response = await commonRequest<InnerVersion>({
@@ -29,15 +30,18 @@ export async function checkValidUrl(params: checkValidUriParams): Promise<boolea
     })
     if (response.code === 200) {
       params.setResult(true)
-      return true
+      result = true
     } else {
       params.setResult(false)
-      return false
+      result = false
     }
   } catch (e) {
     params.setResult(false)
-    return false
+    result = false
   } finally {
     params.setChecking(false)
+    return result
   }
 }
+
+

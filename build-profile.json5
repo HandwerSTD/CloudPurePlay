@@ -87,6 +87,18 @@
     {
       "name": "music_library",
       "srcPath": "./feature/music_library",
+    },
+    {
+      "name": "navidrome_api",
+      "srcPath": "./apis/navidrome_api",
+      "targets": [
+        {
+          "name": "default",
+          "applyToProducts": [
+            "default"
+          ]
+        }
+      ]
     }
   ]
 }
