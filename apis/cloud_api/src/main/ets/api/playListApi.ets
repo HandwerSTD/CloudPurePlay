@@ -205,3 +205,24 @@ export async function renamePlayList(name: string, pid: number): Promise<boolean
   ToastUtil.showToast(response?.message)
   return false
 }
+
+interface albumSubResponse {
+  code: number
+  message: string
+}
+
+/**
+ * 收藏/取消收藏专辑
+ * @param id - 专辑id
+ * @param t - 1:收藏, 0:取消收藏
+ * @returns Promise<boolean>
+ */
+export const subscribeAlbum = async (id: number, t: number): Promise<boolean> => {
+  const response = await commonRequest<albumSubResponse>({
+    url: '/album/sub',
+    params: { id, t, timestamp: new Date().getTime() }
+  })
+  if(response.code === 200) return true
+  ToastUtil.showToast(response.message)
+  return false
+}

@@ -726,7 +726,7 @@ export struct MainPage {
         preferType: SheetType.CENTER
       })
       .padding({
-        top: this.gs.wd.top,
+        top: this.gs.wd.top === 0 ? 12 : this.gs.wd.top,
         // bottom: this.gs.wd.bottom
       })
       .height('100%')

@@ -383,6 +383,18 @@
     {
       "name": "remove_album",
       "value": "删除专辑"
+    },
+    {
+      "name": "subscribe_album",
+      "value": "订阅专辑"
+    },
+    {
+      "name": "subscribe_failed",
+      "value": "订阅失败"
+    },
+    {
+      "name": "subscribe_success",
+      "value": "订阅成功"
     }
   ]
 }

@@ -5,6 +5,7 @@ import {
   SubAlbumResult, SubAlbumResult_INITIAL } from "../entities/Album";
 import commonRequest from "./request/RequestUtil";
 import { preferences } from "@kit.ArkData";
+import { ToastUtil } from "@pura/harmony-utils";
 
 /**
  * 获取专辑信息和歌曲
@@ -43,4 +44,26 @@ export const searchAlbums = async (keywords: string): Promise<Album[]> => {
     params: { keywords, type: 10 }
   })
   return result.result.albums ?? []
+}
+
+
+interface albumSubResponse {
+  code: number
+  message: string
+}
+
+/**
+ * 收藏/取消收藏专辑
+ * @param id - 专辑id
+ * @param t - 1:收藏, 0:取消收藏
+ * @returns Promise<boolean>
+ */
+export const subscribeAlbum = async (id: number, t: number): Promise<boolean> => {
+  const response = await commonRequest<albumSubResponse>({
+    url: '/album/sub',
+    params: { id, t, timestamp: new Date().getTime() }
+  })
+  if(response.code === 200) return true
+  ToastUtil.showToast(response.message)
+  return false
 }

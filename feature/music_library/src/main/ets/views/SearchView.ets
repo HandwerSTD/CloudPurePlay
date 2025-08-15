@@ -131,6 +131,7 @@ export struct MusicLibrarySearchView {
         }
       }.width('100%')
       .layoutWeight(1)
+      .scrollBar(BarState.Off)
       .fadingEdge(true, {
         fadingEdgeLength: LengthMetrics.percent(10)
       }).edgeEffect(EdgeEffect.Spring, {alwaysEnabled: true})
@@ -188,7 +189,7 @@ export struct MusicLibrarySearchView {
         this.searchAlbums = []
       } else {
         this.searchAlbums = UserStore.userSubAlbum.filter((val) => {
-          return val.name.includes(this.searchContent)
+          return val.name.toLowerCase().includes(this.searchContent.toLowerCase())
         })
       }
     }
@@ -197,7 +198,7 @@ export struct MusicLibrarySearchView {
         this.searchPlaylists = []
       } else {
         this.searchPlaylists = UserStore.userPlaylists.filter((val) => {
-          return val.name.includes(this.searchContent)
+          return val.name.toLowerCase().includes(this.searchContent.toLowerCase())
         })
       }
     }

@@ -9,6 +9,7 @@ const TAG = '[songLike] '
 
 export class SongLike {
   static isSongLiked(sid: number) {
+    if (sid === 0) return false;
     let isLiked: boolean = false
     try {
       let likeList = Array.from(UserStore.likeList)

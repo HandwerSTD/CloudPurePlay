@@ -1,4 +1,4 @@
-import { getAlbumInfo, getUserSubscribedAlbum, searchAlbums } from '../api/albumApi';
+import { getAlbumInfo, getUserSubscribedAlbum, searchAlbums, subscribeAlbum } from '../api/albumApi';
 import { getArtistInfo, searchArtists } from '../api/artistApi';
 import { getComment } from '../api/commentApi';
 import { getUserDjSubscribeList, getDjPrograms, putDjRadioInQueue, getDjRadioList } from '../api/djApi';
@@ -42,6 +42,16 @@ export class AlbumAPIUtils {
   static async searchAlbums(keywords: string) {
     return searchAlbums(keywords);
   }
+  /**
+   * 收藏/取消收藏专辑
+   * @param id - 专辑id
+   * @param t - 1:收藏, 0:取消收藏
+   * @returns Promise<boolean>
+   */
+  static async subscribeAlbum(id: number, t: number): Promise<boolean> {
+    return await subscribeAlbum(id, t)
+  }
+  
 }
 
 export class ArtistAPIUtils {

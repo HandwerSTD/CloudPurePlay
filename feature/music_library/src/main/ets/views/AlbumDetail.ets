@@ -41,6 +41,10 @@ import { JSON } from "@kit.ArkTS";
 
 const TAG = '[AlbumDetail]'
 
+export interface Album_PopReturn {
+  removed?: boolean
+}
+
 @ComponentV2
 export struct AlbumDetail {
   @Local pageOpacity: number = 1;
@@ -62,6 +66,9 @@ export struct AlbumDetail {
 
   @Local showPlaylistOperationSheet: boolean = false
 
+  get isThisAlbumSub() {
+    return UserStore.userSubAlbum.find((val) => val.id === this.albumInfo.id) !== null;
+  }
 
   async onStart() {
     this.fullPlayListDetail = new Array(Math.min(this.albumInfo.size)).fill(new PlaylistSongViewModel({
@@ -153,13 +160,23 @@ export struct AlbumDetail {
         ListItem() {
           Column() {
             LightUpLinedContainer({lightUpConfig: LightUpLinedDefaultConfig}) {
-              CommonListItem({
-                icon: $r('sys.symbol.trash'),
-                title: $r('app.string.remove_album')
-              })
-                .onClick(() => {
-                  this.onRemoveAlbum()
+              if (this.isThisAlbumSub) {
+                CommonListItem({
+                  icon: $r('sys.symbol.trash'),
+                  title: $r('app.string.remove_album')
                 })
+                  .onClick(() => {
+                    this.onRemoveAlbum()
+                  })
+              } else {
+                CommonListItem({
+                  icon: $r('sys.symbol.opticaldisc_badge_diamond'),
+                  title: $r('app.string.subscribe_album')
+                })
+                  .onClick(() => {
+                    this.onSubscribeAlbum()
+                  })
+              }
             }
           }.borderRadius(24).margin({left: 12, right: 12})
           .visualEffect(new hdsEffect.HdsEffectBuilder().pointLight({
@@ -401,73 +418,57 @@ export struct AlbumDetail {
   }
 
 
+  onSubscribeAlbum() {
+    const play = this.albumInfo
+    AlbumAPIUtils.subscribeAlbum(play.id, 0)
+      .then((res) => {
+        if (res) {
+          SnackBarUtils.showMessage(this.snack, $r('sys.symbol.opticaldisc'),
+            $r('app.string.subscribe_success'));
+          this.showPlaylistOperationSheet = false
+        } else {
+          throw Error()
+        }
+      })
+      .catch(() => {
+        SnackBarUtils.showMessage(this.snack, $r('sys.symbol.opticaldisc'),
+          $r('app.string.subscribe_failed'));
+      })
+  }
   onRemoveAlbum() {
-    // const play = this.albumInfo
-    //
-    // const remove = () => {
-    //   const id = DialogHelper.showLoadingDialog()
-    //   PlayListAPIUtils.deletePlayList(play.id)
-    //     .then((res) => {
-    //       if (res) {
-    //         SnackBarUtils.showMessage(GlobalStore.globalSnack!, $r('sys.symbol.trash'),
-    //           $r('app.string.remove_list_success'));
-    //         this.showPlaylistOperationSheet = false
-    //         this.pageStack.pop({
-    //           removed: true
-    //         } as PlaylistDetail_PopReturn)
-    //       } else {
-    //         SnackBarUtils.showMessage(GlobalStore.globalSnack!, $r('sys.symbol.trash'),
-    //           $r('app.string.remove_list_failed'));
-    //       }
-    //     })
-    //     .catch(() => {
-    //       SnackBarUtils.showMessage(GlobalStore.globalSnack!, $r('sys.symbol.trash'),
-    //         $r('app.string.remove_list_failed'));
-    //     })
-    //     .finally(() => {
-    //       DialogHelper.closeDialog(id)
-    //     })
-    // }
-    // const unsub = () => {
-    //   const id = DialogHelper.showLoadingDialog()
-    //   PlayListAPIUtils.subscribePlayList(play.id, 2)
-    //     .then((res) => {
-    //       if (res) {
-    //         SnackBarUtils.showMessage(this.snack, $r('sys.symbol.heart_square_stack'),
-    //           $r('app.string.unsubscribe_success'));
-    //         this.showPlaylistOperationSheet = false
-    //         this.pageStack.pop({
-    //           removed: true
-    //         } as PlaylistDetail_PopReturn)
-    //       } else {
-    //         SnackBarUtils.showMessage(this.snack, $r('sys.symbol.heart_square_stack'),
-    //           $r('app.string.unsubscribe_failed'));
-    //       }
-    //     })
-    //     .catch(() => {
-    //       SnackBarUtils.showMessage(this.snack, $r('sys.symbol.heart_square_stack'),
-    //         $r('app.string.unsubscribe_failed'));
-    //     })
-    //     .finally(() => {
-    //       DialogHelper.closeDialog(id)
-    //     })
-    // }
-    //
-    // if (play.userId === UserStore.userId) {
-    //   DialogUtils.showAlertDialog(
-    //     this.getUIContext(),
-    //     $r('app.string.remove_list'), $r('app.string.remove_list_alert_content'), () => {},
-    //     () => {
-    //       remove()
-    //     })
-    // } else {
-    //   DialogUtils.showAlertDialog(
-    //     this.getUIContext(),
-    //     $r('app.string.unsubscribe'), $r('app.string.unsubscribe_alert_content'), () => {},
-    //     () => {
-    //       unsub()
-    //     })
-    // }
+    const play = this.albumInfo
+
+    const unsub = () => {
+      const id = DialogHelper.showLoadingDialog()
+      AlbumAPIUtils.subscribeAlbum(play.id, 0)
+        .then((res) => {
+          if (res) {
+            SnackBarUtils.showMessage(this.snack, $r('sys.symbol.heart_square_stack'),
+              $r('app.string.unsubscribe_success'));
+            this.showPlaylistOperationSheet = false
+            this.pageStack.pop({
+              removed: true
+            } as Album_PopReturn)
+          } else {
+            SnackBarUtils.showMessage(this.snack, $r('sys.symbol.heart_square_stack'),
+              $r('app.string.unsubscribe_failed'));
+          }
+        })
+        .catch(() => {
+          SnackBarUtils.showMessage(this.snack, $r('sys.symbol.heart_square_stack'),
+            $r('app.string.unsubscribe_failed'));
+        })
+        .finally(() => {
+          DialogHelper.closeDialog(id)
+        })
+    }
+
+    DialogUtils.showAlertDialog(
+      this.getUIContext(),
+      $r('app.string.unsubscribe'), $r('app.string.unsubscribe_alert_content'), () => {},
+      () => {
+        unsub()
+      })
   }
 
   addSongToList(song: PlayListSong) {
@@ -478,6 +479,6 @@ export struct AlbumDetail {
 
 export function generatePageParams_AlbumDetail(album: Album) {
   const params: Record<string, Object> = {}
-  params['albumDetail'] = album
+  params['albumInfo'] = album
   return params
 }

@@ -64,6 +64,20 @@ export class AlbumAPIUtils {
       throw Error('API Unimplemented')
     }
   }
+  
+  /**
+   * 收藏/取消收藏专辑
+   * @param id - 专辑id
+   * @param t - 1:收藏, 0:取消收藏
+   * @returns Promise<boolean>
+   */
+  static async subscribeAlbum(id: number, t: number): Promise<boolean> {
+    if (InstanceSwitcher.InstanceType === INSTANCE_TYPE.CLOUD) {
+      return Cloud_AlbumAPIUtils.subscribeAlbum(id, t);
+    } else {
+      throw Error('API Unimplemented')
+    }
+  }
 }
 
 
