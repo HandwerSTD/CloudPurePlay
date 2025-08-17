@@ -1,27 +1,39 @@
-import { LyricResult } from "../entities/Lyric";
 import commonRequest from "./request/RequestUtil";
 
-/**
- * 获取歌词
- * @param id - 歌曲id
- * @returns - string[]
- */
-export const getLyric = async (id: number): Promise<LyricResult> => {
-  return commonRequest({
-    url: '/lyric',
-    params: { id, noCookie: true }
-  })
+interface Lyric {
+  artist: string;
+  title: string;
+  value: string; // 整段歌词
+}
+
+interface LyricResult {
+  status: string;
+  version: string;
+  lyrics?: Lyric;
 }
 
 /**
- * 获取歌词完整string
- * @param id
- * @return
+ * 获取歌词（原始结果）
+ * @param id - 歌曲id
  */
-export const getLyricString = async (id: number): Promise<string> => {
+export const getLyric = async (id: string): Promise<LyricResult> => {
+  return commonRequest({
+    url: '/rest/getLyrics.view',
+    params: { id, f: 'json' }
+  });
+};
+
+/**
+ * 获取歌词文本
+ * @param id - 歌曲id
+ * @returns - 歌词 string
+ */
+export const getLyricString = async (id: string): Promise<string> => {
   const response = await commonRequest<LyricResult>({
-    url: '/lyric',
-    params: { id, noCookie: true }
-  })
-  return response.code === 200 ? response.lrc.lyric : '[00:00:00] 暂无歌词'
-}
+    url: '/rest/getLyrics.view',
+    params: { id, f: 'json' }
+  });
+
+  const lyric = response?.lyrics?.value;
+  return lyric ?? "[00:00.00] 暂无歌词";
+};

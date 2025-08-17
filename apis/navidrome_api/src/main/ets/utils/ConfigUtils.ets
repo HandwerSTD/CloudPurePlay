@@ -44,7 +44,7 @@ export async function checkValidUrl(params: checkValidUriParams): Promise<boolea
     })
     const rec = response
 
-    if ((rec['subsonic-response'] as SubsonicPingInnerResponse).status === 'ok') {
+    if (rec.status === 'ok') {
       params.setResult(true)
       result = true
     } else {

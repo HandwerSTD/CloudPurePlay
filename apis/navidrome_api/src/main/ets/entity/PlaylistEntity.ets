@@ -7,6 +7,7 @@ export interface PlayList {
   owner?: string;
   public?: boolean;
   songCount?: number;
+  coverArt?: string
 }
 
 /** 歌单列表返回 */

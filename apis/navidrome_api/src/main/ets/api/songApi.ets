@@ -7,14 +7,24 @@ import commonRequest from "./request/RequestUtil";
  * @param keywords - 搜索关键词
  * @param limit - 限制返回数量
  */
-export const searchSongs = async (keywords: string, limit: number = 50): Promise<Song[]> => {
+export const searchSongs = async (
+  keywords: string,
+  limit: number = 50,
+  offset: number = 0
+): Promise<Song[]> => {
   const result = await commonRequest<SongSearchResult>({
     url: '/rest/search2.view',
-    params: { query: keywords, songCount: limit, f: 'json' }
+    params: {
+      query: keywords,
+      songCount: limit,
+      songOffset: offset,
+      f: 'json'
+    }
   });
 
   return result.searchResult2?.song ?? [];
 };
+
 export const getSongUrl = async (id: number): Promise<SongPlayResult> => {
   return commonRequest<SongPlayResult>({
     url: '/rest/stream.view',
@@ -73,4 +83,3 @@ export const getAlbumSongCoverUrl = (song: AlbumSong, size: number = 500): strin
   if (!coverArtId) return '';
   return `/rest/getCoverArt.view?id=${coverArtId}&size=${size}`;
 };
-

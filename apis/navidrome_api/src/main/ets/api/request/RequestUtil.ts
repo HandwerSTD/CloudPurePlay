@@ -97,7 +97,7 @@ interface ApiResponse<T> {
 const commonRequest = async<T>(config: AxiosRequestConfig): Promise<T> => {
   try {
     const response = await instance.request(config) as ApiResponse<T>
-    return response.data
+    return response.data['subsonic-response']
   } catch (e) {
     console.error(TAG, `commonRequest got error: ${e.message ?? ""}, ${e.code ?? -1} for request ${config.url} with params ${JSON.stringify(config.params)}`)
     throw Error(e)
