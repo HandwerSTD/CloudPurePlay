@@ -174,9 +174,9 @@ export struct MainPage {
           }),
         ]
       })
-        .hitTestBehavior(this.isTopAreaExpand ? HitTestMode.Default : HitTestMode.Transparent)
+        .hitTestBehavior(this.isBottomAreaExpand ? HitTestMode.Default : HitTestMode.Transparent)
         .offset(this.isBottomAreaExpand ? undefined : {x: 5}) // 抵消掉自带边距
-    }.hitTestBehavior(this.isTopAreaExpand ? HitTestMode.Default : HitTestMode.Transparent)
+    }.hitTestBehavior(this.isBottomAreaExpand ? HitTestMode.Default : HitTestMode.Transparent)
   }
 
   @Builder TopAreaActionButton_ActionBar_PrimaryButton() {

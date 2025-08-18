@@ -117,7 +117,7 @@ export class CloudAPIEntityParser {
    * 转换Artist数组
    */
   static parseArtists(cloudArtists: CloudAPI_Artist[]): Artist[] {
-    return cloudArtists.map(artist => CloudAPIEntityParser.parseArtist(artist));
+    return cloudArtists?.map(artist => CloudAPIEntityParser.parseArtist(artist)) ?? [];
   }
 
   /**
