@@ -24,10 +24,10 @@ export interface DjProgramResult {
  * 推荐电台
  */
 export interface RecommendDjRadio {
-  id: number
+  id: string
   name: string
   picUrl: string
-  categoryId: number
+  categoryId: string
   category: string
   rcmdtext: string
   playCount: number
@@ -48,7 +48,7 @@ export interface DjRecommendResult {
  */
 export interface Dj {
   avatarUrl: string
-  userId: number
+  userId: string
   nickname: string
   backgroundUrl: string
 }
@@ -66,10 +66,10 @@ export interface DjRadio {
   subCount: number
   programCount: number
   picUrl: string
-  lastProgramId: number
+  lastProgramId: string
   desc: string // 简介
   name: string
-  id: number
+  id: string
 }
 
 /**
@@ -85,7 +85,7 @@ export interface DjResult {
 export const DjRadio_INITIAL: DjRadio = {
   dj: {
     avatarUrl: '',
-    userId: 0,
+    userId: "",
     nickname: '',
     backgroundUrl: ''
   },
@@ -97,23 +97,23 @@ export const DjRadio_INITIAL: DjRadio = {
   subCount: 0,
   programCount: 0,
   picUrl: "",
-  lastProgramId: 0,
+  lastProgramId: "",
   desc: "",
   name: "",
-  id: 0
+  id: ""
 }
 
 export const RecommendDjRadio_INITIAL: RecommendDjRadio = {
-  id: 0,
+  id: "",
   name: "",
   picUrl: "",
-  categoryId: 0,
+  categoryId: "",
   category: "",
   rcmdtext: "",
   playCount: 0,
   dj: {
     avatarUrl: '',
-    userId: 0,
+    userId: "",
     nickname: '',
     backgroundUrl: ''
   },

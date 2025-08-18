@@ -1,13 +1,13 @@
 interface UserContent {
   avatarUrl: string
   nickname: string
-  userId: number
+  userId: string
   vipType: number
 }
 
 export interface Comment {
   user: UserContent
-  commentId: number
+  commentId: string
   content: string
   time: number
   timeStr: string
@@ -36,10 +36,10 @@ export const Comment_INITIAL: Comment = {
   user: {
     avatarUrl: '',
     nickname: '',
-    userId: 0,
+    userId: "",
     vipType: 0
   },
-  commentId: 0,
+  commentId: "",
   content: '',
   time: 0,
   timeStr: '',

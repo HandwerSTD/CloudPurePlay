@@ -5,7 +5,7 @@ import { Artist, Song } from "./Song"
  * 歌单创建者
  */
 export interface Creator {
-  userId: number
+  userId: string
   nickname: string
   avatarUrl: string
 }
@@ -16,10 +16,10 @@ export interface Creator {
 export interface PlayList {
   coverImgUrl: string
   name: string
-  id: number
+  id: string
   playCount: number
   subscribedCount: number
-  userId: number
+  userId: string
   trackCount: number
   subscribed: boolean
   creator: Creator
@@ -72,7 +72,7 @@ export interface PlayListSearchResult {
  * 正在播放的歌单信息
  */
 export interface PlayingPlayList {
-  id: number,
+  id: string,
   count: number
 }
 
@@ -81,7 +81,7 @@ export interface PlayingPlayList {
  */
 export interface PlayListSong {
   name: string
-  id: number
+  id: string
   dt: number
   al: Album
   ar: Artist[]
@@ -100,7 +100,7 @@ export interface PlayListSongsResult {
  */
 interface DailySong {
   name: string
-  id: number
+  id: string
   dt: number
   al: Album
   ar: Artist[]
@@ -131,14 +131,14 @@ export interface CloudResult {
 export const PlayList_INITIAL: PlayList = {
   coverImgUrl: '',
   name: '',
-  id: 0,
+  id: "",
   playCount: 0,
   subscribedCount: 0,
-  userId: 0,
+  userId: "",
   trackCount: 0,
   subscribed: false,
   creator: {
-    userId: -1,
+    userId: "",
     nickname: 'null',
     avatarUrl: ''
   },
@@ -151,14 +151,14 @@ export const PlayListResult_INITIAL: PlayListResult = {
     {
       coverImgUrl: '',
       name: '',
-      id: 0,
+      id: "",
       playCount: 0,
       subscribedCount: 0,
-      userId: 0,
+      userId: "",
       trackCount: 0,
       subscribed: false,
       creator: {
-        userId: -1,
+        userId: "",
         nickname: '',
         avatarUrl: ''
       },

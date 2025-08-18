@@ -6,7 +6,7 @@ interface AlbumDetail {
   picUrl: string
   description: string
   name: string
-  id: number
+  id: string
 }
 
 /**
@@ -26,7 +26,7 @@ export interface Album {
   artists: Artist[]
   picUrl: string
   name: string
-  id: number
+  id: string
   size: number
 }
 
@@ -57,7 +57,7 @@ export const AlbumInfoResult_INITIAL: AlbumInfoResult = {
     picUrl: '',
     description: '',
     name: '',
-    id: 0
+    id: ""
   }
 }
 
@@ -69,7 +69,7 @@ export const Album_INITIAL: Album = {
   artists: [],
   picUrl: "",
   name: "",
-  id: 0,
+  id: "",
   size: 0
 }
 

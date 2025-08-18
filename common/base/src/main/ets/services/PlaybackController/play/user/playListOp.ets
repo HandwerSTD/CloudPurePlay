@@ -10,8 +10,8 @@ import { PlayControl } from "./playControl"
 const TAG = '[playListOp] '
 
 export interface PlaylistContentUpdateInfo {
-  pid: number,
-  songId: number,
+  pid: string,
+  songId: string,
   songInfo: PlayListSong,
   operation: 'add' | 'del' | undefined
 }
@@ -45,13 +45,13 @@ export class PlayListOp {
 
   static cleanLastPlayInfo() {
     const playInfo: PlayingPlayList = {
-      id: -1,
+      id: "-1",
       count: -1
     }
     // AppStorage.setOrCreate(StorageConstants.LAST_PLAYED_LIST, playInfo)
   }
 
-  static async addSongToPlaylist(playlistId: number, song: Song): Promise<boolean> {
+  static async addSongToPlaylist(playlistId: string, song: Song): Promise<boolean> {
     const result = await PlayListAPIUtils.PlayListOperation('add', playlistId, song.id)
     if (result) {
       // notify

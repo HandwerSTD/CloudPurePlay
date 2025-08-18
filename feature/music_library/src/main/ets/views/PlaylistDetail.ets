@@ -68,7 +68,7 @@ export struct PlaylistDetail {
 
   async onStart() {
     this.fullPlayListDetail = new Array(Math.min(100, this.playListInfo.trackCount)).fill({
-      name: '', id: 0, al: Album_INITIAL, dt: 0, ar: [], fee: 0
+      name: '', id: "0", al: Album_INITIAL, dt: 0, ar: [], fee: 0
     } as PlayListSong)
     this.fullPlayListDataSource.setData(
       PlaylistSongViewModel.fromPlaylistData(this.fullPlayListDetail)

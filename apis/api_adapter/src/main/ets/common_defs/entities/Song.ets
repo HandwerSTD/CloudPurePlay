@@ -4,7 +4,7 @@ import { Album } from "./Album"
  * 歌手
  */
 export interface Artist {
-  id: number
+  id: string
   name: string
 }
 
@@ -12,7 +12,7 @@ export interface Artist {
  * 单曲
  */
 export interface Song {
-  id: number
+  id: string
   name: string
   artists: Artist[]
   album: Album
@@ -59,7 +59,7 @@ export type QualityType = 'standard' | 'higher' | 'exhigh' | 'lossless' | 'hires
  * 歌曲下载
  */
 export interface SongDownloadItem {
-  id: number
+  id: string
   url: string
   size: number
   type: string
@@ -74,7 +74,7 @@ export interface SongDownload {
 }
 
 interface SongPlayData {
-  id: number
+  id: string
   url: string
   time: number
 }
@@ -90,8 +90,8 @@ export interface SongPlayResult {
  * 本地歌曲
  */
 export interface LocalSong {
-  id: number
-  songId: number
+  id: string
+  songId: string
   name: string
   artists: string
   picFile: string
@@ -100,8 +100,8 @@ export interface LocalSong {
 }
 
 export const LocalSong_INITIAL: LocalSong = {
-  id: -1,
-  songId: -1,
+  id: "",
+  songId: "",
   name: "",
   artists: "",
   picFile: "",
@@ -111,7 +111,7 @@ export const LocalSong_INITIAL: LocalSong = {
 
 export const SongPlay_INITIAL: SongPlayResult = {
   data: [{
-    id: -1,
+    id: "",
     url: '',
     time: -1
   }]
@@ -119,7 +119,7 @@ export const SongPlay_INITIAL: SongPlayResult = {
 
 export const SongDownload_INITIAL: SongDownload = {
   data: [{
-    id: 0,
+    id: "",
     url: '',
     size: 0,
     type: '',
@@ -138,16 +138,16 @@ export const SongDetail_INITIAL: SongDetail = {
 };
 
 export const Song_INITIAL: Song = {
-  id: 0,
+  id: "",
   name: '',
   artists: [
     {
-      id: 0,
+      id: "",
       name: '',
     }
   ],
   album: {
-    id: 0,
+    id: "",
     name: '',
     picUrl: '',
     size: 0,

@@ -4,7 +4,7 @@ import { PlayListSong } from "./PlayList"
  * 歌手
  */
 export interface ArtistItem {
-  id: number,
+  id: string,
   name: string,
   picUrl: string
 }
@@ -19,7 +19,7 @@ interface ArtistInfoBody {
   picUrl: string
   alias: string[] //别名
   name: string
-  id: number
+  id: string
 }
 
 /**
@@ -45,7 +45,7 @@ export const ArtistInfo_INITIAL: ArtistInfo = {
     picUrl: '',
     alias: [],
     name: '',
-    id: 0
+    id: ""
   },
   hotSongs: [],
   code: 0,

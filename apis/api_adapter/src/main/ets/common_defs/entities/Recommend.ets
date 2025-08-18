@@ -1,12 +1,8 @@
 import { Album } from "./Album"
-
-interface Artist {
-  name: string
-  id: number
-}
+import { Artist } from "./Song"
 
 interface SongInfo {
-  id: number
+  id: string
   name: string
   ar: Artist[]
   dt: number
@@ -30,7 +26,7 @@ export interface HeartMode {
  * 推荐歌单信息
  */
 export interface PersonalListItem {
-  id: number
+  id: string
   type: number
   name: string
   copywriter: string

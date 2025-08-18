@@ -1,5 +1,5 @@
 interface Profile {
-  userId:number
+  userId:string
   nickname:string
   avatarUrl:string
   backgroundUrl:string
@@ -7,7 +7,7 @@ interface Profile {
 }
 
 interface Account {
-  id:number
+  id:string
   userName:string
   vipType:number
 }
@@ -24,12 +24,12 @@ export interface User {
 export const User_INITIAL: User = {
   data: {
     account: {
-      id: 0,
+      id: "",
       userName: '',
       vipType: 0
     },
     profile: {
-      userId: 0,
+      userId: "",
       nickname: '',
       avatarUrl: '',
       backgroundUrl: '',

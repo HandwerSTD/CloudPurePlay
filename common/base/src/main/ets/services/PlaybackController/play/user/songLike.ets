@@ -8,8 +8,8 @@ import NowPlayingStore from "../NowPlayingStore"
 const TAG = '[songLike] '
 
 export class SongLike {
-  static isSongLiked(sid: number) {
-    if (sid === 0) return false;
+  static isSongLiked(sid: string) {
+    if (sid === "0") return false;
     let isLiked: boolean = false
     try {
       let likeList = Array.from(UserStore.likeList)
@@ -24,7 +24,7 @@ export class SongLike {
    * 判断当前歌曲是否被喜欢
    * @param sid
    */
-  static isThisSongLiked(sid: number) {
+  static isThisSongLiked(sid: string) {
     let isLiked: boolean = false
     try {
       let likeList = Array.from(UserStore.likeList)
@@ -87,7 +87,7 @@ export class SongLike {
   /**
    * 从歌单页面喜欢当前歌曲，不触发歌单刷新
    */
-  static async likeSong(sid: number, toastCallback?: ShowToastCallback) {
+  static async likeSong(sid: string, toastCallback?: ShowToastCallback) {
     const store = UserStore
     try {
       let isLogged: boolean = UserManager.isLogged
