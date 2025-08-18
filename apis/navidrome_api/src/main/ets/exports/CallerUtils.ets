@@ -17,7 +17,7 @@ export class AlbumAPIUtils {
    * @param id 专辑ID
    * @returns 专辑详细信息
    */
-  static async getAlbumInfo(id: number) {
+  static async getAlbumInfo(id: string) {
     return getAlbumInfo(id);
   }
   /**
@@ -42,7 +42,7 @@ export class AlbumAPIUtils {
    * @param t - 1:收藏, 0:取消收藏
    * @returns Promise<boolean>
    */
-  static async subscribeAlbum(id: number, t: number): Promise<boolean> {
+  static async subscribeAlbum(id: string, t: number): Promise<boolean> {
     return await subscribeAlbum(id, t)
   }
   
@@ -54,7 +54,7 @@ export class ArtistAPIUtils {
    * @param id 歌手ID
    * @returns 歌手详细信息
    */
-  static async getArtistInfo(id: number) {
+  static async getArtistInfo(id: string) {
     return getArtistInfo(id);
   }
   /**
@@ -120,7 +120,7 @@ export class PlayListAPIUtils {
     // 添加红心歌单
     const likeList = await getLikeList()
     result.playlist.unshift({
-      id: -1,
+      id: '-1',
       name: '我喜欢的音乐',
       songCount: likeList.length,
       public: false,
@@ -135,8 +135,8 @@ export class PlayListAPIUtils {
    * @param usetimestamp 是否带时间戳，默认true
    * @returns 歌曲列表
    */
-  static async getPlayListSongs(id: number) {
-    if (id === -1) {
+  static async getPlayListSongs(id: string) {
+    if (id === '-1') {
       // like list
       return getLikeList()
     }
@@ -149,8 +149,8 @@ export class PlayListAPIUtils {
    * @param tracks 歌曲ID
    * @returns 是否操作成功
    */
-  static async PlayListOperation(op: 'add' | 'del', pid: number, tracks: number) {
-    if (pid === -1) {
+  static async PlayListOperation(op: 'add' | 'del', pid: string, tracks: string) {
+    if (pid === '-1') {
       return likeMusic(tracks, op === 'add')
     }
     return playListOperation(pid, [tracks], op === 'add');
@@ -160,7 +160,7 @@ export class PlayListAPIUtils {
    * @param id 歌单ID
    * @returns 是否删除成功
    */
-  static async deletePlayList(id: number) {
+  static async deletePlayList(id: string) {
     return deletePlayList(id);
   }
   /**
@@ -178,8 +178,8 @@ export class PlayListAPIUtils {
    * @param pid 歌单编号
    * @returns 无
    */
-  static async renamePlayList(name: string, pid: number): Promise<boolean> {
-    if (pid === -1) return false;
+  static async renamePlayList(name: string, pid: string): Promise<boolean> {
+    if (pid === '-1') return false;
     return renamePlayList(pid, name);
   }
 }
@@ -202,7 +202,7 @@ export class SongAPIUtils {
    * @param isLogged 是否已登录
    * @returns 歌曲播放信息
    */
-  static async getSongUrl(id: number) {
+  static async getSongUrl(id: string) {
     return getSongUrl(id);
   }
   /**
@@ -220,7 +220,7 @@ export class SongAPIUtils {
    * @param id 歌曲ID
    * @returns 是否操作成功
    */
-  static async likeMusic(id: number) {
+  static async likeMusic(id: string) {
     return likeMusic(id);
   }
 }

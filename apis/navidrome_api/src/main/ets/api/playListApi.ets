@@ -29,7 +29,7 @@ interface GetPlaylistSongResponse {
   playlist: GetPlaylistSongResponse_Inner;
 }
 
-export const getPlayListSongs = async (playlistId: number): Promise<Song[]> => {
+export const getPlayListSongs = async (playlistId: string): Promise<Song[]> => {
   const response = await commonRequest<GetPlaylistSongResponse>({
     url: '/rest/getPlaylist.view',
     params: { id: playlistId, f: 'json' }
@@ -52,7 +52,7 @@ export const createPlayList = async (name: string): Promise<boolean> => {
 };
 
 // 删除歌单
-export const deletePlayList = async (playlistId: number): Promise<boolean> => {
+export const deletePlayList = async (playlistId: string): Promise<boolean> => {
   const response = await commonRequest<BasicResponse>({
     url: '/rest/deletePlaylist.view',
     params: { id: playlistId, f: 'json' }
@@ -61,7 +61,7 @@ export const deletePlayList = async (playlistId: number): Promise<boolean> => {
 };
 
 // 重命名歌单
-export const renamePlayList = async (playlistId: number, name: string): Promise<boolean> => {
+export const renamePlayList = async (playlistId: string, name: string): Promise<boolean> => {
   const response = await commonRequest<BasicResponse>({
     url: '/rest/updatePlaylist.view',
     params: { playlistId, name, f: 'json' }
@@ -70,8 +70,8 @@ export const renamePlayList = async (playlistId: number, name: string): Promise<
 };
 
 export const playListOperation = async (
-  playlistId: number,
-  songIds: number[],
+  playlistId: string,
+  songIds: string[],
   add: boolean
 ): Promise<boolean> => {
   const params: Record<string, Object> = {

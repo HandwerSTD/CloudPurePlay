@@ -6,7 +6,7 @@ interface ArtistInfoResponse {
   artist: ArtistInfo;
 }
 
-export const getArtistInfo = async (id: number): Promise<ArtistInfo> => {
+export const getArtistInfo = async (id: string): Promise<ArtistInfo> => {
   const result = await commonRequest<ArtistInfoResponse>({
     url: '/artists',
     params: { id }

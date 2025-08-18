@@ -25,7 +25,7 @@ export const searchSongs = async (
   return result.searchResult2?.song ?? [];
 };
 
-export const getSongUrl = async (id: number): Promise<SongPlayResult> => {
+export const getSongUrl = async (id: string): Promise<SongPlayResult> => {
   return commonRequest<SongPlayResult>({
     url: '/rest/stream.view',
     params: { id, f: 'json' }
@@ -49,7 +49,7 @@ interface StarResponse {
   status: string;
 }
 
-export const likeMusic = async (songId: number, add: boolean = true): Promise<boolean> => {
+export const likeMusic = async (songId: string, add: boolean = true): Promise<boolean> => {
   const response = await commonRequest<StarResponse>({
     url: '/rest/star.view',
     params: { id: songId, type: 'song', add, f: 'json' }
@@ -58,7 +58,7 @@ export const likeMusic = async (songId: number, add: boolean = true): Promise<bo
   return response.status === 'ok';
 };
 
-export const getCoverUrl = (coverArtId: number, size: number = 500): string => {
+export const getCoverUrl = (coverArtId: string, size: number = 500): string => {
   return `/rest/getCoverArt.view?id=${coverArtId}&size=${size}`;
 };
 

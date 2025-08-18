@@ -1,6 +1,6 @@
 /** 单个歌手信息 */
 export interface ArtistInfo {
-  id: number;
+  id: string;
   name: string;
   albumCount: number;
   songCount: number;
@@ -10,7 +10,7 @@ export interface ArtistInfo {
 
 /** 搜索结果里的歌手项 */
 export interface ArtistItem {
-  id: number;
+  id: string;
   name: string;
   albumCount: number;
   songCount: number;

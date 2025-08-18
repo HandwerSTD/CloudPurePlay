@@ -1,17 +1,17 @@
 /** 歌曲信息 */
 interface SongArtist {
-  id: number;
+  id: string;
   name: string;
 }
 
 interface SongAlbum {
-  id: number;
+  id: string;
   name: string;
   coverArt?: string;
 }
 
 export interface Song {
-  id: number;
+  id: string;
   name: string;
   artists: SongArtist[];
   album: SongAlbum;

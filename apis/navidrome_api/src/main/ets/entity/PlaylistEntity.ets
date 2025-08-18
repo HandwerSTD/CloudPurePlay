@@ -2,7 +2,7 @@ import { Song } from "./SongEntity";
 
 /** 歌单信息 */
 export interface PlayList {
-  id: number;
+  id: string;
   name: string;
   owner?: string;
   public?: boolean;

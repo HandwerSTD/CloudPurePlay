@@ -11,7 +11,7 @@ interface GetAlbumInfoResponse {
  * 获取专辑信息和歌曲
  * @param id - 专辑ID
  */
-export const getAlbumInfo = async (id: number): Promise<AlbumInfoResult> => {
+export const getAlbumInfo = async (id: string): Promise<AlbumInfoResult> => {
   const result = await commonRequest<GetAlbumInfoResponse>({
     url: '/rest/getAlbum.view',
     params: { id, f: 'json' }
@@ -71,7 +71,7 @@ interface SubscribeAlbumResponse {
  * @param id - 专辑ID
  * @param t - 1 收藏，0 取消收藏
  */
-export const subscribeAlbum = async (id: number, t: number): Promise<boolean> => {
+export const subscribeAlbum = async (id: string, t: number): Promise<boolean> => {
   try {
     const response = await commonRequest<SubscribeAlbumResponse>({
       url: '/rest/star.view',

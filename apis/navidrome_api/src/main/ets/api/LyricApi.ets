@@ -6,7 +6,7 @@ interface Lyric {
   value: string; // 整段歌词
 }
 
-interface LyricResult {
+export interface LyricResult {
   status: string;
   version: string;
   lyrics?: Lyric;
