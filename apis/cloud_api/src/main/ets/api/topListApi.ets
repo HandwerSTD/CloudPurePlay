@@ -1,11 +1,11 @@
-import { TopList, TopListItem } from "../entities/Recommend"
+import { CloudAPI_TopList, CloudAPI_TopListItem } from "../entities/Recommend"
 import commonRequest from "./request/RequestUtil"
 
 /**
  * 排行榜
  */
-export const getTopList = async (statePersistent?: (val: TopListItem[]) => void): Promise<TopListItem[]> => {
-  const response = await commonRequest<TopList>({
+export const getTopList = async (statePersistent?: (val: CloudAPI_TopListItem[]) => void): Promise<CloudAPI_TopListItem[]> => {
+  const response = await commonRequest<CloudAPI_TopList>({
     url: '/toplist',
     params: {}
   })

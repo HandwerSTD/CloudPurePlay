@@ -1,5 +1,5 @@
-import { CommentResult } from "../entities/Comment";
-import { COMMENT_SORT_TYPE, COMMENT_TYPE } from "../model/Enum";
+import { CloudAPI_CommentResult } from "../entities/Comment";
+import { CloudAPI_COMMENT_SORT_TYPE, CloudAPI_COMMENT_TYPE } from "../model/Enum";
 import commonRequest from "./request/RequestUtil";
 
 /**
@@ -14,12 +14,12 @@ import commonRequest from "./request/RequestUtil";
  */
 export const getComment = async (
   id: number,
-  type: COMMENT_TYPE,
+  type: CloudAPI_COMMENT_TYPE,
   pageNo: number = 1,
   pageSize: number = 30,
-  sortType: COMMENT_SORT_TYPE,
+  sortType: CloudAPI_COMMENT_SORT_TYPE,
   cursor?: number
-): Promise<CommentResult> => {
+): Promise<CloudAPI_CommentResult> => {
   return commonRequest({
     url: '/comment/new',
     params: { id, type, pageNo, pageSize, sortType, cursor }

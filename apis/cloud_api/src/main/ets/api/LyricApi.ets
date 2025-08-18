@@ -1,4 +1,4 @@
-import { LyricResult } from "../entities/Lyric";
+import { CloudAPI_LyricResult } from "../entities/Lyric";
 import commonRequest from "./request/RequestUtil";
 
 /**
@@ -6,7 +6,7 @@ import commonRequest from "./request/RequestUtil";
  * @param id - 歌曲id
  * @returns - string[]
  */
-export const getLyric = async (id: number): Promise<LyricResult> => {
+export const getLyric = async (id: number): Promise<CloudAPI_LyricResult> => {
   return commonRequest({
     url: '/lyric',
     params: { id, noCookie: true }
@@ -19,7 +19,7 @@ export const getLyric = async (id: number): Promise<LyricResult> => {
  * @return
  */
 export const getLyricString = async (id: number): Promise<string> => {
-  const response = await commonRequest<LyricResult>({
+  const response = await commonRequest<CloudAPI_LyricResult>({
     url: '/lyric',
     params: { id, noCookie: true }
   })

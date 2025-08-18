@@ -11,7 +11,7 @@ interface InnerVersion {
   data: InnerData
 }
 
-export interface checkValidUriParams {
+export interface CloudAPI_checkValidUriParams {
   setChecking: (status: boolean) => void
   setResult: (success: boolean) => void
 }
@@ -20,7 +20,7 @@ export interface checkValidUriParams {
  * 检查API URL连通性
  * @returns
  */
-export async function checkValidUrl(params: checkValidUriParams): Promise<boolean> {
+export async function checkValidUrl(params: CloudAPI_checkValidUriParams): Promise<boolean> {
   let result = false
   try {
     params.setChecking(true)

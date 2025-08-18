@@ -1,14 +1,14 @@
 import { LogUtil } from "@pura/harmony-utils"
-import { User, User_INITIAL } from "../entities/User"
+import { CloudAPI_User, User_INITIAL } from "../entities/User"
 import commonRequest from "./request/RequestUtil"
 import { preferences } from "@kit.ArkData"
 
 /**
  * 获取登录状态，在此之前需要先把 Cookie 设置好
  */
-export const getLoginStatus = async (statePersistent?: (val: User) => void): Promise<boolean> => {
+export const getLoginStatus = async (statePersistent?: (val: CloudAPI_User) => void): Promise<boolean> => {
   try {
-    const response = await commonRequest<User>({
+    const response = await commonRequest<CloudAPI_User>({
       url: '/login/status',
       params: { timestamp: new Date().getTime() }
     })
@@ -49,7 +49,7 @@ interface LogOutResponse {
 /**
  * 退出登录
  */
-export const logOut = async (statePersistent?: (val: User) => void): Promise<boolean> => {
+export const logOut = async (statePersistent?: (val: CloudAPI_User) => void): Promise<boolean> => {
   const response = await commonRequest<LogOutResponse>({
     url: '/logout',
     params: { timestamp: new Date().getTime() }

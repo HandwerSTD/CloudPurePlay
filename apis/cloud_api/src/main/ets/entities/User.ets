@@ -17,11 +17,11 @@ interface Data {
   profile:Profile
 }
 
-export interface User {
+export interface CloudAPI_User {
   data:Data
 }
 
-export const User_INITIAL: User = {
+export const User_INITIAL: CloudAPI_User = {
   data: {
     account: {
       id: 0,

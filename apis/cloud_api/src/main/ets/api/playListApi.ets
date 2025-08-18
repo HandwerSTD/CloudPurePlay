@@ -1,32 +1,32 @@
 import { ToastUtil } from "@pura/harmony-utils"
 import {
-  CloudResult,
-  PlayList, PlayListOperationResult,
-  PlayListResult,
-  PlayListSearchResult,
-  PlayListSong,
-  PlayListSongsResult} from "../entities/PlayList"
-import { Song } from "../entities/Song"
-import { User } from "../entities/User"
+  CloudAPI_CloudResult,
+  CloudAPI_PlayList, CloudAPI_PlayListOperationResult,
+  CloudAPI_PlayListResult,
+  CloudAPI_PlayListSearchResult,
+  CloudAPI_PlayListSong,
+  CloudAPI_PlayListSongsResult} from "../entities/PlayList"
+import { CloudAPI_Song } from "../entities/Song"
+import { CloudAPI_User } from "../entities/User"
 import commonRequest from "./request/RequestUtil"
-import { Personalized, PersonalListItem } from "../entities/Recommend"
+import { CloudAPI_Personalized, CloudAPI_PersonalListItem } from "../entities/Recommend"
 
-export interface PlayListsResult {
+export interface CloudAPI_PlayListsResult {
   more:boolean
-  playlist:PlayList[]
+  playlist:CloudAPI_PlayList[]
 }
 /**
  * 获取用户歌单列表
  * @param offset - 偏移量
  * @returns list
  */
-export const getPlayLists = async (offset: number, user: User, statePersistent?: (val: PlayList[]) => void): Promise<PlayListsResult> => {
-  let list: PlayList[] = new Array()
+export const getPlayLists = async (offset: number, user: CloudAPI_User, statePersistent?: (val: CloudAPI_PlayList[]) => void): Promise<CloudAPI_PlayListsResult> => {
+  let list: CloudAPI_PlayList[] = new Array()
   // const user = await PreferencesUtils.getPreferenceValue<User>(StorageConstants.USER_PREF, StorageConstants.USER, User_INITIAL)
   if(user.data.account.id === 0) {
     return { more: false, playlist: [] }
   }
-  const response = await commonRequest<PlayListResult>({
+  const response = await commonRequest<CloudAPI_PlayListResult>({
     url:'/user/playlist',
     params: { uid: user.data.account.id, offset, timestamp: new Date().getTime() }
   })
@@ -49,8 +49,8 @@ export const getPlayListSongs = async (
   limit: number,
   offset: number,
   usetimestamp: boolean = true
-): Promise<PlayListSong[]> => {
-  const result = await commonRequest<PlayListSongsResult>({
+): Promise<CloudAPI_PlayListSong[]> => {
+  const result = await commonRequest<CloudAPI_PlayListSongsResult>({
     url: '/playlist/track/all',
     params: { id, limit, offset, timestamp: new Date().getTime() }
   })
@@ -72,7 +72,7 @@ export const PlayListOperation = async (
   pid:number,
   tracks:number
 ): Promise<boolean> => {
-  const result = await commonRequest<PlayListOperationResult>({
+  const result = await commonRequest<CloudAPI_PlayListOperationResult>({
     url: '/playlist/tracks',
     params: { op: op, pid, tracks, timestamp: new Date().getTime() }
   })
@@ -80,8 +80,8 @@ export const PlayListOperation = async (
   return false
 }
 
-export interface DailySongRes {
-  song: Song
+export interface CloudAPI_DailySongRes {
+  song: CloudAPI_Song
   reason: string
   picUrl: string
 }
@@ -90,7 +90,7 @@ export interface DailySongRes {
  * @param offset 偏移
  * @returns list 歌曲列表
  */
-export const getCloudList = async (offset: number): Promise<CloudResult> => {
+export const getCloudList = async (offset: number): Promise<CloudAPI_CloudResult> => {
   return commonRequest({
     url: '/user/cloud',
     params: { limit: 200, offset }
@@ -101,12 +101,12 @@ export const getCloudList = async (offset: number): Promise<CloudResult> => {
  * 搜索歌单
  * @returns list
  */
-export const searchPlayLists = async (keywords: string, offset:number): Promise<PlayListsResult> => {
-  const response = await commonRequest<PlayListSearchResult>({
+export const searchPlayLists = async (keywords: string, offset:number): Promise<CloudAPI_PlayListsResult> => {
+  const response = await commonRequest<CloudAPI_PlayListSearchResult>({
     url: '/search',
     params: { keywords, offset, limit: 20, type: 1000 }
   })
-  const result: PlayListsResult = {
+  const result: CloudAPI_PlayListsResult = {
     more: response.result.hasMore,
     playlist: response.result.playlists
   }
@@ -134,10 +134,10 @@ export const subscribePlayList = async (id: number, mode: number): Promise<boole
 
 /**
  * Get personalized list
- * @returns Array<PersonalListItem>
+ * @returns Array<CloudAPI_PersonalListItem>
  */
-export const getPersonalizedList = async (statePersistent?: (val: PersonalListItem[]) => void): Promise<Array<PersonalListItem>> => {
-  const request = await commonRequest<Personalized>({
+export const getPersonalizedList = async (statePersistent?: (val: CloudAPI_PersonalListItem[]) => void): Promise<Array<CloudAPI_PersonalListItem>> => {
+  const request = await commonRequest<CloudAPI_Personalized>({
     url: '/personalized',
     params: { timestamp: new Date().getTime() }
   })

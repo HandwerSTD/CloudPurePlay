@@ -1,7 +1,7 @@
 /**
  * 歌词格式 time + content
  */
-export interface Lyric {
+export interface CloudAPI_Lyric {
   time: number
   content: string
 }
@@ -13,7 +13,7 @@ interface Lrc {
 /**
  * 歌词返回结果
  */
-export interface LyricResult {
+export interface CloudAPI_LyricResult {
   code: number
   lrc: Lrc
   tlyric: Lrc // 译
@@ -21,7 +21,7 @@ export interface LyricResult {
   romalrc: Lrc // 音
 }
 
-export const LyricResult_INITIAL: LyricResult = {
+export const LyricResult_INITIAL: CloudAPI_LyricResult = {
   code: 200,
   lrc: {
     lyric: ''

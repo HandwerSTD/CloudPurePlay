@@ -1,9 +1,9 @@
-import { PLAYMODE } from "./Enum"
-import { Song } from "../entities/Song"
+import { CloudAPI_PLAYMODE } from "./Enum"
+import { CloudAPI_Song } from "../entities/Song"
 
-export interface PlayQueue {
-  playmode: PLAYMODE
-  song: Song
+export interface CloudAPI_PlayQueue {
+  playmode: CloudAPI_PLAYMODE
+  song: CloudAPI_Song
   fileName: string
   picUrl: string
 }

@@ -1,7 +1,7 @@
-import { PlayListSong } from "./PlayList"
-import { Artist } from "./Song"
+import { CloudAPI_PlayListSong } from "./PlayList"
+import { CloudAPI_Artist } from "./Song"
 
-interface AlbumDetail {
+interface CloudAPI_AlbumDetail {
   company: string
   picUrl: string
   description: string
@@ -12,18 +12,18 @@ interface AlbumDetail {
 /**
  * 专辑详细信息
  */
-export interface AlbumInfoResult {
+export interface CloudAPI_AlbumInfoResult {
   code: number
   resourceState: boolean
-  songs: PlayListSong[]
-  album: AlbumDetail
+  songs: CloudAPI_PlayListSong[]
+  album: CloudAPI_AlbumDetail
 }
 
 /**
  * 专辑
  */
-export interface Album {
-  artists: Artist[]
+export interface CloudAPI_Album {
+  artists: CloudAPI_Artist[]
   picUrl: string
   name: string
   id: number
@@ -33,22 +33,22 @@ export interface Album {
 /**
  * 收藏专辑结果
  */
-export interface SubAlbumResult {
-  data: Album[]
+export interface CloudAPI_SubAlbumResult {
+  data: CloudAPI_Album[]
 }
 
-interface SearchResult {
-  albums: Album[]
+interface CloudAPI_SearchResult {
+  albums: CloudAPI_Album[]
 }
 
 /**
  * 搜索专辑结果
  */
-export interface AlbumSearchResult {
-  result: SearchResult
+export interface CloudAPI_AlbumSearchResult {
+  result: CloudAPI_SearchResult
 }
 
-export const AlbumInfoResult_INITIAL: AlbumInfoResult = {
+export const AlbumInfoResult_INITIAL: CloudAPI_AlbumInfoResult = {
   code: 200,
   resourceState: false,
   songs: [],
@@ -61,11 +61,11 @@ export const AlbumInfoResult_INITIAL: AlbumInfoResult = {
   }
 }
 
-export const SubAlbumResult_INITIAL: SubAlbumResult = {
+export const SubAlbumResult_INITIAL: CloudAPI_SubAlbumResult = {
   data: []
 }
 
-export const Album_INITIAL: Album = {
+export const Album_INITIAL: CloudAPI_Album = {
   artists: [],
   picUrl: "",
   name: "",
@@ -73,7 +73,7 @@ export const Album_INITIAL: Album = {
   size: 0
 }
 
-export const AlbumSearchResult_INITIAL: AlbumSearchResult = {
+export const AlbumSearchResult_INITIAL: CloudAPI_AlbumSearchResult = {
   result: {
     albums: []
   }

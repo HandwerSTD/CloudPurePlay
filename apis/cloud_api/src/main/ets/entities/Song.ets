@@ -1,9 +1,9 @@
-import { Album } from "./Album"
+import { CloudAPI_Album } from "./Album"
 
 /**
  * 歌手
  */
-export interface Artist {
+export interface CloudAPI_Artist {
   id: number
   name: string
 }
@@ -11,18 +11,18 @@ export interface Artist {
 /**
  * 单曲
  */
-export interface Song {
+export interface CloudAPI_Song {
   id: number
   name: string
-  artists: Artist[]
-  album: Album
+  artists: CloudAPI_Artist[]
+  album: CloudAPI_Album
   duration: number
   alias: string[]
   fee: number
 }
 
 interface SearchResultBody {
-  songs: Song[]
+  songs: CloudAPI_Song[]
   hasMore: boolean
   songCount: number // 歌曲总数
 }
@@ -30,47 +30,47 @@ interface SearchResultBody {
 /**
  * 歌曲搜索结果
  */
-export interface SongSearchResult {
+export interface CloudAPI_SongSearchResult {
   result: SearchResultBody
 }
 
-interface Al {
+interface CloudAPI_Al {
   picUrl:string
 }
 
 interface SongDetailItem {
-  al: Al
+  al: CloudAPI_Al
 }
 
 /**
  * SongDetail
  * 歌曲详细信息
  */
-export interface SongDetail {
+export interface CloudAPI_SongDetail {
   songs: SongDetailItem[]
 }
 
 /**
  * 音质
  */
-export type QualityType = 'standard' | 'higher' | 'exhigh' | 'lossless' | 'hires' | 'jyeffect' | 'sky' | 'dolby' | 'jymaster'
+export type CloudAPI_QualityType = 'standard' | 'higher' | 'exhigh' | 'lossless' | 'hires' | 'jyeffect' | 'sky' | 'dolby' | 'jymaster'
 
 /**
  * 歌曲下载
  */
-export interface SongDownloadItem {
+export interface CloudAPI_SongDownloadItem {
   id: number
   url: string
   size: number
   type: string
-  level: QualityType
+  level: CloudAPI_QualityType
 }
 
 /**
  * 歌曲Url
  */
-export interface SongDownload {
-  data: SongDownloadItem[]
+export interface CloudAPI_SongDownload {
+  data: CloudAPI_SongDownloadItem[]
 }
 
 interface SongPlayData {
@@ -82,14 +82,14 @@ interface SongPlayData {
 /**
  * 歌曲播放
  */
-export interface SongPlayResult {
+export interface CloudAPI_SongPlayResult {
   data: SongPlayData[]
 }
 
 /**
  * 本地歌曲
  */
-export interface LocalSong {
+export interface CloudAPI_LocalSong {
   id: number
   songId: number
   name: string
@@ -99,7 +99,7 @@ export interface LocalSong {
   lyricFile: string
 }
 
-export const LocalSong_INITIAL: LocalSong = {
+export const LocalSong_INITIAL: CloudAPI_LocalSong = {
   id: -1,
   songId: -1,
   name: "",
@@ -109,7 +109,7 @@ export const LocalSong_INITIAL: LocalSong = {
   lyricFile: "",
 }
 
-export const SongPlay_INITIAL: SongPlayResult = {
+export const SongPlay_INITIAL: CloudAPI_SongPlayResult = {
   data: [{
     id: -1,
     url: '',
@@ -117,7 +117,7 @@ export const SongPlay_INITIAL: SongPlayResult = {
   }]
 }
 
-export const SongDownload_INITIAL: SongDownload = {
+export const SongDownload_INITIAL: CloudAPI_SongDownload = {
   data: [{
     id: 0,
     url: '',
@@ -127,7 +127,7 @@ export const SongDownload_INITIAL: SongDownload = {
   }],
 };
 
-export const SongDetail_INITIAL: SongDetail = {
+export const SongDetail_INITIAL: CloudAPI_SongDetail = {
   songs: [
     {
       al: {
@@ -137,7 +137,7 @@ export const SongDetail_INITIAL: SongDetail = {
   ]
 };
 
-export const Song_INITIAL: Song = {
+export const Song_INITIAL: CloudAPI_Song = {
   id: 0,
   name: '',
   artists: [

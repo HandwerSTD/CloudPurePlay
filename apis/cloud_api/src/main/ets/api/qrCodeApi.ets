@@ -2,7 +2,7 @@ import { ToastUtil } from "@pura/harmony-utils"
 import { SongConvertUtils } from "../functions/convert"
 import commonRequest, { getNowRequestContext, setupRequestContext } from "./request/RequestUtil"
 import { getLoginStatus } from "./loginApi"
-import { User } from "../entities/User"
+import { CloudAPI_User } from "../../../../Index"
 
 interface GetQrCodeImg {
   qrimg: string
@@ -48,7 +48,7 @@ interface CheckQrResponse {
   message: string
   cookie: string
 }
-export const checkQrLogin = async (key: string, cookieSetter: (cookie: string) => void, loginStatePersistent?: (val: User) => void): Promise<boolean> => {
+export const checkQrLogin = async (key: string, cookieSetter: (cookie: string) => void, loginStatePersistent?: (val: CloudAPI_User) => void): Promise<boolean> => {
   const response = await commonRequest<CheckQrResponse>({
     url: '/login/qr/check',
     params: { key, noCookie: true, timestamp: new Date().getTime() }

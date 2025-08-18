@@ -1,9 +1,9 @@
-import { PlayListSong } from "./PlayList"
+import { CloudAPI_PlayListSong } from "./PlayList"
 
 /**
  * 歌手
  */
-export interface ArtistItem {
+export interface CloudAPI_ArtistItem {
   id: number,
   name: string,
   picUrl: string
@@ -11,10 +11,10 @@ export interface ArtistItem {
 
 interface ArtistBody {
   artistCount: number
-  artists: ArtistItem[]
+  artists: CloudAPI_ArtistItem[]
 }
 
-interface ArtistInfoBody {
+interface CloudAPI_ArtistInfoBody {
   briefDesc: string // 简介
   picUrl: string
   alias: string[] //别名
@@ -25,9 +25,9 @@ interface ArtistInfoBody {
 /**
  * 歌手详细信息
  */
-export interface ArtistInfo {
-  artist: ArtistInfoBody
-  hotSongs: PlayListSong[]
+export interface CloudAPI_ArtistInfo {
+  artist: CloudAPI_ArtistInfoBody
+  hotSongs: CloudAPI_PlayListSong[]
   code: number
   more: boolean
 }
@@ -35,11 +35,11 @@ export interface ArtistInfo {
 /**
  * 歌手请求
  */
-export interface ArtistsResult {
+export interface CloudAPI_ArtistsResult {
   result: ArtistBody
 }
 
-export const ArtistInfo_INITIAL: ArtistInfo = {
+export const ArtistInfo_INITIAL: CloudAPI_ArtistInfo = {
   artist: {
     briefDesc: '',
     picUrl: '',

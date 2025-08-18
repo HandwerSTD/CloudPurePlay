@@ -1,6 +1,6 @@
-import { Song, SongDownloadItem } from "./Song";
+import { CloudAPI_Song, CloudAPI_SongDownloadItem } from "./Song";
 
-export interface DownloadItem {
-  song: Song
-  downloadItem: SongDownloadItem
+export interface CloudAPI_DownloadItem {
+  song: CloudAPI_Song
+  downloadItem: CloudAPI_SongDownloadItem
 }

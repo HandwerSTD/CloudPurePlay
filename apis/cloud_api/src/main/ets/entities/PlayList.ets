@@ -1,10 +1,10 @@
-import { Album } from "./Album"
-import { Artist } from "./Song"
+import { CloudAPI_Album } from "./Album"
+import { CloudAPI_Artist } from "./Song"
 
 /**
  * 歌单创建者
  */
-export interface Creator {
+export interface CloudAPI_Creator {
   userId: number
   nickname: string
   avatarUrl: string
@@ -13,7 +13,7 @@ export interface Creator {
 /**
  * 歌单
  */
-export interface PlayList {
+export interface CloudAPI_PlayList {
   coverImgUrl: string
   name: string
   id: number
@@ -22,16 +22,16 @@ export interface PlayList {
   userId: number
   trackCount: number
   subscribed: boolean
-  creator: Creator
+  creator: CloudAPI_Creator
   description: string
 }
 
 /**
  * 歌单结果
  */
-export interface PlayListResult {
+export interface CloudAPI_PlayListResult {
   more: boolean
-  playlist: PlayList[]
+  playlist: CloudAPI_PlayList[]
 }
 
 interface OperationBody {
@@ -42,7 +42,7 @@ interface OperationBody {
 /**
  * 歌单操作结果
  */
-export interface PlayListOperationResult {
+export interface CloudAPI_PlayListOperationResult {
   status: number
   body: OperationBody
 }
@@ -50,20 +50,20 @@ export interface PlayListOperationResult {
 /**
  * 歌单列表返回类
  */
-export interface PlayListsResult {
+export interface CloudAPI_PlayListsResult {
   more:boolean
-  playlist:PlayList[]
+  playlist:CloudAPI_PlayList[]
 }
 
 interface SearchBody {
   hasMore: boolean
-  playlists: Array<PlayList>
+  playlists: Array<CloudAPI_PlayList>
 }
 
 /**
  * 搜索歌单结果
  */
-export interface PlayListSearchResult {
+export interface CloudAPI_PlayListSearchResult {
   code: number
   result: SearchBody
 }
@@ -71,7 +71,7 @@ export interface PlayListSearchResult {
 /**
  * 正在播放的歌单信息
  */
-export interface PlayingPlayList {
+export interface CloudAPI_PlayingPlayList {
   id: number,
   count: number
 }
@@ -79,20 +79,20 @@ export interface PlayingPlayList {
 /**
  * 歌单单曲
  */
-export interface PlayListSong {
+export interface CloudAPI_PlayListSong {
   name: string
   id: number
   dt: number
-  al: Album
-  ar: Artist[]
+  al: CloudAPI_Album
+  ar: CloudAPI_Artist[]
   fee: number
 }
 
 /**
  * 歌单内歌曲结果
  */
-export interface PlayListSongsResult {
-  songs: PlayListSong[]
+export interface CloudAPI_PlayListSongsResult {
+  songs: CloudAPI_PlayListSong[]
 }
 
 /**
@@ -102,8 +102,8 @@ interface DailySong {
   name: string
   id: number
   dt: number
-  al: Album
-  ar: Artist[]
+  al: CloudAPI_Album
+  ar: CloudAPI_Artist[]
   reason: string
   fee: number
 }
@@ -112,7 +112,7 @@ interface Data {
   dailySongs: DailySong[]
 }
 
-export interface DailyListSongs {
+export interface CloudAPI_DailyListSongs {
   data: Data
 }
 
@@ -120,15 +120,15 @@ export interface DailyListSongs {
  * 云盘歌单内歌曲
  */
 interface CloudData {
-  simpleSong: PlayListSong
+  simpleSong: CloudAPI_PlayListSong
 }
 
-export interface CloudResult {
+export interface CloudAPI_CloudResult {
   data: CloudData[]
   hasMore: boolean
 }
 
-export const PlayList_INITIAL: PlayList = {
+export const PlayList_INITIAL: CloudAPI_PlayList = {
   coverImgUrl: '',
   name: '',
   id: 0,
@@ -145,7 +145,7 @@ export const PlayList_INITIAL: PlayList = {
   description: ""
 };
 
-export const PlayListResult_INITIAL: PlayListResult = {
+export const PlayListResult_INITIAL: CloudAPI_PlayListResult = {
   more: false,
   playlist: [
     {
@@ -167,12 +167,12 @@ export const PlayListResult_INITIAL: PlayListResult = {
   ]
 };
 
-export const CloudResult_INITIAL: CloudResult = {
+export const CloudResult_INITIAL: CloudAPI_CloudResult = {
   data: [],
   hasMore: false
 }
 
-export const PlayListOperationResult_INITIAL: PlayListOperationResult = {
+export const PlayListOperationResult_INITIAL: CloudAPI_PlayListOperationResult = {
   status: 200,
   body:
   {

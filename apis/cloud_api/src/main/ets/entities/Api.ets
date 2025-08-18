@@ -1,4 +1,4 @@
-export interface Api {
+export interface CloudAPI_Api {
   domain: string
   port: number
   user: string
@@ -7,7 +7,7 @@ export interface Api {
   https: boolean
 }
 
-export const Api_INITIAL: Api = {
+export const Api_INITIAL: CloudAPI_Api = {
   domain: '',
   port: 80,
   user: '',

@@ -4,18 +4,18 @@ import { getComment } from '../api/commentApi';
 import { getUserDjSubscribeList, getDjPrograms, putDjRadioInQueue, getDjRadioList } from '../api/djApi';
 import { getLoginStatus, logOut } from '../api/loginApi';
 import { getLyric, getLyricString } from '../api/LyricApi';
-import { getPlayLists, getPlayListSongs, PlayListOperation, getCloudList, searchPlayLists, subscribePlayList, getPersonalizedList, deletePlayList, createPlayList, DailySongRes, PlayListsResult,
+import { getPlayLists, getPlayListSongs, PlayListOperation, getCloudList, searchPlayLists, subscribePlayList, getPersonalizedList, deletePlayList, createPlayList, CloudAPI_DailySongRes, CloudAPI_PlayListsResult,
   renamePlayList } from '../api/playListApi';
 import { getQrCode, checkQrLogin } from '../api/qrCodeApi';
 import { checkMusic, searchSongs, getSongUrl, getSongPicUrl, getDailySongs, getLikeList, likeMusic, setHeartMode, getPersonalFmSong } from '../api/songApi';
 import { getTopList } from '../api/topListApi';
 import { getDownloadInfo } from '../api/getDownloadInfo';
-import { User } from '../entities/User';
-import { PlayQueue } from '../model/PlayQueue';
-import { QualityType } from '../entities/Song';
-import { COMMENT_TYPE, COMMENT_SORT_TYPE } from '../model/Enum';
+import { CloudAPI_User } from '../entities/User';
+import { CloudAPI_PlayQueue } from '../model/PlayQueue';
+import { CloudAPI_QualityType } from '../entities/Song';
+import { CloudAPI_COMMENT_TYPE, CloudAPI_COMMENT_SORT_TYPE } from '../model/Enum';
 import { preferences } from '@kit.ArkData';
-import { Album, DjRadio, PlayList, PersonalListItem, TopListItem } from './ExportedEntities';
+import { CloudAPI_Album, CloudAPI_DjRadio, CloudAPI_PlayList, CloudAPI_PersonalListItem, CloudAPI_TopListItem } from './ExportedEntities';
 
 export class AlbumAPIUtils {
   /**
@@ -31,7 +31,7 @@ export class AlbumAPIUtils {
    * @param statePersistent 按需求，可传入回调对返回的 Album[] 进行持久化
    * @returns 用户订阅的专辑数组
    */
-  static async getUserSubscribedAlbum(statePersistent?: (val: Album[]) => void) {
+  static async getUserSubscribedAlbum(statePersistent?: (val: CloudAPI_Album[]) => void) {
     return getUserSubscribedAlbum(statePersistent);
   }
   /**
@@ -85,7 +85,7 @@ export class CommentAPIUtils {
    * @param cursor 游标（可选）
    * @returns 评论数据
    */
-  static async getComment(id: number, type: COMMENT_TYPE, pageNo: number = 1, pageSize: number = 30, sortType: COMMENT_SORT_TYPE, cursor?: number) {
+  static async getComment(id: number, type: CloudAPI_COMMENT_TYPE, pageNo: number = 1, pageSize: number = 30, sortType: CloudAPI_COMMENT_SORT_TYPE, cursor?: number) {
     return getComment(id, type, pageNo, pageSize, sortType, cursor);
   }
 }
@@ -100,7 +100,7 @@ export class DjAPIUtils {
    * @param statePersistent 按需求，可传入回调对返回的 DjRadio[] 进行持久化
    * @returns 用户订阅的电台数组
    */
-  static async getUserDjSubscribeList(statePersistent?: (val: DjRadio[]) => void) {
+  static async getUserDjSubscribeList(statePersistent?: (val: CloudAPI_DjRadio[]) => void) {
     return getUserDjSubscribeList(statePersistent);
   }
   /**
@@ -131,7 +131,7 @@ export class DjAPIUtils {
     offset: number = 0,
     first: boolean = true,
     cleanQueue: () => Promise<void>,
-    addToQueue: (queue: PlayQueue[]) => Promise<void>
+    addToQueue: (queue: CloudAPI_PlayQueue[]) => Promise<void>
   ) {
     return putDjRadioInQueue(rid, trackCount, limit, offset, first, cleanQueue, addToQueue);
   }
@@ -151,7 +151,7 @@ export class LoginAPIUtils {
    * @param statePersistent 按需求，可传入回调对返回的 User 进行持久化
    * @returns 是否登录成功
    */
-  static async getLoginStatus(statePersistent?: (val: User) => void) {
+  static async getLoginStatus(statePersistent?: (val: CloudAPI_User) => void) {
     return getLoginStatus(statePersistent);
   }
   /**
@@ -159,7 +159,7 @@ export class LoginAPIUtils {
    * @param statePersistent 按需求，可传入回调对返回的 User 进行持久化
    * @returns 是否登出成功
    */
-  static async logOut(statePersistent?: (val: User) => void) {
+  static async logOut(statePersistent?: (val: CloudAPI_User) => void) {
     return logOut(statePersistent);
   }
 
@@ -180,7 +180,7 @@ export class LoginAPIUtils {
   static async checkQrLogin(
     key: string,
     cookieSetter: (cookie: string) => void,
-    loginStatePersistent?: (val: User) => void
+    loginStatePersistent?: (val: CloudAPI_User) => void
   ) {
     return checkQrLogin(key, cookieSetter, loginStatePersistent);
   }
@@ -205,7 +205,7 @@ export class LyricAPIUtils {
   }
 }
 
-export { DailySongRes } from '../api/playListApi'
+export { CloudAPI_DailySongRes } from '../api/playListApi'
 
 export class PlayListAPIUtils {
   /**
@@ -215,7 +215,7 @@ export class PlayListAPIUtils {
    * @param statePersistent 按需求，可传入回调对返回的 PlayList[] 进行持久化
    * @returns 歌单列表
    */
-  static async getPlayLists(offset: number, user: User, statePersistent?: (val: PlayList[]) => void) {
+  static async getPlayLists(offset: number, user: CloudAPI_User, statePersistent?: (val: CloudAPI_PlayList[]) => void) {
     return getPlayLists(offset, user, statePersistent);
   }
   /**
@@ -270,7 +270,7 @@ export class PlayListAPIUtils {
    * @param statePersistent 按需求，可传入回调对返回的 PersonalListItem[] 进行持久化
    * @returns 推荐歌单列表
    */
-  static async getPersonalizedList(statePersistent?: (val: PersonalListItem[]) => void) {
+  static async getPersonalizedList(statePersistent?: (val: CloudAPI_PersonalListItem[]) => void) {
     return getPersonalizedList(statePersistent);
   }
   /**
@@ -301,7 +301,7 @@ export class PlayListAPIUtils {
   }
 }
 
-export { SearchReturn } from '../api/songApi'
+export { CloudAPI_SearchReturn } from '../api/songApi'
 
 export class SongAPIUtils {
   /**
@@ -329,7 +329,7 @@ export class SongAPIUtils {
    * @param isLogged 是否已登录
    * @returns 歌曲播放信息
    */
-  static async getSongUrl(id: number, quality: QualityType, isLogged: boolean) {
+  static async getSongUrl(id: number, quality: CloudAPI_QualityType, isLogged: boolean) {
     return getSongUrl(id, quality, isLogged);
   }
   /**
@@ -354,7 +354,7 @@ export class SongAPIUtils {
    * @param statePersistent 按需求，可传入回调对返回的 string[] 进行持久化
    * @returns 喜欢的歌曲ID数组
    */
-  static async getLikeList(user: User, statePersistent?: (val: string[]) => void) {
+  static async getLikeList(user: CloudAPI_User, statePersistent?: (val: string[]) => void) {
     return getLikeList(user, statePersistent);
   }
   /**
@@ -377,7 +377,7 @@ export class SongAPIUtils {
     id: number,
     pid: number,
     cleanQueue: () => Promise<void>,
-    addQueue: (queue: PlayQueue[]) => Promise<void>
+    addQueue: (queue: CloudAPI_PlayQueue[]) => Promise<void>
   ) {
     return setHeartMode(id, pid, cleanQueue, addQueue);
   }
@@ -397,7 +397,7 @@ export class TopListAPIUtils {
    * @param statePersistent 按需求，可传入回调对返回的 TopListItem[] 进行持久化
    * @returns 排行榜列表
    */
-  static async getTopList(statePersistent?: (val: TopListItem[]) => void) {
+  static async getTopList(statePersistent?: (val: CloudAPI_TopListItem[]) => void) {
     return getTopList(statePersistent);
   }
 }
@@ -410,7 +410,7 @@ export class GetDownloadInfoAPIUtils {
    * @param isLogged 是否已登录
    * @returns 下载信息
    */
-  static async getDownloadInfo(id: string, quality: QualityType, isLogged: boolean) {
+  static async getDownloadInfo(id: string, quality: CloudAPI_QualityType, isLogged: boolean) {
     return getDownloadInfo(id, quality, isLogged);
   }
 }

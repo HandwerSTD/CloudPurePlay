@@ -1,29 +1,29 @@
-import { Song } from "./Song"
+import { CloudAPI_Song } from "./Song"
 
 /**
  * 电台节目
  */
-export interface DjRadioProgram {
-  mainSong: Song
-  dj: Dj
-  radio: DjRadio
+export interface CloudAPI_DjRadioProgram {
+  mainSong: CloudAPI_Song
+  dj: CloudAPI_Dj
+  radio: CloudAPI_DjRadio
   coverUrl: string
 }
 
 /**
  * 电台节目返回结果
  */
-export interface DjProgramResult {
+export interface CloudAPI_DjProgramResult {
   count: number
   code: number
   more: boolean
-  programs: DjRadioProgram[]
+  programs: CloudAPI_DjRadioProgram[]
 }
 
 /**
  * 推荐电台
  */
-export interface RecommendDjRadio {
+export interface CloudAPI_RecommendDjRadio {
   id: number
   name: string
   picUrl: string
@@ -31,7 +31,7 @@ export interface RecommendDjRadio {
   category: string
   rcmdtext: string
   playCount: number
-  dj: Dj
+  dj: CloudAPI_Dj
   copywriter: string
   buyed: boolean
 }
@@ -39,14 +39,14 @@ export interface RecommendDjRadio {
 /**
  * 推荐电台结果
  */
-export interface DjRecommendResult {
-  djRadios: RecommendDjRadio[]
+export interface CloudAPI_DjRecommendResult {
+  djRadios: CloudAPI_RecommendDjRadio[]
 }
 
 /**
  * 电台作者/DJ
  */
-export interface Dj {
+export interface CloudAPI_Dj {
   avatarUrl: string
   userId: number
   nickname: string
@@ -56,8 +56,8 @@ export interface Dj {
 /**
  * 电台
  */
-export interface DjRadio {
-  dj: Dj
+export interface CloudAPI_DjRadio {
+  dj: CloudAPI_Dj
   category: string
   secondCategory: string
   buyed: boolean
@@ -75,14 +75,14 @@ export interface DjRadio {
 /**
  * Sublist 电台返回类
  */
-export interface DjResult {
+export interface CloudAPI_DjResult {
   code: number
-  djRadios: DjRadio[]
+  djRadios: CloudAPI_DjRadio[]
   count: number
   hasMore: boolean
 }
 
-export const DjRadio_INITIAL: DjRadio = {
+export const DjRadio_INITIAL: CloudAPI_DjRadio = {
   dj: {
     avatarUrl: '',
     userId: 0,
@@ -103,7 +103,7 @@ export const DjRadio_INITIAL: DjRadio = {
   id: 0
 }
 
-export const RecommendDjRadio_INITIAL: RecommendDjRadio = {
+export const RecommendDjRadio_INITIAL: CloudAPI_RecommendDjRadio = {
   id: 0,
   name: "",
   picUrl: "",

@@ -1,12 +1,12 @@
-interface UserContent {
+interface CloudAPI_UserContent {
   avatarUrl: string
   nickname: string
   userId: number
   vipType: number
 }
 
-export interface Comment {
-  user: UserContent
+export interface CloudAPI_Comment {
+  user: CloudAPI_UserContent
   commentId: number
   content: string
   time: number
@@ -16,15 +16,15 @@ export interface Comment {
 
 interface CommentData {
   commentsTitle: string
-  comments: Comment[]
+  comments: CloudAPI_Comment[]
 }
 
-export interface CommentResult {
+export interface CloudAPI_CommentResult {
   code: number
   data: CommentData
 }
 
-export const CommentResult_INITIAL: CommentResult = {
+export const CommentResult_INITIAL: CloudAPI_CommentResult = {
   code: 200,
   data: {
     commentsTitle: '',
@@ -32,7 +32,7 @@ export const CommentResult_INITIAL: CommentResult = {
   }
 }
 
-export const Comment_INITIAL: Comment = {
+export const Comment_INITIAL: CloudAPI_Comment = {
   user: {
     avatarUrl: '',
     nickname: '',

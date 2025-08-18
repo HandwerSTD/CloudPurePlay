@@ -1,7 +1,7 @@
 /**
  * 歌词样式
  */
-export interface LyricStyle {
+export interface CloudAPI_LyricStyle {
   size: number
   weight: number | FontWeight
 
@@ -16,7 +16,7 @@ export interface LyricStyle {
 /**
  * 歌词位置
  */
-export interface LyricPosition {
+export interface CloudAPI_LyricPosition {
   x: number,
   y: number
 }
@@ -24,9 +24,9 @@ export interface LyricPosition {
 /**
  * 浮动歌词
  */
-export interface FloatLyric {
+export interface CloudAPI_FloatLyric {
   on: boolean
-  position: LyricPosition
+  position: CloudAPI_LyricPosition
   size: number
   width: number
   lines: number
@@ -41,7 +41,7 @@ export interface FloatLyric {
 /**
  * 缓存设置
  */
-export interface CacheSet {
+export interface CloudAPI_CacheSet {
   songCacheMaxSize: number
   staticCacheMaxSize: number
 }
@@ -49,7 +49,7 @@ export interface CacheSet {
 /**
  * Real IP 设置
  */
-export interface RealIP {
+export interface CloudAPI_RealIP {
   /**
    * 是否使用 Real IP
    */
@@ -60,17 +60,17 @@ export interface RealIP {
   realIp: string
 }
 
-export const RealIP_INITIAL: RealIP = {
+export const RealIP_INITIAL: CloudAPI_RealIP = {
   toggle: false,
   realIp: '116.25.146.177'
 }
 
-export const CacheSet_INITIAL: CacheSet = {
+export const CacheSet_INITIAL: CloudAPI_CacheSet = {
   songCacheMaxSize: 1024 * 1024 * 1024,
   staticCacheMaxSize: 1024 * 1024 * 1024
 }
 
-export const LyricStyle_INITIAL: LyricStyle = {
+export const LyricStyle_INITIAL: CloudAPI_LyricStyle = {
   size: 28,
   weight: FontWeight.Bold,
   onNotPlayScale: 0.8,
@@ -80,7 +80,7 @@ export const LyricStyle_INITIAL: LyricStyle = {
   mode: 0
 }
 
-export const FloatLyric_INITIAL: FloatLyric = {
+export const FloatLyric_INITIAL: CloudAPI_FloatLyric = {
   on: false,
   position: {
     x: 0,

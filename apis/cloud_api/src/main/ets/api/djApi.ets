@@ -1,6 +1,6 @@
-import { DjProgramResult, DjRadio, DjResult } from "../entities/DjRadio"
-import { PlayQueue } from "../model/PlayQueue"
-import { Song } from "../entities/Song"
+import { CloudAPI_DjProgramResult, CloudAPI_DjRadio, CloudAPI_DjResult } from "../entities/DjRadio"
+import { CloudAPI_PlayQueue } from "../model/PlayQueue"
+import { CloudAPI_Song } from "../entities/Song"
 import commonRequest from "./request/RequestUtil"
 import { preferences } from "@kit.ArkData"
 
@@ -8,8 +8,8 @@ import { preferences } from "@kit.ArkData"
  * 获取用户电台 Sublist
  * @returns DjResult
  */
-export const getUserDjSubscribeList = async (statePersistent?: (val: DjRadio[]) => void): Promise<DjResult> => {
-  const response = await commonRequest<DjResult>({
+export const getUserDjSubscribeList = async (statePersistent?: (val: CloudAPI_DjRadio[]) => void): Promise<CloudAPI_DjResult> => {
+  const response = await commonRequest<CloudAPI_DjResult>({
     url: '/dj/sublist',
     params: { timestamp: new Date().getTime() }
   })
@@ -26,7 +26,7 @@ export const getUserDjSubscribeList = async (statePersistent?: (val: DjRadio[]) 
  * @param offset
  * @returns DjProgramResult
  */
-export const getDjPrograms = async (rid: number, limit: number, offset: number): Promise<DjProgramResult> => {
+export const getDjPrograms = async (rid: number, limit: number, offset: number): Promise<CloudAPI_DjProgramResult> => {
   return commonRequest({
     url: '/dj/program',
     params: { rid, limit, offset, timestamp: new Date().getTime() }
@@ -49,19 +49,19 @@ export const putDjRadioInQueue = async (
   offset: number = 0,
   first: boolean = true,
   cleanQueue: () => Promise<void>,
-  addToQueue: (queue: PlayQueue[]) => Promise<void>
+  addToQueue: (queue: CloudAPI_PlayQueue[]) => Promise<void>
 ): Promise<void> => {
-  const allQueue: PlayQueue[] = []
+  const allQueue: CloudAPI_PlayQueue[] = []
 
   while (offset < trackCount) {
-    const response = await commonRequest<DjProgramResult>({
+    const response = await commonRequest<CloudAPI_DjProgramResult>({
       url: '/dj/program',
       params: { rid, limit, offset, timestamp: new Date().getTime() }
     })
 
-    allQueue.push(...response.programs.map((item): PlayQueue => ({
+    allQueue.push(...response.programs.map((item): CloudAPI_PlayQueue => ({
       playmode: 3,
-      song: item.mainSong as Song,
+      song: item.mainSong as CloudAPI_Song,
       fileName: '',
       picUrl: item.coverUrl ?? ''
     })))
@@ -73,7 +73,7 @@ export const putDjRadioInQueue = async (
 }
 
 interface DjRadioBody {
-  djRadios: DjRadio[]
+  djRadios: CloudAPI_DjRadio[]
 }
 
 interface DjRadioResult {
@@ -85,7 +85,7 @@ interface DjRadioResult {
  * @param keyword
  * @returns
  */
-export const getDjRadioList = async (keywords: string): Promise<DjRadio[]> => {
+export const getDjRadioList = async (keywords: string): Promise<CloudAPI_DjRadio[]> => {
   const response = await commonRequest<DjRadioResult>({
     url: '/search',
     params: { keywords, type: 1009 }

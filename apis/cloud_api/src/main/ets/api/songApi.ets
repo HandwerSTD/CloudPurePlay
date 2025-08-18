@@ -1,13 +1,13 @@
 import { LogUtil } from "@pura/harmony-utils"
 import { PlayConstants } from "../constants/PlayConstants"
 // import { StorageConstants } from "../constants/StorageConstants"
-import { HeartMode } from "../entities/Recommend"
-import { PlayQueue } from "../model/PlayQueue"
-import { QualityType, Song, SongDetail, Song_INITIAL, SongPlayResult, SongSearchResult } from "../entities/Song"
-import { User } from "../entities/User"
-import { DailySongRes } from "./playListApi"
+import { CloudAPI_HeartMode } from "../entities/Recommend"
+import { CloudAPI_PlayQueue } from "../model/PlayQueue"
+import { CloudAPI_QualityType, CloudAPI_Song, CloudAPI_SongDetail, Song_INITIAL, CloudAPI_SongPlayResult, CloudAPI_SongSearchResult } from "../entities/Song"
+import { CloudAPI_User } from "../entities/User"
+import { CloudAPI_DailySongRes } from "./playListApi"
 import commonRequest from "./request/RequestUtil"
-import { DailyListSongs } from "../entities/PlayList"
+import { CloudAPI_DailyListSongs } from "../entities/PlayList"
 import { preferences } from "@kit.ArkData"
 
 interface CheckValiableResponse {
@@ -28,8 +28,8 @@ export const checkMusic = async (id: number): Promise<boolean> => {
   }
 }
 
-export interface SearchReturn {
-  list: Array<Song>
+export interface CloudAPI_SearchReturn {
+  list: Array<CloudAPI_Song>
   hasMore: boolean
   songCount: number
 }
@@ -43,13 +43,13 @@ export const searchSongs = async (
   keywords: string,
   offset: number,
   limit: number = 30
-): Promise<SearchReturn> => {
-  const response = await commonRequest<SongSearchResult>({
+): Promise<CloudAPI_SearchReturn> => {
+  const response = await commonRequest<CloudAPI_SongSearchResult>({
     url: '/search',
     params: { keywords, offset, limit, noCookie: true }
   })
 
-  let searchReturn: SearchReturn = {
+  let searchReturn: CloudAPI_SearchReturn = {
     list: response.result.songs,
     hasMore: response.result.hasMore,
     songCount: response.result.songCount
@@ -62,9 +62,9 @@ export const searchSongs = async (
  */
 export const getSongUrl = async (
   id: number,
-  quality: QualityType,
+  quality: CloudAPI_QualityType,
   isLogged: boolean
-): Promise<SongPlayResult> => {
+): Promise<CloudAPI_SongPlayResult> => {
   return commonRequest({
     url: '/song/url/v1',
     params: { id, level: quality }
@@ -77,7 +77,7 @@ export const getSongUrl = async (
  * @returns string
  */
 export const getSongPicUrl = async (ids: number): Promise<string> => {
-  const response = await commonRequest<SongDetail>({
+  const response = await commonRequest<CloudAPI_SongDetail>({
     url: '/song/detail',
     params: { ids }
   })
@@ -89,9 +89,9 @@ export const getSongPicUrl = async (ids: number): Promise<string> => {
  * @param useCookie
  * @returns
  */
-export const getDailySongs = async (useCookie: boolean = true): Promise<Array<DailySongRes>> => {
-  let list: Array<DailySongRes> = []
-  const response = await commonRequest<DailyListSongs>({
+export const getDailySongs = async (useCookie: boolean = true): Promise<Array<CloudAPI_DailySongRes>> => {
+  let list: Array<CloudAPI_DailySongRes> = []
+  const response = await commonRequest<CloudAPI_DailyListSongs>({
     url: '/recommend/songs',
     params: useCookie ? { } : { noCookie: true }
   })
@@ -123,7 +123,7 @@ interface LikeListResponse {
  * @param uid
  * @returns
  */
-export const getLikeList = async (user: User, statePersistent?: (val: string[]) => void): Promise<string[]> => {
+export const getLikeList = async (user: CloudAPI_User, statePersistent?: (val: string[]) => void): Promise<string[]> => {
   let list:Array<string> = []
   const response = await commonRequest<LikeListResponse>({
     url: '/likelist',
@@ -162,10 +162,10 @@ export const likeMusic = async (id: number): Promise<boolean> => {
  * @param id - 歌曲id
  * @param pid - 歌单id
  */
-export const setHeartMode = async (id: number, pid: number, cleanQueue: () => Promise<void>, addQueue: (queue: PlayQueue[]) => Promise<void>): Promise<void> => {
-  let queue: Array<PlayQueue> = []
-  let tempSong: Song
-  const response = await commonRequest<HeartMode>({
+export const setHeartMode = async (id: number, pid: number, cleanQueue: () => Promise<void>, addQueue: (queue: CloudAPI_PlayQueue[]) => Promise<void>): Promise<void> => {
+  let queue: Array<CloudAPI_PlayQueue> = []
+  let tempSong: CloudAPI_Song
+  const response = await commonRequest<CloudAPI_HeartMode>({
     url: '/playmode/intelligence/list',
     params: { id, pid }
   })
@@ -192,18 +192,18 @@ export const setHeartMode = async (id: number, pid: number, cleanQueue: () => Pr
 
 interface PersonalFmSongResult {
   code: number
-  data: Song[]
+  data: CloudAPI_Song[]
 }
 /**
  * 获取私人FM歌曲
  */
-export const getPersonalFmSong = async (mode: number): Promise<Song> => {
+export const getPersonalFmSong = async (mode: number): Promise<CloudAPI_Song> => {
   const response = await commonRequest<PersonalFmSongResult>({
     url: '/personal/fm/mode',
     params: { mode: PlayConstants.PERSONAL_FM_MODE[mode], timestamp: new Date().getTime() }
   })
   if(response.code == 200) {
-    let dataGot = response.data[0] as Song
+    let dataGot = response.data[0] as CloudAPI_Song
     return dataGot
   } else return Song_INITIAL
 }

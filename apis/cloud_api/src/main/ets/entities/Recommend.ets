@@ -1,16 +1,12 @@
-import { Album } from "./Album"
-
-interface Artist {
-  name: string
-  id: number
-}
+import { CloudAPI_Album } from "./Album"
+import { CloudAPI_Artist } from "./Song"
 
 interface SongInfo {
   id: number
   name: string
-  ar: Artist[]
+  ar: CloudAPI_Artist[]
   dt: number
-  al: Album
+  al: CloudAPI_Album
   fee: number
 }
 
@@ -21,7 +17,7 @@ interface ResultData {
 /**
  * 心动模式
  */
-export interface HeartMode {
+export interface CloudAPI_HeartMode {
   code: number
   data: ResultData[]
 }
@@ -29,7 +25,7 @@ export interface HeartMode {
 /**
  * 推荐歌单信息
  */
-export interface PersonalListItem {
+export interface CloudAPI_PersonalListItem {
   id: number
   type: number
   name: string
@@ -42,16 +38,16 @@ export interface PersonalListItem {
 /**
  * 推荐歌单
  */
-export interface Personalized {
+export interface CloudAPI_Personalized {
   hasTaste: boolean
   code: number
-  result: PersonalListItem[]
+  result: CloudAPI_PersonalListItem[]
 }
 
 /**
  * 排行榜单个信息
  */
-export interface TopListItem {
+export interface CloudAPI_TopListItem {
   id: number
   name: string
   trackCount: number
@@ -65,7 +61,7 @@ export interface TopListItem {
 /**
  * 排行榜
  */
-export interface TopList {
+export interface CloudAPI_TopList {
   code: number
-  list: TopListItem[]
+  list: CloudAPI_TopListItem[]
 }

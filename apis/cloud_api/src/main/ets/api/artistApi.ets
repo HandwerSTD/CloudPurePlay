@@ -1,4 +1,4 @@
-import { ArtistInfo, ArtistItem, ArtistsResult } from "../entities/Artists"
+import { CloudAPI_ArtistInfo, CloudAPI_ArtistItem, CloudAPI_ArtistsResult } from "../entities/Artists"
 import commonRequest from "./request/RequestUtil"
 
 /**
@@ -6,8 +6,8 @@ import commonRequest from "./request/RequestUtil"
  * @param id
  * @returns
  */
-export const getArtistInfo = async (id: number): Promise<ArtistInfo> => {
-  return commonRequest<ArtistInfo>({
+export const getArtistInfo = async (id: number): Promise<CloudAPI_ArtistInfo> => {
+  return commonRequest<CloudAPI_ArtistInfo>({
     url: '/artists',
     params: { id }
   })
@@ -18,8 +18,8 @@ export const getArtistInfo = async (id: number): Promise<ArtistInfo> => {
  * @param keyword
  * @returns
  */
-export const searchArtists = async (keywords: string, limit: number = 20): Promise<ArtistItem[]> => {
-  const result = await commonRequest<ArtistsResult>({
+export const searchArtists = async (keywords: string, limit: number = 20): Promise<CloudAPI_ArtistItem[]> => {
+  const result = await commonRequest<CloudAPI_ArtistsResult>({
     url: '/search',
     params: { keywords, limit, type: 100 }
   })

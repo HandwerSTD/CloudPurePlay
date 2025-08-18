@@ -1,8 +1,8 @@
 import {
-  Album,
-  AlbumInfoResult,
-  AlbumSearchResult,
-  SubAlbumResult, SubAlbumResult_INITIAL } from "../entities/Album";
+  CloudAPI_Album,
+  CloudAPI_AlbumInfoResult,
+  CloudAPI_AlbumSearchResult,
+  CloudAPI_SubAlbumResult, SubAlbumResult_INITIAL } from "../entities/Album";
 import commonRequest from "./request/RequestUtil";
 import { preferences } from "@kit.ArkData";
 import { ToastUtil } from "@pura/harmony-utils";
@@ -12,7 +12,7 @@ import { ToastUtil } from "@pura/harmony-utils";
  * @param id
  * @returns
  */
-export const getAlbumInfo = async (id: number): Promise<AlbumInfoResult> =>
+export const getAlbumInfo = async (id: number): Promise<CloudAPI_AlbumInfoResult> =>
   commonRequest({
     url: '/album',
     params: { id }
@@ -23,8 +23,8 @@ export const getAlbumInfo = async (id: number): Promise<AlbumInfoResult> =>
  * 获取收藏的专辑
  * @returns
  */
-export const getUserSubscribedAlbum = async (statePersistent?: (val: Album[]) => void): Promise<SubAlbumResult> => {
-  const result = await commonRequest<SubAlbumResult>({
+export const getUserSubscribedAlbum = async (statePersistent?: (val: CloudAPI_Album[]) => void): Promise<CloudAPI_SubAlbumResult> => {
+  const result = await commonRequest<CloudAPI_SubAlbumResult>({
     url: '/album/sublist',
     params: {}
   })
@@ -38,8 +38,8 @@ export const getUserSubscribedAlbum = async (statePersistent?: (val: Album[]) =>
  * @param keyword
  * @returns Album[]
  */
-export const searchAlbums = async (keywords: string): Promise<Album[]> => {
-  const result = await commonRequest<AlbumSearchResult>({
+export const searchAlbums = async (keywords: string): Promise<CloudAPI_Album[]> => {
+  const result = await commonRequest<CloudAPI_AlbumSearchResult>({
     url: '/search',
     params: { keywords, type: 10 }
   })

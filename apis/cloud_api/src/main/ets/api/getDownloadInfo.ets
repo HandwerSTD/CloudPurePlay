@@ -1,8 +1,8 @@
-import { QualityType, SongDownload } from "../entities/Song"
+import { CloudAPI_QualityType, CloudAPI_SongDownload } from "../entities/Song"
 import commonRequest from "./request/RequestUtil"
 
 interface SongUrlResponse {
-  data: SongDownload
+  data: CloudAPI_SongDownload
 }
 /**
  * 获取音乐地址
@@ -13,9 +13,9 @@ interface SongUrlResponse {
  */
 export const getDownloadInfo = async (
   id: string,
-  quality: QualityType,
+  quality: CloudAPI_QualityType,
   isLogged: boolean
-): Promise<SongDownload> => {
+): Promise<CloudAPI_SongDownload> => {
   // const rootUrl = await getApiUrl()
   // const url: string = isLogged ?
   //   `${rootUrl}/song/url/v1?id=${songId}&level=${quality}` :
