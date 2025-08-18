@@ -33,7 +33,7 @@ class LyricUtils {
     this.currentLyricIndex = 0
     let lyricArr: string[] = []
     try {
-      if(song.artists[0].id == 0) {
+      if(song.artists[0].id == "0") {
         this.lyric.lrc.lyric = '[00:00:00] 暂无歌词'
         lyricArr = ['[00:00:00] 暂无歌词']
       } else {

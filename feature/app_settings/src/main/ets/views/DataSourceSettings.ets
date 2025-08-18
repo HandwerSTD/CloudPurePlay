@@ -7,6 +7,7 @@ export struct DataSourceSettings {
   @Local pageOpacity: number = 1
   build() {
     HdsNavDestination() {
+      CloudAPI_Source()
     }.backgroundColor(Color.Transparent)
     .onShown(() => {
       this.pageOpacity = 1
@@ -24,7 +25,22 @@ export function CloudAPI_Source() {
   NavDestination() {
     CloudAPI_Console({
       LoginInfoSetter: (user, cookie) => {
-        UserManager.setUserInfo(user as User)
+        UserManager.setUserInfo({
+          data: {
+            account: {
+              userName: user.data.account.userName,
+              id: user.data.account.id.toString(),
+              vipType: user.data.account.vipType
+            },
+            profile: {
+              userId: user.data.profile.userId.toString(),
+              nickname: user.data.profile.nickname,
+              backgroundUrl: user.data.profile.backgroundUrl,
+              gender: user.data.profile.gender,
+              avatarUrl: user.data.profile.avatarUrl
+            }
+          }
+        } as User)
         UserSettings.put(SCUser.user, user)
         UserSettings.put(SCUser.cookie, cookie)
         UserManager.fetchAllUserData()

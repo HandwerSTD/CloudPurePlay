@@ -72,7 +72,7 @@ export struct AlbumDetail {
 
   async onStart() {
     this.fullPlayListDetail = new Array(Math.min(this.albumInfo.size)).fill(new PlaylistSongViewModel({
-      name: '', id: 0, al: Album_INITIAL, dt: 0, ar: [], fee: 0
+      name: '', id: "0", al: Album_INITIAL, dt: 0, ar: [], fee: 0
     }))
     AlbumAPIUtils.getAlbumInfo(this.albumInfo.id)
       .then((res) => {

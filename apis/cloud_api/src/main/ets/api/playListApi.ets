@@ -5,30 +5,26 @@ import {
   CloudAPI_PlayListResult,
   CloudAPI_PlayListSearchResult,
   CloudAPI_PlayListSong,
-  CloudAPI_PlayListSongsResult} from "../entities/PlayList"
+  CloudAPI_PlayListSongsResult,
+  CloudAPI_PlayListsResult} from "../entities/PlayList"
 import { CloudAPI_Song } from "../entities/Song"
-import { CloudAPI_User } from "../entities/User"
 import commonRequest from "./request/RequestUtil"
 import { CloudAPI_Personalized, CloudAPI_PersonalListItem } from "../entities/Recommend"
 
-export interface CloudAPI_PlayListsResult {
-  more:boolean
-  playlist:CloudAPI_PlayList[]
-}
 /**
  * 获取用户歌单列表
  * @param offset - 偏移量
  * @returns list
  */
-export const getPlayLists = async (offset: number, user: CloudAPI_User, statePersistent?: (val: CloudAPI_PlayList[]) => void): Promise<CloudAPI_PlayListsResult> => {
+export const getPlayLists = async (offset: number, userId: number, statePersistent?: (val: CloudAPI_PlayList[]) => void): Promise<CloudAPI_PlayListsResult> => {
   let list: CloudAPI_PlayList[] = new Array()
   // const user = await PreferencesUtils.getPreferenceValue<User>(StorageConstants.USER_PREF, StorageConstants.USER, User_INITIAL)
-  if(user.data.account.id === 0) {
+  if(userId === 0) {
     return { more: false, playlist: [] }
   }
   const response = await commonRequest<CloudAPI_PlayListResult>({
     url:'/user/playlist',
-    params: { uid: user.data.account.id, offset, timestamp: new Date().getTime() }
+    params: { uid: userId, offset, timestamp: new Date().getTime() }
   })
   list = response.playlist
   // AppStorage.setOrCreate(StorageConstants.USER_PLAYLISTS, list)

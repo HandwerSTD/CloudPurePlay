@@ -1,4 +1,4 @@
-import { QualityType } from "../entities/Song"
+import { CloudAPI_QualityType as QualityType } from "../entities/Song"
 
 
 export class PlayConstants {

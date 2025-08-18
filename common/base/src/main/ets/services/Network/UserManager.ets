@@ -48,7 +48,7 @@ export class UserManager {
       }
     }
   }
-  static getCookie() {
+  static getCookie(): string | undefined {
     if (store.cookieSettings.customCookie) return store.cookieSettings.customCookie
     return store.cookieSettings.cookie
   }

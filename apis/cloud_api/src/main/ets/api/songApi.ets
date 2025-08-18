@@ -123,11 +123,11 @@ interface LikeListResponse {
  * @param uid
  * @returns
  */
-export const getLikeList = async (user: CloudAPI_User, statePersistent?: (val: string[]) => void): Promise<string[]> => {
+export const getLikeList = async (userId: number, statePersistent?: (val: string[]) => void): Promise<string[]> => {
   let list:Array<string> = []
   const response = await commonRequest<LikeListResponse>({
     url: '/likelist',
-    params: { uid: user.data.account.id, timestamp: new Date().getTime() }
+    params: { uid: userId, timestamp: new Date().getTime() }
   })
   try {
     const dataGot: string[] = response.ids as string[]

@@ -206,7 +206,7 @@ export struct ImageCover {
 
 @Extend(Image) function ImageLightShadowFaker() {
   .aspectRatio(1)
-  .layoutWeight(nps.currentSong.id === 0 ? undefined : 1)
+  .layoutWeight(nps.currentSong.id === "0" ? undefined : 1)
   .constraintSize({
     maxWidth: '100%'
   })
@@ -223,7 +223,7 @@ export struct ImageCover {
 
 @Extend(Image) function ImageFaker(handleLike: () => void, useShadow: boolean = true) {
   .aspectRatio(1)
-  .layoutWeight(nps.currentSong.id === 0 ? undefined : 1)
+  .layoutWeight(nps.currentSong.id === "0" ? undefined : 1)
   .constraintSize({
     maxWidth: '100%'
   })
@@ -255,7 +255,7 @@ export struct ImageCoverThumbnail {
     Stack({alignContent: Alignment.Center}) {
       Image(this.nowPlayingCoverImg)
         .aspectRatio(1)
-        .layoutWeight(nps.currentSong.id === 0 ? undefined : 1)
+        .layoutWeight(nps.currentSong.id === "0" ? undefined : 1)
         .margin(nps.isPaused ? ResponsiveUtil.chooseByWidth(['10%', '7%']) : 12)
         .constraintSize({
           maxWidth: '100%'

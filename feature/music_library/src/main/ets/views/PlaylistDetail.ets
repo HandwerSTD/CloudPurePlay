@@ -438,6 +438,7 @@ export struct PlaylistDetail {
       this.isLoading = true // 初次加载
     }
     try {
+      Logger.debug(TAG, JSON.stringify(this.playListInfo))
       const result = await PlayListAPIUtils.getPlayListSongs(this.playListInfo.id, limit <= 1000 ? limit : 1000, offset, false)
       Logger.debug(TAG, `got result return: ${result.length}`)
       if (this.isLoading) {
@@ -459,7 +460,7 @@ export struct PlaylistDetail {
       }
     } catch (e) {
       // LogUtil.error(TAG, 'Error fetching songs: ', e.message)
-      Logger.error(TAG, `ERR fetching songs: ${JSON.stringify(e)}`)
+      Logger.error(TAG, `ERR fetching songs: ${e.message} + ${e.stacktrace}`)
     } finally {
       // this.getUIContext().animateTo({curve: curves.springMotion()}, () => {
         this.isLoading = false

@@ -1,7 +1,6 @@
-import { CloudAPIConfigUtils, LoginAPIUtils, User } from "@handwer/cloud_api"
+import { CloudAPIConfigUtils, CloudAPI_User, LoginAPIUtils } from "@handwer/cloud_api"
 import { webview } from "@kit.ArkWeb"
 import { promptAction } from "@kit.ArkUI"
-import { CloudUser } from "../CloudAPIExports"
 
 
 // UserManager.setUserInfo(user)
@@ -11,7 +10,7 @@ import { CloudUser } from "../CloudAPIExports"
 
 @ComponentV2
 export struct CloudAPI_Console {
-  @Param @Require LoginInfoSetter: (user: CloudUser, cookie: string) => void
+  @Param @Require LoginInfoSetter: (user: CloudAPI_User, cookie: string) => void
 
   @Local qrImg: string = ''
   @Local qrKey: string = ''
@@ -47,7 +46,7 @@ export struct CloudAPI_Console {
  */
 @ComponentV2
 export struct WebLogin {
-  @Param @Require LoginInfoSetter: (user: CloudUser, cookie: string) => void
+  @Param @Require LoginInfoSetter: (user: CloudAPI_User, cookie: string) => void
   @Local userAgent: string = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
   @Local isLoading: boolean = true
   controller: webview.WebviewController = new webview.WebviewController()

@@ -114,10 +114,10 @@ export class PlayControl {
       if(FileUtil.accessSync(fileUrl)) {
         await PlayControl.setPlayData(0, song, artistsString, fileName)
         await AVPlayerUtils.reset()
-        let picUrl = song.id !== 0 ? `file://${filesDir}/pic/${song.id}.jpg` : ''
+        let picUrl = song.id !== "0" ? `file://${filesDir}/pic/${song.id}.jpg` : ''
         await PlayControl.setPicUrl(picUrl)
         // Lyric
-        if(song.id != 0) {
+        if(song.id != "0") {
           let lyricString = await LyricUtils.readLyric(song.id.toString())
           LyricUtils.setLyricString(lyricString)
         } else {

@@ -4,7 +4,7 @@ import { getComment } from '../api/commentApi';
 import { getUserDjSubscribeList, getDjPrograms, putDjRadioInQueue, getDjRadioList } from '../api/djApi';
 import { getLoginStatus, logOut } from '../api/loginApi';
 import { getLyric, getLyricString } from '../api/LyricApi';
-import { getPlayLists, getPlayListSongs, PlayListOperation, getCloudList, searchPlayLists, subscribePlayList, getPersonalizedList, deletePlayList, createPlayList, CloudAPI_DailySongRes, CloudAPI_PlayListsResult,
+import { getPlayLists, getPlayListSongs, PlayListOperation, getCloudList, searchPlayLists, subscribePlayList, getPersonalizedList, deletePlayList, createPlayList,
   renamePlayList } from '../api/playListApi';
 import { getQrCode, checkQrLogin } from '../api/qrCodeApi';
 import { checkMusic, searchSongs, getSongUrl, getSongPicUrl, getDailySongs, getLikeList, likeMusic, setHeartMode, getPersonalFmSong } from '../api/songApi';
@@ -215,8 +215,8 @@ export class PlayListAPIUtils {
    * @param statePersistent 按需求，可传入回调对返回的 PlayList[] 进行持久化
    * @returns 歌单列表
    */
-  static async getPlayLists(offset: number, user: CloudAPI_User, statePersistent?: (val: CloudAPI_PlayList[]) => void) {
-    return getPlayLists(offset, user, statePersistent);
+  static async getPlayLists(offset: number, userId: number, statePersistent?: (val: CloudAPI_PlayList[]) => void) {
+    return getPlayLists(offset, userId, statePersistent);
   }
   /**
    * 获取歌单内歌曲列表
@@ -354,8 +354,8 @@ export class SongAPIUtils {
    * @param statePersistent 按需求，可传入回调对返回的 string[] 进行持久化
    * @returns 喜欢的歌曲ID数组
    */
-  static async getLikeList(user: CloudAPI_User, statePersistent?: (val: string[]) => void) {
-    return getLikeList(user, statePersistent);
+  static async getLikeList(userId: number, statePersistent?: (val: string[]) => void) {
+    return getLikeList(userId, statePersistent);
   }
   /**
    * 喜欢某首歌曲（不喜欢请直接在红心歌单中删除）

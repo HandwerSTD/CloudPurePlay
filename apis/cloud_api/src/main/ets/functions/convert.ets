@@ -1,4 +1,4 @@
-import { Artist, Song } from "../entities/Song"
+import { CloudAPI_Artist, CloudAPI_Song } from "../entities/Song"
 import { util } from "@kit.ArkTS"
 import { media } from "@kit.MediaKit"
 import { fileIo } from "@kit.CoreFileKit"
@@ -27,7 +27,7 @@ export class SongConvertUtils {
    * @param fileName
    * @returns song:Song
    */
-  static async fetchSongInfo(fileName: string): Promise<Song> {
+  static async fetchSongInfo(fileName: string): Promise<CloudAPI_Song> {
     const regex = /^(.+?) - (.+)\.\w+$/
     const match = fileName.match(regex)
     if (!match) {
@@ -53,14 +53,14 @@ export class SongConvertUtils {
     }
     const artistName = match[1].trim()
     const songName = match[2].trim()
-    const artists: Artist[] = [
+    const artists: CloudAPI_Artist[] = [
       {
         id: 0,
         name: artistName
       }
     ]
 
-    let song: Song = {
+    let song: CloudAPI_Song = {
       id: 0,
       name: songName,
       artists: artists,
@@ -83,7 +83,7 @@ export class SongConvertUtils {
    * @param artists
    * @returns
    */
-  static getArtists(artists: Artist[]): string {
+  static getArtists(artists: CloudAPI_Artist[]): string {
     let artistStr: string = ''
     for (let artist of artists) {
       artistStr = artistStr + artist.name + ', '

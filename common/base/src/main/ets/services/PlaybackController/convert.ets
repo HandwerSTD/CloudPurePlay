@@ -33,14 +33,14 @@ export class SongConvertUtils {
     if (!match) {
       LogUtil.error('文件名格式错误: ' + fileName)
       return {
-        id: -1,
+        id: "-1",
         name: fileName,
         artists: [{
-          id: 0,
+          id: "0",
           name: '未知'
         }],
         album: {
-          id: 0,
+          id: "0",
           name: '',
           picUrl: '',
           artists: [],
@@ -55,17 +55,17 @@ export class SongConvertUtils {
     const songName = match[2].trim()
     const artists: Artist[] = [
       {
-        id: 0,
+        id: "0",
         name: artistName
       }
     ]
 
     let song: Song = {
-      id: 0,
+      id: "0",
       name: songName,
       artists: artists,
       album: {
-        id: 0,
+        id: "0",
         name: '',
         picUrl: '',
         artists: [],

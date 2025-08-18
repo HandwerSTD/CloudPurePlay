@@ -1,6 +1,6 @@
 import axios, { AxiosError, AxiosRequestConfig, AxiosResponse, InternalAxiosRequestConfig } from '@ohos/axios'
 import { LogUtil } from '@pura/harmony-utils'
-import { RequestContext } from './RequestContext'
+import { CloudAPI_RequestContext as RequestContext } from './RequestContext'
 
 const TAG = 'RequestUtil '
 

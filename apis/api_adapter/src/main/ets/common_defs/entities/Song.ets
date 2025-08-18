@@ -34,11 +34,11 @@ export interface SongSearchResult {
   result: SearchResultBody
 }
 
-interface Al {
+export interface Al {
   picUrl:string
 }
 
-interface SongDetailItem {
+export interface SongDetailItem {
   al: Al
 }
 
@@ -73,7 +73,7 @@ export interface SongDownload {
   data: SongDownloadItem[]
 }
 
-interface SongPlayData {
+export interface SongPlayData {
   id: string
   url: string
   time: number

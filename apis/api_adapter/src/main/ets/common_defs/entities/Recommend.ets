@@ -1,7 +1,7 @@
 import { Album } from "./Album"
 import { Artist } from "./Song"
 
-interface SongInfo {
+export interface SongInfo {
   id: string
   name: string
   ar: Artist[]
@@ -10,7 +10,7 @@ interface SongInfo {
   fee: number
 }
 
-interface ResultData {
+export interface ResultData {
   songInfo: SongInfo
 }
 
@@ -48,7 +48,7 @@ export interface Personalized {
  * 排行榜单个信息
  */
 export interface TopListItem {
-  id: number
+  id: string
   name: string
   trackCount: number
   updateFrequency: string // “更新xx首”

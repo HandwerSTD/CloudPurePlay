@@ -7,7 +7,7 @@ import { PlayControl } from "./playControl"
 const TAG = '[podcastOp] '
 
 export class podcastOp {
-  static async djRadioToQueue(id: number, count: number, currentIndex: number = 0) {
+  static async djRadioToQueue(id: string, count: number, currentIndex: number = 0) {
     try {
       NowPlayingStore.isPlayerLoading = true
       // const lastPlayInfo = await AppStorage.get(StorageConstants.LAST_PLAYED_LIST) as PlayingPlayList
