@@ -35,28 +35,28 @@ instance.interceptors.request.use(async (request: InternalAxiosRequestConfig ) =
   // const settings: Api = await AppStorage.get(StorageConstants.API_SETTINGS) as Api
   if (!currentContext) return Promise.reject()
   // if(settings.user !== 'cloudmusic' && request.params?.baseUrl != Constants.API_URL) return Promise.reject()
-
+  const ctx = JSON.parse(JSON.stringify(currentContext)) as RequestContext
   // baseUrl
-  request.baseURL = !request.params.baseUrl ? currentContext.baseUrl : request.params.baseUrl
+  request.baseURL = !request.params?.baseUrl ? ctx.baseUrl : request.params.baseUrl
   // timeout
-  request.timeout = request.params.timeout ?? 15000
+  request.timeout = request.params?.timeout ?? 15000
   // 补全 user token 部分
 
   // ===== 生成认证参数 =====
   let authParams: Record<string, string>
-  if (currentContext.token && currentContext.salt) {
+  if (ctx.token && ctx.salt) {
     // 已有 token + salt
     authParams = {
-      "u": currentContext.username,
-      "t": currentContext.token,
-      "s": currentContext.salt
+      "u": ctx.username,
+      "t": ctx.token,
+      "s": ctx.salt
     }
-  } else if (currentContext.password) {
+  } else if (ctx.password) {
     // 动态生成 salt + token
     const salt = Math.random().toString(36).substring(2, 8)
-    const token = await getMD5(currentContext.password + salt)
+    const token = await getMD5(ctx.password + salt)
     authParams = {
-      "u": currentContext.username,
+      "u": ctx.username,
       "t": token,
       "s": salt
     }
@@ -66,8 +66,8 @@ instance.interceptors.request.use(async (request: InternalAxiosRequestConfig ) =
 
   // ===== 默认 API 参数 =====
   const defaultParams: Record<string, string> = {
-    "v": currentContext.apiVersion!,
-    "c": currentContext.clientName!,
+    "v": ctx.apiVersion ?? '1.16.1',
+    "c": ctx.clientName ?? 'CloudPurePlay',
     "f": 'json',
     ...authParams
   }
@@ -86,7 +86,7 @@ instance.interceptors.request.use(async (request: InternalAxiosRequestConfig ) =
 instance.interceptors.response.use((response: AxiosResponse) => {
   return response
 }, (err: AxiosError) => {
-  console.error(TAG, `error: ${err?.status} + ${err?.message ?? ""} -> URL = ${err.response?.config.url}, baseURL = ${err.response?.config.baseURL}`)
+  console.error(TAG, `error: ${err?.status} + ${err?.message ?? ""} -> URL = ${err.response?.config?.url}, baseURL = ${err.response?.config?.baseURL}`)
   return Promise.reject(err)
 })
 

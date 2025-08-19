@@ -3,7 +3,7 @@ import { CommonListItem, HDS_TITLE_CONFIG_STYLE, LightUpLinedContainer, SnackBar
 import { HdsNavigation, HdsNavigationTitleMode, HdsNavigationAttribute } from "@hms.hds.hdsBaseComponent";
 import { hdsEffect, HdsSnackBar } from "@kit.UIDesignKit";
 import { common, OpenLinkOptions } from '@kit.AbilityKit';
-import { DataSourceSettings } from "../views/DataSourceSettings";
+import { CloudAPI_Source, DataSourceSettings, NavidromeAPI_Source } from "../views/DataSourceSettings";
 import { AboutPage } from "../views/AboutPage";
 
 @ComponentV2
@@ -24,6 +24,10 @@ export struct MainPage {
       this.Main()
     } else if (name === 'AboutPage') {
       AboutPage()
+    } else if (name === 'CloudAPI_Source') {
+      CloudAPI_Source()
+    } else if (name === 'NavidromeAPI_Source') {
+      NavidromeAPI_Source()
     }
   }
 

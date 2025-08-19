@@ -21,6 +21,8 @@ export class NavidromeAPIConfigUtils {
   }
 }
 
+export { RequestContext as NavidromeRequestContext }
+
 interface SubsonicPingInnerResponse {
   status: string;
   version: string;
@@ -40,9 +42,11 @@ export async function checkValidUrl(params: checkValidUriParams): Promise<boolea
     params.setChecking(true)
 
     const response = await commonRequest<Record<string, Object> >({
-      url: '/rest/ping'
+      url: '/rest/ping',
+      params: {}
     })
     const rec = response
+    console.log(TAG, `check valid url result = ${JSON.stringify(rec)}`)
 
     if (rec.status === 'ok') {
       params.setResult(true)

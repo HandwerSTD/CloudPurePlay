@@ -1,10 +1,10 @@
 export enum INSTANCE_TYPE {
-  WEB_DAV,
+  NAVIDROME,
   CLOUD
 }
 
 const InstanceTypeName: Record<INSTANCE_TYPE, string> = {
-  0: "WebDAV",
+  0: "Navidrome",
   1: "CloudAPI"
 }
 
