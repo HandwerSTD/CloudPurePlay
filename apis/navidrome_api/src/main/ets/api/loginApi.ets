@@ -10,13 +10,13 @@ interface GetUserResponse {
 export const getLoginStatus = async (statePersistent?: (val: User) => void): Promise<boolean> => {
   try {
     const response = await commonRequest<GetUserResponse>({
-      url: '/rest/me.view',
+      url: '/rest/getUser.view',
       params: { f: 'json', timestamp: new Date().getTime() }
     });
 
     const user = response.user;
 
-    if (user?.id && user?.username) {
+    if (user?.username) {
       statePersistent?.(user);
       return true;
     } else {

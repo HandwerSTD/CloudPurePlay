@@ -3,4 +3,7 @@ export enum SCPref {
   notFirstOpen,
   cacheSet,
   audioQuality,
+
+  apiInstanceType,
+  currentAPIConfig
 }

@@ -21,7 +21,7 @@ const instance = axios.create({
 // custom cookie 比 cookie 优先级高
 const getCookie = () => {
   if (!currentContext) return ''
-  if (currentContext.cookie.customCookie) return currentContext.cookie.customCookie
+  if (currentContext.cookie?.customCookie) return currentContext.cookie.customCookie
   return currentContext.cookie.cookie
 }
 
@@ -41,7 +41,7 @@ instance.interceptors.request.use(async (request: InternalAxiosRequestConfig ) =
   // realIP
   if(!request.url?.includes('/login')) {
     const realIP = currentContext?.realIp
-    if(realIP.toggle) {
+    if(realIP?.toggle) {
       request.params.realIP = realIP.realIp
     }
   }

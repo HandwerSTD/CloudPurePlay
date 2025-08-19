@@ -1,6 +1,5 @@
 /** Navidrome 用户信息 */
 export interface User {
-  id: string;
   username: string;
   email?: string;
   admin?: boolean;
@@ -8,7 +7,6 @@ export interface User {
 
 /** 初始值 */
 export const User_INITIAL: User = {
-  id: '',
   username: '',
   email: '',
   admin: false

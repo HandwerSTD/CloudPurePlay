@@ -179,10 +179,11 @@ export class DjAPIUtils {
 }
 
 export class LoginAPIUtils {
-  static async getLoginStatus(statePersistent?: (val: User) => void): Promise<boolean> {
-    if (InstanceSwitcher.InstanceType === INSTANCE_TYPE.CLOUD) {
+  static async getLoginStatus(statePersistent?: (val: User) => void, forceInstance?: INSTANCE_TYPE): Promise<boolean> {
+    const type = forceInstance ?? InstanceSwitcher.InstanceType
+    if (type === INSTANCE_TYPE.CLOUD) {
       return CloudAPI_LoginAPIUtils.getLoginStatus(statePersistent);
-    } else if (InstanceSwitcher.InstanceType === INSTANCE_TYPE.NAVIDROME) {
+    } else if (type === INSTANCE_TYPE.NAVIDROME) {
       return Navidrome_LoginUtils.getLoginStatus(statePersistent);
     } else {
       throw Error('API Unimplemented')
@@ -361,9 +362,11 @@ export class SongAPIUtils {
     }
   }
 
-  static async getSongPicUrl(ids: string): Promise<string> {
+  static async getSongPicUrl(song: Song): Promise<string> {
     if (InstanceSwitcher.InstanceType === INSTANCE_TYPE.CLOUD) {
-      return CloudAPI_SongAPIUtils.getSongPicUrl(Number.parseInt(ids));
+      return CloudAPI_SongAPIUtils.getSongPicUrl(Number.parseInt(song.id));
+    } else if (InstanceSwitcher.InstanceType === INSTANCE_TYPE.NAVIDROME) {
+      return song.album.picUrl
     } else {
       throw Error('API Unimplemented')
     }

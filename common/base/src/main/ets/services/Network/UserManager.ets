@@ -1,4 +1,5 @@
-import { CloudAPIConfigUtils, LoginAPIUtils, User, User_INITIAL, PlayList, DjRadio, Album, TopListItem, PersonalListItem } from '@handwer/api_adapter'
+import { CloudAPIConfigUtils, LoginAPIUtils, User, User_INITIAL, PlayList, DjRadio, Album, TopListItem, PersonalListItem,
+  APIConfigUtils } from '@handwer/api_adapter'
 import { PreferenceUtils } from '../Preferences/PreferenceUtils'
 import { PlayListAPIUtils, DjAPIUtils, AlbumAPIUtils, TopListAPIUtils, SongAPIUtils } from '@handwer/api_adapter'
 import store from './UserStore'
@@ -9,7 +10,7 @@ import NowPlayingStore from '../PlaybackController/play/NowPlayingStore'
 const TAG = '[UserManager]'
 
 export enum SCUser {
-  cookie = 1,
+  passwd = 1,
   user = 2,
   customCookie = 3,
   userPlaylists = 4,
@@ -25,15 +26,10 @@ const UserSettings = new PreferenceUtils('UserSettings')
 export class UserManager {
   static async init() {
     UserSettings.init()
-    if (UserSettings.get<string>(SCUser.user) !== undefined) {
+    if (UserSettings.get<User>(SCUser.user) !== undefined) {
       Logger.info(TAG, `detected existing user info, loaded`)
       store.user = UserSettings.get<User>(SCUser.user) ?? User_INITIAL
-      let requestContext = CloudAPIConfigUtils.getRequestContext()
-      if (requestContext) {
-        requestContext.cookie.cookie = UserSettings.get<string>(SCUser.cookie)
-        requestContext.cookie.customCookie = UserSettings.get<string>(SCUser.customCookie)
-        CloudAPIConfigUtils.setRequestContext(requestContext)
-      }
+      APIConfigUtils.setLoginToken(store.userId, UserSettings.get<string>(SCUser.passwd))
       const result = await LoginAPIUtils.getLoginStatus((val) => {
         store.user = val
         UserSettings.put(SCUser.user, val)
@@ -55,48 +51,53 @@ export class UserManager {
   static get isLogged() {
     return store.user != User_INITIAL
   }
-  static setUserInfo(user: User) {
+  static setUserInfo(user: User, passwd?: string) {
     store.user = user
+    UserSettings.put(SCUser.user, user)
+    UserSettings.put(SCUser.passwd, passwd)
   }
 
   static async fetchAllUserData() {
+    await Promise.allSettled([
     // 歌单
-    await PlayListAPIUtils.getPlayLists(0, store.user, (val) => {
-      store.userPlaylists = val ?? store.userPlaylists
-      UserManager.persistUserPlaylists()
-    })
+      PlayListAPIUtils.getPlayLists(0, store.user, (val) => {
+        store.userPlaylists = val ?? store.userPlaylists
+        UserManager.persistUserPlaylists()
+      }),
 
-    // 电台
-    await DjAPIUtils.getUserDjSubscribeList((val) => {
-      store.userDjRadioList = val ?? store.userDjRadioList
-      UserSettings.put(SCUser.userDjRadioList, store.userDjRadioList)
-    })
+      // 电台
+      DjAPIUtils.getUserDjSubscribeList((val) => {
+        store.userDjRadioList = val ?? store.userDjRadioList
+        UserSettings.put(SCUser.userDjRadioList, store.userDjRadioList)
+      }),
 
-    // 收藏专辑
-    await AlbumAPIUtils.getUserSubscribedAlbum((val) => {
-      store.userSubAlbum = val ?? store.userSubAlbum
-      UserManager.persistUserSubAlbum()
-    })
+      // 收藏专辑
+      AlbumAPIUtils.getUserSubscribedAlbum((val) => {
+        store.userSubAlbum = val ?? store.userSubAlbum
+        UserManager.persistUserSubAlbum()
+      }),
 
-    // 排行榜
-    await TopListAPIUtils.getTopList((val) => {
-      store.topLists = val ?? store.topLists
-      UserSettings.put(SCUser.topLists, store.topLists)
-    })
+      // 排行榜
+      TopListAPIUtils.getTopList((val) => {
+        store.topLists = val ?? store.topLists
+        UserSettings.put(SCUser.topLists, store.topLists)
+      }),
 
-    // 个性化推荐歌单
-    await PlayListAPIUtils.getPersonalizedList((val) => {
-      store.personalizedList = val ?? store.personalizedList
-      UserSettings.put(SCUser.personalizedList, store.personalizedList)
-    })
+      // 个性化推荐歌单
+      PlayListAPIUtils.getPersonalizedList((val) => {
+        store.personalizedList = val ?? store.personalizedList
+        UserSettings.put(SCUser.personalizedList, store.personalizedList)
+      }),
 
-    // 喜欢列表
-    await SongAPIUtils.getLikeList(store.user, (val) => {
-      store.likeList = new Set(val ?? store.likeList)
-      // 再次重置歌曲红心信息
-      SongLike.isThisSongLiked(NowPlayingStore.currentSong.id)
-      UserManager.persistLikeList()
-    })
+      // 喜欢列表
+      SongAPIUtils.getLikeList(store.user, (val) => {
+        store.likeList = new Set(val ?? store.likeList)
+        // 再次重置歌曲红心信息
+        SongLike.isThisSongLiked(NowPlayingStore.currentSong.id)
+        UserManager.persistLikeList()
+      })
+    ])
+
   }
   static async fetchDynamicData() {
     const dailySongs = await SongAPIUtils.getDailySongs()
@@ -168,7 +169,7 @@ export class UserManager {
     
     // 清除所有用户相关的存储数据
     UserSettings.del(SCUser.user)
-    UserSettings.del(SCUser.cookie)
+    UserSettings.del(SCUser.passwd)
     UserSettings.del(SCUser.customCookie)
     UserSettings.del(SCUser.userPlaylists)
     UserSettings.del(SCUser.userDjRadioList)

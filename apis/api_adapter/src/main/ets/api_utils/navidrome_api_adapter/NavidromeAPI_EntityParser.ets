@@ -25,7 +25,8 @@ import {
   Navidrome_TopList,
   Navidrome_User,
   Navidrome_LyricResult,
-  Navidrome_SongArtist
+  Navidrome_SongArtist,
+  NavidromeAPI_AlbumAPIUtils
 } from '@handwer/navidrome_api';
 
 // Import APIAdapter entities
@@ -119,7 +120,7 @@ export class NavidromeAPI_EntityParser {
         id: navidromeAlbum.artistId,
         name: navidromeAlbum.artist
       }], // Navidrome的单个artist转为数组
-      picUrl: navidromeAlbum.coverArt ?? '', // coverArt对应picUrl
+      picUrl: NavidromeAPI_AlbumAPIUtils.getAlbumCoverUrl(navidromeAlbum) ?? '', // coverArt对应picUrl
       name: navidromeAlbum.name,
       id: navidromeAlbum.id,
       size: navidromeAlbum.songCount ?? 0 // songCount对应size
@@ -305,11 +306,11 @@ export class NavidromeAPI_EntityParser {
       data: {
         account: {
           userName: navidromeUser.username,
-          id: navidromeUser.id,
+          id: navidromeUser.username,
           vipType: 1
         },
         profile: {
-          userId: navidromeUser.id,
+          userId: navidromeUser.username,
           nickname: navidromeUser.username,
           backgroundUrl: '',
           avatarUrl: '',

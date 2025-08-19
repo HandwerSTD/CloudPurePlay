@@ -1,5 +1,10 @@
-import { CloudAPI_Console, NavidromeAPIConfigUtils, User } from "@handwer/api_adapter"
-import { UserManager, UserSettings, SCUser, Logger, SCApp } from "@handwer/base"
+import { CloudAPI_Console, InstanceSwitcher, INSTANCE_TYPE,
+  LoginAPIUtils,
+  NavidromeAPIConfigUtils,
+  NavidromeRequestContext,
+  User,
+  User_INITIAL} from "@handwer/api_adapter"
+import { UserManager, UserSettings, SCUser, Logger, SCApp, ServiceInitUtils } from "@handwer/base"
 import { CommonListItem, HDS_TITLE_CONFIG_STYLE, LightUpLinedContainer } from "@handwer/ui_components"
 import { hdsEffect, HdsNavigationAttribute, HdsNavigation,
   HdsNavigationTitleMode } from "@kit.UIDesignKit"
@@ -108,9 +113,7 @@ export struct CloudAPI_Source {
                 avatarUrl: user.data.profile.avatarUrl
               }
             }
-          } as User)
-          UserSettings.put(SCUser.user, user)
-          UserSettings.put(SCUser.cookie, cookie)
+          } as User, cookie)
           UserManager.fetchAllUserData()
         }
       })
@@ -135,17 +138,25 @@ export struct NavidromeAPI_Source {
     NavDestination() {
       Button('set config')
         .onClick(() => {
-          NavidromeAPIConfigUtils.setRequestContext({
+          const ctx = {
             baseUrl: "http://192.168.1.13:4533/",
             username: "handwer",
             password: '123456',
-          })
+          } as NavidromeRequestContext
+          NavidromeAPIConfigUtils.setRequestContext(ctx)
           NavidromeAPIConfigUtils.checkValidConnection({
             setChecking: (val) => {
               Logger.debug(`NavidromeAPI`, `set checking = ${val}`)
             },
             setResult: (val) => {
               Logger.debug(`NavidromeAPI`, `set result = ${val}`)
+              if (val) {
+                LoginAPIUtils.getLoginStatus((val) => {
+                  if (val.data.account.id === '') return;
+                  Logger.debug(`NavidromeAPI`, `getLoginStat: ${JSON.stringify(val)}`)
+                  ServiceInitUtils.reInit(INSTANCE_TYPE.NAVIDROME, val, ctx.password!, ctx)
+                }, INSTANCE_TYPE.NAVIDROME)
+              }
             }
           })
         })

@@ -1,4 +1,4 @@
-import commonRequest from "./request/RequestUtil";
+import commonRequest, { generateRequestTokenSync } from "./request/RequestUtil";
 import { ToastUtil } from "@pura/harmony-utils";
 import { AlbumInfoResult, AlbumInfoResult_INITIAL, Album, SubAlbumResult } from "../entity/AlbumEntity";
 
@@ -20,8 +20,12 @@ export const getAlbumInfo = async (id: string): Promise<AlbumInfoResult> => {
 };
 
 /** getUserSubscribedAlbum 的返回类型 */
+interface GetUserSubAlbumResponse_Inner {
+  album: Album[];
+}
+
 interface GetUserSubscribedAlbumResponse {
-  musicDirectory: Album[] | null;
+  starred: GetUserSubAlbumResponse_Inner
 }
 
 /**
@@ -32,7 +36,7 @@ export const getUserSubscribedAlbum = async (statePersistent?: (val: Album[]) =>
     url: '/rest/getStarred.view',
     params: { f: 'json', type: 'album' }
   });
-  const albums = result.musicDirectory ?? [];
+  const albums = result.starred.album ?? [];
   statePersistent?.(albums);
   return { data: albums } as SubAlbumResult;
 };
@@ -93,6 +97,7 @@ export const subscribeAlbum = async (id: string, t: number): Promise<boolean> =>
  */
 export const getAlbumCoverUrl = (album: Album, size: number = 500): string => {
   const coverArtId = album.coverArt;
+  const params = generateRequestTokenSync() as Record<string, string>
   if (!coverArtId) return '';
-  return `/rest/getCoverArt.view?id=${coverArtId}&size=${size}`;
+  return `${params['baseUrl']}rest/getCoverArt?u=${params['u']}&t=${params['t']}&s=${params['s']}&f=${params['f']}&v=${params['v']}&c=${params['c']}&id=${coverArtId}&size=${size}`;
 };

@@ -16,6 +16,17 @@ async function getMD5(message: string) {
     .map(b => b.toString(16).padStart(2, '0')) // 每个字节转16进制，补0
     .join('');
 }
+function getMD5Sync(message: string) {
+  let mdAlgName = 'MD5'; // 摘要算法名。
+  let md = cryptoFramework.createMd(mdAlgName);
+  // 数据量较少时，可以只做一次update，将数据全部传入，接口未对入参长度做限制。
+  md.updateSync({ data: new Uint8Array(buffer.from(message, 'utf-8').buffer) });
+  let mdResult = md.digestSync();
+
+  return Array.from(mdResult.data)
+    .map(b => b.toString(16).padStart(2, '0')) // 每个字节转16进制，补0
+    .join('');
+}
 
 let currentContext: RequestContext | null = null
 
@@ -30,6 +41,47 @@ const instance = axios.create({
   timeout: 15000
 })
 
+export const generateRequestTokenSync = () => {
+  let request: Record<string, string>
+  const ctx = JSON.parse(JSON.stringify(currentContext)) as RequestContext
+
+  // ===== 生成认证参数 =====
+  let authParams: Record<string, string>
+  if (ctx.token && ctx.salt) {
+    // 已有 token + salt
+    authParams = {
+      "u": ctx.username,
+      "t": ctx.token,
+      "s": ctx.salt
+    }
+  } else if (ctx.password) {
+    // 动态生成 salt + token
+    const salt = Math.random().toString(36).substring(2, 8)
+    const token = getMD5Sync(ctx.password + salt)
+    authParams = {
+      "u": ctx.username,
+      "t": token,
+      "s": salt
+    }
+  } else {
+    return {}
+  }
+
+  // ===== 默认 API 参数 =====
+  const defaultParams: Record<string, string> = {
+    "v": ctx.apiVersion ?? '1.16.1',
+    "c": ctx.clientName ?? 'CloudPurePlay',
+    "f": 'json',
+    ...authParams
+  }
+
+  // 合并 query 参数
+  request = {
+    ...defaultParams,
+    'baseUrl': ctx.baseUrl
+  }
+  return request
+}
 
 instance.interceptors.request.use(async (request: InternalAxiosRequestConfig ) => {
   // const settings: Api = await AppStorage.get(StorageConstants.API_SETTINGS) as Api

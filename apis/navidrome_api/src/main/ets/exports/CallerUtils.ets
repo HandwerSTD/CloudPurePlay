@@ -1,10 +1,10 @@
-import { getAlbumInfo, getUserSubscribedAlbum, searchAlbums, subscribeAlbum } from '../api/albumApi';
+import { getAlbumCoverUrl, getAlbumInfo, getUserSubscribedAlbum, searchAlbums, subscribeAlbum } from '../api/albumApi';
 import { getArtistInfo, searchArtists } from '../api/artistApi';
 import { getLoginStatus, logOut } from '../api/loginApi';
 import { getLyric, getLyricString } from '../api/LyricApi';
 import { getPlayLists, getPlayListSongs, deletePlayList, createPlayList, renamePlayList,
   playListOperation } from '../api/playListApi';
-import { searchSongs, getSongUrl, getLikeList, likeMusic } from '../api/songApi';
+import { searchSongs, getSongUrl, getLikeList, likeMusic, getSongCoverUrl, getCoverUrl } from '../api/songApi';
 import { getTopList } from '../api/topListApi';
 import { Album } from '../entity/AlbumEntity';
 import { PlayList, PlayListsResult } from '../entity/PlaylistEntity';
@@ -45,7 +45,10 @@ export class NavidromeAPI_AlbumAPIUtils {
   static async subscribeAlbum(id: string, t: number): Promise<boolean> {
     return await subscribeAlbum(id, t)
   }
-  
+
+  static getAlbumCoverUrl(album: Album) {
+    return getAlbumCoverUrl(album)
+  }
 }
 
 export class NavidromeAPI_ArtistAPIUtils {
@@ -186,6 +189,9 @@ export class NavidromeAPI_PlayListAPIUtils {
 }
 
 export class NavidromeAPI_SongAPIUtils {
+  static getSongPicUrl(coverArt: string): string {
+    return getCoverUrl(coverArt)
+  }
   /**
    * 搜索歌曲
    * @param keywords 搜索关键字

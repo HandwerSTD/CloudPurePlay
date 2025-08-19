@@ -73,7 +73,7 @@ export class PlayControl {
       await AVSessionUtils.bufferingState(0)
 
       if(!picUrl) {
-        picUrl = await SongAPIUtils.getSongPicUrl(song.id)
+        picUrl = await SongAPIUtils.getSongPicUrl(song)
       }
       await PlayControl.setPicUrl(picUrl)
       await PlayControl.saveCurrentSongInfo(mode, song, artists, picUrl)
@@ -300,5 +300,9 @@ export class PlayControl {
     playControlKV.put('CurrentImage', imgUrl)
     playControlKV.put('CurrentQueueIndex', PlayQueueUtils.currentQueueIndex)
     playControlKV.put('isPersonalFMState', NowPlayingStore.specialPlayMode)
+  }
+  static async clearCurrentSong() {
+    await PlayControl.stopMusic()
+    await PlayControl.saveCurrentSongInfo(0, Song_INITIAL, '','');
   }
 }

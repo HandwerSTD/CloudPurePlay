@@ -237,9 +237,9 @@ export class Navidrome_SongUtils {
     return NavidromeAPI_EntityParser.parseSongPlayResult(navidromeResult);
   }
 
-  static async getSongPicUrl(ids: string): Promise<string> {
+  static async getSongPicUrl(coverArtId: string): Promise<string> {
     // NavidromeAPI doesn't support getting song picture URL
-    throw Error('API Unimplemented - NavidromeAPI does not support getting song picture URL');
+    return NavidromeAPI_SongAPIUtils.getSongPicUrl(coverArtId)
   }
 
   static async getDailySongs(useCookie: boolean = true): Promise<DailySongRes[]> {
