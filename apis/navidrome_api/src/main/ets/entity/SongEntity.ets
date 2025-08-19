@@ -1,5 +1,5 @@
 /** 歌曲信息 */
-interface SongArtist {
+export interface SongArtist {
   id: string;
   name: string;
 }

@@ -7,11 +7,11 @@ import { getPlayLists, getPlayListSongs, deletePlayList, createPlayList, renameP
 import { searchSongs, getSongUrl, getLikeList, likeMusic } from '../api/songApi';
 import { getTopList } from '../api/topListApi';
 import { Album } from '../entity/AlbumEntity';
-import { PlayList } from '../entity/PlaylistEntity';
+import { PlayList, PlayListsResult } from '../entity/PlaylistEntity';
 import { Song } from '../entity/SongEntity';
 import { User } from '../entity/UserEntity';
 
-export class AlbumAPIUtils {
+export class NavidromeAPI_AlbumAPIUtils {
   /**
    * 获取专辑信息和歌曲
    * @param id 专辑ID
@@ -48,7 +48,7 @@ export class AlbumAPIUtils {
   
 }
 
-export class ArtistAPIUtils {
+export class NavidromeAPI_ArtistAPIUtils {
   /**
    * 获取歌手信息
    * @param id 歌手ID
@@ -68,7 +68,7 @@ export class ArtistAPIUtils {
   }
 }
 
-export class LoginAPIUtils {
+export class NavidromeAPI_LoginAPIUtils {
   /**
    * 获取登录状态
    * @param statePersistent 按需求，可传入回调对返回的 User 进行持久化
@@ -87,7 +87,7 @@ export class LoginAPIUtils {
   }
 }
 
-export class LyricAPIUtils {
+export class NavidromeAPI_LyricAPIUtils {
   /**
    * 获取歌词对象
    * @param id 歌曲ID
@@ -107,7 +107,7 @@ export class LyricAPIUtils {
 }
 
 
-export class PlayListAPIUtils {
+export class NavidromeAPI_PlayListAPIUtils {
   /**
    * 获取用户歌单列表
    * @param offset 偏移量
@@ -115,8 +115,8 @@ export class PlayListAPIUtils {
    * @param statePersistent 按需求，可传入回调对返回的 PlayList[] 进行持久化
    * @returns 歌单列表
    */
-  static async getPlayLists(user: User, statePersistent?: (val: PlayList[]) => void) {
-    const result = await getPlayLists(user);
+  static async getPlayLists(statePersistent?: (val: PlayList[]) => void): Promise<PlayListsResult> {
+    const result = await getPlayLists();
     // 添加红心歌单
     const likeList = await getLikeList()
     result.playlist.unshift({
@@ -126,6 +126,7 @@ export class PlayListAPIUtils {
       public: false,
     } as PlayList)
     statePersistent?.(result.playlist);
+    return result
   }
   /**
    * 获取歌单内歌曲列表
@@ -184,7 +185,7 @@ export class PlayListAPIUtils {
   }
 }
 
-export class SongAPIUtils {
+export class NavidromeAPI_SongAPIUtils {
   /**
    * 搜索歌曲
    * @param keywords 搜索关键字
@@ -211,9 +212,10 @@ export class SongAPIUtils {
    * @param statePersistent 按需求，可传入回调对返回的 string[] 进行持久化
    * @returns 喜欢的歌曲ID数组
    */
-  static async getLikeList(statePersistent?: (val: string[]) => void) {
+  static async getLikeList(statePersistent?: (val: string[]) => void): Promise<string[]> {
     const result = await getLikeList();
     statePersistent?.(result.map((val) => val.id.toString()))
+    return result.map((val) => val.id)
   }
   /**
    * 喜欢某首歌曲（不喜欢请直接在红心歌单中删除）
@@ -225,7 +227,7 @@ export class SongAPIUtils {
   }
 }
 
-export class TopListAPIUtils {
+export class NavidromeAPI_TopListAPIUtils {
   /**
    * 获取排行榜
    * @param statePersistent 按需求，可传入回调对返回的 TopListItem[] 进行持久化

@@ -7,8 +7,7 @@ interface GetPlaylistResponse {
   playlists: PlayList[];
 }
 
-export const getPlayLists = async (user: User): Promise<PlayListsResult> => {
-  if (!user?.id) return { more: false, playlist: [] };
+export const getPlayLists = async (): Promise<PlayListsResult> => {
 
   const response = await commonRequest<GetPlaylistResponse>({
     url: '/rest/getPlaylists.view',

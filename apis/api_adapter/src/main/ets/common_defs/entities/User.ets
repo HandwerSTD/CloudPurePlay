@@ -1,8 +1,8 @@
 interface Profile {
   userId:string
   nickname:string
-  avatarUrl:string
-  backgroundUrl:string
+  avatarUrl:ResourceStr
+  backgroundUrl:ResourceStr
   gender:number
 }
 

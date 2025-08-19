@@ -6,6 +6,7 @@
   "author": "",
   "license": "Apache-2.0",
   "dependencies": {
-    '@handwer/cloud_api': "file:../cloud_api"
+    '@handwer/cloud_api': "file:../cloud_api",
+    '@handwer/navidrome_api': "file:../navidrome_api"
   }
 }

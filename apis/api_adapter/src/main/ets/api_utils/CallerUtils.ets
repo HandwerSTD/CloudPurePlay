@@ -2,18 +2,29 @@ import { User } from '../common_defs/entities/User';
 import { PlayQueue } from '../common_defs/model/PlayQueue';
 import { COMMENT_TYPE, COMMENT_SORT_TYPE } from '../common_defs/model/Enum';
 import { InstanceSwitcher, INSTANCE_TYPE } from '../api_switcher/InstanceSwitcher';
-import { Album, DjRadio, PlayList, PersonalListItem, TopListItem, AlbumInfoResult,
-  SubAlbumResult, QualityType,
-  SongPlayResult, Song, ArtistInfo,
-  CommentResult, LyricResult,
-  PlayListsResult,
-  PlayListSong,
-  PlayListResult,
+import {
+  AlbumInfoResult,
+  Album,
+  SubAlbumResult,
+  ArtistInfo,
   ArtistItem,
+  CommentResult,
+  DjRadio,
   DjResult,
   DjProgramResult,
+  LyricResult,
+  PlayList,
+  PlayListResult,
+  PlayListSong,
+  PlayListsResult,
+  PersonalListItem,
   SearchReturn,
-  DailySongRes} from '../common_defs/ExportedEntities';
+  QualityType,
+  SongPlayResult,
+  DailySongRes,
+  Song,
+  TopListItem
+} from '../common_defs/ExportedEntities';
 import {
   CloudAPI_AlbumAPIUtils,
   CloudAPI_ArtistAPIUtils,
@@ -25,11 +36,23 @@ import {
   CloudAPI_SongAPIUtils,
   CloudAPI_TopListAPIUtils
 } from './cloud_api_adapter/CloudAPIExports';
+import {
+  Navidrome_AlbumUtils,
+  Navidrome_ArtistUtils,
+  Navidrome_LoginUtils,
+  Navidrome_LyricUtils,
+  Navidrome_PlayListUtils,
+  Navidrome_SongUtils,
+  Navidrome_TopListUtils
+} from './navidrome_api_adapter/NavidromeAPI_APIUtilsExports';
+
 
 export class AlbumAPIUtils {
   static async getAlbumInfo(id: string): Promise<AlbumInfoResult> {
     if (InstanceSwitcher.InstanceType === INSTANCE_TYPE.CLOUD) {
       return CloudAPI_AlbumAPIUtils.getAlbumInfo(Number.parseInt(id));
+    } else if (InstanceSwitcher.InstanceType === INSTANCE_TYPE.WEB_DAV) {
+      return Navidrome_AlbumUtils.getAlbumInfo(id);
     } else {
       throw Error('API Unimplemented')
     }
@@ -38,6 +61,8 @@ export class AlbumAPIUtils {
   static async getUserSubscribedAlbum(statePersistent?: (val: Album[]) => void): Promise<SubAlbumResult> {
     if (InstanceSwitcher.InstanceType === INSTANCE_TYPE.CLOUD) {
       return CloudAPI_AlbumAPIUtils.getUserSubscribedAlbum(statePersistent);
+    } else if (InstanceSwitcher.InstanceType === INSTANCE_TYPE.WEB_DAV) {
+      return Navidrome_AlbumUtils.getUserSubscribedAlbum(statePersistent);
     } else {
       throw Error('API Unimplemented')
     }
@@ -46,6 +71,8 @@ export class AlbumAPIUtils {
   static async searchAlbums(keywords: string): Promise<Album[]> {
     if (InstanceSwitcher.InstanceType === INSTANCE_TYPE.CLOUD) {
       return CloudAPI_AlbumAPIUtils.searchAlbums(keywords);
+    } else if (InstanceSwitcher.InstanceType === INSTANCE_TYPE.WEB_DAV) {
+      return Navidrome_AlbumUtils.searchAlbums(keywords);
     } else {
       throw Error('API Unimplemented')
     }
@@ -54,6 +81,8 @@ export class AlbumAPIUtils {
   static async subscribeAlbum(id: string, t: number): Promise<boolean> {
     if (InstanceSwitcher.InstanceType === INSTANCE_TYPE.CLOUD) {
       return CloudAPI_AlbumAPIUtils.subscribeAlbum(Number.parseInt(id), t);
+    } else if (InstanceSwitcher.InstanceType === INSTANCE_TYPE.WEB_DAV) {
+      return Navidrome_AlbumUtils.subscribeAlbum(id, t);
     } else {
       throw Error('API Unimplemented')
     }
@@ -64,6 +93,8 @@ export class ArtistAPIUtils {
   static async getArtistInfo(id: string): Promise<ArtistInfo> {
     if (InstanceSwitcher.InstanceType === INSTANCE_TYPE.CLOUD) {
       return CloudAPI_ArtistAPIUtils.getArtistInfo(Number.parseInt(id));
+    } else if (InstanceSwitcher.InstanceType === INSTANCE_TYPE.WEB_DAV) {
+      return Navidrome_ArtistUtils.getArtistInfo(id);
     } else {
       throw Error('API Unimplemented')
     }
@@ -72,6 +103,8 @@ export class ArtistAPIUtils {
   static async searchArtists(keywords: string, limit: number = 20): Promise<ArtistItem[]> {
     if (InstanceSwitcher.InstanceType === INSTANCE_TYPE.CLOUD) {
       return CloudAPI_ArtistAPIUtils.searchArtists(keywords, limit);
+    } else if (InstanceSwitcher.InstanceType === INSTANCE_TYPE.WEB_DAV) {
+      return Navidrome_ArtistUtils.searchArtists(keywords, limit);
     } else {
       throw Error('API Unimplemented')
     }
@@ -149,6 +182,8 @@ export class LoginAPIUtils {
   static async getLoginStatus(statePersistent?: (val: User) => void): Promise<boolean> {
     if (InstanceSwitcher.InstanceType === INSTANCE_TYPE.CLOUD) {
       return CloudAPI_LoginAPIUtils.getLoginStatus(statePersistent);
+    } else if (InstanceSwitcher.InstanceType === INSTANCE_TYPE.WEB_DAV) {
+      return Navidrome_LoginUtils.getLoginStatus(statePersistent);
     } else {
       throw Error('API Unimplemented')
     }
@@ -157,6 +192,8 @@ export class LoginAPIUtils {
   static async logOut(statePersistent?: (val: User) => void): Promise<boolean> {
     if (InstanceSwitcher.InstanceType === INSTANCE_TYPE.CLOUD) {
       return CloudAPI_LoginAPIUtils.logOut(statePersistent);
+    } else if (InstanceSwitcher.InstanceType === INSTANCE_TYPE.WEB_DAV) {
+      return Navidrome_LoginUtils.logOut(statePersistent);
     } else {
       throw Error('API Unimplemented')
     }
@@ -187,6 +224,8 @@ export class LyricAPIUtils {
   static async getLyric(id: string): Promise<LyricResult> {
     if (InstanceSwitcher.InstanceType === INSTANCE_TYPE.CLOUD) {
       return CloudAPI_LyricAPIUtils.getLyric(Number.parseInt(id));
+    } else if (InstanceSwitcher.InstanceType === INSTANCE_TYPE.WEB_DAV) {
+      return Navidrome_LyricUtils.getLyric(id);
     } else {
       throw Error('API Unimplemented')
     }
@@ -195,6 +234,8 @@ export class LyricAPIUtils {
   static async getLyricString(id: string): Promise<string> {
     if (InstanceSwitcher.InstanceType === INSTANCE_TYPE.CLOUD) {
       return CloudAPI_LyricAPIUtils.getLyricString(Number.parseInt(id));
+    } else if (InstanceSwitcher.InstanceType === INSTANCE_TYPE.WEB_DAV) {
+      return Navidrome_LyricUtils.getLyricString(id);
     } else {
       throw Error('API Unimplemented')
     }
@@ -205,6 +246,9 @@ export class PlayListAPIUtils {
   static async getPlayLists(offset: number, user: User, statePersistent?: (val: PlayList[]) => void): Promise<PlayListResult> {
     if (InstanceSwitcher.InstanceType === INSTANCE_TYPE.CLOUD) {
       return CloudAPI_PlayListAPIUtils.getPlayLists(offset, user, statePersistent);
+    } else if (InstanceSwitcher.InstanceType === INSTANCE_TYPE.WEB_DAV) {
+      // NavidromeAPI doesn't support offset parameter
+      return Navidrome_PlayListUtils.getPlayLists(offset, user, statePersistent);
     } else {
       throw Error('API Unimplemented')
     }
@@ -213,6 +257,9 @@ export class PlayListAPIUtils {
   static async getPlayListSongs(id: string, limit: number, offset: number, usetimestamp: boolean = true): Promise<PlayListSong[]> {
     if (InstanceSwitcher.InstanceType === INSTANCE_TYPE.CLOUD) {
       return CloudAPI_PlayListAPIUtils.getPlayListSongs(Number.parseInt(id), limit, offset, usetimestamp);
+    } else if (InstanceSwitcher.InstanceType === INSTANCE_TYPE.WEB_DAV) {
+      // NavidromeAPI doesn't support limit, offset, usetimestamp parameters
+      return Navidrome_PlayListUtils.getPlayListSongs(id, limit, offset, usetimestamp);
     } else {
       throw Error('API Unimplemented')
     }
@@ -221,6 +268,8 @@ export class PlayListAPIUtils {
   static async PlayListOperation(op: 'add' | 'del', pid: string, tracks: string): Promise<boolean> {
     if (InstanceSwitcher.InstanceType === INSTANCE_TYPE.CLOUD) {
       return CloudAPI_PlayListAPIUtils.PlayListOperation(op, Number.parseInt(pid), Number.parseInt(tracks));
+    } else if (InstanceSwitcher.InstanceType === INSTANCE_TYPE.WEB_DAV) {
+      return Navidrome_PlayListUtils.PlayListOperation(op, pid, tracks);
     } else {
       throw Error('API Unimplemented')
     }
@@ -253,6 +302,8 @@ export class PlayListAPIUtils {
   static async deletePlayList(id: string): Promise<boolean> {
     if (InstanceSwitcher.InstanceType === INSTANCE_TYPE.CLOUD) {
       return CloudAPI_PlayListAPIUtils.deletePlayList(Number.parseInt(id));
+    } else if (InstanceSwitcher.InstanceType === INSTANCE_TYPE.WEB_DAV) {
+      return Navidrome_PlayListUtils.deletePlayList(id);
     } else {
       throw Error('API Unimplemented')
     }
@@ -261,6 +312,9 @@ export class PlayListAPIUtils {
   static async createPlayList(name: string, isPrivacy: boolean): Promise<boolean> {
     if (InstanceSwitcher.InstanceType === INSTANCE_TYPE.CLOUD) {
       return CloudAPI_PlayListAPIUtils.createPlayList(name, isPrivacy);
+    } else if (InstanceSwitcher.InstanceType === INSTANCE_TYPE.WEB_DAV) {
+      // NavidromeAPI doesn't support isPrivacy parameter
+      return Navidrome_PlayListUtils.createPlayList(name, isPrivacy);
     } else {
       throw Error('API Unimplemented')
     }
@@ -269,6 +323,8 @@ export class PlayListAPIUtils {
   static async renamePlaylist(pid: string, newName: string): Promise<boolean> {
     if (InstanceSwitcher.InstanceType === INSTANCE_TYPE.CLOUD) {
       return CloudAPI_PlayListAPIUtils.renamePlaylist(Number.parseInt(pid), newName);
+    } else if (InstanceSwitcher.InstanceType === INSTANCE_TYPE.WEB_DAV) {
+      return Navidrome_PlayListUtils.renamePlaylist(newName, pid);
     } else {
       throw Error('API Unimplemented')
     }
@@ -287,6 +343,8 @@ export class SongAPIUtils {
   static async searchSongs(keywords: string, offset: number, limit: number = 30): Promise<SearchReturn> {
     if (InstanceSwitcher.InstanceType === INSTANCE_TYPE.CLOUD) {
       return CloudAPI_SongAPIUtils.searchSongs(keywords, offset, limit);
+    } else if (InstanceSwitcher.InstanceType === INSTANCE_TYPE.WEB_DAV) {
+      return Navidrome_SongUtils.searchSongs(keywords, offset, limit);
     } else {
       throw Error('API Unimplemented')
     }
@@ -295,6 +353,9 @@ export class SongAPIUtils {
   static async getSongUrl(id: string, quality: QualityType, isLogged: boolean): Promise<SongPlayResult> {
     if (InstanceSwitcher.InstanceType === INSTANCE_TYPE.CLOUD) {
       return CloudAPI_SongAPIUtils.getSongUrl(Number.parseInt(id), quality, isLogged);
+    } else if (InstanceSwitcher.InstanceType === INSTANCE_TYPE.WEB_DAV) {
+      // NavidromeAPI doesn't support quality and isLogged parameters
+      return Navidrome_SongUtils.getSongUrl(id, quality, isLogged);
     } else {
       throw Error('API Unimplemented')
     }
@@ -319,6 +380,8 @@ export class SongAPIUtils {
   static async getLikeList(user: User, statePersistent?: (val: string[]) => void): Promise<string[]> {
     if (InstanceSwitcher.InstanceType === INSTANCE_TYPE.CLOUD) {
       return CloudAPI_SongAPIUtils.getLikeList(user, statePersistent);
+    } else if (InstanceSwitcher.InstanceType === INSTANCE_TYPE.WEB_DAV) {
+      return Navidrome_SongUtils.getLikeList(user, statePersistent);
     } else {
       throw Error('API Unimplemented')
     }
@@ -327,6 +390,8 @@ export class SongAPIUtils {
   static async likeMusic(id: string): Promise<boolean> {
     if (InstanceSwitcher.InstanceType === INSTANCE_TYPE.CLOUD) {
       return CloudAPI_SongAPIUtils.likeMusic(Number.parseInt(id));
+    } else if (InstanceSwitcher.InstanceType === INSTANCE_TYPE.WEB_DAV) {
+      return Navidrome_SongUtils.likeMusic(id);
     } else {
       throw Error('API Unimplemented')
     }
@@ -358,6 +423,8 @@ export class TopListAPIUtils {
   static async getTopList(statePersistent?: (val: TopListItem[]) => void): Promise<TopListItem[]> {
     if (InstanceSwitcher.InstanceType === INSTANCE_TYPE.CLOUD) {
       return CloudAPI_TopListAPIUtils.getTopList(statePersistent);
+    } else if (InstanceSwitcher.InstanceType === INSTANCE_TYPE.WEB_DAV) {
+      return Navidrome_TopListUtils.getTopList(statePersistent);
     } else {
       throw Error('API Unimplemented')
     }
