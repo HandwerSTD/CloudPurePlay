@@ -251,8 +251,8 @@ export class Navidrome_SongUtils {
     return NavidromeAPI_SongAPIUtils.getLikeList(statePersistent);
   }
 
-  static async likeMusic(id: string): Promise<boolean> {
-    return NavidromeAPI_SongAPIUtils.likeMusic(id);
+  static async likeMusic(id: string, setLike: boolean): Promise<boolean> {
+    return NavidromeAPI_SongAPIUtils.likeMusic(id, setLike);
   }
 
   static async setHeartMode(

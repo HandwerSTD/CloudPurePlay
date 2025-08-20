@@ -362,8 +362,8 @@ export class SongAPIUtils {
    * @param id 歌曲ID
    * @returns 是否操作成功
    */
-  static async likeMusic(id: number) {
-    return likeMusic(id);
+  static async likeMusic(id: number, setLike: boolean) {
+    return likeMusic(id, setLike);
   }
   /**
    * 设置心动模式

@@ -26,7 +26,8 @@ import {
   Navidrome_User,
   Navidrome_LyricResult,
   Navidrome_SongArtist,
-  NavidromeAPI_AlbumAPIUtils
+  NavidromeAPI_AlbumAPIUtils,
+  NavidromeAPI_SongAPIUtils
 } from '@handwer/navidrome_api';
 
 // Import APIAdapter entities
@@ -141,7 +142,7 @@ export class NavidromeAPI_EntityParser {
     return {
       code: 200, // 默认成功码
       resourceState: true, // 默认true
-      songs: navidromeResult.songs.map((song): PlayListSong => ({
+      songs: navidromeResult.song.map((song): PlayListSong => ({
         id: song.id,
         ar: [{
           id: song.artistId,
@@ -152,7 +153,7 @@ export class NavidromeAPI_EntityParser {
             id: song.artistId,
             name: song.artist
           }],
-          picUrl: song.coverArt ?? '',
+          picUrl: NavidromeAPI_SongAPIUtils.getSongPicUrl(song.coverArt!) ?? '',
           name: song.album,
           id: song.albumId,
           size: 0 // 默认值
@@ -163,7 +164,7 @@ export class NavidromeAPI_EntityParser {
       })),
       album: {
         company: '', // Navidrome没有公司信息
-        picUrl: navidromeResult.coverArt ?? '',
+        picUrl: NavidromeAPI_SongAPIUtils.getSongPicUrl(navidromeResult.coverArt!) ?? '',
         description: '', // Navidrome没有描述信息
         name: navidromeResult.name,
         id: navidromeResult.id

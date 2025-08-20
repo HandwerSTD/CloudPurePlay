@@ -1,6 +1,6 @@
 import { AlbumSong } from "../entity/AlbumEntity";
 import { Song, SongSearchResult, SongPlayResult } from "../entity/SongEntity";
-import commonRequest from "./request/RequestUtil";
+import commonRequest, { generateRequestTokenSync } from "./request/RequestUtil";
 
 /**
  * 搜索歌曲
@@ -26,15 +26,20 @@ export const searchSongs = async (
 };
 
 export const getSongUrl = async (id: string): Promise<SongPlayResult> => {
-  return commonRequest<SongPlayResult>({
-    url: '/rest/stream.view',
-    params: { id, f: 'json' }
-  });
+  const params = generateRequestTokenSync() as Record<string, string>
+  const result = `${params['baseUrl']}/rest/stream.view?u=${params['u']}&t=${params['t']}&s=${params['s']}&f=${params['f']}&v=${params['v']}&c=${params['c']}&id=${id}`;
+  return {
+    path: result
+  }
 };
 
 /** Navidrome 收藏歌曲列表 */
+interface GetStarredSong_Inner {
+  song: Song[];
+}
+
 interface GetStarredSongsResponse {
-  musicDirectory: Song[] | null;
+  starred: GetStarredSong_Inner
 }
 
 export const getLikeList = async (): Promise<Song[]> => {
@@ -43,7 +48,7 @@ export const getLikeList = async (): Promise<Song[]> => {
     params: { type: 'song', f: 'json' }
   });
 
-  return response.musicDirectory ?? [];
+  return response.starred.song ?? [];
 };
 interface StarResponse {
   status: string;
@@ -59,7 +64,9 @@ export const likeMusic = async (songId: string, add: boolean = true): Promise<bo
 };
 
 export const getCoverUrl = (coverArtId: string, size: number = 500): string => {
-  return `/rest/getCoverArt.view?id=${coverArtId}&size=${size}`;
+  const params = generateRequestTokenSync() as Record<string, string>
+  if (!coverArtId) return '';
+  return `${params['baseUrl']}/rest/getCoverArt?u=${params['u']}&t=${params['t']}&s=${params['s']}&f=${params['f']}&v=${params['v']}&c=${params['c']}&id=${coverArtId}&size=${size}`;
 };
 
 /**
@@ -68,18 +75,5 @@ export const getCoverUrl = (coverArtId: string, size: number = 500): string => {
  * @param size - 尺寸，可选，默认 500
  */
 export const getSongCoverUrl = (song: Song, size: number = 500): string => {
-  const coverArtId = song.album?.coverArt;
-  if (!coverArtId) return '';
-  return `/rest/getCoverArt.view?id=${coverArtId}&size=${size}`;
-};
-
-/**
- * 获取歌曲的专辑封面 URL
- * @param song - Song 对象
- * @param size - 尺寸，可选，默认 500
- */
-export const getAlbumSongCoverUrl = (song: AlbumSong, size: number = 500): string => {
-  const coverArtId = song.coverArt;
-  if (!coverArtId) return '';
-  return `/rest/getCoverArt.view?id=${coverArtId}&size=${size}`;
+  return getCoverUrl(song.album.coverArt!, size)
 };

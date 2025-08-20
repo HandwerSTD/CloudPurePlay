@@ -149,10 +149,10 @@ interface LikeMusicResponse {
  * @param id
  * @returns
  */
-export const likeMusic = async (id: number): Promise<boolean> => {
+export const likeMusic = async (id: number, setLike: boolean): Promise<boolean> => {
   const response = await commonRequest<LikeMusicResponse>({
     url: '/like',
-    params: { id, timestamp: new Date().getTime() }
+    params: { id, timestamp: new Date().getTime(), like: setLike }
   })
   return response.code === 200 ? true : false
 }

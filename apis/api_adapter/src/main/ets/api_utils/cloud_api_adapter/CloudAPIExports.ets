@@ -251,8 +251,8 @@ export class CloudAPI_SongAPIUtils {
     return cloudResult.map(id => id.toString());
   }
 
-  static async likeMusic(id: number): Promise<boolean> {
-    return Cloud_SongAPIUtils.likeMusic(id);
+  static async likeMusic(id: number, setLike: boolean): Promise<boolean> {
+    return Cloud_SongAPIUtils.likeMusic(id, setLike);
   }
 
   static async setHeartMode(

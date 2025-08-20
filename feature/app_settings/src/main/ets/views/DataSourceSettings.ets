@@ -139,7 +139,7 @@ export struct NavidromeAPI_Source {
       Button('set config')
         .onClick(() => {
           const ctx = {
-            baseUrl: "http://192.168.1.13:4533/",
+            baseUrl: "http://192.168.1.13:4533",
             username: "handwer",
             password: '123456',
           } as NavidromeRequestContext

@@ -4,7 +4,7 @@ import { getLoginStatus, logOut } from '../api/loginApi';
 import { getLyric, getLyricString } from '../api/LyricApi';
 import { getPlayLists, getPlayListSongs, deletePlayList, createPlayList, renamePlayList,
   playListOperation } from '../api/playListApi';
-import { searchSongs, getSongUrl, getLikeList, likeMusic, getSongCoverUrl, getCoverUrl } from '../api/songApi';
+import { searchSongs, getSongUrl, getLikeList, likeMusic, getCoverUrl } from '../api/songApi';
 import { getTopList } from '../api/topListApi';
 import { Album } from '../entity/AlbumEntity';
 import { PlayList, PlayListsResult } from '../entity/PlaylistEntity';
@@ -228,8 +228,8 @@ export class NavidromeAPI_SongAPIUtils {
    * @param id 歌曲ID
    * @returns 是否操作成功
    */
-  static async likeMusic(id: string) {
-    return likeMusic(id);
+  static async likeMusic(id: string, setLike: boolean) {
+    return likeMusic(id, setLike);
   }
 }
 

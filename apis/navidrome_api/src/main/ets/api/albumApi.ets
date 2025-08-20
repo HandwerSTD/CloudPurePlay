@@ -99,5 +99,5 @@ export const getAlbumCoverUrl = (album: Album, size: number = 500): string => {
   const coverArtId = album.coverArt;
   const params = generateRequestTokenSync() as Record<string, string>
   if (!coverArtId) return '';
-  return `${params['baseUrl']}rest/getCoverArt?u=${params['u']}&t=${params['t']}&s=${params['s']}&f=${params['f']}&v=${params['v']}&c=${params['c']}&id=${coverArtId}&size=${size}`;
+  return `${params['baseUrl']}/rest/getCoverArt?u=${params['u']}&t=${params['t']}&s=${params['s']}&f=${params['f']}&v=${params['v']}&c=${params['c']}&id=${coverArtId}&size=${size}`;
 };

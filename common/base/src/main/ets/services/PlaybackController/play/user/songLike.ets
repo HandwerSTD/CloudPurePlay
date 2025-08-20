@@ -50,7 +50,7 @@ export class SongLike {
       } else if(!isLiked) { // 未喜欢
         let currentSong = NowPlayingStore.currentSong
         const result = await SongAPIUtils.likeMusic(currentSong.id)
-        NowPlayingStore.isLiked = !isLiked
+        if (result) NowPlayingStore.isLiked = !isLiked
         // 喜欢列表
         await SongAPIUtils.getLikeList(UserStore.user, (val) => {
           if (val) store.likeList = new Set(val)
@@ -59,9 +59,9 @@ export class SongLike {
         toastCallback?.($r('sys.symbol.heart_fill'), result ? '已收藏至【我喜欢的音乐】' : '收藏失败')
       } else { // 已喜欢
         let currentSong = NowPlayingStore.currentSong
-        let userPlayLists = UserStore.userPlaylists
-        const result = await PlayListAPIUtils.PlayListOperation('del', userPlayLists[0].id, currentSong.id)
-        NowPlayingStore.isLiked = !isLiked
+        // const result = await PlayListAPIUtils.PlayListOperation('del', userPlayLists[0].id, currentSong.id)
+        const result = await SongAPIUtils.likeMusic(currentSong.id, false)
+        if (result) NowPlayingStore.isLiked = !isLiked
         // 喜欢列表
         await SongAPIUtils.getLikeList(UserStore.user, (val) => {
           store.likeList = new Set(val ?? store.likeList)
@@ -70,7 +70,7 @@ export class SongLike {
         toastCallback?.($r('sys.symbol.heart'), result ? '取消喜欢当前歌曲' : '取消喜欢失败')
       }
       EmitterUtil.post(SCEmitter.PlaylistContentUpdate, {
-        pid: UserStore.userPlaylists[0].id,
+        pid: UserStore.userPlaylists[0]?.id ?? '',
         songId: NowPlayingStore.currentSong.id,
         songInfo: SongConvertUtils.NormalSong2PlaylistSong(NowPlayingStore.currentSong),
         operation: !isLiked ? 'add' : 'del' // 曾经未喜欢，就是加歌曲
@@ -103,9 +103,7 @@ export class SongLike {
         })
         toastCallback?.($r('sys.symbol.heart_fill'), result ? '已收藏至【我喜欢的音乐】' : '收藏失败')
       } else { // 已喜欢
-        let currentSong = NowPlayingStore.currentSong
-        let userPlayLists = UserStore.userPlaylists
-        const result = await PlayListAPIUtils.PlayListOperation('del', userPlayLists[0].id, sid)
+        const result = await SongAPIUtils.likeMusic(sid, false)
         // 喜欢列表
         await SongAPIUtils.getLikeList(UserStore.user, (val) => {
           store.likeList = new Set(val ?? store.likeList)

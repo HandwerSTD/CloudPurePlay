@@ -41,6 +41,6 @@ export class ServiceInitUtils {
     Settings.put(SCPref.apiInstanceType, newInstanceType);
     Settings.put(SCPref.currentAPIConfig, newRequestContext);
     UserManager.setUserInfo(newUser, newPasswd);
-    await UserManager.init();
+    await ServiceInitUtils.init()
   }
 }

@@ -49,6 +49,7 @@ class AVPlayerUtils {
     this.avPlayer?.off('audioOutputDeviceChangeWithInfo')
     this.avPlayer?.off('audioInterrupt')
     this.avPlayer?.off('seekDone')
+    this.avPlayer = null
   }
 
   async setUrl(url: string) {

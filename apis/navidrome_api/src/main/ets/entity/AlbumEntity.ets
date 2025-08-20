@@ -12,7 +12,7 @@ export interface Album {
 
 /** 专辑详细信息，包括歌曲列表 */
 export interface AlbumInfoResult extends Album {
-  songs: AlbumSong[];           // 专辑下的歌曲列表
+  song: AlbumSong[];           // 专辑下的歌曲列表
 }
 
 /** 歌曲信息 */
@@ -50,7 +50,7 @@ export const AlbumInfoResult_INITIAL: AlbumInfoResult = {
   name: '',
   artist: '',
   artistId: '',
-  songs: []
+  song: []
 };
 
 export const SubAlbumResult_INITIAL: SubAlbumResult = {

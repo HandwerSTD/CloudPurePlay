@@ -355,7 +355,6 @@ export class SongAPIUtils {
     if (InstanceSwitcher.InstanceType === INSTANCE_TYPE.CLOUD) {
       return CloudAPI_SongAPIUtils.getSongUrl(Number.parseInt(id), quality, isLogged);
     } else if (InstanceSwitcher.InstanceType === INSTANCE_TYPE.NAVIDROME) {
-      // NavidromeAPI doesn't support quality and isLogged parameters
       return Navidrome_SongUtils.getSongUrl(id, quality, isLogged);
     } else {
       throw Error('API Unimplemented')
@@ -390,11 +389,11 @@ export class SongAPIUtils {
     }
   }
 
-  static async likeMusic(id: string): Promise<boolean> {
+  static async likeMusic(id: string, setLike: boolean = true): Promise<boolean> {
     if (InstanceSwitcher.InstanceType === INSTANCE_TYPE.CLOUD) {
-      return CloudAPI_SongAPIUtils.likeMusic(Number.parseInt(id));
+      return CloudAPI_SongAPIUtils.likeMusic(Number.parseInt(id), setLike);
     } else if (InstanceSwitcher.InstanceType === INSTANCE_TYPE.NAVIDROME) {
-      return Navidrome_SongUtils.likeMusic(id);
+      return Navidrome_SongUtils.likeMusic(id, setLike);
     } else {
       throw Error('API Unimplemented')
     }
