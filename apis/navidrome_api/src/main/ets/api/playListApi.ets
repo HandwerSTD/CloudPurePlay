@@ -3,8 +3,12 @@ import { Song } from "../entity/SongEntity";
 import { User } from "../entity/UserEntity";
 import commonRequest from "./request/RequestUtil";
 
+interface GetPlaylistResponse_Inner {
+  playlist: PlayList[];
+}
+
 interface GetPlaylistResponse {
-  playlists: PlayList[];
+  playlists: GetPlaylistResponse_Inner
 }
 
 export const getPlayLists = async (): Promise<PlayListsResult> => {
@@ -16,12 +20,12 @@ export const getPlayLists = async (): Promise<PlayListsResult> => {
 
   return {
     more: false,
-    playlist: response.playlists ?? []
+    playlist: response.playlists.playlist ?? []
   };
 };
 
 interface GetPlaylistSongResponse_Inner {
-  song: Song[];
+  entry: Song[];
 }
 
 interface GetPlaylistSongResponse {
@@ -34,7 +38,7 @@ export const getPlayListSongs = async (playlistId: string): Promise<Song[]> => {
     params: { id: playlistId, f: 'json' }
   });
 
-  return response.playlist?.song ?? [];
+  return response.playlist?.entry ?? [];
 };
 
 interface BasicResponse {
@@ -73,21 +77,39 @@ export const playListOperation = async (
   songIds: string[],
   add: boolean
 ): Promise<boolean> => {
-  const params: Record<string, Object> = {
-    "playlistId": playlistId,
-    "songId": songIds.join(','),
-    "f": 'json'
-  };
+  if (add) {
+    const params: Record<string, Object> = {
+      "playlistId": playlistId,
+      "songIdToAdd": songIds,
+      "f": 'json'
+    };
+    const response = await commonRequest<BasicResponse>({
+      url: '/rest/updatePlaylist.view',
+      params
+    });
+    return response.status === 'ok';
+  } else {
+    interface _P {
+      id: string,
+      index: number
+    }
+    // 先获取歌单详情
+    const playlist = await getPlayListSongs(playlistId);
+    const toRemove = playlist.map((song, index) => ({
+      id: song.id, index: index
+    } as _P))
+      .filter((val) => songIds.includes(val.id))
+      .map((val) => val.index)
 
-  // 如果是删除操作，添加 op=delete
-  if (!add) {
-    params.op = 'delete';
+    const response = await commonRequest<BasicResponse>({
+      url: '/rest/updatePlaylist.view',
+      params: {
+        playlistId,
+        songIndexToRemove: toRemove,
+        f: 'json'
+      }
+    });
+    return response.status === 'ok'
   }
 
-  const response = await commonRequest<BasicResponse>({
-    url: '/rest/updatePlaylist.view',
-    params
-  });
-
-  return response.status === 'ok';
 };

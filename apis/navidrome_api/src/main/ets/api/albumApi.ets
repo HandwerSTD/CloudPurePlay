@@ -78,8 +78,8 @@ interface SubscribeAlbumResponse {
 export const subscribeAlbum = async (id: string, t: number): Promise<boolean> => {
   try {
     const response = await commonRequest<SubscribeAlbumResponse>({
-      url: '/rest/star.view',
-      params: { id, type: 'album', add: t === 1 ? true : false, f: 'json' }
+      url: t === 1 ? '/rest/star.view' : '/rest/unstar.view',
+      params: { id, type: 'album', f: 'json' }
     });
     if (response.status === 'ok') return true;
     ToastUtil.showToast(response.message || '操作失败');

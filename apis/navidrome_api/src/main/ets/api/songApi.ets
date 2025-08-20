@@ -56,8 +56,8 @@ interface StarResponse {
 
 export const likeMusic = async (songId: string, add: boolean = true): Promise<boolean> => {
   const response = await commonRequest<StarResponse>({
-    url: '/rest/star.view',
-    params: { id: songId, type: 'song', add, f: 'json' }
+    url: add ? '/rest/star.view' : '/rest/unstar.view',
+    params: { id: songId, type: 'song', f: 'json' }
   });
 
   return response.status === 'ok';
@@ -75,5 +75,5 @@ export const getCoverUrl = (coverArtId: string, size: number = 500): string => {
  * @param size - 尺寸，可选，默认 500
  */
 export const getSongCoverUrl = (song: Song, size: number = 500): string => {
-  return getCoverUrl(song.album.coverArt!, size)
+  return getCoverUrl(song.coverArt!, size)
 };

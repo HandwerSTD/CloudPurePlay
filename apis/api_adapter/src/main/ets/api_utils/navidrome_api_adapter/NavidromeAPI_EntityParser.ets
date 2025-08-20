@@ -198,16 +198,16 @@ export class NavidromeAPI_EntityParser {
   static parseSong(navidromeSong: Navidrome_Song): Song {
     return {
       id: navidromeSong.id,
-      name: navidromeSong.name,
-      artists: NavidromeAPI_EntityParser.parseArtists(navidromeSong.artists),
+      name: navidromeSong.title,
+      artists: [NavidromeAPI_EntityParser.parseArtist({id: navidromeSong.artistId, name: navidromeSong.artist})],
       album: {
-        artists: NavidromeAPI_EntityParser.parseArtists(navidromeSong.artists),
-        picUrl: navidromeSong.album.coverArt ?? '',
-        name: navidromeSong.album.name,
-        id: navidromeSong.album.id,
+        artists: [NavidromeAPI_EntityParser.parseArtist({id: navidromeSong.artistId, name: navidromeSong.artist})],
+        picUrl: navidromeSong.coverArt ?? '',
+        name: navidromeSong.album,
+        id: navidromeSong.albumId,
         size: 0 // 默认值
       },
-      duration: navidromeSong.duration * 1000, // 转换为毫秒
+      duration: navidromeSong.duration! * 1000, // 转换为毫秒
       alias: [], // Navidrome没有别名
       fee: 0 // 默认免费
     };
@@ -252,7 +252,7 @@ export class NavidromeAPI_EntityParser {
    */
   static parsePlayList(navidromePlayList: Navidrome_PlayList): PlayList {
     return {
-      coverImgUrl: navidromePlayList.coverArt ?? '',
+      coverImgUrl: NavidromeAPI_SongAPIUtils.getSongPicUrl(navidromePlayList.coverArt ?? '') ?? '',
       name: navidromePlayList.name,
       id: navidromePlayList.id,
       playCount: 0, // Navidrome没有播放次数统计
@@ -283,19 +283,19 @@ export class NavidromeAPI_EntityParser {
    * 转换PlayListSongsResult到PlayListSong数组
    */
   static parsePlayListSongs(navidromeResult: Navidrome_PlayListSongsResult): PlayListSong[] {
-    return navidromeResult.songs.map((song): PlayListSong => ({
-      id: song.id,
-      ar: NavidromeAPI_EntityParser.parseArtists(song.artists),
+    return navidromeResult.songs.map((navidromeSong): PlayListSong => ({
+      id: navidromeSong.id,
+      name: navidromeSong.title,
+      dt: navidromeSong.duration! * 1000,
       al: {
-        artists: NavidromeAPI_EntityParser.parseArtists(song.artists),
-        picUrl: song.album.coverArt ?? '',
-        name: song.album.name,
-        id: song.album.id,
-        size: 0 // 默认值
+        name: navidromeSong.albumId,
+        id: navidromeSong.id,
+        size: -1,
+        artists: [{id: navidromeSong.artistId, name: navidromeSong.artist}],
+        picUrl: NavidromeAPI_SongAPIUtils.getSongPicUrl(navidromeSong.coverArt ?? ''),
       },
-      dt: song.duration * 1000, // 转换为毫秒
-      name: song.name,
-      fee: 0 // 默认免费
+      ar: [{id: navidromeSong.artistId, name: navidromeSong.artist}],
+      fee: 0
     }));
   }
 

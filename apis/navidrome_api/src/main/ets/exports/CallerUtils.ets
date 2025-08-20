@@ -126,6 +126,7 @@ export class NavidromeAPI_PlayListAPIUtils {
       id: '-1',
       name: '我喜欢的音乐',
       songCount: likeList.length,
+      coverArt: likeList[0].coverArt,
       public: false,
     } as PlayList)
     statePersistent?.(result.playlist);
