@@ -31,6 +31,8 @@ export class SCApp {
   static settingsSheet: string = 'settingsSheet'
   static settingsPageStack: string = 'settingsPageStack'
   static showAddToPlaylistSheet = 'showAddToPlaylistSheet'
+  static registerBackButton = 'registerBackButton'
+  static shouldDisableTab = 'shouldDisableTab'
 }
 
 export class SCGlobal {

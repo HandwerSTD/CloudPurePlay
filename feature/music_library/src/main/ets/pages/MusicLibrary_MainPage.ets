@@ -5,7 +5,8 @@ import { HDS_TITLE_CONFIG_STYLE, LightUpContainer, LightUpRoundedButton, LightUp
   DialogUtils,
   SnackBarUtils, OverrideLightUpStat,
   LightUpCommonButton,
-  LightUpIconTextButton} from "@handwer/ui_components"
+  LightUpIconTextButton,
+  BackButtonUtils} from "@handwer/ui_components"
 import { hdsEffect, HdsNavigation, HdsNavigationAttribute, HdsNavigationTitleMode,
   HdsSnackBar,
   IconStyleMode } from "@kit.UIDesignKit"
@@ -22,11 +23,11 @@ export function genId_MusicLibraryPlaylist(id: string) {
 
 @ComponentV2
 export struct MainPage {
-  @Consumer(SCApp.exploreSheet) exploreSheet: boolean = false
+  @Consumer(SCApp.shouldDisableTab) shouldDisableTab: boolean = false
+
   @Consumer(SCApp.explorePageStack) pageStack: NavPathStack = new NavPathStack()
   @Consumer(SCApp.settingsSheet) settingsSheet: boolean = false
   @Local gridColumnNum: number = 4
-  @Local pageOpacity: number = 1
   user = UserStore
   snack = new HdsSnackBar(this.getUIContext())
 
@@ -312,10 +313,32 @@ export struct MainPage {
     .backdropBlur(this.showSearchPage ? 128 : 0)
     .animation({duration: 300})
     .hitTestBehavior(this.showSearchPage ? HitTestMode.Default : HitTestMode.None)
-}
+  }
 
   aboutToAppear(): void {
     this.setData()
+    BackButtonUtils.registerBackButton({
+      id: 'musicLibrary_showSearch',
+      judge: () => {
+        return this.showSearchPage
+      },
+      action: () => {
+        this.showSearchPage = false
+      }
+    })
+    BackButtonUtils.registerBackButton({
+      id: 'musicLibrary_modifyPlaylist',
+      judge: () => {
+        return this.modifyPlaylist
+      },
+      action: () => {
+        this.modifyPlaylist = false
+      }
+    })
+  }
+  aboutToDisappear(): void {
+    BackButtonUtils.unregisterBackButton('musicLibrary_showSearch')
+    BackButtonUtils.unregisterBackButton('musicLibrary_modifyPlaylist')
   }
 
   @Monitor('user.userPlaylists')
@@ -323,38 +346,19 @@ export struct MainPage {
     this.playlistDataSource.setData(this.user.userPlaylists)
     this.playlistDataSource.notifyDataReload()
   }
+  @Monitor('showSearchPage')
+  onShowSearch() {
+    this.shouldDisableTab = this.showSearchPage
+  }
 
   build() {
-    NavDestination() {
-      Row() {
-        Stack() {
-          this.MusicLibraryMainPage()
-          this.MusicLibrarySearch()
-        }
+    Row() {
+      Stack() {
+        this.MusicLibraryMainPage()
+        this.MusicLibrarySearch()
       }
-      .height('100%')
-    }.hideTitleBar(true)
-    .backgroundColor(Color.Transparent)
-    .onShown(() => {
-      this.pageOpacity = 1
-    })
-    .onWillHide(() => {
-      this.pageOpacity = 0
-    })
-    .onBackPressed(() => {
-      if (this.modifyPlaylist) {
-        this.modifyPlaylist = false;
-        return true;
-      }
-      if (this.showSearchPage) {
-        this.showSearchPage = false;
-        return true;
-      }
-      this.exploreSheet = false;
-      return true;
-    })
-    .opacity(this.pageOpacity)
-    .animation({duration: ResponsiveUtil.chooseByWidth([300, 200, 200])})
+    }
+    .height('100%')
   }
 
   onPlayListItemClicked(index: number) {
