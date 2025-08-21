@@ -5,7 +5,8 @@ import { getUserDjSubscribeList, getDjPrograms, putDjRadioInQueue, getDjRadioLis
 import { getLoginStatus, logOut } from '../api/loginApi';
 import { getLyric, getLyricString } from '../api/LyricApi';
 import { getPlayLists, getPlayListSongs, PlayListOperation, getCloudList, searchPlayLists, subscribePlayList, getPersonalizedList, deletePlayList, createPlayList,
-  renamePlayList } from '../api/playListApi';
+  renamePlayList,
+  getPlaylistInfo} from '../api/playListApi';
 import { getQrCode, checkQrLogin } from '../api/qrCodeApi';
 import { checkMusic, searchSongs, getSongUrl, getSongPicUrl, getDailySongs, getLikeList, likeMusic, setHeartMode, getPersonalFmSong } from '../api/songApi';
 import { getTopList } from '../api/topListApi';
@@ -228,6 +229,9 @@ export class PlayListAPIUtils {
    */
   static async getPlayListSongs(id: number, limit: number, offset: number, usetimestamp: boolean = true) {
     return getPlayListSongs(id, limit, offset, usetimestamp);
+  }
+  static async getPlaylistInfo(id: number) {
+    return getPlaylistInfo(id)
   }
   /**
    * 歌单操作（添加/删除歌曲）

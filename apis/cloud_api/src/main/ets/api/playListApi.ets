@@ -53,6 +53,14 @@ export const getPlayListSongs = async (
   return result.songs
 }
 
+export const getPlaylistInfo = async (id: number): Promise<CloudAPI_PlayList> => {
+  const result = await commonRequest<Record<string, Object>>({
+    url: '/playlist/detail',
+    params: { id , timestamp: new Date().getTime()}
+  })
+  return result['playlist'] as CloudAPI_PlayList
+}
+
 /**
  * 歌单操作
  */

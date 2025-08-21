@@ -24,6 +24,25 @@ export const getPlayLists = async (): Promise<PlayListsResult> => {
   };
 };
 
+
+interface GetPlaylistInfoResponse {
+  playlist: PlayList;
+}
+
+/**
+ * 获取歌单详情（包含歌曲）
+ * @param playlistId - 歌单 ID
+ * @returns Playlist 对象（包含 entry 歌曲列表）
+ */
+export const getPlaylistDetail = async (playlistId: string): Promise<PlayList> => {
+  const response = await commonRequest<GetPlaylistInfoResponse>({
+    url: "/rest/getPlaylist.view",
+    params: { id: playlistId, f: "json" }
+  });
+
+  return response.playlist;
+};
+
 interface GetPlaylistSongResponse_Inner {
   entry: Song[];
 }

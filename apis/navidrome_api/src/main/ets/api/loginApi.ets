@@ -1,5 +1,5 @@
-import commonRequest from "./request/RequestUtil";
-import { LogUtil } from "@pura/harmony-utils";
+import commonRequest, { getNowRequestContext } from "./request/RequestUtil";
+import { LogUtil, SHA } from "@pura/harmony-utils";
 import { User, User_INITIAL } from "../entity/UserEntity";
 
 /** 获取登录状态 */
@@ -54,3 +54,9 @@ export const logOut = async (statePersistent?: (val: User) => void): Promise<boo
     return false;
   }
 };
+
+export const getGravatar = (email: string) => {
+  const addr = String( email ).trim().toLowerCase();
+  const hash = SHA.digestSync(addr)
+  return `https://gravatar.loli.net/avatar/${ hash }`
+}

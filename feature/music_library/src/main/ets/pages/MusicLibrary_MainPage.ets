@@ -110,6 +110,9 @@ export struct MainPage {
       .margin({top: 24, bottom: 24})
     }.padding({left: 12, right: 12})
     .width(this.fullWidth)
+    .onClick(() => {
+      UserManager.fetchUserInfo()
+    })
   }
 
   @Builder Album_SingleItem(list: Album, index: number) {
@@ -454,6 +457,7 @@ export struct MainPage {
         const p = this.user.userPlaylists.findIndex((v) => v.id === playlist.id)
         if (p !== -1) this.user.userPlaylists.splice(p, 1)
       }
+      this.setData()
     }
 
     this.pageStack.pushPath({

@@ -1,9 +1,10 @@
 import { getAlbumCoverUrl, getAlbumInfo, getUserSubscribedAlbum, searchAlbums, subscribeAlbum } from '../api/albumApi';
 import { getArtistInfo, searchArtists } from '../api/artistApi';
-import { getLoginStatus, logOut } from '../api/loginApi';
+import { getLoginStatus, getGravatar, logOut } from '../api/loginApi';
 import { getLyric, getLyricString } from '../api/LyricApi';
 import { getPlayLists, getPlayListSongs, deletePlayList, createPlayList, renamePlayList,
-  playListOperation } from '../api/playListApi';
+  playListOperation,
+  getPlaylistDetail} from '../api/playListApi';
 import { searchSongs, getSongUrl, getLikeList, likeMusic, getCoverUrl } from '../api/songApi';
 import { getTopList } from '../api/topListApi';
 import { Album } from '../entity/AlbumEntity';
@@ -72,6 +73,9 @@ export class NavidromeAPI_ArtistAPIUtils {
 }
 
 export class NavidromeAPI_LoginAPIUtils {
+  static getGravatar(email: string): ResourceStr {
+    return getGravatar(email)
+  }
   /**
    * 获取登录状态
    * @param statePersistent 按需求，可传入回调对返回的 User 进行持久化
@@ -131,6 +135,20 @@ export class NavidromeAPI_PlayListAPIUtils {
     } as PlayList)
     statePersistent?.(result.playlist);
     return result
+  }
+  static async getPlaylistInfo(id: string) {
+    if (id === '-1') {
+      const likeList = await getLikeList();
+      return {
+        id: '-1',
+        name: '我喜欢的音乐',
+        songCount: likeList.length,
+        coverArt: likeList[0].coverArt,
+        public: false,
+      } as PlayList
+    } else {
+      return await getPlaylistDetail(id)
+    }
   }
   /**
    * 获取歌单内歌曲列表

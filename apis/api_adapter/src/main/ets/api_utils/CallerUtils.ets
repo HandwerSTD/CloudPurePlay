@@ -244,6 +244,17 @@ export class LyricAPIUtils {
 }
 
 export class PlayListAPIUtils {
+
+  static async getPlaylistInfo(id: string): Promise<PlayList> {
+    if (InstanceSwitcher.InstanceType === INSTANCE_TYPE.CLOUD) {
+      return CloudAPI_PlayListAPIUtils.getPlaylistInfo(Number.parseInt(id));
+    } else if (InstanceSwitcher.InstanceType === INSTANCE_TYPE.NAVIDROME) {
+      // NavidromeAPI doesn't support offset parameter
+      return Navidrome_PlayListUtils.getPlaylistInfo(id);
+    } else {
+      throw Error('API Unimplemented')
+    }
+  }
   static async getPlayLists(offset: number, user: User, statePersistent?: (val: PlayList[]) => void): Promise<PlayListResult> {
     if (InstanceSwitcher.InstanceType === INSTANCE_TYPE.CLOUD) {
       return CloudAPI_PlayListAPIUtils.getPlayLists(offset, user, statePersistent);
@@ -325,7 +336,7 @@ export class PlayListAPIUtils {
     if (InstanceSwitcher.InstanceType === INSTANCE_TYPE.CLOUD) {
       return CloudAPI_PlayListAPIUtils.renamePlaylist(Number.parseInt(pid), newName);
     } else if (InstanceSwitcher.InstanceType === INSTANCE_TYPE.NAVIDROME) {
-      return Navidrome_PlayListUtils.renamePlaylist(newName, pid);
+      return Navidrome_PlayListUtils.renamePlaylist(pid, newName);
     } else {
       throw Error('API Unimplemented')
     }

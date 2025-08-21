@@ -395,6 +395,30 @@
     {
       "name": "subscribe_success",
       "value": "订阅成功"
+    },
+    {
+      "name": "api_source_addr",
+      "value": "API 地址"
+    },
+    {
+      "name": "api_username",
+      "value": "用户名"
+    },
+    {
+      "name": "api_password",
+      "value": "密码"
+    },
+    {
+      "name": "check_connectivity",
+      "value": "检测 API 连通性"
+    },
+    {
+      "name": "welcome_UserName",
+      "value": "欢迎，%s！"
+    },
+    {
+      "name": "start_use",
+      "value": "开始使用"
     }
   ]
 }

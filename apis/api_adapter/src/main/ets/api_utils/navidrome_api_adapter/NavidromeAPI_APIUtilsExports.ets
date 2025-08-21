@@ -173,6 +173,10 @@ export class Navidrome_PlayListUtils {
     });
     return NavidromeAPI_EntityParser.parsePlayListsResult(res)
   }
+  static async getPlaylistInfo(id: string) {
+    const res = await NavidromeAPI_PlayListAPIUtils.getPlaylistInfo(id)
+    return NavidromeAPI_EntityParser.parsePlayList(res)
+  }
 
   static async getPlayListSongs(id: string, limit: number, offset: number, usetimestamp: boolean = true): Promise<PlayListSong[]> {
     // NavidromeAPI doesn't support limit, offset, usetimestamp parameters

@@ -27,7 +27,8 @@ import {
   Navidrome_LyricResult,
   Navidrome_SongArtist,
   NavidromeAPI_AlbumAPIUtils,
-  NavidromeAPI_SongAPIUtils
+  NavidromeAPI_SongAPIUtils,
+  NavidromeAPI_LoginAPIUtils
 } from '@handwer/navidrome_api';
 
 // Import APIAdapter entities
@@ -314,7 +315,7 @@ export class NavidromeAPI_EntityParser {
           userId: navidromeUser.username,
           nickname: navidromeUser.username,
           backgroundUrl: '',
-          avatarUrl: '',
+          avatarUrl: NavidromeAPI_LoginAPIUtils.getGravatar(navidromeUser.email ?? '{}'),
           gender: 0
         }
       }

@@ -44,6 +44,12 @@ export class UserManager {
       }
     }
   }
+  static async fetchUserInfo() {
+    await LoginAPIUtils.getLoginStatus((val) => {
+      store.user = val
+      UserSettings.put(SCUser.user, val)
+    })
+  }
   static getCookie(): string | undefined {
     if (store.cookieSettings.customCookie) return store.cookieSettings.customCookie
     return store.cookieSettings.cookie

@@ -1,4 +1,5 @@
 import { hdsEffect } from "@kit.UIDesignKit"
+import { LightUpLinedContainer } from "../../light_up/LightUpContainer"
 
 @ComponentV2
 export struct CommonListItem {
@@ -8,7 +9,6 @@ export struct CommonListItem {
   @Param subtitle: ResourceStr | null = null
   @Param filled: boolean = true
   @Param highlightBorder: boolean = false
-  @Param shouldBeLightedUp: boolean = false
 
   @Param fontColor: ResourceColor = $r('sys.color.font_on_primary')
   @Param hintFontColor: ResourceColor = $r('sys.color.font_on_secondary')
@@ -59,8 +59,35 @@ export struct CommonListItem {
     .padding({ left: 12, right: 12 })
     .justifyContent(FlexAlign.Start)
     .height(54)
+  }
+}
+
+@ComponentV2
+export struct LightedCommonListItem {
+  @Param icon: Resource | null = null
+  @Param isSymbol: boolean = true
+  @Param @Require title: ResourceStr
+  @Param subtitle: ResourceStr | null = null
+  @Param filled: boolean = true
+  @Param highlightBorder: boolean = false
+  // @Param shouldBeLightedUp: boolean = false
+
+  build() {
+    Column() {
+      LightUpLinedContainer({ lightUpConfig: {lightIntensity: 1, lightHeight: 120 }}) {
+        CommonListItem({
+          icon: this.icon,
+          title: this.title,
+          isSymbol: this.isSymbol,
+          subtitle: this.subtitle,
+          filled: this.filled,
+          highlightBorder: this.highlightBorder,
+        })
+      }
+    }.backgroundColor($r('app.color.play_list_single_item_bg'))
+    .borderRadius(20)
     .visualEffect(new hdsEffect.HdsEffectBuilder().pointLight({
-      illuminatedType: this.shouldBeLightedUp ? hdsEffect.PointLightIlluminatedType.BORDER : hdsEffect.PointLightIlluminatedType.NONE
+      illuminatedType: hdsEffect.PointLightIlluminatedType.BORDER
     }).buildEffect())
   }
 }

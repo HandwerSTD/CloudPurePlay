@@ -1,4 +1,5 @@
 import { AlbumAPIUtils as Cloud_AlbumAPIUtils,
+  CloudAPI_PlayList,
   CloudAPI_PlayListsResult,
   CloudAPI_PlayQueue} from '@handwer/cloud_api';
 import { ArtistAPIUtils as Cloud_ArtistAPIUtils } from '@handwer/cloud_api';
@@ -166,6 +167,10 @@ export class CloudAPI_LyricAPIUtils {
 }
 
 export class CloudAPI_PlayListAPIUtils {
+  static async getPlaylistInfo(id: number) {
+    const cloudResult: CloudAPI_PlayList = await Cloud_PlayListAPIUtils.getPlaylistInfo(id)
+    return CloudAPIEntityParser.parsePlayList(cloudResult)
+  }
   static async getPlayLists(offset: number, user: User, statePersistent?: (val: PlayList[]) => void): Promise<PlayListResult> {
     const cloudResult: CloudAPI_PlayListsResult = await Cloud_PlayListAPIUtils.getPlayLists(
       offset, Number.parseInt(user.data.profile.userId),

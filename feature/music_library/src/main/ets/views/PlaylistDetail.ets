@@ -16,6 +16,7 @@ import {
   SCGlobal,
   SongConvertUtils, SongLike,
   SpecialPlayMode,
+  UserManager,
   UserStore } from "@handwer/base";
 import {
   CommonListItem,
@@ -74,8 +75,11 @@ export struct PlaylistDetail {
       PlaylistSongViewModel.fromPlaylistData(this.fullPlayListDetail)
     )
     this.fullPlayListDataSource.notifyDataReload()
+    const info = await PlayListAPIUtils.getPlaylistInfo(this.playListInfo.id)
+    this.playListInfo = info
+    this.writeToUserStore()
     await this.loadSongs(200, 0)
-    await this.loadSongs(this.playListInfo.trackCount - 200, 200)
+    await this.loadSongs(this.playListInfo.trackCount, 200)
   }
 
   shouldThisSongLightedUp(index: number): boolean {
@@ -383,6 +387,10 @@ export struct PlaylistDetail {
         this.onReceivePlayListSongUpdate(data)
       })
     })
+    .onBackPressed(() => {
+      this.pageStack.pop({} as PlaylistDetail_PopReturn, true)
+      return true;
+    })
     .onWillDisappear(() => {
       this.shouldLightSourceOff = true
       EmitterUtil.unSubscribe(SCEmitter.PlaylistContentUpdate)
@@ -423,13 +431,22 @@ export struct PlaylistDetail {
           this.fullPlayListDataSource.notifyDataReload()
         }
       }
-      this.updateThisPlaylistInfo()
+      this.updateThisPlaylistLength()
     }
   }
-  updateThisPlaylistInfo() {
+  updateThisPlaylistLength() {
     const newInfo = JSON.parse(JSON.stringify(this.playListInfo)) as PlayList
     newInfo.playCount = this.fullPlayListDetail.length
     this.playListInfo = newInfo
+    this.writeToUserStore()
+  }
+  writeToUserStore() {
+    const newInfo = JSON.parse(JSON.stringify(this.playListInfo)) as PlayList
+    const userPlayList = UserStore.userPlaylists.findIndex((val) => val.id === this.playListInfo.id)
+    if (userPlayList !== -1) {
+      UserStore.userPlaylists[userPlayList] = newInfo
+      UserManager.persistUserPlaylists()
+    }
   }
 
   async loadSongs(limit: number, offset: number): Promise<void> {
@@ -438,7 +455,6 @@ export struct PlaylistDetail {
       this.isLoading = true // 初次加载
     }
     try {
-      Logger.debug(TAG, JSON.stringify(this.playListInfo))
       const result = await PlayListAPIUtils.getPlayListSongs(this.playListInfo.id, limit <= 1000 ? limit : 1000, offset, false)
       Logger.debug(TAG, `got result return: ${result.length}`)
       if (this.isLoading) {
@@ -453,6 +469,10 @@ export struct PlaylistDetail {
       this.currentOffset += limit <= 1000 ? limit : 1000
       if (this.fullPlayListDetail.length >= this.playListInfo.trackCount) {
         this.hasMore = false
+        SongAPIUtils.getLikeList(UserStore.user, (val) => {
+          if (val) UserStore.likeList = new Set(val)
+          UserManager.persistLikeList()
+        })
       }
       limit -= 1000
       if(limit > 0) {
@@ -595,7 +615,7 @@ export struct PlaylistDetail {
           this.fullPlayListDetail.splice(index, 1)
           this.fullPlayListDataSource.deleteData(index)
           this.fullPlayListDataSource.notifyDataReload()
-          this.updateThisPlaylistInfo()
+          this.updateThisPlaylistLength()
         } else {
           SnackBarUtils.showMessage(this.snack, $r('sys.symbol.trash'), $r('app.string.remove_song_failed'))
         }

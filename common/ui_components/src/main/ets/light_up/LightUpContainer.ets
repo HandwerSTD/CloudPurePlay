@@ -1,4 +1,4 @@
-import { LightUpConfig, LightUpDefaultConfig, OverrideLightUpStat } from "./LightUpConfig"
+import { LightUpConfig, LightUpDefaultConfig, LightUpLinedDefaultConfig, OverrideLightUpStat } from "./LightUpConfig"
 import { hdsEffect } from "@kit.UIDesignKit"
 
 @ComponentV2
@@ -74,7 +74,7 @@ export struct LightUpContainer {
 
 @ComponentV2
 export struct LightUpLinedContainer {
-  @Param @Require lightUpConfig: LightUpConfig
+  @Param lightUpConfig: LightUpConfig = LightUpLinedDefaultConfig
   @Param lightNum: number = 5
   @BuilderParam child: () => void
 
