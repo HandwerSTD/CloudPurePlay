@@ -1,18 +1,16 @@
-import { InstanceSwitcher } from "@handwer/api_adapter"
+import { InstanceSwitcher, INSTANCE_TYPE } from "@handwer/api_adapter"
 import { SCApp } from "@handwer/base"
 import {
-  LightUpLinedContainer,
-  LightUpLinedDefaultConfig,
-  OverrideLightUpStat,
   HDS_TITLE_CONFIG_STYLE
 } from "@handwer/ui_components"
 import { HdsNavigation, HdsNavigationTitleMode, HdsNavigationAttribute } from "@kit.UIDesignKit"
 
-export function generate_APIFinishWelcome_PageParams(userName: string, userAvatar: ResourceStr, onReInit: () => void) {
+export function generate_APIFinishWelcome_PageParams(userName: string, userAvatar: ResourceStr, onReInit: () => void, instance: string) {
   return {
     "userName": userName,
     "userAvatar": userAvatar,
-    "onReInit": onReInit
+    "onReInit": onReInit,
+    "instance": instance
   } as Record<string, Object>
 }
 
@@ -23,6 +21,7 @@ export struct APIFinishWelcome {
 
   @Local userAvatar?: ResourceStr
   @Local userName: string = ''
+  @Local instance: string = ''
 
   onReInit?: () => void
 
@@ -41,7 +40,7 @@ export struct APIFinishWelcome {
             .fontColor(Color.White)
             .width('100%')
             .textAlign(TextAlign.Center)
-          Text($r('app.string.api_switch_from_what', InstanceSwitcher.InstanceTypeName))
+          Text($r('app.string.api_switch_from_what', this.instance))
             .fontColor(Color.White)
         }
       }
@@ -77,6 +76,7 @@ export struct APIFinishWelcome {
       const params = context.pathInfo.param as Record<string, Object>
       this.userName = params['userName'] as string
       this.userAvatar = params['userAvatar'] as ResourceStr
+      this.instance = params['instance'] as string
       this.onReInit = params['onReInit'] as () => void
     })
     .opacity(this.pageOpacity)

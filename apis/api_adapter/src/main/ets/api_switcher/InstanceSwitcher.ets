@@ -31,4 +31,7 @@ export class InstanceSwitcher {
   static get InstanceTypeName() {
     return InstanceTypeName[InstanceSwitcher.InstanceType]
   }
+  static getInstanceNameByType(type: INSTANCE_TYPE) {
+    return InstanceTypeName[type]
+  }
 }

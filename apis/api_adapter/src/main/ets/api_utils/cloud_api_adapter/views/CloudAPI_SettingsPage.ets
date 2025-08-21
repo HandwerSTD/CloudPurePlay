@@ -1,6 +1,7 @@
 import { CloudAPIConfigUtils, CloudAPI_User, LoginAPIUtils } from "@handwer/cloud_api"
 import { webview } from "@kit.ArkWeb"
 import { promptAction } from "@kit.ArkUI"
+import { LogUtil } from "@pura/harmony-utils"
 
 
 // UserManager.setUserInfo(user)
@@ -19,6 +20,9 @@ export struct CloudAPI_Console {
 
   @Builder web() {
     WebLogin({
+      closeSheet: () => {
+        this.webSheet = false
+      },
       LoginInfoSetter: (user, cookie) => {
         this.LoginInfoSetter(user, cookie)
       }
@@ -36,7 +40,9 @@ export struct CloudAPI_Console {
         .onClick(() => {
           this.webSheet = true
         })
-        .bindSheet($$this.webSheet, this.web())
+        .bindSheet($$this.webSheet, this.web(), {
+          showClose: false
+        })
     }.width('100%').height('100%')
   }
 }
@@ -46,6 +52,7 @@ export struct CloudAPI_Console {
  */
 @ComponentV2
 export struct WebLogin {
+  @Event closeSheet: () => void
   @Param @Require LoginInfoSetter: (user: CloudAPI_User, cookie: string) => void
   @Local userAgent: string = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
   @Local isLoading: boolean = true
@@ -143,7 +150,7 @@ export struct WebLogin {
         return false
       }
     } catch (error) {
-      // LogUtil.error('获取Cookie失败', error.message)
+      LogUtil.error('获取Cookie失败', error.message)
       // ToastUtil.showToast('获取Cookie失败：' + error.message)
       return false
     }
@@ -199,11 +206,9 @@ export struct WebLogin {
         Button('获取登录信息').onClick(async () => {
           let result = await this.getCookie()
           if(result) {
-            // ToastUtil.showToast('登录成功!')
-            // this.pageInfos.pop()
+            this.closeSheet()
           }
           else {
-            // ToastUtil.showToast('登录失败')
           }
         })
       }
