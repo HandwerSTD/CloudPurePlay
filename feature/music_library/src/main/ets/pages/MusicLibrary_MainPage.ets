@@ -104,7 +104,7 @@ export struct MainPage {
               this.showAlbum = !this.showAlbum
             }
           })
-        }.justifyContent(FlexAlign.End)
+        }.justifyContent(FlexAlign.End).margin({left: 12})
       }.width('100%').padding(ResponsiveUtil.chooseByWidth([12, 12, 24])).borderRadius(20)
       .backgroundColor($r('app.color.common_card_item_background'))
       .shadow(ShadowStyle.OUTER_FLOATING_SM)
@@ -294,6 +294,10 @@ export struct MainPage {
       y: '15%'
     } : undefined)
     .animation({curve: curves.springMotion(0.6, 0.7)})
+    .foregroundEffect({
+      radius: this.showSearchPage ? 128 : 0
+    })
+    .animation({duration: 300})
   }
   @Builder MusicLibrarySearch() {
     Column() {
@@ -310,8 +314,6 @@ export struct MainPage {
           .transition(TransitionEffect.OPACITY.animation({duration: 500}))
       }
     }.width('100%').height('100%')
-    .backdropBlur(this.showSearchPage ? 128 : 0)
-    .animation({duration: 300})
     .hitTestBehavior(this.showSearchPage ? HitTestMode.Default : HitTestMode.None)
   }
 
