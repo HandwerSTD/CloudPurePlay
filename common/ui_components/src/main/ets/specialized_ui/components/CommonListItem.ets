@@ -70,6 +70,7 @@ export struct LightedCommonListItem {
   @Param subtitle: ResourceStr | null = null
   @Param filled: boolean = true
   @Param highlightBorder: boolean = false
+  @BuilderParam trailing?: () => void
   // @Param shouldBeLightedUp: boolean = false
 
   build() {
@@ -82,6 +83,7 @@ export struct LightedCommonListItem {
           subtitle: this.subtitle,
           filled: this.filled,
           highlightBorder: this.highlightBorder,
+          trailing: this.trailing
         })
       }
     }.backgroundColor($r('app.color.play_list_single_item_bg'))

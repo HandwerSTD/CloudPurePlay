@@ -3,8 +3,11 @@ import { hilog } from '@kit.PerformanceAnalysisKit';
 import { window } from '@kit.ArkUI';
 import {
   BreakpointSystem,
+  DeviceCollaborationUtils,
   GlobalStore,
-  KVStoreUtil, Logger, LogStorage, SCPref,
+  KVStoreUtil, Logger, LogStorage,
+  MissionContinueData,
+  SCPref,
   ServiceInitUtils,
   Settings, SpiderMan, ThemeManager, WindowUtil } from '@handwer/base';
 import { DialogHelper } from '@pura/harmony-dialog';
@@ -19,6 +22,21 @@ export default class MainAbility extends UIAbility {
     // Logger
     Logger.setLogStorage(LogStorage.instance())
     GlobalStore.isDarkMode = (this.context.config.colorMode === ConfigurationConstant.ColorMode.COLOR_MODE_DARK)
+    GlobalStore.contextFaker = this.context
+    this.context.setMissionContinueState(AbilityConstant.ContinueState.INACTIVE)
+    if (launchParam.launchReason === AbilityConstant.LaunchReason.CONTINUATION) {
+      this.onHandleMissionContinueWant(want)
+    } else {
+      this.onHandleWant(want)
+    }
+  }
+
+  onNewWant(want: Want, launchParam: AbilityConstant.LaunchParam): void {
+    if (launchParam.launchReason === AbilityConstant.LaunchReason.CONTINUATION) {
+      this.onHandleMissionContinueWant(want)
+    } else {
+      this.onHandleWant(want)
+    }
   }
 
   onDestroy(): void {
@@ -69,6 +87,24 @@ export default class MainAbility extends UIAbility {
 
   onConfigurationUpdate(newConfig: Configuration): void {
     GlobalStore.isDarkMode = (newConfig.colorMode === ConfigurationConstant.ColorMode.COLOR_MODE_DARK)
+  }
+
+  async onContinue(wantParam: Record<string, Object>) {
+    wantParam['data'] = await DeviceCollaborationUtils.generateContinueData()
+    return AbilityConstant.OnContinueResult.AGREE
+  }
+
+  onHandleMissionContinueWant(want: Want) {
+    const params = want.parameters
+    if (params) {
+      const data = params[data] as MissionContinueData
+      if (DeviceCollaborationUtils.checkContinueData(data.requestContextHash)) {
+        DeviceCollaborationUtils.applyContinuation(data)
+      }
+    }
+  }
+  onHandleWant(want: Want) {
+
   }
 
   async appStartUp(windowStage: window.WindowStage) {

@@ -20,13 +20,13 @@ export struct InListSongItem {
       //   }).margin({left: 12, right: 12})
       //     // .transition(TransitionEffect.OPACITY.animation({duration: 300}))
       // }
-      Column({space: 12}) {
+      Column() {
         Text(this.songName).fontSize(16).fontWeight(FontWeight.Bold)
           .songText()
         Text(this.songArtist)
           .fontColor($r('sys.color.font_secondary')).fontSize(14)
           .songText()
-      }.alignItems(HorizontalAlign.Start).layoutWeight(1)
+      }.alignItems(HorizontalAlign.Start).layoutWeight(1).height('100%').justifyContent(FlexAlign.SpaceAround)
       if (this.trailing) {
         this.trailing();
       }

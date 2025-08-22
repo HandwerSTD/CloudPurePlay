@@ -5,5 +5,7 @@ export enum SCPref {
   audioQuality,
 
   apiInstanceType,
-  currentAPIConfig
+  currentAPIConfig,
+
+  useMissionContinue
 }

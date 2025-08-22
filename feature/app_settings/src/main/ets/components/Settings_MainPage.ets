@@ -8,6 +8,7 @@ import { AboutPage } from "../views/AboutPage";
 import { APIFinishWelcome } from "../views/DataSource/APIFinishWelcome";
 import { CloudAPI_Source } from "../views/DataSource/CloudAPI";
 import { NavidromeAPI_Source } from "../views/DataSource/NavidromeAPI";
+import { MissionContinueSettings } from "../views/MissionContinue/MissionContinueSettings";
 
 @ComponentV2
 export struct MainPage {
@@ -33,6 +34,8 @@ export struct MainPage {
       NavidromeAPI_Source()
     } else if (name === 'APIFinishWelcome') {
       APIFinishWelcome()
+    } else if (name === 'MissionContinueSettings') {
+      MissionContinueSettings()
     }
   }
 
@@ -44,6 +47,23 @@ export struct MainPage {
           title: $r('app.string.data_source'),
         }).onClick(() => {
           this.pushPage('DataSourceSettings', {})
+        })
+      }
+    }.backgroundColor($r('app.color.play_list_single_item_bg'))
+    .borderRadius(20)
+    .visualEffect(new hdsEffect.HdsEffectBuilder().pointLight({
+      illuminatedType: hdsEffect.PointLightIlluminatedType.BORDER
+    }).buildEffect())
+  }
+
+  @Builder MultiDevice() {
+    Column() {
+      LightUpLinedContainer({ lightUpConfig: {lightIntensity: 1, lightHeight: 120 }}) {
+        CommonListItem({
+          icon: $r('sys.symbol.Interconnection_ic_multiscreen_collaboration'),
+          title: $r('app.string.mission_continue'),
+        }).onClick(() => {
+          this.pushPage('MissionContinueSettings', {})
         })
       }
     }.backgroundColor($r('app.color.play_list_single_item_bg'))
@@ -90,6 +110,9 @@ export struct MainPage {
             ListItem().height($r('sys.float.ohos_id_navigation_bar_height'))
             ListItem() {
               this.DataSource()
+            }
+            ListItem() {
+              this.MultiDevice()
             }
             ListItem() {
               this.AboutApp()

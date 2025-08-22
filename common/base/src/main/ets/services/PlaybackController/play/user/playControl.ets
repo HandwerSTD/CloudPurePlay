@@ -15,7 +15,7 @@ import { playQueueStore } from "../../queue/PlayQueueStore"
 import { UserManager } from "../../../Network/UserManager"
 import Settings, { PreferenceUtils } from "../../../Preferences/PreferenceUtils"
 import { SCPref } from "../../../../constants/PreferenceConstants"
-import { Logger } from "../../../../../../../Index"
+import { Logger, DeviceCollaborationUtils, GlobalStore } from "../../../../../../../Index"
 import { SCEmitter } from "../../../../exports"
 import { SongConvertUtils } from "../../convert"
 
@@ -93,6 +93,7 @@ export class PlayControl {
         Logger.debug(TAG, `playMusicByUrl got final data, set url = ${proxyUrl ?? songPlay.data[0].url}`)
         await AVPlayerUtils.setUrl(proxyUrl ?? songPlay.data[0].url)
       }
+      DeviceCollaborationUtils.setCanMissionContinue(GlobalStore.contextFaker!)
     } catch (e) {
       LogUtil.error(TAG, '播放出错: ' + e)
       await PlayControl.playNext()

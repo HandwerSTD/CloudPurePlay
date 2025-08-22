@@ -49,4 +49,13 @@ export class APIConfigUtils {
       throw Error('API Unimplemented')
     }
   }
+  static get NowRequestContext(): Object | null {
+    if (InstanceSwitcher.InstanceType === INSTANCE_TYPE.CLOUD) {
+      return CloudAPIConfigUtils.getRequestContext()
+    } else if (InstanceSwitcher.InstanceType === INSTANCE_TYPE.NAVIDROME) {
+      return NavidromeAPIConfigUtils.getRequestContext()
+    } else {
+      throw Error('API Unimplemented')
+    }
+  }
 }

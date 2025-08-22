@@ -2,6 +2,7 @@ import { DistributionSyncResult } from "../services/DistributionMgr/Distribution
 import { SingleDeviceViewModel } from "../services/DistributionMgr/DistributionViewModels"
 import { WindowAvoidanceData } from "../utils/WindowUtil"
 import { HdsSnackBar } from "@kit.UIDesignKit"
+import { common } from "@kit.AbilityKit"
 
 @ObservedV2
 class GlobalStore {
@@ -35,6 +36,7 @@ class GlobalStore {
   @Trace isDarkMode: boolean = false
 
   globalSnack?: HdsSnackBar
+  contextFaker?: common.UIAbilityContext
 }
 
 export default GlobalStore.instance

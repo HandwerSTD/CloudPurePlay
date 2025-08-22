@@ -435,6 +435,14 @@
     {
       "name": "need_dist_perm_to_sync",
       "value": "需要分布式权限以进行数据同步"
+    },
+    {
+      "name": "settings_enable_mission_continue",
+      "value": "启用应用接续"
+    },
+    {
+      "name": "mission_continue",
+      "value": "应用接续"
     }
   ]
 }

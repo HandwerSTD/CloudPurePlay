@@ -120,7 +120,7 @@ struct MainPage_Shell {
           }),
 
           new ActionBarButton({
-            baseIcon: $r('sys.symbol.gearshape_fill'),
+            baseIcon: $r('sys.symbol.gearshape'),
             backgroundColor: this.settingsSheet ? ColorMetrics.numeric(0xFFFFFFFF) : undefined,
             baseIconSymbolGlyphModifier: this.settingsSheet ? new SymbolGlyphModifier().fontColor([Color.Black]) : undefined,
             width: LengthMetrics.vp(40),
