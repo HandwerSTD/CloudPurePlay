@@ -8,7 +8,5 @@
   "dependencies": {
     '@handwer/api_adapter': "file:../../apis/api_adapter",
     '@handwer/base': "file:../base",
-    "@handwer/music_library": "file:../../feature/music_library",
-    "@handwer/music_library1": "file:../../feature/music_library"
   }
 }

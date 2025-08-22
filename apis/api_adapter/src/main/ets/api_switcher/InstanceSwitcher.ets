@@ -34,4 +34,10 @@ export class InstanceSwitcher {
   static getInstanceNameByType(type: INSTANCE_TYPE) {
     return InstanceTypeName[type]
   }
+  static getTypeByName(name: string) {
+    for (let i = 0; i < 2; ++i) {
+      if (InstanceTypeName[i] === name) return i;
+    }
+    return -1;
+  }
 }

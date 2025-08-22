@@ -3,9 +3,11 @@ import { CommonListItem, HDS_TITLE_CONFIG_STYLE, LightUpLinedContainer, SnackBar
 import { HdsNavigation, HdsNavigationTitleMode, HdsNavigationAttribute } from "@hms.hds.hdsBaseComponent";
 import { hdsEffect, HdsSnackBar } from "@kit.UIDesignKit";
 import { common, OpenLinkOptions } from '@kit.AbilityKit';
-import { CloudAPI_Source, DataSourceSettings, NavidromeAPI_Source } from "../views/DataSource/DataSourceSettings";
+import {  DataSourceSettings } from "../views/DataSource/DataSourceSettings";
 import { AboutPage } from "../views/AboutPage";
 import { APIFinishWelcome } from "../views/DataSource/APIFinishWelcome";
+import { CloudAPI_Source } from "../views/DataSource/CloudAPI";
+import { NavidromeAPI_Source } from "../views/DataSource/NavidromeAPI";
 
 @ComponentV2
 export struct MainPage {

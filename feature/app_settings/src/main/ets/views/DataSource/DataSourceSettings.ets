@@ -1,22 +1,28 @@
 import {
-  CloudAPIConfigUtils,
-  CloudAPI_Console,
-  Cloud_RequestContext,
-  InstanceSwitcher,
-  INSTANCE_TYPE,
-  LoginAPIUtils,
-  NavidromeAPIConfigUtils, NavidromeRequestContext, User} from "@handwer/api_adapter"
-import { UserManager, SCApp, Logger, ServiceInitUtils } from "@handwer/base"
-import { CommonListItem, HDS_TITLE_CONFIG_STYLE, LightUpLinedContainer, LightUpLinedDefaultConfig, OverrideLightUpStat } from "@handwer/ui_components"
+  InstanceSwitcher,} from "@handwer/api_adapter"
+import { UserManager, SCApp, Logger, ServiceInitUtils, SingleDeviceViewModel,
+  DeviceSelectorViewModel,
+  DeviceIcon,
+  DistributedUtils,
+  GlobalStore} from "@handwer/base"
+import { CommonListItem, HDS_TITLE_CONFIG_STYLE,
+  LightUpDefaultConfig,
+  LightUpLinedContainer, LightUpLinedDefaultConfig,
+  LightUpRoundedButton,
+  OverrideLightUpStat,
+  SnackBarUtils} from "@handwer/ui_components"
 import { hdsEffect, HdsNavigation,
-  HdsNavigationTitleMode, HdsNavigationAttribute } from "@kit.UIDesignKit"
-import { DialogHelper } from "@pura/harmony-dialog"
-import { generate_APIFinishWelcome_PageParams } from "./APIFinishWelcome"
+  HdsNavigationTitleMode, HdsNavigationAttribute,
+  HdsSnackBar } from "@kit.UIDesignKit"
 
 @ComponentV2
 export struct DataSourceSettings {
+  snack = new HdsSnackBar(this.getUIContext())
+
   @Local pageOpacity: number = 1
   @Consumer(SCApp.settingsPageStack) pageStack: NavPathStack = new NavPathStack()
+
+  readonly apiPage = ['NavidromeAPI_Source', 'CloudAPI_Source']
 
   @Builder CloudAPI() {
     ListItem() {
@@ -55,6 +61,22 @@ export struct DataSourceSettings {
       }).buildEffect())
     }
   }
+  @Builder DataSyncPanel() {
+    ListItem() {
+      DeviceSelectorPanel({
+        onDeviceClick: async (device) => {
+          const name = await DistributedUtils.getUsingAPIName(device.deviceId)
+          const type = InstanceSwitcher.getTypeByName(name)
+          if (type !== -1) {
+            const ctx = await DistributedUtils.getRequestContext(type, device.deviceId)
+            this.pushPage(this.apiPage[type], {'context': ctx})
+          } else {
+            SnackBarUtils.showMessage(this.snack, $r('sys.symbol.multi_screen_collaboration'), $r('app.string.target_device_no_api_config'))
+          }
+        }
+      })
+    }
+  }
 
   build() {
     NavDestination() {
@@ -62,6 +84,7 @@ export struct DataSourceSettings {
         Column() {
           List({space: 12}) {
             ListItem().height($r('sys.float.ohos_id_navigation_bar_height'))
+            this.DataSyncPanel()
             this.CloudAPI()
             this.NavidromeAPI()
             ListItem().height(12)
@@ -72,7 +95,7 @@ export struct DataSourceSettings {
         style: HDS_TITLE_CONFIG_STYLE,
         content: {
           title: {
-            mainTitle: $r('app.string.settings')
+            mainTitle: $r('app.string.data_source')
           }
         }
       })
@@ -94,223 +117,99 @@ export struct DataSourceSettings {
   }
 }
 
-@ComponentV2
-export struct CloudAPI_Source {
-  @Consumer(SCApp.settingsPageStack) pageStack: NavPathStack = new NavPathStack()
-
-  @Local pageOpacity: number = 1
-
-  aboutToAppear(): void {
-    const context = CloudAPIConfigUtils.getRequestContext() ?? {
-      baseUrl: 'http://111.229.38.178:3333/',
-      cookie: {
-      },
-    } as Cloud_RequestContext
-    CloudAPIConfigUtils.setRequestContext(context)
-  }
-
-  build() {
-    NavDestination() {
-      CloudAPI_Console({
-        LoginInfoSetter: (user, cookie) => {
-          // UserManager.setUserInfo({
-          //   data: {
-          //     account: {
-          //       userName: user.data.account.userName,
-          //       id: user.data.account.id.toString(),
-          //       vipType: user.data.account.vipType
-          //     },
-          //     profile: {
-          //       userId: user.data.profile.userId.toString(),
-          //       nickname: user.data.profile.nickname,
-          //       backgroundUrl: user.data.profile.backgroundUrl,
-          //       gender: user.data.profile.gender,
-          //       avatarUrl: user.data.profile.avatarUrl
-          //     }
-          //   }
-          // } as User, cookie)
-          // UserManager.fetchAllUserData()
-          const context = CloudAPIConfigUtils.getRequestContext() ?? {
-            baseUrl: 'http://111.229.38.178:3333/',
-            cookie: {
-              cookie: cookie,
-            },
-          } as Cloud_RequestContext
-          CloudAPIConfigUtils.setRequestContext(context)
-          LoginAPIUtils.getLoginStatus((val) => {
-            Logger.debug(`NavidromeAPI`, `getLoginStat: ${JSON.stringify(val)}`)
-            this.pageStack.pushPath({
-              name: 'APIFinishWelcome',
-              param: generate_APIFinishWelcome_PageParams(val.data.profile.nickname, val.data.profile.avatarUrl, () => {
-                const idd = DialogHelper.showLoadingDialog()
-                ServiceInitUtils.reInit(INSTANCE_TYPE.CLOUD, val, cookie, context)
-                  .finally(() => {
-                    DialogHelper.closeDialog(idd)
-                  })
-              },InstanceSwitcher.getInstanceNameByType(INSTANCE_TYPE.CLOUD))
-            })
-          }, INSTANCE_TYPE.CLOUD)
-        }
-      })
-    }.title('CloudAPI')
-    .backgroundColor(Color.Transparent)
-    .onShown(() => {
-      this.pageOpacity = 1
-    })
-    .onWillHide(() => {
-      this.pageOpacity = 0
-    })
-    .opacity(this.pageOpacity)
-    .animation({duration: 300})
-  }
-}
 
 @ComponentV2
-export struct NavidromeAPI_Source {
-  @Consumer(SCApp.settingsPageStack) pageStack: NavPathStack = new NavPathStack()
-  @Local pageOpacity: number = 1
+export struct DeviceSelectorPanel {
+  @Param @Require onDeviceClick: (device: SingleDeviceViewModel) => void
 
-  @Local apiSourceAddr: string = ''
-  @Local apiUserName: string = ''
-  @Local apiPassword: string = ''
+  @Local deviceList: DeviceSelectorViewModel = new DeviceSelectorViewModel()
 
-  @Local focusedInput: number = -1
-
-  @Builder Main() {
-    List({space: 12}) {
-      ListItem().height($r('sys.float.ohos_id_navigation_bar_height'))
-      ListItem() {
-        Row() {
-          LightUpLinedContainer({lightUpConfig: LightUpLinedDefaultConfig, overrideLightUpStat: this.focusedInput === 0 ? OverrideLightUpStat.ALWAYS_ENABLED : OverrideLightUpStat.ALWAYS_DISABLED}) {
-            TextInput({placeholder: $r('app.string.api_source_addr'), text: this.apiSourceAddr!!})
-              .type(InputType.URL)
-              .TextInputEffect(0, (n) => this.focusedInput = n)
-          }
-        }.RowLightUpEffect()
-      }
-      ListItem() {
-        Row() {
-          LightUpLinedContainer({lightUpConfig: LightUpLinedDefaultConfig, overrideLightUpStat: this.focusedInput === 1 ? OverrideLightUpStat.ALWAYS_ENABLED : OverrideLightUpStat.ALWAYS_DISABLED}) {
-            TextInput({placeholder: $r('app.string.api_username'), text: this.apiUserName!!})
-              .type(InputType.USER_NAME)
-              .TextInputEffect(1, (n) => this.focusedInput = n)
-          }
-        }.RowLightUpEffect()
-      }
-      ListItem() {
-        Row() {
-          LightUpLinedContainer({lightUpConfig: LightUpLinedDefaultConfig, overrideLightUpStat: this.focusedInput === 2 ? OverrideLightUpStat.ALWAYS_ENABLED : OverrideLightUpStat.ALWAYS_DISABLED}) {
-            TextInput({placeholder: $r('app.string.api_password'), text: this.apiPassword!!})
-              .type(InputType.Password)
-              .TextInputEffect(2, (n) => this.focusedInput = n)
-          }
-        }.RowLightUpEffect()
-      }
-      ListItem() {
-        LightUpLinedContainer() {
-          Button($r('app.string.check_connectivity'))
-            .visualEffect(new hdsEffect.HdsEffectBuilder().pointLight({
-              illuminatedType: hdsEffect.PointLightIlluminatedType.BORDER,
-            }))
-            .width('100%')
-            .onClick(() => {
-              this.checkConnect()
-            })
-        }
-      }
-      ListItem().height(12)
-    }.padding({left: 12, right: 12})
-  }
   aboutToAppear(): void {
-    const ctx = NavidromeAPIConfigUtils.getRequestContext()
-    if (ctx) {
-      this.apiSourceAddr = ctx.baseUrl;
-      this.apiUserName = ctx.username;
-      this.apiPassword = ctx.password ?? ''
-    }
-  }
-
-  build() {
-    NavDestination() {
-      HdsNavigation() {
-        this.Main()
-      }.titleBar({
-        style: HDS_TITLE_CONFIG_STYLE,
-        content: {
-          title: {
-            mainTitle: 'Navidrome'
-          }
+    DistributedUtils.init(this.getUIContext().getHostContext()!)
+      .then((): Promise<boolean> => {
+        return DistributedUtils.checkPermission();
+      }).then((res: boolean) => {
+        if (res) {
+          this.deviceList.devices = DistributedUtils.scanDevices()?.map((val): SingleDeviceViewModel => {
+            return SingleDeviceViewModel.fromDistInfo(val);
+          }) ?? []
+        } else {
+          SnackBarUtils.showMessage(GlobalStore.globalSnack!, $r('sys.symbol.eco_hop'), $r('app.string.need_dist_perm_to_sync'))
         }
       })
-      .titleMode(HdsNavigationTitleMode.MINI)
-    }.hideTitleBar(true)
-    .backgroundColor(Color.Transparent)
-    .onShown(() => {
-      this.pageOpacity = 1
-    })
-    .onWillHide(() => {
-      this.pageOpacity = 0
-    })
-    .opacity(this.pageOpacity)
-    .animation({duration: 300})
   }
 
-  checkConnect() {
-    const contextBack = NavidromeAPIConfigUtils.getRequestContext()
-    if (this.apiSourceAddr.endsWith('/')) {
-      this.apiSourceAddr = this.apiSourceAddr.substring(0, this.apiSourceAddr.length - 1)
-    }
-    const newCtx = {
-      baseUrl: this.apiSourceAddr,
-      username: this.apiUserName,
-      password: this.apiPassword
-    } as NavidromeRequestContext
-    NavidromeAPIConfigUtils.setRequestContext(newCtx)
-    const id = DialogHelper.showLoadingDialog()
-    NavidromeAPIConfigUtils.checkValidConnection({
-      setChecking: (stat) => {
-        if (!stat) {
-          DialogHelper.closeDialog(id)
-        }
-      },
-      setResult: (res) => {
-        if (!res) {
-          if (contextBack) NavidromeAPIConfigUtils.setRequestContext(contextBack)
-          return;
-        }
-
-        LoginAPIUtils.getLoginStatus((val) => {
-          Logger.debug(`NavidromeAPI`, `getLoginStat: ${JSON.stringify(val)}`)
-          this.pageStack.pushPath({
-            name: 'APIFinishWelcome',
-            param: generate_APIFinishWelcome_PageParams(this.apiUserName, val.data.profile.avatarUrl, () => {
-              const idd = DialogHelper.showLoadingDialog()
-              ServiceInitUtils.reInit(INSTANCE_TYPE.NAVIDROME, val, newCtx.password!, newCtx)
-                .finally(() => {
-                  DialogHelper.closeDialog(idd)
-                })
-            }, InstanceSwitcher.getInstanceNameByType(INSTANCE_TYPE.NAVIDROME))
-          })
-        }, INSTANCE_TYPE.NAVIDROME)
-      }
-    })
-  }
-}
-
-@Extend(Row) function RowLightUpEffect() {
-  .borderRadius(999)
+  @Styles CardStyle() {
+    .backgroundColor($r('app.color.common_card_item_background'))
+    .borderRadius(24)
+    .padding(12)
     .visualEffect(new hdsEffect.HdsEffectBuilder().pointLight({
-      illuminatedType: hdsEffect.PointLightIlluminatedType.BORDER_CONTENT
+      illuminatedType: hdsEffect.PointLightIlluminatedType.BORDER
     }).buildEffect())
-}
-@Extend(TextInput) function TextInputEffect(index: number, changeIndex: (stat: number) => void) {
-  .fontColor(Color.White)
-  .maxLines(1)
-  .onFocus(() => {
-    changeIndex(index)
-  })
-  .onBlur(() => {
-    changeIndex(-1)
-  })
-  .padding(12)
+  }
+
+  @Builder SingleDeviceListItem(device: SingleDeviceViewModel) {
+    ListItem() {
+      Row({space: 4}) {
+        SymbolGlyph(DeviceIcon[device.deviceType])
+          .fontColor([$r('sys.color.font_primary')])
+          .fontSize(24)
+          .width(36)
+        Text(device.deviceName)
+          .fontSize(14)
+          .layoutWeight(1)
+      }
+    }.width('100%')
+    .height(45)
+    .onClick(() => {
+      this.onDeviceClick(device)
+    })
+    .transition(TransitionEffect.OPACITY.animation({duration: 300}))
+  }
+
+  @Builder DeviceListCard() {
+    Stack() {
+      Column() {
+        Row() {
+          Text($r('app.string.multi_device_sync'))
+            .fontSize($r('sys.float.Subtitle_M'))
+            .fontWeight(FontWeight.Bold)
+          LightUpRoundedButton({
+            lightUpConfig: LightUpDefaultConfig,
+            icon: $r('sys.symbol.dot_radiowaves_left_and_right'),
+            clickAction: () => {
+              let new_dev = DistributedUtils.scanDevices()
+              if (new_dev) {
+                this.deviceList.devices = new_dev.map((val): SingleDeviceViewModel => {
+                  return SingleDeviceViewModel.fromDistInfo(val);
+                })
+              }
+            }
+          })
+        }.width('100%').padding({left: 12, right: 12})
+        .justifyContent(FlexAlign.SpaceBetween)
+        List() {
+          if (this.deviceList.devices.length == 0) {
+            ListItem() {
+              Column() {
+                Text($r('app.string.common_empty_content')).fontColor(Color.Gray).width('100%').height('100%')
+                  .textAlign(TextAlign.Center)
+              }
+            }
+          } else {
+            ForEach(this.deviceList.devices, (device: SingleDeviceViewModel) => {
+              this.SingleDeviceListItem(device)
+            })
+          }
+        }.height(150).width('100%').padding({left: 12, right: 12})
+        .divider({
+          strokeWidth: 1,
+          color: $r('sys.color.ohos_id_divider_color')
+        })
+      }.CardStyle()
+    }
+  }
+  build() {
+    this.DeviceListCard()
+  }
 }

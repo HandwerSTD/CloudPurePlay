@@ -18,6 +18,10 @@
     {
       "name": "vibrate_perm",
       "value": "需要振动权限以提供更真实的触感反馈"
+    },
+    {
+      "name": "data_sync_permission_reason",
+      "value": "需要分布式权限以进行数据同步"
     }
   ]
 }

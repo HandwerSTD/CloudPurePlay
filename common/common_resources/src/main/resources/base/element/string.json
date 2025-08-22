@@ -423,6 +423,18 @@
     {
       "name": "start_use",
       "value": "开始使用"
+    },
+    {
+      "name": "target_device_no_api_config",
+      "value": "对端设备未找到 API 配置"
+    },
+    {
+      "name": "multi_device_sync",
+      "value": "多设备同步"
+    },
+    {
+      "name": "need_dist_perm_to_sync",
+      "value": "需要分布式权限以进行数据同步"
     }
   ]
 }

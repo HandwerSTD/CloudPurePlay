@@ -8,13 +8,13 @@ export class CommonConstants {
 export class SCDistKV {
   static readonly dbName = 'distKV'
   static readonly dbOptions: distributedKVStore.Options = {
-    securityLevel: distributedKVStore.SecurityLevel.S4,
+    securityLevel: distributedKVStore.SecurityLevel.S4, // for safety
     encrypt: true,
-    kvStoreType: distributedKVStore.KVStoreType.SINGLE_VERSION,
+    kvStoreType: distributedKVStore.KVStoreType.DEVICE_COLLABORATION,
     autoSync: true,
     createIfMissing: true
   }
-  static readonly targetInput = 'targetInput'
+  static readonly currentUsedAPI = "currentUsedAPI"
 }
 
 export class SCEmitter {

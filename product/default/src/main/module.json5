@@ -63,6 +63,14 @@
       {
         "name": "ohos.permission.VIBRATE",
         "reason": "$string:vibrate_perm"
+      },
+      {
+        "name": "ohos.permission.DISTRIBUTED_DATASYNC",
+        "reason": "$string:data_sync_permission_reason",
+        "usedScene": {
+          "abilities": ["MainAbility"],
+          "when": "always"
+        }
       }
     ],
     "extensionAbilities": [
