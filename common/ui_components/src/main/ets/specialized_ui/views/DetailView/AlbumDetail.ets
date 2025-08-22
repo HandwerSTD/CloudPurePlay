@@ -27,7 +27,7 @@ import {
   LightUpRoundedButton,
   LightUpLinedDefaultConfig,
   SnackBarUtils,
-  DialogUtils} from "@handwer/ui_components";
+  DialogUtils} from "../../../../../../Index";
 import { hdsEffect, HdsNavDestination, HdsNavDestinationAttribute, HdsNavigationAttribute,
   HdsNavigation,
   HdsNavigationTitleMode,
@@ -35,9 +35,9 @@ import { hdsEffect, HdsNavDestination, HdsNavDestinationAttribute, HdsNavigation
 import { LazyData } from "@pie/lazy-data";
 import { LengthMetrics } from "@kit.ArkUI";
 import { DialogHelper } from "@pura/harmony-dialog";
-import { PlaylistSongViewModel } from "../viewmodels/PlaylistDetailViewmodel";
 import { EmitterUtil } from "@pura/harmony-utils";
 import { JSON } from "@kit.ArkTS";
+import { PlaylistSongViewModel } from "./PlaylistDetailViewmodel";
 
 const TAG = '[AlbumDetail]'
 

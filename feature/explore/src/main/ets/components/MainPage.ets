@@ -1,8 +1,11 @@
 import { ResponsiveUtil, SCApp } from "@handwer/base"
-import { AlbumDetail, MusicLibrary, PlaylistDetail } from '@handwer/music_library'
 import { HdsActionBar, ActionBarButton, ActionBarStyle } from "@kit.UIDesignKit"
 import { ColorMetrics, LengthMetrics, SymbolGlyphModifier } from "@kit.ArkUI"
-import { LightUpRoundedButton,LightUpDefaultConfig,OverrideLightUpStat,BackButtonUtils } from "@handwer/ui_components"
+import { LightUpRoundedButton,LightUpDefaultConfig,OverrideLightUpStat,BackButtonUtils,
+  AlbumDetail,
+  PlaylistDetail } from "@handwer/ui_components"
+import { MusicLibrary } from "@handwer/music_library"
+import { ExplorePage } from "./ExplorePage"
 
 
 @ComponentV2
@@ -49,16 +52,21 @@ export function ExplorePageBuilder() {
 struct MainPage_Shell {
   @Provider(SCApp.shouldDisableTab) shouldDisableTab: boolean = false
   @Consumer(SCApp.exploreSheet) exploreSheet: boolean = false
+  @Consumer(SCApp.settingsSheet) settingsSheet: boolean = false
 
   @Local pageOpacity: number = 1
   @Local showFloatingTab: boolean = true
   @Local isTabExpand: boolean = false
-  @Local currentTabIndex: number = 1
+  @Local currentTabIndex: number = 0
   tabController: TabsController = new TabsController()
 
   @Local primaryWidth: number = 0
 
   showTabTimeoutHandler?: number
+
+  shouldTabItemLight(index: number) {
+    return this.currentTabIndex === index && !this.settingsSheet
+  }
 
   @Builder TopAreaActionButton_ActionBar_PrimaryButton() {
     LightUpRoundedButton({
@@ -67,6 +75,7 @@ struct MainPage_Shell {
       customBgColor: $r('sys.color.icon_fourth'),
       clickAction: () => {
         this.isTabExpand = !this.isTabExpand
+        this.showTab()
       },
       customFontSize: 24,
       customPadding: 12,
@@ -78,6 +87,7 @@ struct MainPage_Shell {
       .onAreaChange((_, val) => {
         this.primaryWidth = val.width.valueOf() as number
       })
+      .backgroundBlurStyle(BlurStyle.BACKGROUND_THICK)
   }
   @Builder ActionButton_ActionBar() {
     Row() {
@@ -91,8 +101,8 @@ struct MainPage_Shell {
           new ActionBarButton({
             baseIcon: $r('sys.symbol.cloud_and_stars'),
             width: LengthMetrics.vp(40),
-            backgroundColor: this.currentTabIndex === 0 ? ColorMetrics.numeric(0xFFFFFFFF) : undefined,
-            baseIconSymbolGlyphModifier: this.currentTabIndex === 0 ?
+            backgroundColor: this.shouldTabItemLight(0) ? ColorMetrics.numeric(0xFFFFFFFF) : undefined,
+            baseIconSymbolGlyphModifier: this.shouldTabItemLight(0) ?
               new SymbolGlyphModifier().fontColor([Color.Black]) : undefined,
             onClick: () => {
               this.tabController.changeIndex(0)
@@ -101,52 +111,56 @@ struct MainPage_Shell {
 
           new ActionBarButton({
             baseIcon: $r('sys.symbol.storagebox'),
-            backgroundColor: this.currentTabIndex === 1 ? ColorMetrics.numeric(0xFFFFFFFF) : undefined,
-            baseIconSymbolGlyphModifier: this.currentTabIndex === 1 ? new SymbolGlyphModifier().fontColor([Color.Black]) : undefined,
+            backgroundColor: this.shouldTabItemLight(1) ? ColorMetrics.numeric(0xFFFFFFFF) : undefined,
+            baseIconSymbolGlyphModifier: this.shouldTabItemLight(1) ? new SymbolGlyphModifier().fontColor([Color.Black]) : undefined,
             width: LengthMetrics.vp(40),
             onClick: () => {
               this.tabController.changeIndex(1)
             }
           }),
+
+          new ActionBarButton({
+            baseIcon: $r('sys.symbol.gearshape_fill'),
+            backgroundColor: this.settingsSheet ? ColorMetrics.numeric(0xFFFFFFFF) : undefined,
+            baseIconSymbolGlyphModifier: this.settingsSheet ? new SymbolGlyphModifier().fontColor([Color.Black]) : undefined,
+            width: LengthMetrics.vp(40),
+            onClick: () => {
+              this.settingsSheet = true
+            }
+          })
         ],
         actionBarStyle: new ActionBarStyle({
-          backgroundBlurStyle: BlurStyle.BACKGROUND_THICK,
-
+          backgroundBlurStyle: BlurStyle.COMPONENT_THIN,
         })
       })
         .hitTestBehavior(this.isTabExpand ? HitTestMode.Default : HitTestMode.Transparent)
     }.hitTestBehavior(this.isTabExpand ? HitTestMode.Default : HitTestMode.Transparent)
-    .margin({bottom: 12, left: 12})
+    .margin({bottom: 12, left: 24})
     .transition(TransitionEffect.OPACITY.animation({duration: 300}))
   }
 
   build() {
     NavDestination() {
       Stack({alignContent: Alignment.BottomStart}) {
-        Tabs({index: $$this.currentTabIndex, controller: this.tabController}) {
+        Tabs({controller: this.tabController}) {
           TabContent() {
-
+            ExplorePage()
           }
           TabContent() {
             MusicLibrary()
           }
         }.height('100%').barHeight(0).edgeEffect(EdgeEffect.None)
         .scrollable(!this.shouldDisableTab)
+        .onAnimationStart((_, target) => {
+          this.currentTabIndex = target
+        })
         if (this.showFloatingTab && !this.shouldDisableTab) {
           this.ActionButton_ActionBar()
         }
       }.width('100%').height('100%')
       .onTouch((event) => {
         if (event.type === TouchType.Down) {
-          this.showFloatingTab = true;
-          if (this.showTabTimeoutHandler) {
-            clearTimeout(this.showTabTimeoutHandler)
-          }
-          this.showTabTimeoutHandler = setTimeout(() => {
-            this.showFloatingTab = false
-            this.isTabExpand = false
-            this.showTabTimeoutHandler = undefined
-          }, 3000)
+          this.showTab()
         }
       })
     }.hideTitleBar(true)
@@ -169,5 +183,17 @@ struct MainPage_Shell {
     })
     .opacity(this.pageOpacity)
     .animation({duration: ResponsiveUtil.chooseByWidth([300, 200, 200])})
+  }
+
+  showTab() {
+    this.showFloatingTab = true;
+    if (this.showTabTimeoutHandler) {
+      clearTimeout(this.showTabTimeoutHandler)
+    }
+    this.showTabTimeoutHandler = setTimeout(() => {
+      this.showFloatingTab = false
+      this.isTabExpand = false
+      this.showTabTimeoutHandler = undefined
+    }, 3000)
   }
 }

@@ -18,15 +18,6 @@ import {
   SpecialPlayMode,
   UserManager,
   UserStore } from "@handwer/base";
-import {
-  CommonListItem,
-  HDS_TITLE_CONFIG_STYLE, ImageCover, InListSongItem,
-  LightUpCommonButton,
-  LightUpLinedContainer,
-  LightUpRoundedButton,
-  LightUpLinedDefaultConfig,
-  SnackBarUtils,
-  DialogUtils} from "@handwer/ui_components";
 import { hdsEffect, HdsNavDestination, HdsNavDestinationAttribute, HdsNavigationAttribute,
   HdsNavigation,
   HdsNavigationTitleMode,
@@ -34,9 +25,16 @@ import { hdsEffect, HdsNavDestination, HdsNavDestinationAttribute, HdsNavigation
 import { LazyData } from "@pie/lazy-data";
 import { LengthMetrics } from "@kit.ArkUI";
 import { DialogHelper } from "@pura/harmony-dialog";
-import { PlaylistSongViewModel } from "../viewmodels/PlaylistDetailViewmodel";
 import { EmitterUtil } from "@pura/harmony-utils";
 import { JSON } from "@kit.ArkTS";
+import { HDS_TITLE_CONFIG_STYLE } from "../../../constants/HdsNavigationConfig";
+import { LightUpRoundedButton, LightUpCommonButton } from "../../../light_up/LightUpButton";
+import { LightUpLinedDefaultConfig } from "../../../light_up/LightUpConfig";
+import { LightUpLinedContainer } from "../../../light_up/LightUpContainer";
+import { DialogUtils } from "../../../utils/DialogUtils";
+import { SnackBarUtils } from "../../../utils/SnackBarUtils";
+import { CommonListItem, ImageCover, InListSongItem } from "../../exports";
+import { PlaylistSongViewModel } from "./PlaylistDetailViewmodel";
 
 const TAG = '[PlaylistDetail]'
 

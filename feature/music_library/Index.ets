@@ -1,3 +1,3 @@
 export { MainPage as MusicLibrary } from './src/main/ets/pages/MusicLibrary_MainPage';
-export { PlaylistDetail } from './src/main/ets/views/PlaylistDetail'
-export { AlbumDetail } from './src/main/ets/views/AlbumDetail'
+export { PlaylistDetail } from '@handwer/ui_components/src/main/ets/specialized_ui/views/DetailView/PlaylistDetail'
+export { AlbumDetail } from '@handwer/ui_components/src/main/ets/specialized_ui/views/DetailView/AlbumDetail'

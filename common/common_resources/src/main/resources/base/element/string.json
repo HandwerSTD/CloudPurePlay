@@ -329,6 +329,10 @@
       "value": "%s成功"
     },
     {
+      "name": "remove_song_success",
+      "value": "删除歌曲成功"
+    },
+    {
       "name": "remove_song_failed",
       "value": "删除歌曲失败"
     },

@@ -6,16 +6,18 @@ import { HDS_TITLE_CONFIG_STYLE, LightUpContainer, LightUpRoundedButton, LightUp
   SnackBarUtils, OverrideLightUpStat,
   LightUpCommonButton,
   LightUpIconTextButton,
-  BackButtonUtils} from "@handwer/ui_components"
+  BackButtonUtils,
+  Album_PopReturn,
+  generatePageParams_AlbumDetail,
+  generatePageParams_PlayListDetail,
+  PlaylistDetail_PopReturn} from "@handwer/ui_components"
 import { hdsEffect, HdsNavigation, HdsNavigationAttribute, HdsNavigationTitleMode,
   HdsSnackBar,
   IconStyleMode } from "@kit.UIDesignKit"
 import { curves, IconType, LengthMetrics } from "@kit.ArkUI"
-import { generatePageParams_PlayListDetail, PlaylistDetail_PopReturn } from "../views/PlaylistDetail"
 import { MusicLibrarySearchView } from "../views/SearchView"
 import { DialogHelper } from "@pura/harmony-dialog"
 import { LazyData } from "@pie/lazy-data"
-import { Album_PopReturn, generatePageParams_AlbumDetail } from "../views/AlbumDetail"
 
 export function genId_MusicLibraryPlaylist(id: string) {
   return 'MusicLibraryPlaylist_'+id
@@ -26,7 +28,6 @@ export struct MainPage {
   @Consumer(SCApp.shouldDisableTab) shouldDisableTab: boolean = false
 
   @Consumer(SCApp.explorePageStack) pageStack: NavPathStack = new NavPathStack()
-  @Consumer(SCApp.settingsSheet) settingsSheet: boolean = false
   @Local gridColumnNum: number = 4
   user = UserStore
   snack = new HdsSnackBar(this.getUIContext())
@@ -274,14 +275,6 @@ export struct MainPage {
                 type: IconStyleMode.NORMAL,
                 action: () => {
                   this.modifyPlaylist = !this.modifyPlaylist
-                }
-              },
-            },{
-              content: {
-                icon: $r('sys.symbol.gearshape'),
-                type: IconStyleMode.NORMAL,
-                action: () => {
-                  this.settingsSheet = !this.settingsSheet
                 }
               },
             }]
