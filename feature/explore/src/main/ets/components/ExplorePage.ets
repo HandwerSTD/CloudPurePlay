@@ -180,14 +180,15 @@ export struct ExplorePage {
           }
         },
       }).titleMode(HdsNavigationTitleMode.FREE).mode(NavigationMode.Stack)
+      .translate(this.showSearchPage ? {
+        y: '15%'
+      } : undefined)
+      .animation({curve: curves.springMotion(0.6, 0.7)})
     }
     .width('100%').height('100%')
-    .translate(this.showSearchPage ? {
-      y: '15%'
-    } : undefined)
-    .animation({curve: curves.springMotion(0.6, 0.7)})
-    .foregroundEffect({
-      radius: this.showSearchPage ? 128 : 0
+    .foregroundBlurStyle(this.showSearchPage ? BlurStyle.COMPONENT_ULTRA_THIN : undefined, {
+      colorMode: ThemeColorMode.DARK,
+      scale: 0.5
     })
     .animation({duration: 300})
   }
@@ -295,7 +296,9 @@ struct RecommendPlaylistCard {
     EmitterUtil.onSubscribe(SCEmitter.UserInfoReInit, () => {
       this.loadData()
     })
-    this.loadData()
+    setTimeout(() => {
+      this.loadData()
+    }, 1000)
   }
   aboutToDisappear(): void {
     EmitterUtil.unSubscribe(SCEmitter.UserInfoReInit)
@@ -315,7 +318,7 @@ struct RecommendPlaylistCard {
   }
 
   loadData() {
-    this.songs = this.user.userPlaylists.filter(() => {
+    const result = this.user.userPlaylists.filter(() => {
       const prob = Math.min(1, 16/this.user.userPlaylists.length)
       return Math.random() < prob;
     }).map(v => ({
@@ -325,6 +328,9 @@ struct RecommendPlaylistCard {
         this.onPushPlaylist(v)
       }
     } as CommonCoverItem)).sort(() => Math.random() - 0.5)
+    this.getUIContext().animateTo({curve: curves.springMotion(0.5, 0.8)}, () => {
+      this.songs = result
+    })
   }
 
   onPushPlaylist(playlist: PlayList) {

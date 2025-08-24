@@ -281,14 +281,15 @@ export struct MainPage {
           }
         },
       }).titleMode(HdsNavigationTitleMode.FREE).mode(NavigationMode.Stack)
+      .translate(this.showSearchPage ? {
+        y: '15%'
+      } : undefined)
+      .animation({curve: curves.springMotion(0.6, 0.7)})
     }
     .width('100%').height('100%')
-    .translate(this.showSearchPage ? {
-      y: '15%'
-    } : undefined)
-    .animation({curve: curves.springMotion(0.6, 0.7)})
-    .foregroundEffect({
-      radius: this.showSearchPage ? 128 : 0
+    .foregroundBlurStyle(this.showSearchPage ? BlurStyle.COMPONENT_ULTRA_THIN : undefined, {
+      colorMode: ThemeColorMode.DARK,
+      scale: 0.5
     })
     .animation({duration: 300})
   }
