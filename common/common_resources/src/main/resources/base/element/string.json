@@ -467,6 +467,10 @@
     {
       "name": "start_playing_failed",
       "value": "开始播放失败"
+    },
+    {
+      "name": "music_single",
+      "value": "单曲"
     }
   ]
 }

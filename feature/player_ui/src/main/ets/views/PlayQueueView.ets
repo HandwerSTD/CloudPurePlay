@@ -122,11 +122,9 @@ export struct PlayQueueSingleItem {
         customFontSize: 14,
         customFontWeight: FontWeight.Bold,
         clickAction: () => {
-          PlayQueueUtils.queueDelete(this.itemIndex, true)
-            .then(() => {
-              PlayControl.playQueue(PlayQueueStore.currentQueueIndex)
-            })
+          PlayQueueUtils.queueDelete(this.itemIndex, false)
         },
+        customFontColor: [Color.White],
         lightUpConfig: {
           lightIntensity: 2,
           lightHeight: 150

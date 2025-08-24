@@ -18,6 +18,7 @@ import {
   SCGlobal,
   SongConvertUtils, SongLike,
   SpecialPlayMode,
+  UserManager,
   UserStore } from "@handwer/base";
 import {
   CommonListItem,
@@ -66,9 +67,7 @@ export struct AlbumDetail {
 
   @Local showPlaylistOperationSheet: boolean = false
 
-  get isThisAlbumSub() {
-    return UserStore.userSubAlbum.find((val) => val.id === this.albumInfo.id) !== null;
-  }
+  @Local isThisAlbumSub: boolean = false
 
   async onStart() {
     this.fullPlayListDetail = new Array(Math.min(this.albumInfo.size)).fill(new PlaylistSongViewModel({
@@ -78,6 +77,7 @@ export struct AlbumDetail {
       .then((res) => {
         this.fullPlayListDetail = PlaylistSongViewModel.fromPlaylistData(res.songs)
       })
+    this.isThisAlbumSub = UserStore.userSubAlbum.find((val) => val.id === this.albumInfo.id) !== undefined
   }
 
   shouldThisSongLightedUp(index: number): boolean {
@@ -426,6 +426,8 @@ export struct AlbumDetail {
           SnackBarUtils.showMessage(this.snack, $r('sys.symbol.opticaldisc'),
             $r('app.string.subscribe_success'));
           this.showPlaylistOperationSheet = false
+          UserManager.fetchUserSubAlbum()
+          this.isThisAlbumSub = true
         } else {
           throw Error()
         }

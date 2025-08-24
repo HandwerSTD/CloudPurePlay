@@ -200,6 +200,12 @@ export class UserManager {
       UserManager.persistUserPlaylists()
     })
   }
+  static async fetchUserSubAlbum() {
+    await AlbumAPIUtils.getUserSubscribedAlbum((val) => {
+      store.userSubAlbum = val ?? store.userSubAlbum
+      UserManager.persistUserSubAlbum()
+    })
+  }
 
   // 便捷方法：单独更新用户歌单
   static persistUserPlaylists() {

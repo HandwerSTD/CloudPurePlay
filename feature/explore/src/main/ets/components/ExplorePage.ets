@@ -13,7 +13,9 @@ import { LightUpContainer, HDS_TITLE_CONFIG_STYLE, generatePageParams_AlbumDetai
 LightUpIconTextButton,
 LightUpDefaultConfig,
   SnackBarUtils,UIComponentUtils,
-  LightUpRoundedButton} from "@handwer/ui_components"
+  LightUpRoundedButton,
+  generatePageParams_PlayListDetail,
+  PlaylistDetail_PopReturn} from "@handwer/ui_components"
 import { hdsEffect, HdsNavigation, IconStyleMode, HdsNavigationTitleMode, HdsSnackBar, HdsNavigationAttribute } from "@kit.UIDesignKit"
 import { LengthMetrics, curves } from "@kit.ArkUI"
 import { LazyData } from "@pie/lazy-data"
@@ -95,8 +97,8 @@ export struct ExplorePage {
     }.width('100%').justifyContent(FlexAlign.Center)
   }
 
-  @Builder TopPlayedMusic() {
-    // AllAlbumsCard()
+  @Builder RecommendPlaylist() {
+    RecommendPlaylistCard()
   }
 
   @Builder RecommendForYou() {
@@ -116,9 +118,9 @@ export struct ExplorePage {
       ListItem() {
         this.QuickButtons()
       }
-      // ListItem() {
-      //   this.TopPlayedMusic()
-      // }
+      ListItem() {
+        this.RecommendPlaylist()
+      }
       ListItem() {
         this.RecommendForYou()
       }
@@ -233,6 +235,9 @@ struct AllAlbumsCard {
     })
     this.loadData()
   }
+  aboutToDisappear(): void {
+    EmitterUtil.unSubscribe(SCEmitter.UserInfoReInit)
+  }
 
   build() {
     SubCard({
@@ -277,54 +282,71 @@ struct AllAlbumsCard {
     }, true)
   }
 }
-//
-// @ComponentV2
-// struct TopPlayedMusicCard {
-//   user = UserStore
-//
-//   @Consumer(SCApp.explorePageStack) pageStack: NavPathStack = new NavPathStack()
-//
-//   @Local allAlbums: CommonCoverItem[] = []
-//
-//   @Monitor('user.topLists')
-//   aboutToAppear(): void {
-//     this.allAlbums = UserStore.topLists.map(val => ({
-//       name: val.name,
-//       picUrl: val.coverImgUrl,
-//       onClick: () => {
-//         this.onPushAlbum(val)
-//       }
-//     } as CommonCoverItem))
-//   }
-//
-//   build() {
-//     SubCard({
-//       title: $r('app.string.top_played'),
-//       items: this.allAlbums,
-//       detailViewPush: () => {}
-//     })
-//   }
-//
-//   onPushAlbum(album: Album) {
-//     const params = generatePageParams_AlbumDetail(album)
-//     const handlePop = (val: PopInfo) => {
-//       const result = val.result as Album_PopReturn
-//       if (result.removed) {
-//         const p = this.user.userSubAlbum.findIndex((v) => v.id === album.id)
-//         if (p !== -1) this.user.userSubAlbum.splice(p, 1)
-//       }
-//     }
-//
-//     this.pageStack.pushPath({
-//       name: 'AlbumDetail',
-//       param: params,
-//       onPop: (val) => {
-//         handlePop(val)
-//       }
-//     }, true)
-//   }
-// }
 
+@ComponentV2
+struct RecommendPlaylistCard {
+  user = UserStore
+
+  @Consumer(SCApp.explorePageStack) pageStack: NavPathStack = new NavPathStack()
+
+  @Local songs: CommonCoverItem[] = []
+
+  aboutToAppear(): void {
+    EmitterUtil.onSubscribe(SCEmitter.UserInfoReInit, () => {
+      this.loadData()
+    })
+    this.loadData()
+  }
+  aboutToDisappear(): void {
+    EmitterUtil.unSubscribe(SCEmitter.UserInfoReInit)
+  }
+
+  build() {
+    SubCard({
+      title: $r('app.string.recommend_for_you'),
+      titleIcon: $r('sys.symbol.music_note_list'),
+      subtitle: $r('app.string.Playlist'),
+      detailIcon: $r('sys.symbol.arrow_2_circlepath'),
+      items: this.songs,
+      detailViewPush: () => {
+        this.loadData()
+      }
+    })
+  }
+
+  loadData() {
+    this.songs = this.user.userPlaylists.filter(() => {
+      const prob = Math.min(1, 16/this.user.userPlaylists.length)
+      return Math.random() < prob;
+    }).map(v => ({
+      name: v.name,
+      picUrl: v.coverImgUrl,
+      onClick: () => {
+        this.onPushPlaylist(v)
+      }
+    } as CommonCoverItem)).sort(() => Math.random() - 0.5)
+  }
+
+  onPushPlaylist(playlist: PlayList) {
+    const params = generatePageParams_PlayListDetail(playlist)
+    const handlePop = (val: PopInfo) => {
+      const result = val.result as PlaylistDetail_PopReturn
+      if (result.removed) {
+        const p = this.user.userPlaylists.findIndex((v) => v.id === playlist.id)
+        if (p !== -1) this.user.userPlaylists.splice(p, 1)
+        this.loadData()
+      }
+    }
+
+    this.pageStack.pushPath({
+      name: 'PlaylistDetail',
+      param: params,
+      onPop: (val) => {
+        handlePop(val)
+      }
+    }, true)
+  }
+}
 
 @ComponentV2
 struct RecommendForYouCard {
@@ -341,11 +363,15 @@ struct RecommendForYouCard {
     })
     this.loadData()
   }
+  aboutToDisappear(): void {
+    EmitterUtil.unSubscribe(SCEmitter.UserInfoReInit)
+  }
 
   build() {
     SubCard({
       title: $r('app.string.recommend_for_you'),
       titleIcon: $r('sys.symbol.lightbulb_max'),
+      subtitle: $r('app.string.music_single'),
       items: this.songs,
       detailIcon: $r('sys.symbol.play'),
       detailViewPush: () => {
@@ -413,11 +439,14 @@ struct RecommendForYouCard {
 @ComponentV2
 export struct SubCard {
   @Param @Require title: ResourceStr
+  @Param subtitle: ResourceStr = ''
   @Param @Require titleIcon: Resource
   @Param @Require detailViewPush: () => void
   @Param @Require items: CommonCoverItem[]
 
   @Param detailIcon: Resource | undefined = undefined
+
+  @Local lanes: number = 1
 
   @Builder CoverItem(it: CommonCoverItem) {
     Column() {
@@ -439,9 +468,20 @@ export struct SubCard {
         .fontSize(12).fontWeight(FontWeight.Bold)
         .fontColor($r('sys.color.font_on_primary'))
     }.width(ResponsiveUtil.chooseByWidth([120, 150]))
+    .transition(TransitionEffect.OPACITY.animation({duration: 300}))
     .onClick(() => {
       it.onClick()
     })
+  }
+
+  @Monitor('items.length')
+  onItemsLengthChange() {
+    if (this.items.length > 10) this.lanes = 2;
+    else this.lanes = 1;
+  }
+
+  aboutToAppear(): void {
+    this.onItemsLengthChange()
   }
 
   build() {
@@ -459,6 +499,12 @@ export struct SubCard {
             .fontSize(20)
             .fontWeight(FontWeight.Bold)
             .fontColor(Color.White)
+          if (this.subtitle !== '') {
+            Divider().vertical(true).color(Color.White).width(1).height(24)
+            Text(this.subtitle)
+              .fontSize(15)
+              .fontColor(Color.White)
+          }
         }
         LightUpRoundedButton({
           lightUpConfig: LightUpDefaultConfig,
@@ -473,21 +519,25 @@ export struct SubCard {
       }.width('100%').justifyContent(FlexAlign.SpaceBetween)
       .padding(24)
       List({space: 24}) {
-        ListItem().width(0)
-        ListItem().width(0)
+        ForEach((new Array(this.lanes).fill(0)), () => {
+          ListItem()
+        })
         ForEach(this.items, (item: CommonCoverItem) => {
           ListItem() {
             this.CoverItem(item)
           }
         })
-        ListItem().width(0)
-        ListItem().width(0)
-      }.lanes(2, 24)
+        ForEach((new Array(this.lanes).fill(0)), () => {
+          ListItem()
+        })
+      }.lanes(this.lanes, 24)
+      .animation({duration: 300})
       .listDirection(Axis.Horizontal)
       .scrollBar(BarState.Off)
       .fadingEdge(true, {
         fadingEdgeLength: LengthMetrics.percent(10)
       })
+      .alignSelf(ItemAlign.Start)
     }.width('100%')
     // .padding({bottom: 12}).borderRadius(24)
     // .backgroundColor($r('sys.color.comp_background_secondary'))

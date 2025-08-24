@@ -1,5 +1,6 @@
 import { CycleMode, PlayList, PlayListSong, PLAYMODE, PlayQueue, Song } from '@handwer/api_adapter'
 import { EmitterUtil, LogUtil } from '@pura/harmony-utils'
+import { PlayControl } from '../../../exports'
 import { playQueueStore, playQueueKV } from './PlayQueueStore'
 
 const TAG = '[PlayQueueUtils] '
@@ -67,6 +68,9 @@ class PlayQueueUtils {
 
   async queueDelete(index: number, goToFront: boolean = false) {
     try {
+      if (index === playQueueStore.currentQueueIndex) {
+        await PlayControl.playNext()
+      }
       playQueueStore.queue.splice(index, 1)
       playQueueKV.put(SCQueueKV.queue, playQueueStore.queue)
       if (index < playQueueStore.currentQueueIndex) {

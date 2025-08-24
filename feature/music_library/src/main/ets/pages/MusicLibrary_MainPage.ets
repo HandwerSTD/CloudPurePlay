@@ -216,7 +216,7 @@ export struct MainPage {
         this.MyPlaylist()
       }
     }.width('100%').height('100%')
-    .edgeEffect(EdgeEffect.Spring, {alwaysEnabled: true})
+    .edgeEffect(EdgeEffect.Spring, {alwaysEnabled: false})
     .fadingEdge(true, {
       fadingEdgeLength: LengthMetrics.percent(10)
     })
