@@ -58,6 +58,19 @@ export class CloudAPI_AlbumAPIUtils {
   static async subscribeAlbum(id: number, t: number): Promise<boolean> {
     return Cloud_AlbumAPIUtils.subscribeAlbum(id, t);
   }
+
+  static async getAllAlbums(
+    type: 'random' | 'newest' | 'highest' | 'frequent' | 'recent' | 'alphabeticalByName' | 'alphabeticalByArtist' | 'starred' | 'byYear' | 'byGenre',
+    size: number = 10,
+    offset: number = 0,
+    fromYear?: number,
+    toYear?: number,
+    genre?: string
+  ): Promise<Album[]> {
+    // CloudAPI doesn't have direct equivalent to Subsonic's getAlbumList
+    // This is a placeholder implementation that could be extended based on CloudAPI capabilities
+    throw Error('API Unimplemented - CloudAPI does not support getAllAlbums equivalent');
+  }
 }
 
 export class CloudAPI_ArtistAPIUtils {
@@ -260,6 +273,18 @@ export class CloudAPI_SongAPIUtils {
     return Cloud_SongAPIUtils.likeMusic(id, setLike);
   }
 
+  static async getRandomSongs(
+    size: number = 10,
+    genre?: string,
+    fromYear?: number,
+    toYear?: number,
+    musicFolderId?: string
+  ): Promise<Song[]> {
+    // CloudAPI doesn't have direct equivalent to Subsonic's getRandomSongs
+    // This is a placeholder implementation that could be extended based on CloudAPI capabilities
+    throw Error('API Unimplemented - CloudAPI does not support getRandomSongs equivalent');
+  }
+
   static async setHeartMode(
     id: number,
     pid: number,
@@ -280,6 +305,14 @@ export class CloudAPI_SongAPIUtils {
   static async getPersonalFmSong(mode: number): Promise<Song> {
     const cloudResult = await Cloud_SongAPIUtils.getPersonalFmSong(mode);
     return CloudAPIEntityParser.parseSong(cloudResult);
+  }
+
+  static async getSongUrlCacheId(url: string) {
+    url = url.split('?')[0]
+    let start: number = url.lastIndexOf("/")
+    let end: number = url.lastIndexOf(".")
+    let cacheName: string = url.substring(start + 1, end) + '-' + url.substring(end + 1)
+    return cacheName
   }
 }
 

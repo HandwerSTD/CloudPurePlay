@@ -43,17 +43,36 @@ export struct LightUpRoundedButton {
     }
     return this.customBgColor ? this.customBgColor : $r('sys.color.comp_background_secondary')
   }
+  get isChevron() {
+    return this.icon.id === $r('sys.symbol.chevron_right').id || this.icon.id === $r('sys.symbol.chevron_left').id
+  }
 
-  build() {
-    Button() {
-      SymbolGlyph(this.icon)
+  @Builder ChevronButton() {
+    Text() {
+      SymbolSpan(this.icon)
         .fontWeight(this.customFontWeight)
         .fontSize(this.customFontSize ? this.customFontSize: 24)
         .fontColor(this.customFontColor ? this.customFontColor : [$r('sys.color.font_primary')])
         .hitTestBehavior(HitTestMode.Transparent)
+    }.offset({y: -7})
+  }
+
+  build() {
+    Column() {
+      if (this.isChevron) {
+        this.ChevronButton()
+      } else {
+        SymbolGlyph(this.icon)
+          .fontWeight(this.customFontWeight)
+          .fontSize(this.customFontSize ? this.customFontSize: 24)
+          .fontColor(this.customFontColor ? this.customFontColor : [$r('sys.color.font_primary')])
+          .hitTestBehavior(HitTestMode.Transparent)
+      }
     }.borderRadius(this.customFontSize ? this.customFontSize*2 : 48)
     .backgroundColor(this.buttonBgColor)
     .padding(this.customPadding ?? 8)
+    .justifyContent(FlexAlign.Center)
+    .alignItems(HorizontalAlign.Center)
     .aspectRatio(1)
     .animation({
       duration: this.useAnimationToAll ? 300 : 0,

@@ -1,4 +1,4 @@
-import { CacheSet, CacheSet_INITIAL } from "@handwer/api_adapter";
+import { APIConfigUtils, CacheSet, CacheSet_INITIAL, SongAPIUtils } from "@handwer/api_adapter";
 import { LogUtil } from "@pura/harmony-utils";
 import { MCMediaCache } from "@sj/mediacache";
 import { SCPref } from "../../../../constants/PreferenceConstants";
@@ -25,11 +25,7 @@ export default class AudioCacheUtils {
       request.setHeader('cookie', cookie)
     })
     MCMediaCache.setAssetIdentifierPreprocessor(async (url) => {
-      url = url.split('?')[0]
-      let start: number = url.lastIndexOf("/")
-      let end: number = url.lastIndexOf(".")
-      let cacheName: string = url.substring(start + 1, end) + '-' + url.substring(end + 1)
-      return cacheName
+      return SongAPIUtils.getSongUrlCacheId(url)
     })
     MCMediaCache.cacheConfig.maxDiskSize = cacheSet.songCacheMaxSize
 

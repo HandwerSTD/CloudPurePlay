@@ -140,7 +140,7 @@ export struct DeviceSelectorPanel {
   }
 
   @Styles CardStyle() {
-    .backgroundColor($r('app.color.common_card_item_background'))
+    .backgroundColor($r('app.color.play_list_single_item_bg'))
     .borderRadius(24)
     .padding(12)
     .visualEffect(new hdsEffect.HdsEffectBuilder().pointLight({

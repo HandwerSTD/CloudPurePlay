@@ -163,7 +163,7 @@ export struct AlbumDetail {
               if (this.isThisAlbumSub) {
                 CommonListItem({
                   icon: $r('sys.symbol.trash'),
-                  title: $r('app.string.remove_album')
+                  title: $r('app.string.unsubscribe')
                 })
                   .onClick(() => {
                     this.onRemoveAlbum()

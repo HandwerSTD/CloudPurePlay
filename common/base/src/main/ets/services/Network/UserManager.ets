@@ -6,6 +6,7 @@ import store from './UserStore'
 import Logger from '../../utils/Logger'
 import { SongLike } from '../PlaybackController/play/user/songLike'
 import NowPlayingStore from '../PlaybackController/play/NowPlayingStore'
+import { DateUtil } from '@pura/harmony-utils'
 
 const TAG = '[UserManager]'
 
@@ -104,9 +105,7 @@ export class UserManager {
       })
     ])
 
-  }
-  static async fetchDynamicData() {
-    const dailySongs = await SongAPIUtils.getDailySongs()
+    UserManager.getDailyList()
   }
   static persistAllUserData() {
     Logger.info(TAG, 'Persisting all user data to preferences')
@@ -217,13 +216,14 @@ export class UserManager {
     UserSettings.put(SCUser.userSubAlbum, store.userSubAlbum)
   }
 
-  // static changeLikeStat(id: number, stat: boolean) {
-  //   if (stat) store.likeList.add(id.toString())
-  //   else store.likeList.delete(id.toString())
-  //   setTimeout(() => {
-  //     UserManager.updateLikeList()
-  //   })
-  // }
+  static async getDailyList() {
+    const date = DateUtil.getTodayStr('yyyyMMdd')
+    if (store.dailyList.date !== date) {
+      store.dailyList.songs = await SongAPIUtils.getDailySongs()
+      store.dailyList.date = date
+    }
+    return store.dailyList.songs
+  }
 }
 
 export default UserSettings

@@ -11,7 +11,7 @@ import { SpecialPlayMode, PlayControl } from "../user/playControl"
 const TAG = '[FeaturedPlayUtils]'
 
 export class FeaturedPlayUtils {
-  static async playPersonalizedFM() {
+  static async playPersonalizedFM(showToastCallback: (icon: ResourceStr, msg: ResourceStr) => void) {
     const nps = NowPlayingStore
     if(!nps.isPlayerLoading) {
       nps.isPlayerLoading = true
@@ -19,10 +19,12 @@ export class FeaturedPlayUtils {
         // AppStorage.setOrCreate(StorageConstants.IS_PERSONAL_FM, true)
         nps.specialPlayMode = SpecialPlayMode.PERSONAL_FM_DEFAULT
         await PlayQueueUtils.cleanQueue()
-        // ToastUtil.showToast('开始播放私人FM')
+        showToastCallback($r('sys.symbol.radiostation'), $r('app.string.start_playing_personal_fm'))
         await PlayControl.playNext()
       } catch (e) {
         // ToastUtil.showToast('获取私人FM曲目失败')
+        showToastCallback($r('sys.symbol.radiostation'), $r('app.string.start_playing_personal_fm_failed'))
+        nps.specialPlayMode = SpecialPlayMode.DISABLED
       } finally {
         setTimeout(() => {
           nps.isPlayerLoading = false
@@ -68,7 +70,7 @@ export class FeaturedPlayUtils {
   static async playDailySongs(showToastCallback: (icon: ResourceStr, msg: ResourceStr) => void, todayIcon: ResourceStr) {
     const loadSongs = async () => {
       try {
-        let result = await SongAPIUtils.getDailySongs()
+        let result = await UserManager.getDailyList()
         if(result.length < 3) { result = await SongAPIUtils.getDailySongs(false) }
         return result
       } catch (e) {

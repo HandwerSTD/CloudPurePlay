@@ -443,6 +443,30 @@
     {
       "name": "mission_continue",
       "value": "应用接续"
+    },
+    {
+      "name": "all_albums",
+      "value": "全部专辑"
+    },
+    {
+      "name": "top_played",
+      "value": "最爱播放"
+    },
+    {
+      "name": "recommend_for_you",
+      "value": "为你推荐"
+    },
+    {
+      "name": "start_playing_personal_fm",
+      "value": "开始播放私人FM"
+    },
+    {
+      "name": "start_playing_personal_fm_failed",
+      "value": "播放私人FM失败"
+    },
+    {
+      "name": "start_playing_failed",
+      "value": "开始播放失败"
     }
   ]
 }

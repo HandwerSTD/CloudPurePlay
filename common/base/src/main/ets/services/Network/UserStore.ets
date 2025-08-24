@@ -1,8 +1,14 @@
-import { DailyListSongs, Cloud_RequestCookieConfig, User, User_INITIAL } from '@handwer/api_adapter'
+import { DailyListSongs, Cloud_RequestCookieConfig, User, User_INITIAL, DailySongRes } from '@handwer/api_adapter'
 import { PlayList } from '@handwer/api_adapter'
 import { DjRadio, RecommendDjRadio } from '@handwer/api_adapter'
 import { Album } from '@handwer/api_adapter'
 import { TopListItem, PersonalListItem } from '@handwer/api_adapter'
+
+@ObservedV2
+class DailyListViewModel {
+  @Trace date: string = ''
+  @Trace songs: DailySongRes[] = []
+}
 
 @ObservedV2
 class UserStore {
@@ -17,6 +23,7 @@ class UserStore {
   @Trace personalizedList: PersonalListItem[] = []
   @Trace recommendedDj: RecommendDjRadio[] = []
   @Trace searchHistory: string[] = []
+  @Trace dailyList: DailyListViewModel = new DailyListViewModel()
   @Trace likeList: Set<string> = new Set()
 
   @Trace dailySongs?: DailyListSongs

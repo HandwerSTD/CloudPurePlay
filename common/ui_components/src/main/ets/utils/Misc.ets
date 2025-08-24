@@ -1,5 +1,5 @@
 export class UIComponentUtils {
-  static getTodayIcon(): ResourceStr {
+  static getTodayIcon(): Resource {
     return UIComponentUtils.getCalendarIconByDay(new Date().getDate())
   }
   static getCalendarIconByDay(day: number) {

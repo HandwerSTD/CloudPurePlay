@@ -2,6 +2,52 @@ import { AlbumSong } from "../entity/AlbumEntity";
 import { Song, SongSearchResult, SongPlayResult } from "../entity/SongEntity";
 import commonRequest, { generateRequestTokenSync } from "./request/RequestUtil";
 
+/** getRandomSongs 的返回类型 */
+interface GetRandomSongsResponse_Inner {
+  song: Song[];
+}
+
+interface GetRandomSongsResponse {
+  randomSongs: GetRandomSongsResponse_Inner | null;
+}
+
+/**
+ * 获取随机歌曲 (getRandomSongs API)
+ * 返回符合给定条件的随机歌曲
+ * 
+ * @param size - 返回歌曲的最大数量，可选，默认 10，最大 500
+ * @param genre - 只返回属于此流派的歌曲，可选
+ * @param fromYear - 只返回发布于或晚于此年份的歌曲，可选
+ * @param toYear - 只返回发布于或早于此年份的歌曲，可选
+ * @param musicFolderId - 只返回指定音乐文件夹中的歌曲，可选
+ */
+export const getRandomSongs = async (
+  size: number = 10,
+  genre?: string,
+  fromYear?: number,
+  toYear?: number,
+  musicFolderId?: string
+): Promise<Song[]> => {
+  // 构建参数对象
+  const params: Record<string, Object> = {
+    "size": Math.min(size, 500), // 确保不超过最大值 500
+    "f": 'json'
+  };
+
+  // 添加可选参数
+  if (genre) params.genre = genre;
+  if (fromYear !== undefined) params.fromYear = fromYear;
+  if (toYear !== undefined) params.toYear = toYear;
+  if (musicFolderId) params.musicFolderId = musicFolderId;
+
+  const result = await commonRequest<GetRandomSongsResponse>({
+    url: '/rest/getRandomSongs.view',
+    params
+  });
+
+  return result.randomSongs?.song ?? [];
+};
+
 /**
  * 搜索歌曲
  * @param keywords - 搜索关键词

@@ -45,6 +45,7 @@ import {
   Navidrome_SongUtils,
   Navidrome_TopListUtils
 } from './navidrome_api_adapter/NavidromeAPI_APIUtilsExports';
+import { NavidromeAPI_SongAPIUtils } from '@handwer/navidrome_api';
 
 
 export class AlbumAPIUtils {
@@ -83,6 +84,23 @@ export class AlbumAPIUtils {
       return CloudAPI_AlbumAPIUtils.subscribeAlbum(Number.parseInt(id), t);
     } else if (InstanceSwitcher.InstanceType === INSTANCE_TYPE.NAVIDROME) {
       return Navidrome_AlbumUtils.subscribeAlbum(id, t);
+    } else {
+      throw Error('API Unimplemented')
+    }
+  }
+
+  static async getAllAlbums(
+    type: 'random' | 'newest' | 'highest' | 'frequent' | 'recent' | 'alphabeticalByName' | 'alphabeticalByArtist' | 'starred' | 'byYear' | 'byGenre',
+    size: number = 10,
+    offset: number = 0,
+    fromYear?: number,
+    toYear?: number,
+    genre?: string
+  ): Promise<Album[]> {
+    if (InstanceSwitcher.InstanceType === INSTANCE_TYPE.CLOUD) {
+      return (await CloudAPI_AlbumAPIUtils.getUserSubscribedAlbum()).data;
+    } else if (InstanceSwitcher.InstanceType === INSTANCE_TYPE.NAVIDROME) {
+      return Navidrome_AlbumUtils.getAllAlbums(type, size, offset, fromYear, toYear, genre);
     } else {
       throw Error('API Unimplemented')
     }
@@ -385,6 +403,8 @@ export class SongAPIUtils {
   static async getDailySongs(useCookie: boolean = true): Promise<DailySongRes[]> {
     if (InstanceSwitcher.InstanceType === INSTANCE_TYPE.CLOUD) {
       return CloudAPI_SongAPIUtils.getDailySongs(useCookie);
+    } else if (InstanceSwitcher.InstanceType === INSTANCE_TYPE.NAVIDROME) {
+      return Navidrome_SongUtils.getDailySongs()
     } else {
       throw Error('API Unimplemented')
     }
@@ -410,6 +430,22 @@ export class SongAPIUtils {
     }
   }
 
+  static async getRandomSongs(
+    size: number = 10,
+    genre?: string,
+    fromYear?: number,
+    toYear?: number,
+    musicFolderId?: string
+  ): Promise<Song[]> {
+    if (InstanceSwitcher.InstanceType === INSTANCE_TYPE.CLOUD) {
+      return (await CloudAPI_SongAPIUtils.getDailySongs()).map(v => v.song);
+    } else if (InstanceSwitcher.InstanceType === INSTANCE_TYPE.NAVIDROME) {
+      return Navidrome_SongUtils.getRandomSongs(size, genre, fromYear, toYear, musicFolderId);
+    } else {
+      throw Error('API Unimplemented')
+    }
+  }
+
   static async setHeartMode(
     id: string,
     pid: string,
@@ -418,6 +454,8 @@ export class SongAPIUtils {
   ): Promise<void> {
     if (InstanceSwitcher.InstanceType === INSTANCE_TYPE.CLOUD) {
       return CloudAPI_SongAPIUtils.setHeartMode(Number.parseInt(id), Number.parseInt(pid), cleanQueue, addQueue);
+    } else if (InstanceSwitcher.InstanceType === INSTANCE_TYPE.NAVIDROME) {
+      return Navidrome_SongUtils.setHeartMode(id, pid, cleanQueue, addQueue);
     } else {
       throw Error('API Unimplemented')
     }
@@ -426,6 +464,35 @@ export class SongAPIUtils {
   static async getPersonalFmSong(mode: number): Promise<Song> {
     if (InstanceSwitcher.InstanceType === INSTANCE_TYPE.CLOUD) {
       return CloudAPI_SongAPIUtils.getPersonalFmSong(mode);
+    } else if (InstanceSwitcher.InstanceType === INSTANCE_TYPE.NAVIDROME) {
+      return Navidrome_SongUtils.getPersonalFmSong(mode);
+    }  else {
+      throw Error('API Unimplemented')
+    }
+  }
+
+  static async getAllSongs(
+    albumType: 'random' | 'newest' | 'highest' | 'frequent' | 'recent' | 'alphabeticalByName' | 'alphabeticalByArtist' | 'starred' | 'byYear' | 'byGenre' = 'alphabeticalByName',
+    albumSize: number = 1000,
+    albumOffset: number = 0,
+    fromYear?: number,
+    toYear?: number,
+    genre?: string
+  ): Promise<Song[]> {
+    if (InstanceSwitcher.InstanceType === INSTANCE_TYPE.CLOUD) {
+      throw Error('API Unimplemented - CloudAPI does not support getAllSongs yet')
+    } else if (InstanceSwitcher.InstanceType === INSTANCE_TYPE.NAVIDROME) {
+      return Navidrome_SongUtils.getAllSongs(albumType, albumSize, albumOffset, fromYear, toYear, genre);
+    } else {
+      throw Error('API Unimplemented')
+    }
+  }
+
+  static async getSongUrlCacheId(url: string): Promise<string> {
+    if (InstanceSwitcher.InstanceType === INSTANCE_TYPE.CLOUD) {
+      return CloudAPI_SongAPIUtils.getSongUrlCacheId(url)
+    } else if (InstanceSwitcher.InstanceType === INSTANCE_TYPE.NAVIDROME) {
+      return Navidrome_SongUtils.getSongUrlCacheId(url)
     } else {
       throw Error('API Unimplemented')
     }
@@ -437,7 +504,8 @@ export class TopListAPIUtils {
     if (InstanceSwitcher.InstanceType === INSTANCE_TYPE.CLOUD) {
       return CloudAPI_TopListAPIUtils.getTopList(statePersistent);
     } else if (InstanceSwitcher.InstanceType === INSTANCE_TYPE.NAVIDROME) {
-      return Navidrome_TopListUtils.getTopList(statePersistent);
+      // return Navidrome_TopListUtils.getTopList(statePersistent);
+      throw Error('API Unimplemented')
     } else {
       throw Error('API Unimplemented')
     }

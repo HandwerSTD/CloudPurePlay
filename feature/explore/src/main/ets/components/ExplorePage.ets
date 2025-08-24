@@ -1,12 +1,30 @@
-import { Album, PlayList } from "@handwer/api_adapter"
-import { UserStore, ResponsiveUtil, SCApp } from "@handwer/base"
+import { Album, AlbumAPIUtils, PlayList, PlayListSong, Song, SongAPIUtils, TopListAPIUtils, PLAYMODE } from "@handwer/api_adapter"
+import { UserStore, ResponsiveUtil, SCApp, FeaturedPlayUtils, NowPlayingStore, GlobalStore,
+  PlayQueueUtils,
+  SongConvertUtils,
+  PlayControl,
+  SpecialPlayMode,
+  Logger,
+  SCEmitter,
+  ThemeManager} from "@handwer/base"
 import { LightUpContainer, HDS_TITLE_CONFIG_STYLE, generatePageParams_AlbumDetail,
   Album_PopReturn,
-  BackButtonUtils} from "@handwer/ui_components"
+  BackButtonUtils,
+LightUpIconTextButton,
+LightUpDefaultConfig,
+  SnackBarUtils,UIComponentUtils,
+  LightUpRoundedButton} from "@handwer/ui_components"
 import { hdsEffect, HdsNavigation, IconStyleMode, HdsNavigationTitleMode, HdsSnackBar, HdsNavigationAttribute } from "@kit.UIDesignKit"
 import { LengthMetrics, curves } from "@kit.ArkUI"
 import { LazyData } from "@pie/lazy-data"
 import { ExploreSearchView } from "../views/SearchView"
+import { EmitterUtil } from "@pura/harmony-utils"
+
+interface CommonCoverItem {
+  picUrl: string
+  name: string
+  onClick: () => void
+}
 
 @ComponentV2
 export struct ExplorePage {
@@ -14,7 +32,6 @@ export struct ExplorePage {
 
   @Consumer(SCApp.explorePageStack) pageStack: NavPathStack = new NavPathStack()
   @Consumer(SCApp.settingsSheet) settingsSheet: boolean = false
-  @Local gridColumnNum: number = 4
   user = UserStore
   snack = new HdsSnackBar(this.getUIContext())
 
@@ -25,85 +42,97 @@ export struct ExplorePage {
   @Local modifyPlaylist: boolean = false
   @Local fullWidth: number = 0
 
-  @Builder Album_SingleItem(list: Album, index: number) {
-    Column() {
-      Stack({alignContent: Alignment.BottomEnd}) {
-        Image(list.picUrl).borderRadius(12)
-        // .margin({left:12, right: 12, top: 12})
-          .draggable(false)
-          .shadow(ShadowStyle.OUTER_DEFAULT_XS)
-          .visualEffect(new hdsEffect.HdsEffectBuilder().pointLight({
-            illuminatedType: hdsEffect.PointLightIlluminatedType.BORDER
-          }).buildEffect())
-          .clickEffect({
-            level: ClickEffectLevel.HEAVY
-          })
-        // if (this.modifyPlaylist) {
-        //   SymbolGlyph(this.isPlaylistCreated(list) ? $r('sys.symbol.xmark') : $r('sys.symbol.heart_square_stack_fill'))
-        //     .margin({right: 12, bottom: 12})
-        //     .padding(4)
-        //     .fontColor([$r('sys.color.font_primary')])
-        //     .backgroundBlurStyle(BlurStyle.COMPONENT_THICK)
-        //     .borderRadius(24)
-        //     .transition(TransitionEffect.translate({x:-4}).animation({curve: curves.springMotion()}).combine(TransitionEffect.OPACITY.animation({duration: 300})))
-        // }
-      }
-      Text(list.name)
-        .margin(12).maxLines(1).textOverflow({overflow: TextOverflow.Ellipsis})
-        .fontSize(12).fontWeight(FontWeight.Bold)
-        .fontColor($r('sys.color.font_on_primary'))
-    }
-    .onClick(() => {
-      if (this.modifyPlaylist) {
-        // this.on
-      } else {
-        // this.onPlayListItemClicked(index)
-        this.onPushAlbum(list)
-      }
-    })
-  }
 
-  @Builder MyAlbumList() {
-    ListItemGroup({space: 36}) {
-      ForEach(UserStore.userSubAlbum, (list: Album, index) => {
+  @Builder QuickButtons() {
+    Row() {
+      List({space: ResponsiveUtil.chooseByWidth([6, 12])}) {
+        ListItem().width(0)
+        // HeartMode
         ListItem() {
-          LightUpContainer({
-            lightUpConfig: {
-              lightIntensity: 1,
-              lightHeight: 240,
-            },
-            child: () => {
-              this.Album_SingleItem(list, index)
+          LightUpIconTextButton({
+            icon: $r('sys.symbol.opticaldisc_badge_heart'),
+            title: $r('app.string.Heart_list'),
+            lightUpConfig: LightUpDefaultConfig,
+            clickAction: () => {
+              FeaturedPlayUtils.playHeartMode((icon, msg) => {
+                SnackBarUtils.showMessage(this.snack, icon, msg)
+              })
             }
           })
-        }
+        }.margin({right: 12})
+
+        ListItem() {
+          LightUpIconTextButton({
+            icon: UIComponentUtils.getTodayIcon(),
+            title: $r('app.string.Daily_recommend'),
+            lightUpConfig: LightUpDefaultConfig,
+            clickAction: () => {
+              FeaturedPlayUtils.playDailySongs((icon, msg) => {
+                SnackBarUtils.showMessage(this.snack, icon, msg)
+              }, UIComponentUtils.getTodayIcon())
+            }
+          })
+        }.margin({right: 12})
+
+        ListItem() {
+          LightUpIconTextButton({
+            icon: $r('sys.symbol.radiostation'),
+            title: $r('app.string.Personal_fm'),
+            lightUpConfig: LightUpDefaultConfig,
+            clickAction: () => {
+              FeaturedPlayUtils.playPersonalizedFM((icon, msg) => {
+                SnackBarUtils.showMessage(this.snack, icon, msg)
+              })
+            }
+          })
+        }.margin({right: 12})
+        ListItem().width(0)
+      }.fadingEdge(true, {
+        fadingEdgeLength: LengthMetrics.percent(10)
       })
-    }//.visibility(!this.showAlbum ? Visibility.None : Visibility.Visible)
-    .transition(TransitionEffect.OPACITY
-      .combine(TransitionEffect.translate({ y: 24 }))
-      .animation({ duration: 500, curve: Curve.Friction}))
-    .padding({left: 12, right: 12})
+      .listDirection(Axis.Horizontal)
+      .scrollBar(BarState.Off)
+    }.width('100%').justifyContent(FlexAlign.Center)
   }
 
+  @Builder TopPlayedMusic() {
+    AllAlbumsCard()
+  }
+
+  @Builder RecommendForYou() {
+    RecommendForYouCard()
+  }
+
+  @Builder AllAlbums() {
+    AllAlbumsCard()
+  }
+
+
   @Builder MyContent() {
-    List() {
-      ForEach((new Array(this.gridColumnNum).fill(0)), (_: number) => {
+    List({space: ResponsiveUtil.chooseByWidth([12, 24])}) {
+      ForEach((new Array(1).fill(0)), (_: number) => {
         ListItem().height($r('sys.float.ohos_id_navigation_bar_height_emphasize'))
       })
-      // ForEach((new Array(this.gridColumnNum).fill(0)), (_: number, index) => {
-      //   ListItem() {
-      //   }
-      // })
-      this.MyAlbumList()
+      ListItem() {
+        this.QuickButtons()
+      }
+      ListItem() {
+        this.TopPlayedMusic()
+      }
+      ListItem() {
+        this.RecommendForYou()
+      }
+      ListItem() {
+        this.AllAlbums()
+      }
     }.width('100%').height('100%')
     .edgeEffect(EdgeEffect.Spring, {alwaysEnabled: true})
     .fadingEdge(true, {
       fadingEdgeLength: LengthMetrics.percent(10)
     })
-    .lanes(this.gridColumnNum, 24)
     .clip(false)
     .onAreaChange((_, nw) => {
-      this.gridColumnNum = ResponsiveUtil.chooseByWidth([2,4,6])
+      // this.gridColumnNum = ResponsiveUtil.chooseByWidth([2,4,6])
       this.fullWidth = nw.width.valueOf() as number
     })
   }
@@ -188,6 +217,45 @@ export struct ExplorePage {
     this.shouldDisableTab = this.showSearchPage
   }
 
+}
+
+@ComponentV2
+struct AllAlbumsCard {
+  @Consumer(SCApp.explorePageStack) pageStack: NavPathStack = new NavPathStack()
+
+  @Local allAlbums: CommonCoverItem[] = []
+
+  user = UserStore
+
+  aboutToAppear(): void {
+    EmitterUtil.onSubscribe(SCEmitter.UserInfoReInit, () => {
+      this.loadData()
+    })
+    this.loadData()
+  }
+
+  build() {
+    SubCard({
+      title: $r('app.string.all_albums'),
+      titleIcon: $r('sys.symbol.opticaldisc'),
+      items: this.allAlbums,
+      detailViewPush: () => {}
+    })
+  }
+
+  loadData() {
+    AlbumAPIUtils.getAllAlbums("newest")
+      .then((res) => {
+        this.allAlbums = res.map(val => ({
+          name: val.name,
+          picUrl: val.picUrl,
+          onClick: () => {
+            this.onPushAlbum(val)
+          }
+        } as CommonCoverItem))
+      })
+  }
+
   onPushAlbum(album: Album) {
     const params = generatePageParams_AlbumDetail(album)
     const handlePop = (val: PopInfo) => {
@@ -205,5 +273,221 @@ export struct ExplorePage {
         handlePop(val)
       }
     }, true)
+  }
+}
+//
+// @ComponentV2
+// struct TopPlayedMusicCard {
+//   user = UserStore
+//
+//   @Consumer(SCApp.explorePageStack) pageStack: NavPathStack = new NavPathStack()
+//
+//   @Local allAlbums: CommonCoverItem[] = []
+//
+//   @Monitor('user.topLists')
+//   aboutToAppear(): void {
+//     this.allAlbums = UserStore.topLists.map(val => ({
+//       name: val.name,
+//       picUrl: val.coverImgUrl,
+//       onClick: () => {
+//         this.onPushAlbum(val)
+//       }
+//     } as CommonCoverItem))
+//   }
+//
+//   build() {
+//     SubCard({
+//       title: $r('app.string.top_played'),
+//       items: this.allAlbums,
+//       detailViewPush: () => {}
+//     })
+//   }
+//
+//   onPushAlbum(album: Album) {
+//     const params = generatePageParams_AlbumDetail(album)
+//     const handlePop = (val: PopInfo) => {
+//       const result = val.result as Album_PopReturn
+//       if (result.removed) {
+//         const p = this.user.userSubAlbum.findIndex((v) => v.id === album.id)
+//         if (p !== -1) this.user.userSubAlbum.splice(p, 1)
+//       }
+//     }
+//
+//     this.pageStack.pushPath({
+//       name: 'AlbumDetail',
+//       param: params,
+//       onPop: (val) => {
+//         handlePop(val)
+//       }
+//     }, true)
+//   }
+// }
+
+
+@ComponentV2
+struct RecommendForYouCard {
+  user = UserStore
+
+  @Consumer(SCApp.explorePageStack) pageStack: NavPathStack = new NavPathStack()
+
+  _songs: Song[] = []
+  @Local songs: CommonCoverItem[] = []
+
+  aboutToAppear(): void {
+    EmitterUtil.onSubscribe(SCEmitter.UserInfoReInit, () => {
+      this.loadData()
+    })
+    this.loadData()
+  }
+
+  build() {
+    SubCard({
+      title: $r('app.string.recommend_for_you'),
+      titleIcon: $r('sys.symbol.lightbulb_max'),
+      items: this.songs,
+      detailIcon: $r('sys.symbol.play'),
+      detailViewPush: () => {
+        this.playFullList()
+      }
+    })
+  }
+
+  loadData() {
+    SongAPIUtils.getRandomSongs(20)
+      .then((res) => {
+        this._songs = res
+        this.songs = res.map((v, index) => ({
+          name: v.name,
+          picUrl: v.album.picUrl,
+          onClick: () => {
+            this.playSingle(index)
+          }
+        } as CommonCoverItem))
+      })
+  }
+  async playSingle(songIndex: number) {
+    if (this._songs[songIndex].id === NowPlayingStore.currentSong.id) {
+      return;
+    }
+    try {
+      const title = this.getUIContext().getHostContext()!.resourceManager.getStringByNameSync('top_played')
+      const playName = (songIndex ? this._songs[songIndex].name : title)
+      SnackBarUtils.showMessage(GlobalStore.globalSnack!, $r('sys.symbol.music_note_list'), $r('app.string.start_playing_le_NAME_ge_', playName))
+
+      const song = this._songs[songIndex]
+      await PlayQueueUtils.queueAdd(PLAYMODE.SINGLE, song, SongConvertUtils.getArtists(song.artists), '', song.album.picUrl)
+      await PlayControl.playNext()
+
+      NowPlayingStore.specialPlayMode = SpecialPlayMode.DISABLED
+    } catch (e) {
+      Logger.error(`play full list failed: ${JSON.stringify(e)}`)
+      SnackBarUtils.showMessage(GlobalStore.globalSnack!, $r('sys.symbol.music_note_list'), $r('app.string.start_playing_failed'))
+    }
+  }
+  async playFullList(songIndex?: number) {
+    if (songIndex) {
+      if (this._songs[songIndex].id === NowPlayingStore.currentSong.id) {
+        return;
+      }
+    }
+    try {
+      const title = this.getUIContext().getHostContext()!.resourceManager.getStringByNameSync('recommend_for_you')
+      const playName = (songIndex ? this._songs[songIndex].name : title)
+      SnackBarUtils.showMessage(GlobalStore.globalSnack!, $r('sys.symbol.music_note_list'), $r('app.string.start_playing_le_NAME_ge_', playName))
+      const queue = PlayQueueUtils.makeQueueByPlaylist(this._songs.map((v): PlayListSong => {
+        return SongConvertUtils.NormalSong2PlaylistSong(v)
+      }))
+      await PlayQueueUtils.cleanQueue()
+      await PlayQueueUtils.queueAddArray(queue)
+      await PlayControl.playQueue(songIndex ?? 0)
+      NowPlayingStore.specialPlayMode = SpecialPlayMode.DISABLED
+    } catch (e) {
+      Logger.error(`play full list failed: ${JSON.stringify(e)}`)
+      SnackBarUtils.showMessage(GlobalStore.globalSnack!, $r('sys.symbol.music_note_list'), $r('app.string.start_playing_list_failed'))
+    }
+  }
+}
+
+@ComponentV2
+export struct SubCard {
+  @Param @Require title: ResourceStr
+  @Param @Require titleIcon: Resource
+  @Param @Require detailViewPush: () => void
+  @Param @Require items: CommonCoverItem[]
+
+  @Param detailIcon: Resource | undefined = undefined
+
+  @Builder CoverItem(it: CommonCoverItem) {
+    Column() {
+      Row() {
+        Image(it.picUrl).borderRadius(12)
+          .draggable(false)
+          .shadow(ShadowStyle.OUTER_DEFAULT_XS)
+          .visualEffect(new hdsEffect.HdsEffectBuilder().pointLight({
+            illuminatedType: hdsEffect.PointLightIlluminatedType.BORDER
+          }).buildEffect())
+          .clickEffect({
+            level: ClickEffectLevel.HEAVY
+          })
+          .layoutWeight(1)
+          .aspectRatio(1)
+      }
+      Text(it.name)
+        .margin(12).maxLines(1).textOverflow({overflow: TextOverflow.Ellipsis})
+        .fontSize(12).fontWeight(FontWeight.Bold)
+        .fontColor($r('sys.color.font_on_primary'))
+    }.width(ResponsiveUtil.chooseByWidth([120, 150]))
+    .onClick(() => {
+      it.onClick()
+    })
+  }
+
+  build() {
+    Column() {
+      Row() {
+        Row({space: 12}) {
+          SymbolGlyph(this.titleIcon)
+            .fontColor([Color.White])
+            .fontWeight(FontWeight.Bold )
+            .fontSize(24)
+            .padding(8)
+            .backgroundColor($r('app.color.play_list_single_item_bg'))
+            .borderRadius(10)
+          Text(this.title)
+            .fontSize(20)
+            .fontWeight(FontWeight.Bold)
+            .fontColor(Color.White)
+        }
+        LightUpRoundedButton({
+          lightUpConfig: LightUpDefaultConfig,
+          icon: this.detailIcon ?? $r('sys.symbol.chevron_right'),
+          customFontColor: [Color.White],
+          customFontSize: (this.detailIcon === undefined ? 30 : undefined),
+          customPadding: (this.detailIcon === undefined ? 12 : undefined),
+          clickAction: () => {
+            this.detailViewPush()
+          }
+        })
+      }.width('100%').justifyContent(FlexAlign.SpaceBetween)
+      .padding(24)
+      List({space: 24}) {
+        ListItem().width(0)
+        ListItem().width(0)
+        ForEach(this.items, (item: CommonCoverItem) => {
+          ListItem() {
+            this.CoverItem(item)
+          }
+        })
+        ListItem().width(0)
+        ListItem().width(0)
+      }.lanes(2, 24)
+      .listDirection(Axis.Horizontal)
+      .scrollBar(BarState.Off)
+      .fadingEdge(true, {
+        fadingEdgeLength: LengthMetrics.percent(10)
+      })
+    }.width('100%')
+    // .padding({bottom: 12}).borderRadius(24)
+    // .backgroundColor($r('sys.color.comp_background_secondary'))
   }
 }

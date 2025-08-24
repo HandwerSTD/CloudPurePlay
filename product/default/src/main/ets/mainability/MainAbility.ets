@@ -97,7 +97,7 @@ export default class MainAbility extends UIAbility {
   onHandleMissionContinueWant(want: Want) {
     const params = want.parameters
     if (params) {
-      const data = params[data] as MissionContinueData
+      const data = params['data'] as MissionContinueData
       if (DeviceCollaborationUtils.checkContinueData(data.requestContextHash)) {
         DeviceCollaborationUtils.applyContinuation(data)
       }

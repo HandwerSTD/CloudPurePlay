@@ -229,7 +229,9 @@ export struct MainPage {
             baseIconSymbolGlyphModifier: nps.isPersonalFM ? new SymbolGlyphModifier().fontColor([Color.Black]) : undefined,
             backgroundColor: nps.isPersonalFM ? ColorMetrics.numeric(0xFFFFFFFF) : undefined,
             onClick: () => {
-              FeaturedPlayUtils.playPersonalizedFM()
+              FeaturedPlayUtils.playPersonalizedFM((icon, msg) => {
+                SnackBarUtils.showMessage(this.hdsSnackBar, icon, msg)
+              })
             }
           }),
           new ActionBarButton({

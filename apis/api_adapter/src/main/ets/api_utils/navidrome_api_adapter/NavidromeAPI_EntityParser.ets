@@ -203,7 +203,7 @@ export class NavidromeAPI_EntityParser {
       artists: [NavidromeAPI_EntityParser.parseArtist({id: navidromeSong.artistId, name: navidromeSong.artist})],
       album: {
         artists: [NavidromeAPI_EntityParser.parseArtist({id: navidromeSong.artistId, name: navidromeSong.artist})],
-        picUrl: navidromeSong.coverArt ?? '',
+        picUrl: NavidromeAPI_SongAPIUtils.getSongPicUrl(navidromeSong.coverArt!) ?? '',
         name: navidromeSong.album,
         id: navidromeSong.albumId,
         size: 0 // 默认值

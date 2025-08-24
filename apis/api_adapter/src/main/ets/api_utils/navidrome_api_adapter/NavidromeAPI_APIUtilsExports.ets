@@ -61,6 +61,19 @@ export class Navidrome_AlbumUtils {
   static async subscribeAlbum(id: string, t: number): Promise<boolean> {
     return NavidromeAPI_AlbumAPIUtils.subscribeAlbum(id, t);
   }
+
+  static async getAllAlbums(
+    type: 'random' | 'newest' | 'highest' | 'frequent' | 'recent' | 'alphabeticalByName' | 'alphabeticalByArtist' | 'starred' | 'byYear' | 'byGenre',
+    size: number = 10,
+    offset: number = 0,
+    fromYear?: number,
+    toYear?: number,
+    genre?: string
+  ): Promise<Album[]> {
+    const navidromeResult = await NavidromeAPI_AlbumAPIUtils.getAllAlbums(type, size, offset, fromYear, toYear, genre);
+    const parsedResult = NavidromeAPI_EntityParser.parseAlbums(navidromeResult);
+    return parsedResult;
+  }
 }
 
 export class Navidrome_ArtistUtils {
@@ -247,8 +260,12 @@ export class Navidrome_SongUtils {
   }
 
   static async getDailySongs(useCookie: boolean = true): Promise<DailySongRes[]> {
-    // NavidromeAPI doesn't support daily songs
-    throw Error('API Unimplemented - NavidromeAPI does not support daily songs');
+    const result = await NavidromeAPI_SongAPIUtils.getDailySongs()
+    return NavidromeAPI_EntityParser.parseSongs(result).map(v => ({
+      song: v,
+      picUrl: v.album.picUrl,
+      reason: '',
+    } as DailySongRes))
   }
 
   static async getLikeList(user: User, statePersistent?: (val: string[]) => void): Promise<string[]> {
@@ -259,24 +276,98 @@ export class Navidrome_SongUtils {
     return NavidromeAPI_SongAPIUtils.likeMusic(id, setLike);
   }
 
+  static async getRandomSongs(
+    size: number = 10,
+    genre?: string,
+    fromYear?: number,
+    toYear?: number,
+    musicFolderId?: string
+  ): Promise<Song[]> {
+    const navidromeResult = await NavidromeAPI_SongAPIUtils.getRandomSongs(size, genre, fromYear, toYear, musicFolderId);
+    return NavidromeAPI_EntityParser.parseSongs(navidromeResult);
+  }
+
   static async setHeartMode(
     id: string,
     pid: string,
     cleanQueue: () => Promise<void>,
     addQueue: (queue: PlayQueue[]) => Promise<void>
   ): Promise<void> {
-    // NavidromeAPI doesn't support heart mode
-    throw Error('API Unimplemented - NavidromeAPI does not support heart mode');
+    try {
+      // 清空当前播放队列
+      await cleanQueue();
+      
+      // 调用 navidrome_api 中的 getHeartModeSongs 方法
+      const starredSongs = await NavidromeAPI_SongAPIUtils.getHeartModeSongs();
+      
+      // 将starred歌曲转换为APIAdapter格式
+      const convertedSongs = NavidromeAPI_EntityParser.parseSongs(starredSongs);
+      
+      // 构建播放队列
+      const playQueue: PlayQueue[] = convertedSongs.map(song => ({
+        playmode: 1, // PLAYMODE.SINGLE
+        song: song,
+        fileName: '',
+        picUrl: song.album.picUrl || ''
+      } as PlayQueue));
+      
+      // 添加到播放队列
+      await addQueue(playQueue);
+    } catch (error) {
+      console.error('Failed to set heart mode:', error);
+    }
   }
 
   static async getPersonalFmSong(mode: number): Promise<Song> {
-    // NavidromeAPI doesn't support personal FM
-    throw Error('API Unimplemented - NavidromeAPI does not support personal FM');
+    return (await Navidrome_SongUtils.getRandomSongs(1))[0]
+  }
+
+  static async getAllSongs(
+    albumType: 'random' | 'newest' | 'highest' | 'frequent' | 'recent' | 'alphabeticalByName' | 'alphabeticalByArtist' | 'starred' | 'byYear' | 'byGenre' = 'alphabeticalByName',
+    albumSize: number = 1000,
+    albumOffset: number = 0,
+    fromYear?: number,
+    toYear?: number,
+    genre?: string
+  ): Promise<Song[]> {
+    try {
+      // 调用 navidrome_api 中的 getAllSongs 方法
+      const allSongs = await NavidromeAPI_SongAPIUtils.getAllSongs(
+        albumType,
+        albumSize,
+        albumOffset,
+        fromYear,
+        toYear,
+        genre
+      );
+
+      return NavidromeAPI_EntityParser.parseSongs(allSongs);
+    } catch (error) {
+      console.error('Failed to get all songs:', error);
+      return [];
+    }
+  }
+
+  static async getSongUrlCacheId(url: string) {
+    const sp = url.split("?");
+    const base = sp[0], query = sp[1];
+    if (!query) return url;
+
+    const removeKeys = new Set(["t", "s", "f", "v"]);
+
+    const filtered = query
+      .split("&")
+      .filter(param => {
+        const key = param.split("=")[0];
+        return !removeKeys.has(key);
+      });
+
+    return filtered.length > 0 ? `${base}?${filtered.join("&")}` : base;
   }
 }
 
 export class Navidrome_TopListUtils {
-  static async getTopList(statePersistent?: (val: TopListItem[]) => void): Promise<TopListItem[]> {
+  static async getArtistTopList(statePersistent?: (val: TopListItem[]) => void): Promise<TopListItem[]> {
     const navidromeResult = await NavidromeAPI_TopListAPIUtils.getTopList();
     const parsedResult = NavidromeAPI_EntityParser.parseTopListItem({
       topSongs: navidromeResult

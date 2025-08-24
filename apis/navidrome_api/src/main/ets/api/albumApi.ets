@@ -90,9 +90,62 @@ export const subscribeAlbum = async (id: string, t: number): Promise<boolean> =>
   }
 };
 
+/** getAllAlbums 的返回类型 */
+interface GetAlbumListResponse_Inner {
+  album: Album[];
+}
+
+interface GetAlbumListResponse {
+  albumList: GetAlbumListResponse_Inner | null;
+}
+
+/**
+ * 获取专辑列表 (getAlbumList API)
+ * 返回随机、最新、最高评级等专辑列表，类似于 Subsonic 网页界面主页的专辑列表
+ * 
+ * @param type - 列表类型，必填。可选值: 'random', 'newest', 'highest', 'frequent', 'recent', 
+ *               'alphabeticalByName', 'alphabeticalByArtist', 'starred', 'byYear', 'byGenre'
+ * @param size - 返回专辑数量，可选，默认 10，最大 500
+ * @param offset - 列表偏移量，可选，默认 0，用于分页
+ * @param fromYear - 起始年份，当 type 为 'byYear' 时使用，可选
+ * @param toYear - 结束年份，当 type 为 'byYear' 时使用，可选
+ * @param genre - 流派名称，当 type 为 'byGenre' 时使用，可选
+ */
+export const getAllAlbums = async (
+  type: 'random' | 'newest' | 'highest' | 'frequent' | 'recent' | 'alphabeticalByName' | 'alphabeticalByArtist' | 'starred' | 'byYear' | 'byGenre',
+  size: number,
+  offset: number,
+  fromYear?: number,
+  toYear?: number,
+  genre?: string
+): Promise<Album[]> => {
+  // 构建参数对象
+  const params: Record<string, Object> = {
+    "type": type,
+    "size": Math.min(size, 500), // 确保不超过最大值 500
+    "offset": offset,
+    "f": 'json'
+  };
+
+  // 根据 type 添加额外参数
+  if (type === 'byYear') {
+    if (fromYear !== undefined) params.fromYear = fromYear;
+    if (toYear !== undefined) params.toYear = toYear;
+  } else if (type === 'byGenre' && genre) {
+    params.genre = genre;
+  }
+
+  const result = await commonRequest<GetAlbumListResponse>({
+    url: '/rest/getAlbumList.view',
+    params
+  });
+
+  return result.albumList?.album ?? [];
+};
+
 /**
  * 获取歌曲的专辑封面 URL
- * @param song - Song 对象
+ * @param album - Album 对象
  * @param size - 尺寸，可选，默认 500
  */
 export const getAlbumCoverUrl = (album: Album, size: number = 500): string => {
