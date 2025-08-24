@@ -6,6 +6,7 @@ import { LightUpRoundedButton,LightUpDefaultConfig,OverrideLightUpStat,BackButto
   PlaylistDetail } from "@handwer/ui_components"
 import { MusicLibrary } from "@handwer/music_library"
 import { ExplorePage } from "./ExplorePage"
+import { AllAlbums } from "./ExploreSubViews/AllAlbums"
 
 
 @ComponentV2
@@ -23,6 +24,8 @@ export struct MainPage {
       PlaylistDetail()
     } else if (name === 'AlbumDetail') {
       AlbumDetail()
+    } else if (name === 'AllAlbums') {
+      AllAlbums()
     }
   }
 

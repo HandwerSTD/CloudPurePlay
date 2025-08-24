@@ -96,7 +96,7 @@ export struct ExplorePage {
   }
 
   @Builder TopPlayedMusic() {
-    AllAlbumsCard()
+    // AllAlbumsCard()
   }
 
   @Builder RecommendForYou() {
@@ -116,9 +116,9 @@ export struct ExplorePage {
       ListItem() {
         this.QuickButtons()
       }
-      ListItem() {
-        this.TopPlayedMusic()
-      }
+      // ListItem() {
+      //   this.TopPlayedMusic()
+      // }
       ListItem() {
         this.RecommendForYou()
       }
@@ -239,7 +239,9 @@ struct AllAlbumsCard {
       title: $r('app.string.all_albums'),
       titleIcon: $r('sys.symbol.opticaldisc'),
       items: this.allAlbums,
-      detailViewPush: () => {}
+      detailViewPush: () => {
+        this.pageStack.pushPathByName('AllAlbums', [])
+      }
     })
   }
 

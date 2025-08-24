@@ -1,5 +1,6 @@
 import { ThemeManager } from "@handwer/base"
 import { curves } from "@kit.ArkUI"
+import { hdsEffect } from "@kit.UIDesignKit"
 
 @ComponentV2
 export struct WithAnimationFAB {
