@@ -26,6 +26,7 @@ import {
   Navidrome_User,
   Navidrome_LyricResult,
   Navidrome_SongArtist,
+  Navidrome_UnifiedSearchResult,
   NavidromeAPI_AlbumAPIUtils,
   NavidromeAPI_SongAPIUtils,
   NavidromeAPI_LoginAPIUtils
@@ -48,6 +49,7 @@ import {
   PlayListsResult,
   PlayListSong,
   User,
+  UnifiedSearchResult,
   LyricResult,
   TopListItem
 } from '../../common_defs/ExportedEntities';
@@ -364,5 +366,19 @@ export class NavidromeAPI_EntityParser {
    */
   static parseLikeListToSongs(navidromeLikeList: Navidrome_LikeList): Song[] {
     return NavidromeAPI_EntityParser.parseSongs(navidromeLikeList.data);
+  }
+
+  /**
+   * 转换统一搜索结果
+   */
+  static parseUnifiedSearchResult(navidromeSearchResult: Navidrome_UnifiedSearchResult): UnifiedSearchResult {
+    return {
+      artists: NavidromeAPI_EntityParser.parseArtists(navidromeSearchResult.artists),
+      albums: NavidromeAPI_EntityParser.parseAlbums(navidromeSearchResult.albums),
+      songs: NavidromeAPI_EntityParser.parseSongs(navidromeSearchResult.songs),
+      hasMoreArtists: navidromeSearchResult.hasMoreArtists,
+      hasMoreAlbums: navidromeSearchResult.hasMoreAlbums,
+      hasMoreSongs: navidromeSearchResult.hasMoreSongs
+    };
   }
 }

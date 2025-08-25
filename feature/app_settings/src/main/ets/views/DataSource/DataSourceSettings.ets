@@ -152,10 +152,11 @@ export struct DeviceSelectorPanel {
     ListItem() {
       Row({space: 4}) {
         SymbolGlyph(DeviceIcon[device.deviceType])
-          .fontColor([$r('sys.color.font_primary')])
+          .fontColor([Color.White])
           .fontSize(24)
           .width(36)
         Text(device.deviceName)
+          .fontColor(Color.White)
           .fontSize(14)
           .layoutWeight(1)
       }
@@ -174,6 +175,7 @@ export struct DeviceSelectorPanel {
           Text($r('app.string.multi_device_sync'))
             .fontSize($r('sys.float.Subtitle_M'))
             .fontWeight(FontWeight.Bold)
+            .fontColor(Color.White)
           LightUpRoundedButton({
             lightUpConfig: LightUpDefaultConfig,
             icon: $r('sys.symbol.dot_radiowaves_left_and_right'),

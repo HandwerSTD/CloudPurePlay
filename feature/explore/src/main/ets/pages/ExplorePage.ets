@@ -15,18 +15,13 @@ LightUpDefaultConfig,
   SnackBarUtils,UIComponentUtils,
   LightUpRoundedButton,
   generatePageParams_PlayListDetail,
-  PlaylistDetail_PopReturn} from "@handwer/ui_components"
+  PlaylistDetail_PopReturn, CommonSongListCard as SubCard, CommonCoverItem} from "@handwer/ui_components"
 import { hdsEffect, HdsNavigation, IconStyleMode, HdsNavigationTitleMode, HdsSnackBar, HdsNavigationAttribute } from "@kit.UIDesignKit"
 import { LengthMetrics, curves } from "@kit.ArkUI"
 import { LazyData } from "@pie/lazy-data"
-import { ExploreSearchView } from "../views/SearchView"
+import { ExploreSearchView } from "../views/Search/SearchView"
 import { EmitterUtil } from "@pura/harmony-utils"
 
-interface CommonCoverItem {
-  picUrl: string
-  name: string
-  onClick: () => void
-}
 
 @ComponentV2
 export struct ExplorePage {
@@ -294,7 +289,9 @@ struct RecommendPlaylistCard {
 
   aboutToAppear(): void {
     EmitterUtil.onSubscribe(SCEmitter.UserInfoReInit, () => {
-      this.loadData()
+      setTimeout(() => {
+        this.loadData()
+      }, 1000)
     })
     setTimeout(() => {
       this.loadData()
@@ -439,113 +436,5 @@ struct RecommendForYouCard {
       Logger.error(`play full list failed: ${JSON.stringify(e)}`)
       SnackBarUtils.showMessage(GlobalStore.globalSnack!, $r('sys.symbol.music_note_list'), $r('app.string.start_playing_list_failed'))
     }
-  }
-}
-
-@ComponentV2
-export struct SubCard {
-  @Param @Require title: ResourceStr
-  @Param subtitle: ResourceStr = ''
-  @Param @Require titleIcon: Resource
-  @Param @Require detailViewPush: () => void
-  @Param @Require items: CommonCoverItem[]
-
-  @Param detailIcon: Resource | undefined = undefined
-
-  @Local lanes: number = 1
-
-  @Builder CoverItem(it: CommonCoverItem) {
-    Column() {
-      Row() {
-        Image(it.picUrl).borderRadius(12)
-          .draggable(false)
-          .shadow(ShadowStyle.OUTER_DEFAULT_XS)
-          .visualEffect(new hdsEffect.HdsEffectBuilder().pointLight({
-            illuminatedType: hdsEffect.PointLightIlluminatedType.BORDER
-          }).buildEffect())
-          .clickEffect({
-            level: ClickEffectLevel.HEAVY
-          })
-          .layoutWeight(1)
-          .aspectRatio(1)
-      }
-      Text(it.name)
-        .margin(12).maxLines(1).textOverflow({overflow: TextOverflow.Ellipsis})
-        .fontSize(12).fontWeight(FontWeight.Bold)
-        .fontColor($r('sys.color.font_on_primary'))
-    }.width(ResponsiveUtil.chooseByWidth([120, 150]))
-    .transition(TransitionEffect.OPACITY.animation({duration: 300}))
-    .onClick(() => {
-      it.onClick()
-    })
-  }
-
-  @Monitor('items.length')
-  onItemsLengthChange() {
-    if (this.items.length > 10) this.lanes = 2;
-    else this.lanes = 1;
-  }
-
-  aboutToAppear(): void {
-    this.onItemsLengthChange()
-  }
-
-  build() {
-    Column() {
-      Row() {
-        Row({space: 12}) {
-          SymbolGlyph(this.titleIcon)
-            .fontColor([Color.White])
-            .fontWeight(FontWeight.Bold )
-            .fontSize(24)
-            .padding(8)
-            .backgroundColor($r('app.color.play_list_single_item_bg'))
-            .borderRadius(10)
-          Text(this.title)
-            .fontSize(20)
-            .fontWeight(FontWeight.Bold)
-            .fontColor(Color.White)
-          if (this.subtitle !== '') {
-            Divider().vertical(true).color(Color.White).width(1).height(24)
-            Text(this.subtitle)
-              .fontSize(15)
-              .fontColor(Color.White)
-          }
-        }
-        LightUpRoundedButton({
-          lightUpConfig: LightUpDefaultConfig,
-          icon: this.detailIcon ?? $r('sys.symbol.chevron_right'),
-          customFontColor: [Color.White],
-          customFontSize: (this.detailIcon === undefined ? 30 : undefined),
-          customPadding: (this.detailIcon === undefined ? 12 : undefined),
-          clickAction: () => {
-            this.detailViewPush()
-          }
-        })
-      }.width('100%').justifyContent(FlexAlign.SpaceBetween)
-      .padding(24)
-      List({space: 24}) {
-        ForEach((new Array(this.lanes).fill(0)), () => {
-          ListItem()
-        })
-        ForEach(this.items, (item: CommonCoverItem) => {
-          ListItem() {
-            this.CoverItem(item)
-          }
-        })
-        ForEach((new Array(this.lanes).fill(0)), () => {
-          ListItem()
-        })
-      }.lanes(this.lanes, 24)
-      .animation({duration: 300})
-      .listDirection(Axis.Horizontal)
-      .scrollBar(BarState.Off)
-      .fadingEdge(true, {
-        fadingEdgeLength: LengthMetrics.percent(10)
-      })
-      .alignSelf(ItemAlign.Start)
-    }.width('100%')
-    // .padding({bottom: 12}).borderRadius(24)
-    // .backgroundColor($r('sys.color.comp_background_secondary'))
   }
 }

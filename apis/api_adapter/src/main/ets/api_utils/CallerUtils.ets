@@ -23,7 +23,9 @@ import {
   SongPlayResult,
   DailySongRes,
   Song,
-  TopListItem
+  TopListItem,
+  SearchParams,
+  UnifiedSearchResult
 } from '../common_defs/ExportedEntities';
 import {
   CloudAPI_AlbumAPIUtils,
@@ -43,7 +45,8 @@ import {
   Navidrome_LyricUtils,
   Navidrome_PlayListUtils,
   Navidrome_SongUtils,
-  Navidrome_TopListUtils
+  Navidrome_TopListUtils,
+  Navidrome_SearchUtils
 } from './navidrome_api_adapter/NavidromeAPI_APIUtilsExports';
 import { NavidromeAPI_SongAPIUtils } from '@handwer/navidrome_api';
 
@@ -508,6 +511,118 @@ export class TopListAPIUtils {
       throw Error('API Unimplemented')
     } else {
       throw Error('API Unimplemented')
+    }
+  }
+}
+
+interface SearchAllParams {
+  artistCount?: number;
+  albumCount?: number;
+  songCount?: number;
+  musicFolderId?: string;
+}
+
+export class SearchAPIUtils {
+  /**
+   * 统一搜索接口 - search2 API
+   * 同时搜索艺术家、专辑和歌曲
+   * @param params - 搜索参数
+   * @returns Promise<UnifiedSearchResult>
+   */
+  static async search2(params: SearchParams): Promise<UnifiedSearchResult> {
+    if (InstanceSwitcher.InstanceType === INSTANCE_TYPE.CLOUD) {
+      throw Error('Cloud API search2 not implemented');
+    } else if (InstanceSwitcher.InstanceType === INSTANCE_TYPE.NAVIDROME) {
+      return Navidrome_SearchUtils.search2(params);
+    } else {
+      throw Error('API Unimplemented');
+    }
+  }
+
+  /**
+   * 便捷搜索函数
+   * @param query - 搜索关键词
+   * @param options - 可选的搜索选项
+   * @returns Promise<UnifiedSearchResult>
+   */
+  static async searchAll(
+    query: string,
+    options?: SearchAllParams
+  ): Promise<UnifiedSearchResult> {
+    if (InstanceSwitcher.InstanceType === INSTANCE_TYPE.CLOUD) {
+      throw Error('Cloud API searchAll not implemented');
+    } else if (InstanceSwitcher.InstanceType === INSTANCE_TYPE.NAVIDROME) {
+      return Navidrome_SearchUtils.searchAll(query, {
+        artistCount: options?.artistCount,
+        albumCount: options?.albumCount,
+        songCount: options?.songCount,
+        musicFolderId: options?.musicFolderId
+      });
+    } else {
+      throw Error('API Unimplemented');
+    }
+  }
+
+  /**
+   * 分页搜索艺术家
+   * @param query - 搜索关键词
+   * @param offset - 偏移量
+   * @param count - 返回数量
+   * @returns Promise<UnifiedSearchResult>
+   */
+  static async searchArtistsPaged(
+    query: string,
+    offset: number = 0,
+    count: number = 20
+  ): Promise<UnifiedSearchResult> {
+    if (InstanceSwitcher.InstanceType === INSTANCE_TYPE.CLOUD) {
+      throw Error('Cloud API searchArtistsPaged not implemented');
+    } else if (InstanceSwitcher.InstanceType === INSTANCE_TYPE.NAVIDROME) {
+      return Navidrome_SearchUtils.searchArtistsPaged(query, offset, count);
+    } else {
+      throw Error('API Unimplemented');
+    }
+  }
+
+  /**
+   * 分页搜索专辑
+   * @param query - 搜索关键词
+   * @param offset - 偏移量
+   * @param count - 返回数量
+   * @returns Promise<UnifiedSearchResult>
+   */
+  static async searchAlbumsPaged(
+    query: string,
+    offset: number = 0,
+    count: number = 20
+  ): Promise<UnifiedSearchResult> {
+    if (InstanceSwitcher.InstanceType === INSTANCE_TYPE.CLOUD) {
+      throw Error('Cloud API searchAlbumsPaged not implemented');
+    } else if (InstanceSwitcher.InstanceType === INSTANCE_TYPE.NAVIDROME) {
+      return Navidrome_SearchUtils.searchAlbumsPaged(query, offset, count);
+    } else {
+      throw Error('API Unimplemented');
+    }
+  }
+
+  /**
+   * 分页搜索歌曲
+   * @param query - 搜索关键词
+   * @param offset - 偏移量
+   * @param count - 返回数量
+   * @returns Promise<UnifiedSearchResult>
+   */
+  static async searchSongsPaged(
+    query: string,
+    offset: number = 0,
+    count: number = 20
+  ): Promise<UnifiedSearchResult> {
+    if (InstanceSwitcher.InstanceType === INSTANCE_TYPE.CLOUD) {
+      throw Error('Cloud API searchSongsPaged not implemented');
+    } else if (InstanceSwitcher.InstanceType === INSTANCE_TYPE.NAVIDROME) {
+      return Navidrome_SearchUtils.searchSongsPaged(query, offset, count);
+    } else {
+      throw Error('API Unimplemented');
     }
   }
 }

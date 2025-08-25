@@ -5,7 +5,8 @@ import {
   NavidromeAPI_LyricAPIUtils,
   NavidromeAPI_PlayListAPIUtils,
   NavidromeAPI_SongAPIUtils,
-  NavidromeAPI_TopListAPIUtils
+  NavidromeAPI_TopListAPIUtils,
+  NavidromeAPI_SearchAPIUtils
 } from "@handwer/navidrome_api";
 import {
   AlbumInfoResult,
@@ -25,6 +26,8 @@ import {
   PlayListsResult,
   PersonalListItem,
   SearchReturn,
+  UnifiedSearchResult,
+  SearchParams,
   QualityType,
   SongPlayResult,
   DailySongRes,
@@ -382,5 +385,98 @@ export class Navidrome_TopListUtils {
     }
 
     return topListItems;
+  }
+}
+
+interface SearchAllParams {
+  artistCount?: number;
+  albumCount?: number;
+  songCount?: number;
+  musicFolderId?: string;
+}
+
+export class Navidrome_SearchUtils {
+  /**
+   * 统一搜索 - search2 API
+   * 同时搜索艺术家、专辑和歌曲
+   * @param params - 搜索参数
+   * @returns Promise<UnifiedSearchResult>
+   */
+  static async search2(params: SearchParams): Promise<UnifiedSearchResult> {
+    const navidromeResult = await NavidromeAPI_SearchAPIUtils.search2({
+      artistCount: params?.artistCount,
+      artistOffset: params?.artistCount,
+      albumCount: params?.albumCount,
+      albumOffset: params?.albumOffset,
+      query: params.query
+    });
+    return NavidromeAPI_EntityParser.parseUnifiedSearchResult(navidromeResult);
+  }
+
+  /**
+   * 便捷搜索函数
+   * @param query - 搜索关键词
+   * @param options - 可选的搜索选项
+   * @returns Promise<UnifiedSearchResult>
+   */
+  static async searchAll(
+    query: string,
+    options?: SearchAllParams
+  ): Promise<UnifiedSearchResult> {
+    const navidromeResult = await NavidromeAPI_SearchAPIUtils.searchAll(query, {
+      artistCount: options?.artistCount,
+      albumCount: options?.albumCount,
+      songCount: options?.songCount,
+      musicFolderId: options?.musicFolderId
+    });
+    return NavidromeAPI_EntityParser.parseUnifiedSearchResult(navidromeResult);
+  }
+
+  /**
+   * 分页搜索艺术家
+   * @param query - 搜索关键词
+   * @param offset - 偏移量
+   * @param count - 返回数量
+   * @returns Promise<UnifiedSearchResult>
+   */
+  static async searchArtistsPaged(
+    query: string,
+    offset: number = 0,
+    count: number = 20
+  ): Promise<UnifiedSearchResult> {
+    const navidromeResult = await NavidromeAPI_SearchAPIUtils.searchArtistsPaged(query, offset, count);
+    return NavidromeAPI_EntityParser.parseUnifiedSearchResult(navidromeResult);
+  }
+
+  /**
+   * 分页搜索专辑
+   * @param query - 搜索关键词
+   * @param offset - 偏移量
+   * @param count - 返回数量
+   * @returns Promise<UnifiedSearchResult>
+   */
+  static async searchAlbumsPaged(
+    query: string,
+    offset: number = 0,
+    count: number = 20
+  ): Promise<UnifiedSearchResult> {
+    const navidromeResult = await NavidromeAPI_SearchAPIUtils.searchAlbumsPaged(query, offset, count);
+    return NavidromeAPI_EntityParser.parseUnifiedSearchResult(navidromeResult);
+  }
+
+  /**
+   * 分页搜索歌曲
+   * @param query - 搜索关键词
+   * @param offset - 偏移量
+   * @param count - 返回数量
+   * @returns Promise<UnifiedSearchResult>
+   */
+  static async searchSongsPaged(
+    query: string,
+    offset: number = 0,
+    count: number = 20
+  ): Promise<UnifiedSearchResult> {
+    const navidromeResult = await NavidromeAPI_SearchAPIUtils.searchSongsPaged(query, offset, count);
+    return NavidromeAPI_EntityParser.parseUnifiedSearchResult(navidromeResult);
   }
 }

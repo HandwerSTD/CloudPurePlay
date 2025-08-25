@@ -121,6 +121,9 @@ export struct NavidromeAPI_Source {
     if (this.apiSourceAddr.endsWith('/')) {
       this.apiSourceAddr = this.apiSourceAddr.substring(0, this.apiSourceAddr.length - 1)
     }
+    if (!this.apiSourceAddr.startsWith('http://') && !this.apiSourceAddr.startsWith('https://')) {
+      this.apiSourceAddr = 'http://' + this.apiSourceAddr
+    }
     const newCtx = {
       baseUrl: this.apiSourceAddr,
       username: this.apiUserName,

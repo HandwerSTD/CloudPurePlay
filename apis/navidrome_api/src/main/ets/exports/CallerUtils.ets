@@ -8,10 +8,13 @@ import { getPlayLists, getPlayListSongs, deletePlayList, createPlayList, renameP
   getPlaylistDetail} from '../api/playListApi';
 import { getRandomSongs, searchSongs, getSongUrl, getLikeList, likeMusic, getCoverUrl } from '../api/songApi';
 import { getTopList } from '../api/topListApi';
+import { search2, searchAll, searchArtistsPaged, searchAlbumsPaged, searchSongsPaged,
+  SearchAllParams } from '../api/searchApi';
 import { Album, AlbumSong } from '../entity/AlbumEntity';
 import { PlayList, PlayListsResult } from '../entity/PlaylistEntity';
 import { Song } from '../entity/SongEntity';
 import { User } from '../entity/UserEntity';
+import { SearchParams, UnifiedSearchResult } from '../entity/SearchEntity';
 import { MemStore } from '../utils/MemStore';
 
 export class NavidromeAPI_AlbumAPIUtils {
@@ -420,5 +423,75 @@ export class NavidromeAPI_TopListAPIUtils {
    */
   static async getTopList(statePersistent?: (val: Song[]) => void) {
     return getTopList(statePersistent);
+  }
+}
+
+export class NavidromeAPI_SearchAPIUtils {
+  /**
+   * 统一搜索接口 - search2 API
+   * 同时搜索艺术家、专辑和歌曲
+   * @param params - 搜索参数
+   * @returns Promise<UnifiedSearchResult>
+   */
+  static async search2(params: SearchParams): Promise<UnifiedSearchResult> {
+    return await search2(params);
+  }
+
+  /**
+   * 便捷搜索函数
+   * @param query - 搜索关键词
+   * @param options - 可选的搜索选项
+   * @returns Promise<UnifiedSearchResult>
+   */
+  static async searchAll(
+    query: string,
+    options?: SearchAllParams
+  ): Promise<UnifiedSearchResult> {
+    return await searchAll(query, options);
+  }
+
+  /**
+   * 分页搜索艺术家
+   * @param query - 搜索关键词
+   * @param offset - 偏移量
+   * @param count - 返回数量
+   * @returns Promise<UnifiedSearchResult>
+   */
+  static async searchArtistsPaged(
+    query: string,
+    offset: number = 0,
+    count: number = 20
+  ): Promise<UnifiedSearchResult> {
+    return await searchArtistsPaged(query, offset, count);
+  }
+
+  /**
+   * 分页搜索专辑
+   * @param query - 搜索关键词
+   * @param offset - 偏移量
+   * @param count - 返回数量
+   * @returns Promise<UnifiedSearchResult>
+   */
+  static async searchAlbumsPaged(
+    query: string,
+    offset: number = 0,
+    count: number = 20
+  ): Promise<UnifiedSearchResult> {
+    return await searchAlbumsPaged(query, offset, count);
+  }
+
+  /**
+   * 分页搜索歌曲
+   * @param query - 搜索关键词
+   * @param offset - 偏移量
+   * @param count - 返回数量
+   * @returns Promise<UnifiedSearchResult>
+   */
+  static async searchSongsPaged(
+    query: string,
+    offset: number = 0,
+    count: number = 20
+  ): Promise<UnifiedSearchResult> {
+    return await searchSongsPaged(query, offset, count);
   }
 }

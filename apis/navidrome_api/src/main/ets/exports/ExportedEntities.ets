@@ -45,4 +45,13 @@ export {
   User_INITIAL as Navidrome_User_INITIAL
 } from '../entity/UserEntity';
 
+// 搜索相关实体
+export {
+  SearchParams as Navidrome_SearchParams,
+  SearchResult2 as Navidrome_SearchResult2,
+  Search2Response as Navidrome_Search2Response,
+  UnifiedSearchResult as Navidrome_UnifiedSearchResult,
+  UNIFIED_SEARCH_RESULT_INITIAL as Navidrome_UNIFIED_SEARCH_RESULT_INITIAL
+} from '../entity/SearchEntity';
+
 export { LyricResult as Navidrome_LyricResult} from '../api/LyricApi'
