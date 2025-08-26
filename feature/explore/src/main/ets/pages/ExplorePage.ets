@@ -383,6 +383,7 @@ struct RecommendForYouCard {
         this.playFullList()
       }
     })
+      .clip(false)
   }
 
   loadData() {

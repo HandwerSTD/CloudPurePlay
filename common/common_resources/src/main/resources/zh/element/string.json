@@ -475,6 +475,26 @@
     {
       "name": "click_to_play",
       "value": "点击播放"
+    },
+    {
+      "name": "num_results",
+      "value": "%d 个结果"
+    },
+    {
+      "name": "search_start_placeholder",
+      "value": "开始搜索"
+    },
+    {
+      "name": "search_input_hint",
+      "value": "输入关键词搜索歌曲、专辑和播放列表"
+    },
+    {
+      "name": "search_my_music",
+      "value": "搜索我的音乐"
+    },
+    {
+      "name": "search_in_library",
+      "value": "在您的播放列表和专辑中搜索"
     }
   ]
 }

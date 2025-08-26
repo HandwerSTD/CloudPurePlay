@@ -114,7 +114,20 @@ export struct MusicLibrarySearchView {
 
   @Builder Placeholder() {
     Column() {
-
+      SymbolGlyph($r('sys.symbol.magnifyingglass'))
+        .fontColor([$r('sys.color.font_tertiary')])
+        .fontSize(48)
+        .margin({bottom: 12})
+      Text($r('app.string.search_my_music'))
+        .fontColor($r('sys.color.font_tertiary'))
+        .fontSize(18)
+        .fontWeight(FontWeight.Medium)
+        .margin({bottom: 8})
+      Text($r('app.string.search_in_library'))
+        .fontColor($r('sys.color.font_tertiary'))
+        .fontSize(14)
+        .textAlign(TextAlign.Center)
+        .opacity(0.8)
     } .layoutWeight(1)
       .justifyContent(FlexAlign.Center)
   }

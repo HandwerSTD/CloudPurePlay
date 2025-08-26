@@ -6,7 +6,9 @@ import {
   CommonCoverItemConversion,
   CommonSongListCard,
   generatePageParams_AlbumDetail,
-  LightUpContainer } from "@handwer/ui_components"
+  LightUpContainer,
+  LightUpRoundedButton,
+  LightUpDefaultConfig } from "@handwer/ui_components"
 import { hdsEffect } from "@kit.UIDesignKit"
 import { LazyData } from "@pie/lazy-data"
 import { LengthMetrics } from "@kit.ArkUI"
@@ -20,6 +22,7 @@ export struct SearchAlbumView {
   @Local gridCount: number = 1
   @Local fullWindowSizeArea?: Area
   @Local pageOpacity: number = 1
+  allAlbums: Album[] = []
 
   @Builder Album_SingleItem(list: Album, index: number) {
     Column() {
@@ -42,6 +45,31 @@ export struct SearchAlbumView {
     .onClick(() => {
       this.onPushAlbum(list)
     })
+  }
+
+  @Builder TitleHeader() {
+    Row() {
+      Row({space: 12}) {
+        SymbolGlyph($r('sys.symbol.opticaldisc'))
+          .fontColor([Color.White])
+          .fontWeight(FontWeight.Bold )
+          .fontSize(24)
+          .padding(8)
+          .backgroundColor($r('app.color.play_list_single_item_bg'))
+          .borderRadius(10)
+        Text($r('app.string.Album'))
+          .fontSize(20)
+          .fontWeight(FontWeight.Bold)
+          .fontColor(Color.White)
+        if (this.searchAlbums.length > 0) {
+          Divider().vertical(true).color(Color.White).width(1).height(24)
+          Text($r('app.string.num_results', this.searchAlbums.length))
+            .fontSize(15)
+            .fontColor(Color.White)
+        }
+      }
+    }.width('100%').justifyContent(FlexAlign.SpaceBetween)
+    .padding(24)
   }
 
   @Builder MyAlbumList() {
@@ -67,7 +95,11 @@ export struct SearchAlbumView {
   }
 
   aboutToAppear(): void {
-    this.search()
+    AlbumAPIUtils.getAllAlbums('newest')
+      .then((res) => {
+        this.allAlbums = res
+        this.search()
+      })
   }
 
   @Monitor('searchContent')
@@ -76,26 +108,10 @@ export struct SearchAlbumView {
       this.searchAlbums = []
     } else {
       // 首先从用户订阅的专辑中搜索
-      const localResults = UserStore.userSubAlbum.filter((val) => {
+      const localResults = this.allAlbums.filter((val) => {
         return val.name.toLowerCase().includes(this.searchContent.toLowerCase())
       })
       this.searchAlbums = localResults
-      
-      // 然后从API搜索更多结果
-      // try {
-      //   const apiResults = await AlbumAPIUtils.searchAlbums(this.searchContent)
-      //   // 合并结果，去重
-      //   const allResults = [...localResults]
-      //   apiResults.forEach(album => {
-      //     if (!allResults.some(existing => existing.id === album.id)) {
-      //       allResults.push(album)
-      //     }
-      //   })
-      //   this.searchAlbums = allResults.slice(0, 20) // 限制结果数量
-      // } catch (e) {
-      //   // 如果API搜索失败，仅使用本地结果
-      //   this.searchAlbums = localResults
-      // }
     }
     this.searchAlbumsDataSource.setData(this.searchAlbums)
     this.searchAlbumsDataSource.notifyDataReload()
@@ -119,16 +135,15 @@ export struct SearchAlbumView {
   build() {
     NavDestination() {
       Column() {
+        // this.TitleHeader()
         if (this.searchAlbums.length > 0) {
           List() {
-            ForEach((new Array(this.gridCount).fill(0)), (_: number) => {
-              ListItem().height($r('sys.float.ohos_id_navigation_bar_height'))
-            })
             this.MyAlbumList()
             ForEach((new Array(this.gridCount).fill(0)), (_: number) => {
               ListItem().height(12)
             })
-          }.width('100%').height('100%')
+          }.width('100%')
+          .layoutWeight(1)
           .cachedCount(3 * this.gridCount)
           .lanes(this.gridCount, 24)
           .edgeEffect(EdgeEffect.Spring, {alwaysEnabled: true})
@@ -143,15 +158,16 @@ export struct SearchAlbumView {
           // 空状态占位符
           Column() {
             SymbolGlyph($r('sys.symbol.opticaldisc'))
-              .fontColor([$r('sys.color.font_tertiary')])
+              .fontColor([$r('sys.color.font_on_tertiary')])
               .fontSize(48)
               .margin({bottom: 12})
             Text($r('app.string.common_empty_content'))
-              .fontColor($r('sys.color.font_tertiary'))
+              .fontColor($r('sys.color.font_on_tertiary'))
               .fontSize(16)
           }
           .justifyContent(FlexAlign.Center)
           .layoutWeight(1)
+          .offset({y: -48})
         }
       }.height('100%').width('100%')
     }

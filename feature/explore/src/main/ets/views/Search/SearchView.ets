@@ -1,4 +1,4 @@
-import { Album, PlayList, PLAYMODE, SearchAPIUtils, Song, SongAPIUtils } from "@handwer/api_adapter"
+import { Album, AlbumAPIUtils, PlayList, PLAYMODE, SearchAPIUtils, Song, SongAPIUtils } from "@handwer/api_adapter"
 import {
   Album_PopReturn,
   CommonCoverItem,
@@ -43,9 +43,23 @@ export struct ExploreSearchView {
 
   @Builder Placeholder() {
     Column() {
-
+      SymbolGlyph($r('sys.symbol.magnifyingglass'))
+        .fontColor([$r('sys.color.font_on_tertiary')])
+        .fontSize(48)
+        .margin({bottom: 12})
+      Text($r('app.string.search_start_placeholder'))
+        .fontColor($r('sys.color.font_on_tertiary'))
+        .fontSize(18)
+        .fontWeight(FontWeight.Medium)
+        .margin({bottom: 8})
+      Text($r('app.string.search_input_hint'))
+        .fontColor($r('sys.color.font_on_tertiary'))
+        .fontSize(14)
+        .textAlign(TextAlign.Center)
+        .opacity(0.8)
     } .layoutWeight(1)
       .justifyContent(FlexAlign.Center)
+      .offset({y: -48})
   }
 
   @Builder ListView() {
@@ -63,7 +77,7 @@ export struct ExploreSearchView {
           ListItem() {
             this.AlbumResult()
           }
-        }.width('100%').height('100%')
+        }.width('100%')
         .edgeEffect(EdgeEffect.Spring, {alwaysEnabled: true})
         .fadingEdge(true, {
           fadingEdgeLength: LengthMetrics.percent(10)
@@ -78,8 +92,13 @@ export struct ExploreSearchView {
     .onWillHide(() => {
       this.listViewOpacity = 0
     })
+    .onBackPressed(() => {
+      this.closeSearch()
+      return true;
+    })
     .opacity(this.listViewOpacity)
     .animation({duration: 300})
+    .height('100%')
   }
 
   @Builder SongResult() {
@@ -128,6 +147,7 @@ export struct ExploreSearchView {
     .hideTitleBar(true)
     .backgroundColor(Color.Transparent)
     .navDestination(this.MainPageMap)
+    .layoutWeight(1)
   }
 
   aboutToAppear(): void {
@@ -294,9 +314,15 @@ struct AlbumCard {
   @Consumer(SCApp.explorePageStack) pageStack: NavPathStack = new NavPathStack()
   @Param @Require searchContent: string
   @Local searchSong: CommonCoverItem[] = []
+  allAlbums: Album[] = []
 
   aboutToAppear(): void {
     this.search()
+    AlbumAPIUtils.getAllAlbums('newest')
+      .then((res) => {
+        this.allAlbums = res
+        this.search()
+      })
   }
   build() {
     CommonSongListCard({
@@ -316,7 +342,7 @@ struct AlbumCard {
     if (this.searchContent === '') {
       this.searchSong = []
     } else {
-      const result = UserStore.userSubAlbum.filter((val) => {
+      const result = this.allAlbums.filter((val) => {
         return val.name.toLowerCase().includes(this.searchContent.toLowerCase())
       })
       this.searchSong = CommonCoverItemConversion.fromAlbums(result, (v) => {

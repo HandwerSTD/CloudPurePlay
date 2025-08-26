@@ -92,7 +92,9 @@ export struct CommonSongListCard {
       onPlay: () => {
         it.onClick()
       }
-    }).width('40%')
+    })
+      .width(ResponsiveUtil.chooseByWidth(['60%','40%','30%']))
+      .clip(false)
   }
 
   @Monitor('items.length')
@@ -126,7 +128,7 @@ export struct CommonSongListCard {
               .fontSize(15)
               .fontColor(Color.White)
           }
-        }
+        }.clip(false)
         LightUpRoundedButton({
           lightUpConfig: LightUpDefaultConfig,
           icon: this.detailIcon ?? $r('sys.symbol.chevron_right'),
@@ -138,7 +140,7 @@ export struct CommonSongListCard {
           }
         })
       }.width('100%').justifyContent(FlexAlign.SpaceBetween)
-      .padding(24)
+      .padding({left: 24, right: 24, top: 24})
       List({space: 24}) {
         ForEach((new Array(this.lanes).fill(0)), () => {
           ListItem()
@@ -150,12 +152,13 @@ export struct CommonSongListCard {
             } else {
               this.CoverItem(item)
             }
-          }
+          }.clip(false)
         })
         ForEach((new Array(this.lanes).fill(0)), () => {
           ListItem()
         })
       }.lanes(this.lanes, 24)
+      .padding({top: 24, bottom: 24})
       .animation({duration: 300})
       .listDirection(Axis.Horizontal)
       .scrollBar(BarState.Off)
@@ -163,7 +166,9 @@ export struct CommonSongListCard {
         fadingEdgeLength: LengthMetrics.percent(10)
       })
       .alignSelf(ItemAlign.Start)
+      .clip(false)
     }.width('100%')
+    .clip(false)
     // .padding({bottom: 12}).borderRadius(24)
     // .backgroundColor($r('sys.color.comp_background_secondary'))
   }
