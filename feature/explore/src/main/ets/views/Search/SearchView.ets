@@ -162,6 +162,9 @@ export struct ExploreSearchView {
         .margin({top: 12, bottom: 12})
         .onChange((val) => {
           this.searchContent = val
+          if (val === '') {
+            this.searchPageStack.popToName('-1', false)
+          }
         })
         .width('100%')
         .fontColor(Color.White)

@@ -135,8 +135,8 @@ export struct SearchAlbumView {
   build() {
     NavDestination() {
       Column() {
-        // this.TitleHeader()
         if (this.searchAlbums.length > 0) {
+          this.TitleHeader()
           List() {
             this.MyAlbumList()
             ForEach((new Array(this.gridCount).fill(0)), (_: number) => {

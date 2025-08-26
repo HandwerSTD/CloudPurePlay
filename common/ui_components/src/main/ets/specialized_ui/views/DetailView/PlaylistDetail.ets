@@ -99,8 +99,7 @@ export struct PlaylistDetail {
       || checkId(Math.min(index + 2, len))
       || far;
     }
-    return ResponsiveUtil.chooseByWidth<() => boolean>([checkSm, checkMd])()
-      || index < 2; //播放按钮，让前两个也亮起来
+    return ResponsiveUtil.chooseByWidth<() => boolean>([checkSm, checkMd])();
   }
 
   isSongLiked(song: PlayListSong): boolean {
