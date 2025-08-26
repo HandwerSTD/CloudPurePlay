@@ -64,6 +64,9 @@ export struct PlaylistDetail {
 
   @Local showPlaylistOperationSheet: boolean = false
 
+  get isThisHeartList() {
+    return this.playListInfo.id === UserStore.userPlaylists[0]?.id ?? ''
+  }
 
   async onStart() {
     this.fullPlayListDetail = new Array(Math.min(100, this.playListInfo.trackCount)).fill({
@@ -167,14 +170,16 @@ export struct PlaylistDetail {
           .margin({bottom: 12})
         ListItem() {
           Column() {
-            LightUpLinedContainer({lightUpConfig: LightUpLinedDefaultConfig}) {
-              CommonListItem({
-                icon: $r('sys.symbol.pencil_and_card'),
-                title: $r('app.string.common_rename')
-              })
-                .onClick(() => {
-                  this.renamePlaylist()
+            if (!this.isThisHeartList) {
+              LightUpLinedContainer({lightUpConfig: LightUpLinedDefaultConfig}) {
+                CommonListItem({
+                  icon: $r('sys.symbol.pencil_and_card'),
+                  title: $r('app.string.common_rename')
                 })
+                  .onClick(() => {
+                    this.renamePlaylist()
+                  })
+              }
             }
             LightUpLinedContainer({lightUpConfig: LightUpLinedDefaultConfig}) {
               CommonListItem({
@@ -194,14 +199,17 @@ export struct PlaylistDetail {
                   this.addToPersonalFM()
                 })
             }
-            LightUpLinedContainer({lightUpConfig: LightUpLinedDefaultConfig}) {
-              CommonListItem({
-                icon: $r('sys.symbol.trash'),
-                title: $r('app.string.remove_list')
-              })
-                .onClick(() => {
-                  this.onRemovePlaylist()
+            if (!this.isThisHeartList) {
+
+              LightUpLinedContainer({lightUpConfig: LightUpLinedDefaultConfig}) {
+                CommonListItem({
+                  icon: $r('sys.symbol.trash'),
+                  title: $r('app.string.remove_list')
                 })
+                  .onClick(() => {
+                    this.onRemovePlaylist()
+                  })
+              }
             }
           }.borderRadius(24).margin({left: 12, right: 12})
           .visualEffect(new hdsEffect.HdsEffectBuilder().pointLight({
