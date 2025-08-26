@@ -22,11 +22,14 @@ import {
   SpecialPlayMode,
   UserManager,
   UserStore } from "@handwer/base"
+import { SearchSongView } from "./SearchSongView"
+import { SearchPlaylistView } from "./SearchPlaylist"
+import { SearchAlbumView } from "./SearchAlbum"
 
 @ComponentV2
 export struct ExploreSearchView {
+  @Provider('onPushSearchDetail') onPushSearchDetail: (index: number) => void = () => {}
   @Param isSearchAlbum: boolean = false
-  @Event openPlaylist: (playlist: PlayList) => void
   @Event closeSearch: () => void
   @Local searchContent: string = ''
   @Local gridColumnNum: number = 4
@@ -34,6 +37,9 @@ export struct ExploreSearchView {
   @Local searchPlaylists: PlayList[] = []
   @Local searchAlbums: Album[] = []
 
+  @Local listViewOpacity: number = 1
+
+  searchPageStack: NavPathStack = new NavPathStack()
 
   @Builder Placeholder() {
     Column() {
@@ -43,26 +49,37 @@ export struct ExploreSearchView {
   }
 
   @Builder ListView() {
-    if (this.searchContent === '') {
-      this.Placeholder()
-    } else {
-      List({space: ResponsiveUtil.chooseByWidth([12, 24])}) {
-        ListItem() {
-          this.SongResult()
-        }
-        ListItem() {
-          this.PlaylistResult()
-        }
-        ListItem() {
-          this.AlbumResult()
-        }
-      }.width('100%').height('100%')
-      .edgeEffect(EdgeEffect.Spring, {alwaysEnabled: true})
-      .fadingEdge(true, {
-        fadingEdgeLength: LengthMetrics.percent(10)
-      })
-      .clip(false)
-    }
+    NavDestination() {
+      if (this.searchContent === '') {
+        this.Placeholder()
+      } else {
+        List({space: ResponsiveUtil.chooseByWidth([12, 24])}) {
+          ListItem() {
+            this.SongResult()
+          }
+          ListItem() {
+            this.PlaylistResult()
+          }
+          ListItem() {
+            this.AlbumResult()
+          }
+        }.width('100%').height('100%')
+        .edgeEffect(EdgeEffect.Spring, {alwaysEnabled: true})
+        .fadingEdge(true, {
+          fadingEdgeLength: LengthMetrics.percent(10)
+        })
+        .clip(false)
+      }
+    }.hideTitleBar(true)
+    .backgroundColor(Color.Transparent)
+    .onShown(() => {
+      this.listViewOpacity = 1
+    })
+    .onWillHide(() => {
+      this.listViewOpacity = 0
+    })
+    .opacity(this.listViewOpacity)
+    .animation({duration: 300})
   }
 
   @Builder SongResult() {
@@ -81,6 +98,40 @@ export struct ExploreSearchView {
     AlbumCard({
       searchContent: this.searchContent
     }).transition(TransitionEffect.OPACITY.animation({duration: 300}))
+  }
+
+  @Builder MainPageMap(index: string) {
+    if (index === "0") {
+      SearchSongView({
+        searchContent: this.searchContent
+      })
+    }
+    else if (index === "1") {
+      SearchPlaylistView({
+        searchContent: this.searchContent
+      })
+    }
+    else if (index === "2") {
+      SearchAlbumView({
+        searchContent: this.searchContent
+      })
+    }
+    else if (index === "-1") {
+      this.ListView()
+    }
+  }
+  @Builder Main() {
+    Navigation(this.searchPageStack) {
+      // empty
+    }.mode(NavigationMode.Stack)
+    .titleMode(NavigationTitleMode.Mini)
+    .hideTitleBar(true)
+    .backgroundColor(Color.Transparent)
+    .navDestination(this.MainPageMap)
+  }
+
+  aboutToAppear(): void {
+    this.searchPageStack.pushPathByName('-1', [], false)
   }
 
   build() {
@@ -105,23 +156,26 @@ export struct ExploreSearchView {
         })
         .onAppear(() => {
           try {
+            this.onPushSearchDetail = (idx) => {
+              this.searchPageStack.pushPathByName(idx.toString(), [], true)
+            }
             this.getUIContext().getFocusController().requestFocus('musicLibrary_SearchComp')
           } catch (error) {
           }
         })
-      this.ListView()
+      this.Main()
     }.height('100%').width('100%').padding({left: 12, right: 12})
     .onClick(() => {
       this.closeSearch()
     })
   }
-  onPlayListItemClicked(index: number) {
-    this.openPlaylist(this.searchPlaylists[index])
-  }
+
+
 }
 
 @ComponentV2
 struct SongCard {
+  @Consumer('onPushSearchDetail') onPushSearchDetail: (index: number) => void = () => {}
   @Consumer(SCApp.explorePageStack) pageStack: NavPathStack = new NavPathStack()
   @Param @Require searchContent: string
   @Local _songs: Song[] = []
@@ -138,7 +192,7 @@ struct SongCard {
       items: this.searchSong,
       useItemNotCover: true,
       detailViewPush: () => {
-
+        this.onPushSearchDetail(0)
       }
     }).visibility(this.searchSong.length > 0 ? Visibility.Visible : Visibility.None)
   }
@@ -179,6 +233,7 @@ struct SongCard {
 
 @ComponentV2
 struct PlaylistCard {
+  @Consumer('onPushSearchDetail') onPushSearchDetail: (index: number) => void = () => {}
   @Consumer(SCApp.explorePageStack) pageStack: NavPathStack = new NavPathStack()
   @Param @Require searchContent: string
   @Local searchSong: CommonCoverItem[] = []
@@ -193,7 +248,7 @@ struct PlaylistCard {
       title: $r('app.string.Playlist'),
       items: this.searchSong,
       detailViewPush: () => {
-
+        this.onPushSearchDetail(1)
       }
     }).visibility(this.searchSong.length > 0 ? Visibility.Visible : Visibility.None)
   }
@@ -235,6 +290,7 @@ struct PlaylistCard {
 
 @ComponentV2
 struct AlbumCard {
+  @Consumer('onPushSearchDetail') onPushSearchDetail: (index: number) => void = () => {}
   @Consumer(SCApp.explorePageStack) pageStack: NavPathStack = new NavPathStack()
   @Param @Require searchContent: string
   @Local searchSong: CommonCoverItem[] = []
@@ -249,6 +305,7 @@ struct AlbumCard {
       items: this.searchSong,
       detailViewPush: () => {
 
+        this.onPushSearchDetail(2)
       }
     }).visibility(this.searchSong.length > 0 ? Visibility.Visible : Visibility.None)
   }
