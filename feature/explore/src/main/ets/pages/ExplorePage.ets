@@ -44,7 +44,7 @@ export struct ExplorePage {
   @Builder QuickButtons() {
     Row() {
       List({space: ResponsiveUtil.chooseByWidth([6, 12])}) {
-        ListItem().width(0)
+        ListItem().width(ResponsiveUtil.chooseByWidth([14, 12]))
         // HeartMode
         ListItem() {
           LightUpIconTextButton({

@@ -1,5 +1,7 @@
 import { PlayQueue } from "@handwer/api_adapter"
-import { GlobalStore, Logger, PlayControl, PlayQueueStore, PlayQueueUtils, SongConvertUtils } from "@handwer/base"
+import { GlobalStore, Logger,
+  NowPlayingStore,
+  PlayControl, PlayQueueStore, PlayQueueUtils, SongConvertUtils } from "@handwer/base"
 import { LightUpDefaultConfig, LightUpRoundedButton } from "@handwer/ui_components"
 import { curves, TextModifier } from "@kit.ArkUI"
 import { hdsEffect } from "@kit.UIDesignKit"
@@ -15,6 +17,12 @@ export struct PlayQueueView {
   @Monitor('pq.currentQueueIndex')
   onQueueGo() {
     // this.scroller.scrollToIndex(this.pq.currentQueueIndex, true, undefined)
+  }
+
+  get PlayModeName() {
+    if (NowPlayingStore.isPersonalFM) return $r('app.string.Personal_fm')
+    if (NowPlayingStore.isHeartMode) return $r('app.string.Heart_list')
+    return $r('app.string.play_queue_total_num', this.pq.queue.length)
   }
 
   build() {
@@ -60,7 +68,7 @@ export struct PlayQueueView {
       .margin({top: 12}) // Navigation 默认避让
       .title({
         main: $r('app.string.play_queue'),
-        sub: $r('app.string.play_queue_total_num', this.pq.queue.length),
+        sub: this.PlayModeName,
       })
       .titleMode(NavigationTitleMode.Mini)
     }

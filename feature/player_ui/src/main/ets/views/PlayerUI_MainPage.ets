@@ -224,7 +224,7 @@ export struct MainPage {
             }
           }),
           new ActionBarButton({
-            baseIcon: $r('sys.symbol.radio'),
+            baseIcon: $r('sys.symbol.radiostation'),
             width: LengthMetrics.vp(40),
             baseIconSymbolGlyphModifier: nps.isPersonalFM ? new SymbolGlyphModifier().fontColor([Color.Black]) : undefined,
             backgroundColor: nps.isPersonalFM ? ColorMetrics.numeric(0xFFFFFFFF) : undefined,

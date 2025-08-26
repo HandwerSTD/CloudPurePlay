@@ -495,6 +495,22 @@
     {
       "name": "search_in_library",
       "value": "在您的播放列表和专辑中搜索"
+    },
+    {
+      "name": "add_to_personal_fm",
+      "value": "加入私人FM"
+    },
+    {
+      "name": "add_next_play_success",
+      "value": "加入下一首播放成功"
+    },
+    {
+      "name": "add_to_queue_end",
+      "value": "加入播放队列队尾"
+    },
+    {
+      "name": "add_to_personal_fm_success",
+      "value": "加入私人FM成功"
     }
   ]
 }

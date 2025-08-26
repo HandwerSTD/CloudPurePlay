@@ -51,7 +51,23 @@ export struct SearchSongView {
       || checkId(Math.min(index + 2, len))
       || far;
     }
-    return ResponsiveUtil.chooseByWidth<() => boolean>([checkSm, checkMd])();
+    const checkLg = () => {
+      const len = this.searchSongs.length - 1
+      return checkId(index)
+        // 左右一排
+        || checkId(Math.max(index - 1, 0))
+        || checkId(Math.max(index - 2, 0))
+        || checkId(Math.max(index - 3, 0))
+        || checkId(Math.min(index + 1, len))
+        || checkId(Math.min(index + 2, len))
+        || checkId(Math.min(index + 3, len))
+        // 上下排
+        || checkId(Math.max(index - 3, 0))
+        || checkId(Math.max(index - 6, 0))
+        || checkId(Math.min(index + 3, len))
+        || checkId(Math.min(index + 6, len))
+    }
+    return ResponsiveUtil.chooseByWidth<() => boolean>([checkSm, checkMd, checkLg])();
   }
 
   @Builder Song_SingleItem(song: Song, index: number) {

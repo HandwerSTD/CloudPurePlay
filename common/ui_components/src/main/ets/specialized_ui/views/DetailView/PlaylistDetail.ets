@@ -178,6 +178,24 @@ export struct PlaylistDetail {
             }
             LightUpLinedContainer({lightUpConfig: LightUpLinedDefaultConfig}) {
               CommonListItem({
+                icon: $r('sys.symbol.list_interrupt'),
+                title: $r('app.string.add_to_queue_end')
+              })
+                .onClick(() => {
+                  this.addNextPlay()
+                })
+            }
+            LightUpLinedContainer({lightUpConfig: LightUpLinedDefaultConfig}) {
+              CommonListItem({
+                icon: $r('sys.symbol.radiostation'),
+                title: $r('app.string.add_to_personal_fm')
+              })
+                .onClick(() => {
+                  this.addToPersonalFM()
+                })
+            }
+            LightUpLinedContainer({lightUpConfig: LightUpLinedDefaultConfig}) {
+              CommonListItem({
                 icon: $r('sys.symbol.trash'),
                 title: $r('app.string.remove_list')
               })
@@ -625,6 +643,32 @@ export struct PlaylistDetail {
   addSongToList(song: PlayListSong) {
     GlobalContext.getContext().setObject(SCGlobal.addToPlaylistSongData, SongConvertUtils.PlaylistSong2NormalSong(song))
     this.showAddToPlaylistSheet = true
+  }
+
+
+  async addNextPlay() {
+    try {
+      const queue = PlayQueueUtils.makeQueueByPlaylist(this.fullPlayListDetail)
+      await PlayQueueUtils.queueAddArray(queue)
+      NowPlayingStore.specialPlayMode = SpecialPlayMode.DISABLED
+      SnackBarUtils.showMessage(this.snack, $r('sys.symbol.music_note_list'), $r('app.string.add_next_play_success'))
+    } catch (e) {
+      Logger.error(TAG, `play full list failed: ${JSON.stringify(e)}`)
+      SnackBarUtils.showMessage(this.snack, $r('sys.symbol.music_note_list'), $r('app.string.start_playing_list_failed'))
+    }
+  }
+  async addToPersonalFM() {
+    try {
+      const queue = PlayQueueUtils.makeQueueByPlaylist(this.fullPlayListDetail)
+      await PlayQueueUtils.cleanQueue()
+      await PlayQueueUtils.queueAddArray(queue)
+      await PlayControl.playQueue(0)
+      NowPlayingStore.specialPlayMode = SpecialPlayMode.PERSONAL_FM_DEFAULT
+      SnackBarUtils.showMessage(this.snack, $r('sys.symbol.music_note_list'), $r('app.string.add_to_personal_fm_success'))
+    } catch (e) {
+      Logger.error(TAG, `play full list failed: ${JSON.stringify(e)}`)
+      SnackBarUtils.showMessage(this.snack, $r('sys.symbol.music_note_list'), $r('app.string.start_playing_list_failed'))
+    }
   }
 }
 
