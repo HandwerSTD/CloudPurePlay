@@ -14,12 +14,12 @@ export struct InListSongItem {
 
   build() {
     Row() {
-      // if (this.coverInfo) {
-      //   ImageCoverThumbnail({
-      //     nowPlayingCoverImg: this.coverInfo
-      //   }).margin({left: 12, right: 12})
-      //     // .transition(TransitionEffect.OPACITY.animation({duration: 300}))
-      // }
+      if (this.coverInfo) {
+        ImageCoverThumbnail({
+          nowPlayingCoverImg: this.coverInfo
+        }).margin({ right: 12})
+          // .transition(TransitionEffect.OPACITY.animation({duration: 300}))
+      }
       Column() {
         Text(this.songName).fontSize(16).fontWeight(FontWeight.Bold)
           .songText()
@@ -31,7 +31,7 @@ export struct InListSongItem {
         this.trailing();
       }
     }.height(56).width('100%').justifyContent(FlexAlign.Start)
-    .padding({left: 12, right: 12})
+    // .padding({left: 12, right: 12})
     .onClick(() => {
       this.onPlay()
     })

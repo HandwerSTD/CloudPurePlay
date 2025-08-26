@@ -200,6 +200,11 @@ export class UserManager {
       UserManager.persistUserPlaylists()
     })
   }
+  static removePlaylist(id: string) {
+    const p = store.userPlaylists.findIndex((v) => v.id === id)
+    if (p !== -1) store.userPlaylists.splice(p, 1)
+    UserManager.persistUserPlaylists()
+  }
   static async fetchUserSubAlbum() {
     await AlbumAPIUtils.getUserSubscribedAlbum((val) => {
       store.userSubAlbum = val ?? store.userSubAlbum

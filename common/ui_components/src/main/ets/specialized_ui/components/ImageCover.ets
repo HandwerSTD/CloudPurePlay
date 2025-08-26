@@ -50,25 +50,39 @@ export struct ImageCover {
 @ComponentV2
 export struct ImageCoverThumbnail {
   @Param @Require nowPlayingCoverImg: ResourceStr
+  @Param useCoverShadow: boolean = false
   @Param radius: number = 10
 
   build() {
-    Stack({alignContent: Alignment.Center}) {
-      Image(this.nowPlayingCoverImg)
-        .aspectRatio(1)
-        .layoutWeight(1)
-        .constraintSize({
-          maxWidth: '100%'
-        })
-        .draggable(false)
-        .foregroundEffect({
-          radius: 64
-        })
-        // .scale({x: 1.2, y: 1})
-        // .translate({y: 10})
-        .brightness(1.3)
-        .saturate(3)
-        .opacity(0.7)
+    if (this.useCoverShadow) {
+
+      Stack({alignContent: Alignment.Center}) {
+        Image(this.nowPlayingCoverImg)
+          .aspectRatio(1)
+          .layoutWeight(1)
+          .constraintSize({
+            maxWidth: '100%'
+          })
+          .draggable(false)
+          .foregroundEffect({
+            radius: 64
+          })
+          // .scale({x: 1.2, y: 1})
+          // .translate({y: 10})
+          .brightness(1.3)
+          .saturate(3)
+          .opacity(0.7)
+        Image(this.nowPlayingCoverImg)
+          .borderRadius(this.radius)
+          .draggable(false)
+          .shadow({
+            radius: 2,
+            color: '#11000000'
+          })
+          .ImageFaker()
+          .borderRadius(this.radius)
+      }
+    } else {
       Image(this.nowPlayingCoverImg)
         .borderRadius(this.radius)
         .draggable(false)

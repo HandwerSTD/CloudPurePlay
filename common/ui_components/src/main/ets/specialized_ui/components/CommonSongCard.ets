@@ -1,13 +1,15 @@
-import { ResponsiveUtil } from "@handwer/base"
+import { ResponsiveUtil, SongConvertUtils } from "@handwer/base"
 import { LightUpRoundedButton } from "../../light_up/LightUpButton"
 import { LightUpDefaultConfig } from "../../light_up/LightUpConfig"
 import { hdsEffect } from "@kit.UIDesignKit"
 import { LengthMetrics } from "@kit.ArkUI"
 import { Album, PlayList, Song } from "@handwer/api_adapter"
+import { InListSongItem } from "./InListSongItem"
 
 export interface CommonCoverItem {
   picUrl: string
-  name: string
+  name: string,
+  artist?: string,
   onClick: () => void
 }
 
@@ -16,6 +18,7 @@ export class CommonCoverItemConversion {
     return songs.map(v => ({
       name: v.name,
       picUrl: v.album.picUrl,
+      artist: SongConvertUtils.getArtists(v.artists),
       onClick: () => {
         onClick(v)
       }
@@ -25,6 +28,7 @@ export class CommonCoverItemConversion {
     return albums.map(val => ({
       name: val.name,
       picUrl: val.picUrl,
+      artist: SongConvertUtils.getArtists(val.artists),
       onClick: () => {
         onClick(val)
       }
@@ -48,6 +52,7 @@ export struct CommonSongListCard {
   @Param @Require titleIcon: Resource
   @Param @Require detailViewPush: () => void
   @Param @Require items: CommonCoverItem[]
+  @Param useItemNotCover: boolean = false
 
   @Param detailIcon: Resource | undefined = undefined
 
@@ -77,6 +82,17 @@ export struct CommonSongListCard {
     .onClick(() => {
       it.onClick()
     })
+  }
+
+  @Builder ListedCoverItem(it: CommonCoverItem) {
+    InListSongItem({
+      coverInfo: it.picUrl,
+      songName: it.name,
+      songArtist: it.artist,
+      onPlay: () => {
+        it.onClick()
+      }
+    }).width('40%')
   }
 
   @Monitor('items.length')
@@ -129,7 +145,11 @@ export struct CommonSongListCard {
         })
         ForEach(this.items, (item: CommonCoverItem) => {
           ListItem() {
-            this.CoverItem(item)
+            if (this.useItemNotCover) {
+              this.ListedCoverItem(item)
+            } else {
+              this.CoverItem(item)
+            }
           }
         })
         ForEach((new Array(this.lanes).fill(0)), () => {

@@ -307,7 +307,7 @@ export struct PlaylistDetail {
                       this.PlayListItemTrailing(song.s)
                     }
                   })
-                }
+                }.padding({left: 12, right: 12})
                   .backgroundColor(song.s.id === this.nps.currentSong.id ? $r('app.color.play_list_single_item_bg') : undefined)
                   .visualEffect(new hdsEffect.HdsEffectBuilder().pointLight({
                     illuminatedType: this.shouldThisSongLightedUp(index) ? hdsEffect.PointLightIlluminatedType.BORDER : hdsEffect.PointLightIlluminatedType.NONE,

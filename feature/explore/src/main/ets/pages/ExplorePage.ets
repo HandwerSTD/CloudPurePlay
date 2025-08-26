@@ -6,7 +6,8 @@ import { UserStore, ResponsiveUtil, SCApp, FeaturedPlayUtils, NowPlayingStore, G
   SpecialPlayMode,
   Logger,
   SCEmitter,
-  ThemeManager} from "@handwer/base"
+  ThemeManager,
+  RetryUtil} from "@handwer/base"
 import { LightUpContainer, HDS_TITLE_CONFIG_STYLE, generatePageParams_AlbumDetail,
   Album_PopReturn,
   BackButtonUtils,
@@ -141,9 +142,6 @@ export struct ExplorePage {
           closeSearch: () => {
             this.showSearchPage = false
           },
-          openPlaylist: (playlist) => {
-            // this.onPushPlaylist(playlist)
-          }
         })
           .transition(TransitionEffect.OPACITY.animation({duration: 500}))
       }
@@ -289,13 +287,9 @@ struct RecommendPlaylistCard {
 
   aboutToAppear(): void {
     EmitterUtil.onSubscribe(SCEmitter.UserInfoReInit, () => {
-      setTimeout(() => {
-        this.loadData()
-      }, 1000)
+      this.loadOnStart()
     })
-    setTimeout(() => {
-      this.loadData()
-    }, 1000)
+    this.loadOnStart()
   }
   aboutToDisappear(): void {
     EmitterUtil.unSubscribe(SCEmitter.UserInfoReInit)
@@ -314,6 +308,13 @@ struct RecommendPlaylistCard {
     })
   }
 
+  loadOnStart() {
+    RetryUtil.retry(3, async () => {
+      this.loadData()
+    }, async () => {
+      return this.songs.length > 0
+    })
+  }
   loadData() {
     const result = this.user.userPlaylists.filter(() => {
       const prob = Math.min(1, 16/this.user.userPlaylists.length)
@@ -376,6 +377,7 @@ struct RecommendForYouCard {
       titleIcon: $r('sys.symbol.lightbulb_max'),
       subtitle: $r('app.string.music_single'),
       items: this.songs,
+      useItemNotCover: true,
       detailIcon: $r('sys.symbol.play'),
       detailViewPush: () => {
         this.playFullList()
@@ -390,6 +392,7 @@ struct RecommendForYouCard {
         this.songs = res.map((v, index) => ({
           name: v.name,
           picUrl: v.album.picUrl,
+          artist: SongConvertUtils.getArtists(v.artists),
           onClick: () => {
             this.playSingle(index)
           }

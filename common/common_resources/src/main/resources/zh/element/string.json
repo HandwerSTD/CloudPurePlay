@@ -471,6 +471,10 @@
     {
       "name": "music_single",
       "value": "单曲"
+    },
+    {
+      "name": "click_to_play",
+      "value": "点击播放"
     }
   ]
 }

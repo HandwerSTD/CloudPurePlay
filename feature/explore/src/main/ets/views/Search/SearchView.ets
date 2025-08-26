@@ -1,10 +1,27 @@
-import { Album, PlayList, SearchAPIUtils, Song, SongAPIUtils } from "@handwer/api_adapter"
-import { CommonCoverItem,
+import { Album, PlayList, PLAYMODE, SearchAPIUtils, Song, SongAPIUtils } from "@handwer/api_adapter"
+import {
+  Album_PopReturn,
+  CommonCoverItem,
   CommonCoverItemConversion,
-  CommonSongListCard, LightUpContainer } from "@handwer/ui_components"
+  CommonSongListCard,
+  generatePageParams_AlbumDetail,
+  generatePageParams_PlayListDetail,
+  LightUpContainer,
+  PlaylistDetail_PopReturn,
+  SnackBarUtils } from "@handwer/ui_components"
 import { hdsEffect } from "@kit.UIDesignKit"
 import { LengthMetrics } from "@kit.ArkUI"
-import { ResponsiveUtil, UserStore } from "@handwer/base"
+import {
+  GlobalStore,
+  Logger,
+  NowPlayingStore,
+  PlayControl,
+  PlayQueueUtils,
+  ResponsiveUtil, SCApp,
+  SongConvertUtils,
+  SpecialPlayMode,
+  UserManager,
+  UserStore } from "@handwer/base"
 
 @ComponentV2
 export struct ExploreSearchView {
@@ -105,7 +122,9 @@ export struct ExploreSearchView {
 
 @ComponentV2
 struct SongCard {
+  @Consumer(SCApp.explorePageStack) pageStack: NavPathStack = new NavPathStack()
   @Param @Require searchContent: string
+  @Local _songs: Song[] = []
   @Local searchSong: CommonCoverItem[] = []
 
   aboutToAppear(): void {
@@ -115,7 +134,9 @@ struct SongCard {
     CommonSongListCard({
       titleIcon: $r('sys.symbol.play_circle_badge_music_note'),
       title: $r('app.string.music_single'),
+      subtitle: $r('app.string.click_to_play'),
       items: this.searchSong,
+      useItemNotCover: true,
       detailViewPush: () => {
 
       }
@@ -127,10 +148,30 @@ struct SongCard {
     if (this.searchContent === '') {
       this.searchSong = []
     } else {
-      const result = (await SongAPIUtils.getAllSongs()).slice(0, 20)
+      const result = (await SongAPIUtils.getAllSongs()).filter(v => v.name.toLowerCase().includes(this.searchContent.toLowerCase())).slice(0, 20)
+      this._songs = result
       this.searchSong = CommonCoverItemConversion.fromSongs(result, (v) => {
-
+        this.playSingle(v);
       })
+    }
+  }
+
+
+  async playSingle(song: Song) {
+    if (song.id === NowPlayingStore.currentSong.id) {
+      return;
+    }
+    try {
+      const playName = song.name
+      SnackBarUtils.showMessage(GlobalStore.globalSnack!, $r('sys.symbol.music_note_list'), $r('app.string.start_playing_le_NAME_ge_', playName))
+
+      await PlayQueueUtils.queueAdd(PLAYMODE.SINGLE, song, SongConvertUtils.getArtists(song.artists), '', song.album.picUrl)
+      await PlayControl.playNext()
+
+      NowPlayingStore.specialPlayMode = SpecialPlayMode.DISABLED
+    } catch (e) {
+      Logger.error(`play full list failed: ${JSON.stringify(e)}`)
+      SnackBarUtils.showMessage(GlobalStore.globalSnack!, $r('sys.symbol.music_note_list'), $r('app.string.start_playing_failed'))
     }
   }
 }
@@ -138,6 +179,7 @@ struct SongCard {
 
 @ComponentV2
 struct PlaylistCard {
+  @Consumer(SCApp.explorePageStack) pageStack: NavPathStack = new NavPathStack()
   @Param @Require searchContent: string
   @Local searchSong: CommonCoverItem[] = []
 
@@ -166,14 +208,34 @@ struct PlaylistCard {
         return val.name.toLowerCase().includes(this.searchContent.toLowerCase())
       })
       this.searchSong = CommonCoverItemConversion.fromPlaylist(result, (v) => {
-
+        this.onPushPlaylist(v)
       })
     }
+  }
+
+  onPushPlaylist(playlist: PlayList) {
+    const params = generatePageParams_PlayListDetail(playlist)
+    const handlePop = (val: PopInfo) => {
+      const result = val.result as PlaylistDetail_PopReturn
+      if (result.removed) {
+        UserManager.removePlaylist(playlist.id);
+        this.search()
+      }
+    }
+
+    this.pageStack.pushPath({
+      name: 'PlaylistDetail',
+      param: params,
+      onPop: (val) => {
+        handlePop(val)
+      }
+    }, true)
   }
 }
 
 @ComponentV2
 struct AlbumCard {
+  @Consumer(SCApp.explorePageStack) pageStack: NavPathStack = new NavPathStack()
   @Param @Require searchContent: string
   @Local searchSong: CommonCoverItem[] = []
 
@@ -201,8 +263,24 @@ struct AlbumCard {
         return val.name.toLowerCase().includes(this.searchContent.toLowerCase())
       })
       this.searchSong = CommonCoverItemConversion.fromAlbums(result, (v) => {
-
+        this.onPushAlbum(v)
       })
     }
   }
+
+  onPushAlbum(album: Album) {
+    const params = generatePageParams_AlbumDetail(album)
+    const handlePop = (val: PopInfo) => {
+      const result = val.result as Album_PopReturn
+    }
+
+    this.pageStack.pushPath({
+      name: 'AlbumDetail',
+      param: params,
+      onPop: (val) => {
+        handlePop(val)
+      }
+    }, true)
+  }
+
 }
