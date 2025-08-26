@@ -8,7 +8,8 @@ import { BusinessError } from '@kit.BasicServicesKit'
 import PlayQueueUtils from '../../queue/PlayQueueUtils'
 import BackgroundTaskUtils from './BackgroundTaskUtils'
 import NowPlayingStore from '../NowPlayingStore'
-import { PlayControl } from '../user/playControl'
+import { PlayControl, PlayRetryManager } from '../user/playControl'
+import { UserManager } from '../../../Network/UserManager'
 
 const TAG = '[AVPlayerUtils] '
 
@@ -135,7 +136,6 @@ class AVPlayerUtils {
 
   private setCallback(avPlayer: media.AVPlayer) {
     avPlayer.on('error', (err: BusinessError) => {
-      // TODO: 遗留问题
       LogUtil.error(TAG, `Invoke avPlayer failed, code is ${err.code}, message is ${err.message}`)
       if(avPlayer.state === 'paused' || avPlayer.state === 'stopped') return
 
@@ -147,8 +147,22 @@ class AVPlayerUtils {
       this.lastErrorTime = currentTime
       if (!this.errorFlag) {
         this.errorFlag = true
-        setTimeout(() => {
-          PlayControl.playQueue(PlayQueueUtils.currentQueueIndex)
+        setTimeout(async () => {
+          // 使用新的错误处理机制
+          const currentSong = NowPlayingStore.currentSong
+          const isLogged = UserManager.isLogged
+          const picUrl = NowPlayingStore.currentPic as string
+          const playMode = NowPlayingStore.playMode
+          
+          if (currentSong && currentSong.id) {
+            if (playMode === 0) {
+              // 本地文件播放
+              await PlayControl.handleLocalFileError(currentSong.id, currentSong, NowPlayingStore.fileName)
+            } else {
+              // URL播放
+              await PlayControl.handlePlaybackError(currentSong.id, currentSong, isLogged ?? false, picUrl, playMode)
+            }
+          }
           this.errorFlag = false
         }, 3000)
       }
@@ -207,6 +221,10 @@ class AVPlayerUtils {
           NowPlayingStore.isPaused = false
           LyricUtils.startInterval()
           AVSessionUtils.playState(avPlayer.currentTime)
+          // 播放成功，清除重试记录
+          if (NowPlayingStore.currentSong && NowPlayingStore.currentSong.id) {
+            PlayRetryManager.onPlaySuccess(NowPlayingStore.currentSong.id)
+          }
           break
         case 'paused':
           this.clearInterval()

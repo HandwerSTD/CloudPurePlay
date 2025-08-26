@@ -10,7 +10,7 @@ import AVSessionUtils from "../system/AVSessionUtils"
 import { SongLike } from "./songLike"
 import { fileIo } from "@kit.CoreFileKit"
 import PlayQueueUtils from "../../queue/PlayQueueUtils"
-import NowPlayingStore from "../NowPlayingStore.ets"
+import NowPlayingStore from "../NowPlayingStore"
 import { playQueueStore } from "../../queue/PlayQueueStore"
 import { UserManager } from "../../../Network/UserManager"
 import Settings, { PreferenceUtils } from "../../../Preferences/PreferenceUtils"
@@ -18,6 +18,7 @@ import { SCPref } from "../../../../constants/PreferenceConstants"
 import { Logger, DeviceCollaborationUtils, GlobalStore } from "../../../../../../../Index"
 import { SCEmitter } from "../../../../exports"
 import { SongConvertUtils } from "../../convert"
+import { RetryUtil } from "../../../../utils/CommonUtil"
 
 
 const TAG = '[playerControl] '
@@ -32,6 +33,59 @@ export enum SpecialPlayMode {
 }
 
 const playControlKV = new PreferenceUtils('PlayControl')
+
+// 播放重试管理器
+export class PlayRetryManager {
+  private static retryCount: Map<string, number> = new Map()
+  private static maxRetries: number = 2 // 最大重试次数（第1次播放 + 1次重试）
+  
+  /**
+   * 记录播放失败
+   * @param songId 歌曲ID
+   * @returns 当前重试次数
+   */
+  static recordFailure(songId: string): number {
+    const currentCount = PlayRetryManager.retryCount.get(songId) || 0
+    const newCount = currentCount + 1
+    PlayRetryManager.retryCount.set(songId, newCount)
+    Logger.debug(TAG, `歌曲 ${songId} 播放失败，重试次数: ${newCount}`)
+    return newCount
+  }
+  
+  /**
+   * 检查是否应该重试
+   * @param songId 歌曲ID
+   * @returns 是否应该重试
+   */
+  static shouldRetry(songId: string): boolean {
+    const count = PlayRetryManager.retryCount.get(songId) || 0
+    return count < PlayRetryManager.maxRetries
+  }
+  
+  /**
+   * 清除重试记录
+   * @param songId 歌曲ID
+   */
+  static clearRetry(songId: string): void {
+    PlayRetryManager.retryCount.delete(songId)
+    Logger.debug(TAG, `清除歌曲 ${songId} 的重试记录`)
+  }
+  
+  /**
+   * 播放成功时清除重试记录
+   * @param songId 歌曲ID
+   */
+  static onPlaySuccess(songId: string): void {
+    PlayRetryManager.clearRetry(songId)
+  }
+  
+  /**
+   * 获取最大重试次数（供UI显示使用）
+   */
+  static getMaxRetries(): number {
+    return PlayRetryManager.maxRetries
+  }
+}
 
 export class PlayControl {
   static async init() {
@@ -52,6 +106,7 @@ export class PlayControl {
     }
   }
   static async playMusicByUrl(song: Song, isLogged: boolean, picUrl: string = '', mode: number = 1) {
+    const songId = song.id
     try {
       let artists = SongConvertUtils.getArtists(song.artists)
       await PlayControl.setPlayData(mode, song, artists)
@@ -93,14 +148,55 @@ export class PlayControl {
         Logger.debug(TAG, `playMusicByUrl got final data, set url = ${proxyUrl ?? songPlay.data[0].url}`)
         await AVPlayerUtils.setUrl(proxyUrl ?? songPlay.data[0].url)
       }
+      
+      // 播放成功，清除重试记录
+      PlayRetryManager.onPlaySuccess(songId)
       DeviceCollaborationUtils.setCanMissionContinue(GlobalStore.contextFaker!)
     } catch (e) {
       LogUtil.error(TAG, '播放出错: ' + e)
-      await PlayControl.playNext()
+      await PlayControl.handlePlaybackError(songId, song, isLogged, picUrl, mode)
+    }
+  }
+
+  /**
+   * 处理播放错误，支持重试机制
+   * @param songId 歌曲ID
+   * @param song 歌曲信息
+   * @param isLogged 是否登录
+   * @param picUrl 图片URL
+   * @param mode 播放模式
+   */
+  static async handlePlaybackError(songId: string, song: Song, isLogged: boolean, picUrl: string, mode: number) {
+    const retryCount = PlayRetryManager.recordFailure(songId)
+    
+    if (PlayRetryManager.shouldRetry(songId)) {
+      Logger.debug(TAG, `开始重试播放歌曲 ${song.name}，第 ${retryCount} 次重试`)
+      ToastUtil.showToast(`播放失败，正在重试... (${retryCount}/${PlayRetryManager.getMaxRetries()})`)
+      
+      // 使用 RetryUtil 进行重试，延迟1秒后重试
+      try {
+        await RetryUtil.retryWithResult(1, async () => {
+          await PlayControl.playMusicByUrl(song, isLogged, picUrl, mode)
+        }, 1000)
+      } catch (retryError) {
+        // 重试也失败了，记录并继续处理
+        LogUtil.error(TAG, `重试播放失败: ${retryError}`)
+      }
+    } else {
+      // 达到最大重试次数，暂停播放
+      Logger.debug(TAG, `歌曲 ${song.name} 达到最大重试次数，暂停播放`)
+      ToastUtil.showToast(`播放失败次数过多，已暂停播放`)
+      PlayRetryManager.clearRetry(songId)
+      
+      // 暂停播放而不是跳到下一首
+      await PlayControl.pauseMusic()
+      NowPlayingStore.isPlaying = false
+      NowPlayingStore.isPaused = true
     }
   }
 
   static async playMusicWithFile(song: Song, fileName: string) {
+    const songId = song.id
     try {
       NowPlayingStore.isLiked = true
       const filesDir = FileUtils.getFilesDir()
@@ -132,13 +228,47 @@ export class PlayControl {
         await AVSessionUtils.bufferingState(0)
         await PlayControl.saveCurrentSongInfo(0, song, artistsString, picUrl)
         await AVPlayerUtils.setUrl(fdPath)
+        
+        // 播放成功，清除重试记录
+        PlayRetryManager.onPlaySuccess(songId)
       } else {
         ToastUtil.showToast('未找到文件')
-        PlayControl.playNext()
+        await PlayControl.handleLocalFileError(songId, song, fileName)
       }
     } catch (e) {
       LogUtil.error(TAG, '播放本地文件 PlayMusicWithFile 出错: ' + JSON.stringify(e))
-      PlayControl.playNext()
+      await PlayControl.handleLocalFileError(songId, song, fileName)
+    }
+  }
+
+  /**
+   * 处理本地文件播放错误
+   * @param songId 歌曲ID
+   * @param song 歌曲信息
+   * @param fileName 文件名
+   */
+  static async handleLocalFileError(songId: string, song: Song, fileName: string) {
+    const retryCount = PlayRetryManager.recordFailure(songId)
+    
+    if (PlayRetryManager.shouldRetry(songId)) {
+      Logger.debug(TAG, `开始重试播放本地文件 ${fileName}，第 ${retryCount} 次重试`)
+      ToastUtil.showToast(`本地文件播放失败，正在重试... (${retryCount}/${PlayRetryManager.getMaxRetries()})`)
+      
+      try {
+        await RetryUtil.retryWithResult(1, async () => {
+          await PlayControl.playMusicWithFile(song, fileName)
+        }, 1000)
+      } catch (retryError) {
+        LogUtil.error(TAG, `重试播放本地文件失败: ${retryError}`)
+      }
+    } else {
+      Logger.debug(TAG, `本地文件 ${fileName} 达到最大重试次数，暂停播放`)
+      ToastUtil.showToast(`本地文件播放失败次数过多，已暂停播放`)
+      PlayRetryManager.clearRetry(songId)
+      
+      await PlayControl.pauseMusic()
+      NowPlayingStore.isPlaying = false
+      NowPlayingStore.isPaused = true
     }
   }
 
