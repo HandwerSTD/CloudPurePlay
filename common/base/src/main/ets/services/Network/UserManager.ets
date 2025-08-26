@@ -2,7 +2,7 @@ import { CloudAPIConfigUtils, LoginAPIUtils, User, User_INITIAL, PlayList, DjRad
   APIConfigUtils } from '@handwer/api_adapter'
 import { PreferenceUtils } from '../Preferences/PreferenceUtils'
 import { PlayListAPIUtils, DjAPIUtils, AlbumAPIUtils, TopListAPIUtils, SongAPIUtils } from '@handwer/api_adapter'
-import store from './UserStore'
+import store, { LoginStatus } from './UserStore'
 import Logger from '../../utils/Logger'
 import { SongLike } from '../PlaybackController/play/user/songLike'
 import NowPlayingStore from '../PlaybackController/play/NowPlayingStore'
@@ -35,14 +35,22 @@ export class UserManager {
         store.user = val
         UserSettings.put(SCUser.user, val)
       })
+        .catch(() => {
+          store.loginStatus = LoginStatus.LOGIN_FAILED
+        })
       Logger.debug(TAG, `Login result: ${result}, user data = ${store.user.data.profile.nickname}`)
       if (result) {
+        LoginStatus.LOGGED
         // 加载所有用户数据
         UserManager.loadAllUserData()
         // 歌曲红心信息
         SongLike.isThisSongLiked(NowPlayingStore.currentSong.id)
         UserManager.fetchAllUserData()
+      } else {
+        store.loginStatus = LoginStatus.LOGIN_FAILED
       }
+    } else {
+      store.loginStatus = LoginStatus.NOT_LOGGED
     }
   }
   static async fetchUserInfo() {
@@ -131,6 +139,7 @@ export class UserManager {
   
   static loadAllUserData() {
     Logger.info(TAG, 'Loading all user data from preferences')
+    store.loginStatus = LoginStatus.LOGGED
     
     // 加载用户歌单
     const userPlaylists = UserSettings.get<PlayList[]>(SCUser.userPlaylists)

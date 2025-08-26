@@ -5,12 +5,13 @@ import {
   INSTANCE_TYPE,
   InstanceSwitcher
 } from "@handwer/api_adapter"
-import { SCApp, Logger, ServiceInitUtils } from "@handwer/base"
+import { SCApp, Logger, ServiceInitUtils, GlobalStore } from "@handwer/base"
 import {
   LightUpLinedContainer,
   LightUpLinedDefaultConfig,
   OverrideLightUpStat,
-  HDS_TITLE_CONFIG_STYLE
+  HDS_TITLE_CONFIG_STYLE,
+  SnackBarUtils
 } from "@handwer/ui_components"
 import { DialogHelper } from "@pura/harmony-dialog"
 import { generate_APIFinishWelcome_PageParams } from "./APIFinishWelcome"
@@ -140,6 +141,7 @@ export struct NavidromeAPI_Source {
       setResult: (res) => {
         if (!res) {
           if (contextBack) NavidromeAPIConfigUtils.setRequestContext(contextBack)
+          SnackBarUtils.showMessage(GlobalStore.globalSnack!, $r('sys.symbol.music_note_icolud'), $r('app.string.connect_server_failed'))
           return;
         }
 

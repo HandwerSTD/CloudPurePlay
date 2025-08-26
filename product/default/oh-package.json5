@@ -9,7 +9,8 @@
     '@handwer/base': "file:../../common/base",
     '@handwer/api_adapter': "file:../../apis/api_adapter",
     '@handwer/player_ui': "file:../../feature/player_ui",
-    '@handwer/app_settings': "file:../../feature/app_settings"
+    '@handwer/app_settings': "file:../../feature/app_settings",
+    '@handwer/ui_components': "file:../../common/ui_components"
   }
 }
 

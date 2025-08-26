@@ -8,6 +8,6 @@
   "dependencies": {
     '@pura/harmony-utils': '^1.3.6',
     '@handwer/api_adapter': "file:../../apis/api_adapter",
-    '@handwer/common_resources': "file:../common_resources"
+    '@handwer/common_resources': "file:../common_resources",
   }
 }

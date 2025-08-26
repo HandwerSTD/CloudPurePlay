@@ -29,7 +29,7 @@ export { default as NowPlayingStore } from './services/PlaybackController/play/N
 export * from './services/PlaybackController/convert'
 
 export { default as UserSettings, UserManager, SCUser } from './services/Network/UserManager'
-export { default as UserStore } from './services/Network/UserStore'
+export { default as UserStore, LoginStatus } from './services/Network/UserStore'
 
 export { default as PlayQueueUtils } from './services/PlaybackController/queue/PlayQueueUtils'
 export { playQueueStore as PlayQueueStore } from './services/PlaybackController/queue/PlayQueueStore'

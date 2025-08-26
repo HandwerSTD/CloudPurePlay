@@ -34,8 +34,10 @@ export class SCApp {
   static showAddToPlaylistSheet = 'showAddToPlaylistSheet'
   static registerBackButton = 'registerBackButton'
   static shouldDisableTab = 'shouldDisableTab'
+  static retryLoginSheet: string = 'retryLoginSheet'
 }
 
 export class SCGlobal {
   static readonly addToPlaylistSongData = 'addToPlaylistSongData'
+  static app_settings_quickJump = 'app_settings_quickJump'
 }

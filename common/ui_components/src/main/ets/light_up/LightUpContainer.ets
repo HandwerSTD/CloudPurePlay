@@ -76,6 +76,7 @@ export struct LightUpContainer {
 export struct LightUpLinedContainer {
   @Param lightUpConfig: LightUpConfig = LightUpLinedDefaultConfig
   @Param lightNum: number = 5
+  @Param usePressShadow: boolean = true
   @BuilderParam child: () => void
 
   @Param lightAlignment: Alignment = Alignment.Center
@@ -113,7 +114,7 @@ export struct LightUpLinedContainer {
         ForEach((new Array(this.lightNum).fill(0)), () => {
           Column() {
           }.height(1).width(1).visualEffect(new hdsEffect.HdsEffectBuilder()
-            .pressShadow(this.intensity > 0 ? hdsEffect.PressShadowType.BLEND_GRADIENT : 0)
+            .pressShadow(this.intensity > 0 && this.usePressShadow ? hdsEffect.PressShadowType.BLEND_GRADIENT : 0)
             .pointLight({
               options: {
                 color: Color.White,

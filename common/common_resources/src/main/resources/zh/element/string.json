@@ -511,6 +511,30 @@
     {
       "name": "add_to_personal_fm_success",
       "value": "加入私人FM成功"
+    },
+    {
+      "name": "not_logged_content_desc",
+      "value": "《云净听》使用你的私有云以播放音乐，为了访问你的音乐库，请登录后继续。"
+    },
+    {
+      "name": "switch_account",
+      "value": "切换账号"
+    },
+    {
+      "name": "login_failed",
+      "value": "登录失败"
+    },
+    {
+      "name": "login_failed_desc",
+      "value": "《云净听》未能连接到你的音乐库，请检查网络或 API 配置后重试。"
+    },
+    {
+      "name": "connect_server_failed",
+      "value": "连接服务器失败"
+    },
+    {
+      "name": "retry_login_panel_show_reason",
+      "value": "您看到了此界面，是因为您的网络较慢，需要花费一些时间才能加载您的用户配置。"
     }
   ]
 }

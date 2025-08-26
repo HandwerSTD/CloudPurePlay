@@ -1,8 +1,11 @@
-import { GlobalStore, Logger, PlayControl, PlayListOp,
+import { GlobalStore, Logger,
+  LoginStatus,
+  PlayControl, PlayListOp,
   SCApp,
   SCPref, SCUser, Settings,
   UserManager,
-  UserSettings } from '@handwer/base'
+  UserSettings,
+  UserStore} from '@handwer/base'
 import {
   AlbumAPIUtils,
   CloudAPIConfigUtils, LoginAPIUtils, RealIP_INITIAL, SongAPIUtils, User } from '@handwer/api_adapter'
@@ -12,6 +15,7 @@ import { webview } from '@kit.ArkWeb'
 import { ToastUtil } from '@pura/harmony-utils'
 import { SettingsMainPage } from '@handwer/app_settings'
 import { HdsSnackBar } from '@kit.UIDesignKit'
+import { RetryLoginPanel } from '../views/RetryLoginPanel'
 
 const TAG = '[Index]'
 
@@ -19,26 +23,58 @@ const TAG = '[Index]'
 @ComponentV2
 struct Index {
   gs = GlobalStore
+  user = UserStore
 
   @Provider(SCApp.settingsSheet) consoleSheet: boolean = false
-  @Builder testConsole() {
+
+  @Local showLoginPanel: boolean = false
+  @Local connectTimeout: boolean = false
+
+  @Monitor('user.loginStatus')
+  onLoginStatusChange() {
+    this.showLoginPanel = UserStore.loginStatus !== LoginStatus.LOGGED && this.connectTimeout
+  }
+
+  @Builder retryLoginPanel() {
+    RetryLoginPanel()
+  }
+
+  @Builder SettingsPanel() {
     SettingsMainPage()
   }
 
   build() {
-    Column() {
-      PlayerUI()
+    Row() {
+      Column() {
+        PlayerUI()
+      }
+      .bindSheet(this.consoleSheet!!, this.SettingsPanel, {
+        preferType: SheetType.CENTER,
+        backgroundColor: $r('app.color.ui_sheet_bg_col'),
+        blurStyle: BlurStyle.BACKGROUND_THICK,
+        showClose: false,
+      })
     }
-    .bindSheet(this.consoleSheet!!, this.testConsole, {
+    .bindSheet(this.showLoginPanel!!, this.retryLoginPanel, {
       preferType: SheetType.CENTER,
       backgroundColor: $r('app.color.ui_sheet_bg_col'),
       blurStyle: BlurStyle.BACKGROUND_THICK,
-      showClose: false
+      showClose: false,
+      onWillDismiss: (data) => {
+        if (UserStore.loginStatus === LoginStatus.LOGGED) {
+          data.dismiss()
+        }
+      }
     })
     .height('100%')
     .width('100%')
     .onAppear(() => {
       this.gs.globalSnack = new HdsSnackBar(this.getUIContext())
+      this.onLoginStatusChange()
+      setTimeout(() => {
+        this.connectTimeout = true
+        this.onLoginStatusChange()
+      }, 3000)
     })
   }
 }

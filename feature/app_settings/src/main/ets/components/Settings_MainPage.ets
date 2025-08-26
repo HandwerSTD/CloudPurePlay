@@ -1,4 +1,4 @@
-import { SCApp } from "@handwer/base";
+import { GlobalContext, SCApp, SCGlobal } from "@handwer/base";
 import { CommonListItem, HDS_TITLE_CONFIG_STYLE, LightUpLinedContainer, SnackBarUtils } from "@handwer/ui_components";
 import { HdsNavigation, HdsNavigationTitleMode, HdsNavigationAttribute } from "@hms.hds.hdsBaseComponent";
 import { hdsEffect, HdsSnackBar } from "@kit.UIDesignKit";
@@ -12,13 +12,21 @@ import { MissionContinueSettings } from "../views/MissionContinue/MissionContinu
 
 @ComponentV2
 export struct MainPage {
+  @Param onOuterPop: (() => void) | undefined = undefined
   snack = new HdsSnackBar(this.getUIContext())
   @Consumer(SCApp.settingsSheet) consoleSheet: boolean = false
   @Provider(SCApp.settingsPageStack) pageStack: NavPathStack = new NavPathStack()
   @Local pageOpacity: number = 1
 
+  quickJump?: string
+
   aboutToAppear(): void {
+    this.quickJump = GlobalContext.getContext().getObject(SCGlobal.app_settings_quickJump) as string | undefined
     this.pageStack.pushPathByName('Main', [], false)
+    if (this.quickJump) {
+      this.pageStack.pushPathByName(this.quickJump, [], false)
+    }
+    GlobalContext.getContext().deleteObject(SCGlobal.app_settings_quickJump)
   }
 
   @Builder pageMap(name: string) {
@@ -135,11 +143,16 @@ export struct MainPage {
       return true
     }).hideTitleBar(true).backgroundColor(Color.Transparent)
     .onShown(() => {
+      // 由于在 aboutToAppear 里连续 push 两个，Main 的 onShown 根本不会执行，所以它被首次调用的时候就一定是该 pop 的时候
+      if (this.quickJump) {
+        this.onOuterPop?.()
+      }
       this.pageOpacity = 1
     })
     .onWillHide(() => {
       this.pageOpacity = 0
     })
+
     .opacity(this.pageOpacity)
     .animation({duration: 300})
   }

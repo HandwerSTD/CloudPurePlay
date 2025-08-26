@@ -109,8 +109,8 @@ export class NavidromeAPI_LoginAPIUtils {
    * @param statePersistent 按需求，可传入回调对返回的 User 进行持久化
    * @returns 是否登录成功
    */
-  static async getLoginStatus(statePersistent?: (val: User) => void) {
-    return getLoginStatus(statePersistent);
+  static async getLoginStatus(statePersistent?: (val: User) => void): Promise<boolean> {
+    return await getLoginStatus(statePersistent);
   }
   /**
    * 登出

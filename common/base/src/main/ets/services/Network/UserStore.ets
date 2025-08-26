@@ -10,8 +10,16 @@ class DailyListViewModel {
   @Trace songs: DailySongRes[] = []
 }
 
+export enum LoginStatus {
+  NOT_LOGGED,
+  LOGIN_FAILED,
+  TRYING,
+  LOGGED
+}
+
 @ObservedV2
 class UserStore {
+  @Trace loginStatus: LoginStatus = LoginStatus.TRYING
   @Trace user: User = User_INITIAL
   @Trace cookieSettings: Cloud_RequestCookieConfig = {}
   @Trace realIp: string = ''
