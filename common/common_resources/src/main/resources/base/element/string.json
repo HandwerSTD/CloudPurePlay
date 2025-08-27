@@ -535,6 +535,38 @@
     {
       "name": "retry_login_panel_show_reason",
       "value": "您看到了此界面，是因为您的网络较慢，需要花费一些时间才能加载您的用户配置。"
+    },
+    {
+      "name": "display_settings",
+      "value": "Display Settings"
+    },
+    {
+      "name": "show_player_on_launch",
+      "value": "Show Player on Launch"
+    },
+    {
+      "name": "show_player_on_launch_desc",
+      "value": "Show player interface when launching the app"
+    },
+    {
+      "name": "show_music_library_in_online",
+      "value": "Show Music Library in Online Music"
+    },
+    {
+      "name": "show_music_library_in_online_desc",
+      "value": "Prioritize music library content when entering online music"
+    },
+    {
+      "name": "playback_settings",
+      "value": "Playback Settings"
+    },
+    {
+      "name": "auto_play_on_launch",
+      "value": "Auto Play on Launch"
+    },
+    {
+      "name": "auto_play_on_launch_desc",
+      "value": "Automatically start playing music when launching the app"
     }
   ]
 }

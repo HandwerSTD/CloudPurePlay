@@ -10,6 +10,8 @@ import BackgroundTaskUtils from './BackgroundTaskUtils'
 import NowPlayingStore from '../NowPlayingStore'
 import { PlayControl, PlayRetryManager } from '../user/playControl'
 import { UserManager } from '../../../Network/UserManager'
+import Settings from '../../../Preferences/PreferenceUtils'
+import { GlobalStore, SCPref } from '../../../../exports'
 
 const TAG = '[AVPlayerUtils] '
 

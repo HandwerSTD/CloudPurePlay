@@ -535,6 +535,38 @@
     {
       "name": "retry_login_panel_show_reason",
       "value": "您看到了此界面，是因为您的网络较慢，需要花费一些时间才能加载您的用户配置。"
+    },
+    {
+      "name": "display_settings",
+      "value": "显示设置"
+    },
+    {
+      "name": "show_player_on_launch",
+      "value": "启动时默认显示播放器"
+    },
+    {
+      "name": "show_player_on_launch_desc",
+      "value": "启动应用时直接显示播放器界面"
+    },
+    {
+      "name": "show_music_library_in_online",
+      "value": "在线音乐板块默认显示音乐库"
+    },
+    {
+      "name": "show_music_library_in_online_desc",
+      "value": "进入在线音乐时优先显示音乐库内容"
+    },
+    {
+      "name": "playback_settings",
+      "value": "播放设置"
+    },
+    {
+      "name": "auto_play_on_launch",
+      "value": "启动时自动播放"
+    },
+    {
+      "name": "auto_play_on_launch_desc",
+      "value": "启动应用时自动开始播放音乐"
     }
   ]
 }

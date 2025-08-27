@@ -7,5 +7,12 @@ export enum SCPref {
   apiInstanceType,
   currentAPIConfig,
 
-  useMissionContinue
+  useMissionContinue,
+
+  // 显示设置
+  showPlayerOnLaunch,
+  showMusicLibraryInOnlineMusic,
+
+  // 播放设置
+  autoPlayOnLaunch
 }

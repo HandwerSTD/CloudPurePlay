@@ -1,0 +1,70 @@
+import { SCPref, Settings } from "@handwer/base"
+import { HDS_TITLE_CONFIG_STYLE, LightedCommonListToggleItem } from "@handwer/ui_components"
+import { HdsNavigation, HdsNavigationTitleMode, HdsNavigationAttribute } from "@kit.UIDesignKit"
+
+@ComponentV2
+export struct DisplaySettings {
+  @Local pageOpacity: number = 1
+
+  @Local showPlayerOnLaunch: boolean = false
+  @Local showMusicLibraryInOnlineMusic: boolean = false
+
+  aboutToAppear(): void {
+    this.showPlayerOnLaunch = Settings.get<boolean>(SCPref.showPlayerOnLaunch) ?? false
+    this.showMusicLibraryInOnlineMusic = Settings.get<boolean>(SCPref.showMusicLibraryInOnlineMusic) ?? false
+  }
+
+  build() {
+    NavDestination() {
+      HdsNavigation() {
+        Column() {
+          List({space: 12}) {
+            ListItem().height($r('sys.float.ohos_id_navigation_bar_height'))
+            ListItem() {
+              LightedCommonListToggleItem({
+                icon: $r('sys.symbol.gearshape'),
+                title: $r('app.string.show_player_on_launch'),
+                subtitle: $r('app.string.show_player_on_launch_desc'),
+                isOn: this.showPlayerOnLaunch,
+                onToggleChange: (val) => {
+                  this.showPlayerOnLaunch = val
+                  Settings.put(SCPref.showPlayerOnLaunch, val)
+                }
+              })
+            }
+            ListItem() {
+              LightedCommonListToggleItem({
+                icon: $r('sys.symbol.gearshape'),
+                title: $r('app.string.show_music_library_in_online'),
+                subtitle: $r('app.string.show_music_library_in_online_desc'),
+                isOn: this.showMusicLibraryInOnlineMusic,
+                onToggleChange: (val) => {
+                  this.showMusicLibraryInOnlineMusic = val
+                  Settings.put(SCPref.showMusicLibraryInOnlineMusic, val)
+                }
+              })
+            }
+            ListItem().height(12)
+          }.padding({left: 12, right: 12})
+        }
+        .width('100%').height('100%')
+      }.titleBar({
+        style: HDS_TITLE_CONFIG_STYLE,
+        content: {
+          title: {
+            mainTitle: $r('app.string.display_settings')
+          }
+        }
+      })
+      .titleMode(HdsNavigationTitleMode.MINI)
+    }.hideTitleBar(true).backgroundColor(Color.Transparent)
+    .onShown(() => {
+      this.pageOpacity = 1
+    })
+    .onWillHide(() => {
+      this.pageOpacity = 0
+    })
+    .opacity(this.pageOpacity)
+    .animation({duration: 300})
+  }
+}

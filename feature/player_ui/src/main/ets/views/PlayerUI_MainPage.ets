@@ -6,6 +6,8 @@ import { FeaturedPlayUtils,
   ResponsiveUtil,
   SCApp,
   SCGlobal,
+  SCPref,
+  Settings,
   SongConvertUtils,
   SongLike,
   ThemeManager,
@@ -62,7 +64,7 @@ export struct MainPage {
 
   @Consumer(SCApp.settingsSheet) consoleSheet: boolean = false
   @Provider(SCApp.playQueueSheet) showQueueSheet: boolean = false
-  @Provider(SCApp.exploreSheet) showExplore: boolean = true
+  @Provider(SCApp.exploreSheet) showExplore: boolean = false
   @Provider(SCApp.showAddToPlaylistSheet) showAddToPlaylistSheet: boolean = false
 
   controller: hdsEffect.ShaderEffectController = new hdsEffect.ShaderEffectController()
@@ -99,7 +101,7 @@ export struct MainPage {
 
   @Local isBottomAreaExpand: boolean = false
 
-  @Local explorePageOpacity: number = 1
+  @Local explorePageOpacity: number = 0
 
 
   // ----------------------------------------
@@ -650,6 +652,17 @@ export struct MainPage {
     .layoutWeight(1)
     .opacity(this.explorePageOpacity)
     .animation({duration: 300})
+  }
+
+  aboutToAppear(): void {
+    const showPlayer = Settings.get<boolean>(SCPref.showPlayerOnLaunch) ?? true
+    if (showPlayer) {
+      this.showExplore = false
+      this.explorePageOpacity = 0
+    } else {
+      this.showExplore = true
+      this.explorePageOpacity = 1
+    }
   }
 
   build() {

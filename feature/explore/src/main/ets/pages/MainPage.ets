@@ -1,4 +1,4 @@
-import { ResponsiveUtil, SCApp } from "@handwer/base"
+import { ResponsiveUtil, SCApp, SCPref, Settings } from "@handwer/base"
 import { HdsActionBar, ActionBarButton, ActionBarStyle } from "@kit.UIDesignKit"
 import { ColorMetrics, LengthMetrics, SymbolGlyphModifier } from "@kit.ArkUI"
 import { LightUpRoundedButton,LightUpDefaultConfig,OverrideLightUpStat,BackButtonUtils,
@@ -62,6 +62,7 @@ struct MainPage_Shell {
   @Local isTabExpand: boolean = false
   @Local currentTabIndex: number = 0
   tabController: TabsController = new TabsController()
+  defaultTabIndex: number = 0
 
   @Local primaryWidth: number = 0
 
@@ -145,7 +146,7 @@ struct MainPage_Shell {
   build() {
     NavDestination() {
       Stack({alignContent: Alignment.BottomStart}) {
-        Tabs({controller: this.tabController}) {
+        Tabs({controller: this.tabController, index: this.defaultTabIndex}) {
           TabContent() {
             ExplorePage()
           }
@@ -186,6 +187,15 @@ struct MainPage_Shell {
     })
     .opacity(this.pageOpacity)
     .animation({duration: ResponsiveUtil.chooseByWidth([300, 200, 200])})
+  }
+
+  aboutToAppear(): void {
+    const showMusicLibrary = Settings.get<boolean>(SCPref.showMusicLibraryInOnlineMusic) ?? false
+    if (showMusicLibrary) {
+      this.tabController.changeIndex(1)
+      this.currentTabIndex = 1
+      this.defaultTabIndex = 1
+    }
   }
 
   showTab() {

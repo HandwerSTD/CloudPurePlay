@@ -3,6 +3,10 @@
     {
       "name": "page_show",
       "value": "page from package"
+    },
+    {
+      "name": "not_playing",
+      "value": "未在播放"
     }
   ]
 }

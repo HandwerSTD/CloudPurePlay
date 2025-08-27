@@ -16,6 +16,7 @@ export class ServiceInitUtils {
   static async init() {
     // 初始化全局设置
     Settings.init()
+    ServiceInitUtils.loadPresetPreferences()
     // 初始化 API
     InstanceSwitcher.InstanceType = Settings.get<INSTANCE_TYPE>(SCPref.apiInstanceType) ?? INSTANCE_TYPE.CLOUD
     APIConfigUtils.loadRequestContext(Settings.get(SCPref.currentAPIConfig) ?? APIConfigUtils.EmptyConfig)
@@ -29,6 +30,15 @@ export class ServiceInitUtils {
     await PlayControl.init()
     // 初始化用户信息
     await UserManager.init()
+  }
+  static loadPresetPreferences() {
+    if (Settings.get<boolean>(SCPref.useMissionContinue) === undefined) {
+      Settings.put(SCPref.useMissionContinue, true)
+    }
+    // 启动时自动显示Player
+    if (Settings.get<boolean>(SCPref.showPlayerOnLaunch) === undefined) {
+      Settings.put(SCPref.showPlayerOnLaunch, true)
+    }
   }
   static async reInit(newInstanceType: INSTANCE_TYPE, newUser: User, newPasswd: string, newRequestContext: Object) {
     // 清除全部用户信息

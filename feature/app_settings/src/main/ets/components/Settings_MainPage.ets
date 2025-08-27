@@ -9,6 +9,8 @@ import { APIFinishWelcome } from "../views/DataSource/APIFinishWelcome";
 import { CloudAPI_Source } from "../views/DataSource/CloudAPI";
 import { NavidromeAPI_Source } from "../views/DataSource/NavidromeAPI";
 import { MissionContinueSettings } from "../views/MissionContinue/MissionContinueSettings";
+import { DisplaySettings } from "../views/DisplaySettings/DisplaySettings";
+import { PlaybackSettings } from "../views/PlaybackSettings/PlaybackSettings";
 
 @ComponentV2
 export struct MainPage {
@@ -44,6 +46,10 @@ export struct MainPage {
       APIFinishWelcome()
     } else if (name === 'MissionContinueSettings') {
       MissionContinueSettings()
+    } else if (name === 'DisplaySettings') {
+      DisplaySettings()
+    } else if (name === 'PlaybackSettings') {
+      PlaybackSettings()
     }
   }
 
@@ -72,6 +78,40 @@ export struct MainPage {
           title: $r('app.string.mission_continue'),
         }).onClick(() => {
           this.pushPage('MissionContinueSettings', {})
+        })
+      }
+    }.backgroundColor($r('app.color.play_list_single_item_bg'))
+    .borderRadius(20)
+    .visualEffect(new hdsEffect.HdsEffectBuilder().pointLight({
+      illuminatedType: hdsEffect.PointLightIlluminatedType.BORDER
+    }).buildEffect())
+  }
+
+  @Builder DisplaySettingsBuilder() {
+    Column() {
+      LightUpLinedContainer({ lightUpConfig: {lightIntensity: 1, lightHeight: 120 }}) {
+        CommonListItem({
+          icon: $r('sys.symbol.square_grid_2x2'),
+          title: $r('app.string.display_settings'),
+        }).onClick(() => {
+          this.pushPage('DisplaySettings', {})
+        })
+      }
+    }.backgroundColor($r('app.color.play_list_single_item_bg'))
+    .borderRadius(20)
+    .visualEffect(new hdsEffect.HdsEffectBuilder().pointLight({
+      illuminatedType: hdsEffect.PointLightIlluminatedType.BORDER
+    }).buildEffect())
+  }
+
+  @Builder PlaybackSettingsBuilder() {
+    Column() {
+      LightUpLinedContainer({ lightUpConfig: {lightIntensity: 1, lightHeight: 120 }}) {
+        CommonListItem({
+          icon: $r('sys.symbol.play'),
+          title: $r('app.string.playback_settings'),
+        }).onClick(() => {
+          this.pushPage('PlaybackSettings', {})
         })
       }
     }.backgroundColor($r('app.color.play_list_single_item_bg'))
@@ -118,6 +158,12 @@ export struct MainPage {
             ListItem().height($r('sys.float.ohos_id_navigation_bar_height'))
             ListItem() {
               this.DataSource()
+            }
+            ListItem() {
+              this.DisplaySettingsBuilder()
+            }
+            ListItem() {
+              this.PlaybackSettingsBuilder()
             }
             ListItem() {
               this.MultiDevice()

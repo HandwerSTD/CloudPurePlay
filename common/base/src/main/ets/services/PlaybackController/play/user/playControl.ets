@@ -87,6 +87,8 @@ export class PlayRetryManager {
   }
 }
 
+let shouldPauseOnStart: boolean = false
+
 export class PlayControl {
   static async init() {
     const store = NowPlayingStore;
@@ -102,6 +104,8 @@ export class PlayControl {
     if (store.currentSong !== Song_INITIAL) {
       store.isPlaying = true
       store.isPaused = true
+      const playOnStart = Settings.get<boolean>(SCPref.autoPlayOnLaunch) ?? false
+      if (!playOnStart) shouldPauseOnStart = true
       await PlayControl.playMusicByUrl(store.currentSong, UserManager.isLogged, store.currentPic as string, store.playMode)
     }
   }
@@ -119,20 +123,27 @@ export class PlayControl {
       SongLike.isThisSongLiked(song.id)
       let localPath: string = ''
       let tempArtists: string = artists
-      if(song.name.length + artists.length >= 103) {
-        try { tempArtists = artists.slice(0, 100 - song.name.length) }
+      const songNameLength = (typeof song.name === 'string' ? song.name.length : 0)
+      if(songNameLength + artists.length >= 103) {
+        try { tempArtists = artists.slice(0, 100 - songNameLength) }
         catch (e) { artists = '未知' }
       }
-      await AVSessionUtils.setDefaultMetadata(song, artists)
-      await AVSessionUtils.activate()
-      await AVSessionUtils.bufferingState(0)
-
       if(!picUrl) {
         picUrl = await SongAPIUtils.getSongPicUrl(song)
       }
       await PlayControl.setPicUrl(picUrl)
       await PlayControl.saveCurrentSongInfo(mode, song, artists, picUrl)
       await LyricUtils.setLyric(song)
+
+      if (shouldPauseOnStart) {
+        NowPlayingStore.isPaused = true
+        return;
+      } // 设置完 metadata 就走，不动 AVSession
+
+      await AVSessionUtils.setDefaultMetadata(song, artists)
+      await AVSessionUtils.activate()
+      await AVSessionUtils.bufferingState(0)
+
       await AVSessionUtils.setMetadata(song, artists, picUrl)
 
       localPath = await FileUtils.accessLocalFile(SongConvertUtils.sanitizeFileName(`${tempArtists} - ${song.name}`))
@@ -190,7 +201,7 @@ export class PlayControl {
       
       // 暂停播放而不是跳到下一首
       await PlayControl.pauseMusic()
-      NowPlayingStore.isPlaying = false
+      NowPlayingStore.isPlaying = true
       NowPlayingStore.isPaused = true
     }
   }
@@ -285,6 +296,11 @@ export class PlayControl {
   }
 
   static async resumeMusic() {
+    if (shouldPauseOnStart) {
+      shouldPauseOnStart = false
+      const store = NowPlayingStore
+      await PlayControl.playMusicByUrl(store.currentSong, UserManager.isLogged, store.currentPic as string, store.playMode)
+    }
     AVPlayerUtils.play()
     NowPlayingStore.isPaused = false
   }
