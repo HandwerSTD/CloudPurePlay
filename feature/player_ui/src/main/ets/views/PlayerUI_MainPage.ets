@@ -760,7 +760,10 @@ export struct MainPage {
         nps.playTime = value
         this.sliderThickness = 10
         this.isMovingSlider = false
-        PlayControl.seekMusic(this.sliderMovingTime)
+        if (this.sliderMovingTime !== -1) {
+          PlayControl.seekMusic(this.sliderMovingTime)
+        }
+        this.sliderMovingTime = -1
       }
     })
     if (mode == SliderChangeMode.End) {

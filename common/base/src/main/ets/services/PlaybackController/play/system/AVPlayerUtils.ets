@@ -90,6 +90,9 @@ class AVPlayerUtils {
         } else {
           NowPlayingStore.playTime = time
         }
+        if (time === NowPlayingStore.currentSong.duration-1) {
+          LogUtil.debug()
+        }
       })
     } catch (e) {
       LogUtil.error(TAG, '播放错误: ' + e.message)

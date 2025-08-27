@@ -305,8 +305,8 @@ export class PlayControl {
     NowPlayingStore.isPaused = false
   }
 
-  static seekMusic(time: number) {
-    AVPlayerUtils.seek(time)
+  static async seekMusic(time: number) {
+    await AVPlayerUtils.seek(time)
   }
 
   static async playQueue(index: number) {
@@ -366,7 +366,12 @@ export class PlayControl {
     } else {
       if(cycleMode == 2) { PlayControl.playQueue(0) }
       else {
-        AVPlayerUtils.stop()
+        if (NowPlayingStore.playTime >= NowPlayingStore.currentSong.duration) {
+          shouldPauseOnStart = true;
+          await PlayControl.playQueue(PlayQueueUtils.currentQueueIndex)
+          NowPlayingStore.isPaused = true
+          AVSessionUtils.pauseState(0)
+        }
         ToastUtil.showToast('没有下一首了~')
       }
     }
