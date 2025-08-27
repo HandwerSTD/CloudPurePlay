@@ -3,6 +3,38 @@
     {
       "name": "app_name",
       "value": "云净听"
+    },
+    {
+      "name": "no_music_playing",
+      "value": "当前无音乐播放"
+    },
+    {
+      "name": "explore_music_to_start",
+      "value": "探索您的音乐库开始聆听"
+    },
+    {
+      "name": "explore_music",
+      "value": "探索音乐"
+    },
+    {
+      "name": "daily_recommend",
+      "value": "每日推荐"
+    },
+    {
+      "name": "empty_state_tip",
+      "value": "通过浏览推荐内容或收藏开始您的音乐之旅"
+    },
+    {
+      "name": "empty_play_queue",
+      "value": "播放队列为空"
+    },
+    {
+      "name": "add_songs_to_play",
+      "value": "添加歌曲开始播放"
+    },
+    {
+      "name": "empty_queue",
+      "value": "队列中无歌曲"
     }
   ]
 }

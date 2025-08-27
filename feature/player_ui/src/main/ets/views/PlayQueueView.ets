@@ -4,7 +4,8 @@ import { GlobalStore, Logger,
   PlayControl, PlayQueueStore, PlayQueueUtils, SongConvertUtils } from "@handwer/base"
 import { LightUpDefaultConfig, LightUpRoundedButton } from "@handwer/ui_components"
 import { curves, TextModifier } from "@kit.ArkUI"
-import { hdsEffect } from "@kit.UIDesignKit"
+import { hdsEffect, HdsSnackBar } from "@kit.UIDesignKit"
+import { EmptyQueueView } from "../components/EmptyQueueView"
 
 @ComponentV2
 export struct PlayQueueView {
@@ -25,41 +26,53 @@ export struct PlayQueueView {
     return $r('app.string.play_queue_total_num', this.pq.queue.length)
   }
 
+  get isQueueEmpty() {
+    return this.pq.queue.length === 0
+  }
+
   build() {
     // 白嫖一个 title 而已
     WithTheme({colorMode: ThemeColorMode.DARK}) {
       Navigation() {
         Column() {
-          List({space: 12, scroller: this.scroller, initialIndex: Math.max(this.pq.currentQueueIndex - 1, 0)}) {
-            ForEach(this.pq.queue, (item: PlayQueue, index) => {
-              ListItem() {
-                PlayQueueSingleItem({
-                  item: item,
-                  itemIndex: index,
-                  showLight: this.queueItemShowLight
-                })
-              }
-              .transition(TransitionEffect.asymmetric(
-                TransitionEffect.OPACITY.animation({duration: 300}),
-                TransitionEffect.OPACITY.animation({duration: 300})))
-              .onClick(() => {
-                if (this.pq.currentQueueIndex !== index) {
-                  PlayControl.playQueue(index)
+          if (this.isQueueEmpty) {
+            // 空队列状态
+            EmptyQueueView({
+              hdsSnackBar: new HdsSnackBar(this.getUIContext()),
+            }).transition(TransitionEffect.OPACITY.animation({duration: 500}))
+          } else {
+            // 正常队列列表
+            List({space: 12, scroller: this.scroller, initialIndex: Math.max(this.pq.currentQueueIndex - 1, 0)}) {
+              ForEach(this.pq.queue, (item: PlayQueue, index) => {
+                ListItem() {
+                  PlayQueueSingleItem({
+                    item: item,
+                    itemIndex: index,
+                    showLight: this.queueItemShowLight
+                  })
                 }
+                .transition(TransitionEffect.asymmetric(
+                  TransitionEffect.OPACITY.animation({duration: 300}),
+                  TransitionEffect.OPACITY.animation({duration: 300})))
+                .onClick(() => {
+                  if (this.pq.currentQueueIndex !== index) {
+                    PlayControl.playQueue(index)
+                  }
+                })
+                .clickEffect({
+                  level: ClickEffectLevel.LIGHT
+                })
               })
-              .clickEffect({
-                level: ClickEffectLevel.LIGHT
-              })
+              ListItem().height(GlobalStore.wd.bottom)
+            }
+            .divider({
+              strokeWidth: 2,
+              endMargin: 24
             })
-            ListItem().height(GlobalStore.wd.bottom)
+            .onScrollStart(() => {this.queueItemShowLight = false})
+            .onScrollStop(() => {this.queueItemShowLight = true})
+            // .padding({left: 12, right: 12})
           }
-          .divider({
-            strokeWidth: 2,
-            endMargin: 24
-          })
-          .onScrollStart(() => {this.queueItemShowLight = false})
-          .onScrollStop(() => {this.queueItemShowLight = true})
-          // .padding({left: 12, right: 12})
         }
         .onAppear(() => {
           this.queueItemShowLight = true
@@ -68,7 +81,7 @@ export struct PlayQueueView {
       .margin({top: 12}) // Navigation 默认避让
       .title({
         main: $r('app.string.play_queue'),
-        sub: this.PlayModeName,
+        sub: this.isQueueEmpty ? $r('app.string.common_empty_content') : this.PlayModeName,
       })
       .titleMode(NavigationTitleMode.Mini)
     }
@@ -125,19 +138,21 @@ export struct PlayQueueSingleItem {
           .animation({curve: this.moveSpring})
       }.layoutWeight(1)
 
-      LightUpRoundedButton({
-        icon: $r('sys.symbol.xmark'),
-        customFontSize: 14,
-        customFontWeight: FontWeight.Bold,
-        clickAction: () => {
-          PlayQueueUtils.queueDelete(this.itemIndex, false)
-        },
-        customFontColor: [Color.White],
-        lightUpConfig: {
-          lightIntensity: 2,
-          lightHeight: 150
-        }
-      })
+      if (!NowPlayingStore.isPersonalFM) {
+        LightUpRoundedButton({
+          icon: $r('sys.symbol.xmark'),
+          customFontSize: 14,
+          customFontWeight: FontWeight.Bold,
+          clickAction: () => {
+            PlayQueueUtils.queueDelete(this.itemIndex)
+          },
+          customFontColor: [Color.White],
+          lightUpConfig: {
+            lightIntensity: 2,
+            lightHeight: 150
+          }
+        })
+      }
     }.padding({left: 6, right: 12, top: 12, bottom: 12})
     // .animation({curve: this.moveSpring})
     .margin({left: 12, right: 12})

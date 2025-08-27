@@ -24,6 +24,7 @@ import { LyricComponent } from "./LyricArea"
 import { ImageCover, ImageCoverThumbnail } from "../components/ImageCover"
 import { PlayQueueViewBuilder } from "./PlayQueueView"
 import { ExplorePageBuilder } from "@handwer/explore"
+import { EmptyStateView } from "../components/EmptyStateView"
 
 const nps = NowPlayingStore
 const LIGHT_TOP_BTN_SM: LightUpConfig = {
@@ -89,6 +90,14 @@ export struct MainPage {
   get isThisSongLiked() {
     return nps.isLiked
   }
+  get shouldShowEmptyState() {
+    return nps.currentSong === Song_INITIAL || (nps.currentSong.id === "" && this.pq.queue.length === 0)
+  }
+  get isQueueEmpty() {
+    return this.pq.queue.length === 0
+  }
+  
+  pq = PlayQueueStore
   @Local sliderThickness: number = 10
   @Local isMovingSlider: boolean = false
   @Local sliderMovingTime: number = 0
@@ -282,261 +291,372 @@ export struct MainPage {
   }
 
   @Builder AuthorInfo() {
-    Column() {
-      Text(nps.currentSong.name)
-        .width('90%')
-        .textAlign(TextAlign.Start)
-        .textOverflow({
-          overflow: TextOverflow.MARQUEE
-        })
-        .marqueeOptions({
-          start: true,
-          fadeout: true
-        })
-        .fontColor(Color.White).fontWeight(FontWeight.Bold)
-        .fontSize(24)
-      Text(nps.currentArtists)
-        .width('90%')
-        .textAlign(TextAlign.Start)
-        .textOverflow({
-          overflow: TextOverflow.MARQUEE
-        })
-        .marqueeOptions({
-          start: true,
-          fadeout: true
-        })
-        .fontColor(Color.White)
-    }.visibility(this.isBottomAreaExpand ? Visibility.Hidden : Visibility.Visible)
-    .padding({right: 40}) // 避让右边按钮
-    .transition(TransitionEffect.OPACITY.animation({duration: 200}))
-    .alignItems(HorizontalAlign.Start)
-    .onClick(() => {
-      this.showQueueSheet = !this.showQueueSheet
-    })
+    if (this.shouldShowEmptyState) {
+      // 空状态时不显示歌曲信息
+      Column() {}.height(0)
+    } else {
+      Column() {
+        Text(nps.currentSong.name)
+          .width('90%')
+          .textAlign(TextAlign.Start)
+          .textOverflow({
+            overflow: TextOverflow.MARQUEE
+          })
+          .marqueeOptions({
+            start: true,
+            fadeout: true
+          })
+          .fontColor(Color.White).fontWeight(FontWeight.Bold)
+          .fontSize(24)
+        Text(nps.currentArtists)
+          .width('90%')
+          .textAlign(TextAlign.Start)
+          .textOverflow({
+            overflow: TextOverflow.MARQUEE
+          })
+          .marqueeOptions({
+            start: true,
+            fadeout: true
+          })
+          .fontColor(Color.White)
+      }.visibility(this.isBottomAreaExpand ? Visibility.Hidden : Visibility.Visible)
+      .padding({right: 40}) // 避让右边按钮
+      .transition(TransitionEffect.OPACITY.animation({duration: 200}))
+      .alignItems(HorizontalAlign.Start)
+      .onClick(() => {
+        this.showQueueSheet = !this.showQueueSheet
+      })
+    }
   }
 
   @Builder CoverInfo() {
-    Column() {
-      Row() {
-        ImageCover({
-          nowPlayingCoverImg: this.nowPlayingCoverImg,
-          handleLike: () => {
-            this.handleLike()
-          },
-          useLight: true,
-          useCoverAmbBreathe: false,
-          resetNewBackgroundColor: (colors) => {
-            // this.backgroundFlowingColors = colors
-            // Logger.debug(`try resetting flow colors: `, this.backgroundFlowingColors.toString())
-            // this.controller.setEffectParams({
-            //   colorSource: this.backgroundFlowingColors
-            // },)
-            // this.controller.play()
-          }
-        })
-      }.layoutWeight(1)
-      // Blank().height(24)
-      Stack(){
-        this.AuthorInfo()
-        this.BottomAreaControlButton_ActionBar() // 这东西自带 margin，所以上下边距就不用要了
-      }//.width('100%').padding(this.isBottomAreaExpand ? undefined : {right: 24})
-      .alignContent(this.isBottomAreaExpand ? Alignment.Center : Alignment.End)
-      .animation({curve: curves.springMotion()})
-      // Blank().height(24)
+    if (this.shouldShowEmptyState) {
+      // 空状态时不显示封面和控制按钮区域
+      Column() {}.height(0)
+    } else {
+      Column() {
+        Row() {
+          ImageCover({
+            nowPlayingCoverImg: this.nowPlayingCoverImg,
+            handleLike: () => {
+              this.handleLike()
+            },
+            useLight: true,
+            useCoverAmbBreathe: false,
+            resetNewBackgroundColor: (colors) => {
+              // this.backgroundFlowingColors = colors
+              // Logger.debug(`try resetting flow colors: `, this.backgroundFlowingColors.toString())
+              // this.controller.setEffectParams({
+              //   colorSource: this.backgroundFlowingColors
+              // },)
+              // this.controller.play()
+            }
+          })
+        }.layoutWeight(1)
+        // Blank().height(24)
+        Stack(){
+          this.AuthorInfo()
+          this.BottomAreaControlButton_ActionBar() // 这东西自带 margin，所以上下边距就不用要了
+        }//.width('100%').padding(this.isBottomAreaExpand ? undefined : {right: 24})
+        .alignContent(this.isBottomAreaExpand ? Alignment.Center : Alignment.End)
+        .animation({curve: curves.springMotion()})
+        // Blank().height(24)
 
-      this.ProgressBar('90%')
+        this.ProgressBar('90%')
+      }
+      .layoutWeight(1)
+      .height('100%')
+      .justifyContent(FlexAlign.Center)
+      // .aspectRatio(1)
+      .constraintSize({
+        minWidth: 0,
+        maxWidth: '100%',
+        minHeight: 0,
+        maxHeight: ResponsiveUtil.widthCheck(['sm', 'md']) ? '100%' : 500
+      })
+      .onClick(() => {
+        this.showProgressBar()
+      })
     }
-    .layoutWeight(1)
-    .height('100%')
-    .justifyContent(FlexAlign.Center)
-    // .aspectRatio(1)
-    .constraintSize({
-      minWidth: 0,
-      maxWidth: '100%',
-      minHeight: 0,
-      maxHeight: ResponsiveUtil.widthCheck(['sm', 'md']) ? '100%' : 500
-    })
-    .onClick(() => {
-      this.showProgressBar()
-    })
   }
 
   @Builder ProgressBar(wid: Dimension) {
-    Column() {
-      // 进度条
-      Slider({
-        value: nps.playTime,
-        min: 0,
-        max: nps.currentSong.duration,
-        step: 1,
-        style: SliderStyle.InSet
-      })
-        .width('100%')
-        .blockColor(Color.Transparent)
-        .trackColor('#aaffffff')
-        .trackThickness(this.sliderThickness)
-        .selectedColor(Color.White)
-        .showSteps(false)
-        .showTips(false)
-        .onChange(this.handleSliderChange)
-        .hitTestBehavior(!this.shouldShowSlider ? HitTestMode.None : HitTestMode.Default)
+    if (this.shouldShowEmptyState) {
+      // 空状态时不显示进度条
+      Column() {}.height(0).width(wid)
+    } else {
+      Column() {
+        // 进度条
+        Slider({
+          value: nps.playTime,
+          min: 0,
+          max: nps.currentSong.duration,
+          step: 1,
+          style: SliderStyle.InSet
+        })
+          .width('100%')
+          .blockColor(Color.Transparent)
+          .trackColor('#aaffffff')
+          .trackThickness(this.sliderThickness)
+          .selectedColor(Color.White)
+          .showSteps(false)
+          .showTips(false)
+          .onChange(this.handleSliderChange)
+          .hitTestBehavior(!this.shouldShowSlider ? HitTestMode.None : HitTestMode.Default)
 
-      Row() {
-        // 当前时间
-        Row(){
-          Text(`${SongConvertUtils.changeDuration(nps.playTime)}`)
-            .fontSize(12)
-            .textAlign(TextAlign.Start)
-            .fontColor(Color.White)
-            .alignSelf(ItemAlign.Start)
-          if (this.isMovingSlider) {
-            Text(' ')
-              .transition(TransitionEffect.OPACITY.animation({
-                duration: 300
-              }))
+        Row() {
+          // 当前时间
+          Row(){
+            Text(`${SongConvertUtils.changeDuration(nps.playTime)}`)
               .fontSize(12)
               .textAlign(TextAlign.Start)
               .fontColor(Color.White)
               .alignSelf(ItemAlign.Start)
-            SymbolGlyph($r('sys.symbol.arrow_right'))
-              .transition(TransitionEffect.OPACITY.animation({
-                duration: 300
-              }))
-              .fontSize(12)
-              .fontColor([Color.White])
-              .alignSelf(ItemAlign.Start)
-              .fontWeight(FontWeight.Bold)
-            Text(` ${SongConvertUtils.changeDuration(this.sliderMovingTime)}`)
-              .transition(TransitionEffect.OPACITY.animation({
-                duration: 300
-              }))
-              .fontSize(12)
-              .textAlign(TextAlign.Start)
-              .fontColor(Color.White)
-              .alignSelf(ItemAlign.Start)
-              .fontWeight(FontWeight.Bold)
+            if (this.isMovingSlider) {
+              Text(' ')
+                .transition(TransitionEffect.OPACITY.animation({
+                  duration: 300
+                }))
+                .fontSize(12)
+                .textAlign(TextAlign.Start)
+                .fontColor(Color.White)
+                .alignSelf(ItemAlign.Start)
+              SymbolGlyph($r('sys.symbol.arrow_right'))
+                .transition(TransitionEffect.OPACITY.animation({
+                  duration: 300
+                }))
+                .fontSize(12)
+                .fontColor([Color.White])
+                .alignSelf(ItemAlign.Start)
+                .fontWeight(FontWeight.Bold)
+              Text(` ${SongConvertUtils.changeDuration(this.sliderMovingTime)}`)
+                .transition(TransitionEffect.OPACITY.animation({
+                  duration: 300
+                }))
+                .fontSize(12)
+                .textAlign(TextAlign.Start)
+                .fontColor(Color.White)
+                .alignSelf(ItemAlign.Start)
+                .fontWeight(FontWeight.Bold)
+            }
           }
-        }
-          .layoutWeight(1)
+            .layoutWeight(1)
 
-        // 总时间
-        Text(`${SongConvertUtils.changeDuration(nps.currentSong.duration)}`)
-          .fontSize(12)
-          .textAlign(TextAlign.End)
-          .fontColor(Color.White)
-          .alignSelf(ItemAlign.End)
-          .layoutWeight(1)
+          // 总时间
+          Text(`${SongConvertUtils.changeDuration(nps.currentSong.duration)}`)
+            .fontSize(12)
+            .textAlign(TextAlign.End)
+            .fontColor(Color.White)
+            .alignSelf(ItemAlign.End)
+            .layoutWeight(1)
+        }
+        .padding({ left: 5, right: 5 })
+        .width('100%')
       }
-      .padding({ left: 5, right: 5 })
-      .width('100%')
+      .width(wid)
+      .height(this.shouldShowSlider || this.isMovingSlider ? undefined : 0)
+      .opacity(this.shouldShowSlider || this.isMovingSlider ? 0.7 : 0)
+      .animation({curve: curves.springMotion(0.6, 0.8)})
+      .onClick(() => {
+        this.showProgressBar()
+      })
     }
-    .width(wid)
-    .height(this.shouldShowSlider || this.isMovingSlider ? undefined : 0)
-    .opacity(this.shouldShowSlider || this.isMovingSlider ? 0.7 : 0)
-    .animation({curve: curves.springMotion(0.6, 0.8)})
-    .onClick(() => {
-      this.showProgressBar()
-    })
   }
 
   @Builder PlaybackControl() {
-    Row() {
-      // 上一首
-      LightUpRoundedButton({
-        icon: $r('sys.symbol.backward_end_fill'),
-        customFontSize: 32,
-        customFontColor: [Color.White],
-        clickAction: () => {
-          this.isBottomAreaExpand = false
-          ClickUtil.throttle(() => {
-            PlayControl.playPre()
-          }, 500)
-        },
-        lightUpConfig: ResponsiveUtil.chooseByWidth([LIGHT_PLAYBACK_BTN_MD,LIGHT_PLAYBACK_BTN_MD,LIGHT_PLAYBACK_BTN_LG])
-      })
-
-      // 播放
-      LightUpBorderRoundButton({
-        icon: nps.isPaused ? $r('sys.symbol.play_fill') : $r('sys.symbol.pause_fill'),
-        customFontSize: 32,
-        customPadding: nps.isPaused ? 10 : 14,
-        customFontColor: [Color.White],
-        customBgColor: Color.Transparent,
-        clickAction: () => {
-          this.isBottomAreaExpand = false
-          if(nps.isPaused) {
-            PlayControl.resumeMusic()
-          } else {
-            PlayControl.pauseMusic()
-          }
-        },
-        lightUpConfig: ResponsiveUtil.chooseByWidth([LIGHT_PLAYBACK_BTN_MD,LIGHT_PLAYBACK_BTN_MD,LIGHT_PLAYBACK_BTN_LG])
-      })
-        .shadow({
-          color: '#ccffffff',
-          radius: 36
+    if (this.shouldShowEmptyState) {
+      // 空状态时不显示播放控制按钮
+      Column() {}.height(80) // 占位符保持布局
+    } else {
+      Row() {
+        // 上一首
+        LightUpRoundedButton({
+          icon: $r('sys.symbol.backward_end_fill'),
+          customFontSize: 32,
+          customFontColor: [Color.White],
+          clickAction: () => {
+            this.isBottomAreaExpand = false
+            ClickUtil.throttle(() => {
+              PlayControl.playPre()
+            }, 500)
+          },
+          lightUpConfig: ResponsiveUtil.chooseByWidth([LIGHT_PLAYBACK_BTN_MD,LIGHT_PLAYBACK_BTN_MD,LIGHT_PLAYBACK_BTN_LG])
         })
-        .backgroundColor(nps.isPaused ? undefined : '#66ffffff')
-        .backdropBlur(nps.isPaused ? undefined : 64)
-        .animation({duration: 1000, curve: Curve.Ease})
-        .borderRadius(48)
 
-      // 下一首
-      LightUpRoundedButton({
-        icon: $r('sys.symbol.forward_end_fill'),
-        customFontSize: 32,
-        customFontColor: [Color.White],
-        clickAction: () => {
-          this.isBottomAreaExpand = false
-          ClickUtil.throttle(() => {
-            PlayControl.playNext()
-          }, 500)
-        },
-        lightUpConfig: ResponsiveUtil.chooseByWidth([LIGHT_PLAYBACK_BTN_MD,LIGHT_PLAYBACK_BTN_MD,LIGHT_PLAYBACK_BTN_LG])
-      })
-    }.justifyContent(FlexAlign.SpaceEvenly)
-    .width('100%')
-    .margin({bottom: ResponsiveUtil.widthCheck(['md']) ? 36 : 12})
-    .animation({duration: 300, curve: Curve.Ease})
+        // 播放
+        LightUpBorderRoundButton({
+          icon: nps.isPaused ? $r('sys.symbol.play_fill') : $r('sys.symbol.pause_fill'),
+          customFontSize: 32,
+          customPadding: nps.isPaused ? 10 : 14,
+          customFontColor: [Color.White],
+          customBgColor: Color.Transparent,
+          clickAction: () => {
+            this.isBottomAreaExpand = false
+            if(nps.isPaused) {
+              PlayControl.resumeMusic()
+            } else {
+              PlayControl.pauseMusic()
+            }
+          },
+          lightUpConfig: ResponsiveUtil.chooseByWidth([LIGHT_PLAYBACK_BTN_MD,LIGHT_PLAYBACK_BTN_MD,LIGHT_PLAYBACK_BTN_LG])
+        })
+          .shadow({
+            color: '#ccffffff',
+            radius: 36
+          })
+          .backgroundColor(nps.isPaused ? undefined : '#66ffffff')
+          .backdropBlur(nps.isPaused ? undefined : 64)
+          .animation({duration: 1000, curve: Curve.Ease})
+          .borderRadius(48)
+
+        // 下一首
+        LightUpRoundedButton({
+          icon: $r('sys.symbol.forward_end_fill'),
+          customFontSize: 32,
+          customFontColor: [Color.White],
+          clickAction: () => {
+            this.isBottomAreaExpand = false
+            ClickUtil.throttle(() => {
+              PlayControl.playNext()
+            }, 500)
+          },
+          lightUpConfig: ResponsiveUtil.chooseByWidth([LIGHT_PLAYBACK_BTN_MD,LIGHT_PLAYBACK_BTN_MD,LIGHT_PLAYBACK_BTN_LG])
+        })
+      }.justifyContent(FlexAlign.SpaceEvenly)
+      .width('100%')
+      .margin({bottom: ResponsiveUtil.widthCheck(['md']) ? 36 : 12})
+      .animation({duration: 300, curve: Curve.Ease})
+    }
   }
 
   // -----------------------------------------------
 
   @Builder NowPlayingArea() {
-    Column() {
-      this.TopArea()
-      this.CoverInfo()
-      this.PlaybackControl()
-    }.height('100%').width('100%')
-    .padding({left: 24, right: 24})
-    .justifyContent(FlexAlign.SpaceAround)
-    .clip(false)
-    .margin({bottom: this.gs.wd.bottom === 0 ? 24 : this.gs.wd.bottom})
+    if (this.shouldShowEmptyState) {
+      // 空状态视图
+      EmptyStateView({
+        hdsSnackBar: this.hdsSnackBar,
+        onExploreClick: () => {
+          this.showExplore = true
+          this.isTopAreaExpand = false
+          this.isBottomAreaExpand = false
+        }
+      })
+      .height('100%')
+      .width('100%')
+      .padding({left: 24, right: 24})
+        .transition(TransitionEffect.OPACITY.animation({duration: 500}))
+    } else {
+      // 正常播放状态视图
+      Column() {
+        this.TopArea()
+        this.CoverInfo()
+        this.PlaybackControl()
+      }.height('100%').width('100%')
+      .padding({left: 24, right: 24})
+      .justifyContent(FlexAlign.SpaceAround)
+      .clip(false)
+      .margin({bottom: this.gs.wd.bottom === 0 ? 24 : this.gs.wd.bottom})
+      .transition(TransitionEffect.OPACITY.animation({duration: 300}))
+    }
   }
 
   @Builder LyricArea() {
-    LyricComponent({
-      miniMode: this.showExplore
-    })
-      .translate(this.showExplore ? {y: -10} : undefined)
+    if (!this.shouldShowEmptyState) {
+      LyricComponent({
+        miniMode: this.showExplore
+      })
+        .translate(this.showExplore ? {y: -10} : undefined)
+    }
   }
 
   // -----------------------------------------------
 
   @Builder NowPlayingArea_Bar() {
-    Row() {
-      ImageCoverThumbnail({
-        nowPlayingCoverImg: this.nowPlayingCoverImg
+    if (this.shouldShowEmptyState) {
+      // 空状态时显示简化的导航栏
+      Row() {
+        Text($r('app.string.not_playing'))
+          .fontSize(20)
+          .fontColor(Color.White)
+          .fontWeight(FontWeight.Bold)
+          .opacity(0.7)
+          .layoutWeight(1)
+          .textAlign(TextAlign.Start)
+        Row({space: 12}) {
+          LightUpRoundedButton({
+            icon: $r('sys.symbol.heart_fill'),
+            customFontColor: [Color.White],
+            clickAction: () => {
+              FeaturedPlayUtils.playHeartMode((icon, msg) => {
+                if (this.hdsSnackBar) {
+                  SnackBarUtils.showMessage(this.hdsSnackBar, icon, msg)
+                }
+              })
+            },
+            lightUpConfig: {
+              lightIntensity: 1.5,
+              lightHeight: 150,
+            }
+          })
+          // 每日推荐
+          LightUpRoundedButton({
+            icon: this.todayIcon,
+            customFontColor: [Color.White],
+            clickAction: () => {
+              FeaturedPlayUtils.playDailySongs((icon, msg) => {
+                if (this.hdsSnackBar) {
+                  SnackBarUtils.showMessage(this.hdsSnackBar, icon, msg)
+                }
+              }, this.todayIcon)
+            },
+            lightUpConfig: {
+              lightIntensity: 1.5,
+              lightHeight: 150,
+            }
+          })
+
+          // 私人FM
+          LightUpRoundedButton({
+            icon: $r('sys.symbol.radiostation'),
+            customFontColor: [Color.White],
+            clickAction: () => {
+              FeaturedPlayUtils.playPersonalizedFM((icon, msg) => {
+                if (this.hdsSnackBar) {
+                  SnackBarUtils.showMessage(this.hdsSnackBar, icon, msg)
+                }
+              })
+            },
+            lightUpConfig: {
+              lightIntensity: 1.5,
+              lightHeight: 150,
+            }
+          })
+        }
+      }
+      .width('100%')
+      .padding({left: 24,
+        right: 24,
+        top: 8, bottom: 8})
+      .onClick(() => {
+        this.showExplore = false
       })
-        .onClick(() => {
-          this.showExplore = false
+    } else {
+      // 正常状态的播放栏
+      Row() {
+        ImageCoverThumbnail({
+          nowPlayingCoverImg: this.nowPlayingCoverImg
         })
-      this.AuthorInfo_Bar()
-      this.PlaybackButton_Bar()
-    }.width('100%')
-    .padding({left: ResponsiveUtil.chooseByWidth([12, 12, 24]),
-      right: 24,
-      top: 8, bottom: 8})
+          .onClick(() => {
+            this.showExplore = false
+          })
+        this.AuthorInfo_Bar()
+        this.PlaybackButton_Bar()
+      }.width('100%')
+      .padding({left: ResponsiveUtil.chooseByWidth([12, 12, 24]),
+        right: 24,
+        top: 8, bottom: 8})
+    }
   }
   @Builder AuthorInfo_Bar() {
     Column() {
@@ -628,9 +748,14 @@ export struct MainPage {
   }
 
   @Builder LightUpProgress() {
-    Row() {
-      LightUpProgressBar()
-    }.width('100%').padding({left: 12+25, right: 12+25})
+    if (this.shouldShowEmptyState) {
+      // 空状态时不显示进度条
+      Row() {}.width('100%').height(0)
+    } else {
+      Row() {
+        LightUpProgressBar()
+      }.width('100%').padding({left: 12+25, right: 12+25})
+    }
   }
 
   // ------------------------
@@ -716,7 +841,7 @@ export struct MainPage {
             }
             this.LyricArea()
           }.vertical(false)
-          .displayCount(ResponsiveUtil.widthCheck(['md','lg','xl']) ? 2 : 1)
+          .displayCount(ResponsiveUtil.widthCheck(['md','lg','xl']) && !this.shouldShowEmptyState ? 2 : 1)
           .indicator(false)
           .animation({
             curve: curves.springMotion()
@@ -834,7 +959,12 @@ struct LightUpProgressBar {
   nps = NowPlayingStore
 
   get blankLeftWidth() {
-    return (nps.playTime / nps.currentSong.duration) * this.totalWidth
+    if (this.nps.currentSong.duration === 0) return 0
+    return (this.nps.playTime / this.nps.currentSong.duration) * this.totalWidth
+  }
+
+  get shouldShow() {
+    return this.nps.currentSong !== Song_INITIAL && this.nps.currentSong.id !== ""
   }
 
   @Local intensity: number = 0
@@ -846,7 +976,7 @@ struct LightUpProgressBar {
   }
   @Monitor('nps.isPaused')
   onLightUpdate() {
-    if (this.nps.isPaused) {
+    if (this.nps.isPaused || !this.shouldShow) {
       this.intensity = 0
     } else {
       this.intensity = 2
@@ -854,26 +984,31 @@ struct LightUpProgressBar {
   }
 
   build() {
-    Stack() {
-      // Row().width('100%').height(1).backgroundColor('#88ffffff')
-      Row() {
-        Blank().width(this.blankLeftWidth).animation({duration: 100})
+    if (this.shouldShow) {
+      Stack() {
+        // Row().width('100%').height(1).backgroundColor('#88ffffff')
+        Row() {
+          Blank().width(this.blankLeftWidth).animation({duration: 100})
 
-        Column() {}.width(5).height(5).translate({y: -2.5})
-        .backgroundColor(Color.White)
-        .borderRadius(10)
-        .visualEffect(new hdsEffect.HdsEffectBuilder().pointLight({
-          options: {
-            intensity: this.intensity,
-            height: 90
-          }
-        }).buildEffect())
-        .opacity(this.intensity === 0 ? 0.5 : 1)
-        .animation({duration: 300})
-      }.width('100%').justifyContent(FlexAlign.Start)
-      .onAreaChange((_, nw) => {
-        this.totalWidth = nw.width.valueOf() as number
-      })
+          Column() {}.width(5).height(5).translate({y: -2.5})
+          .backgroundColor(Color.White)
+          .borderRadius(10)
+          .visualEffect(new hdsEffect.HdsEffectBuilder().pointLight({
+            options: {
+              intensity: this.intensity,
+              height: 90
+            }
+          }).buildEffect())
+          .opacity(this.intensity === 0 ? 0.5 : 1)
+          .animation({duration: 300})
+        }.width('100%').justifyContent(FlexAlign.Start)
+        .onAreaChange((_, nw) => {
+          this.totalWidth = nw.width.valueOf() as number
+        })
+      }
+    } else {
+      // 空状态时显示占位符或不显示任何内容
+      Stack() {}.height(0)
     }
   }
 }

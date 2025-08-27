@@ -16,7 +16,7 @@ import { UserManager } from "../../../Network/UserManager"
 import Settings, { PreferenceUtils } from "../../../Preferences/PreferenceUtils"
 import { SCPref } from "../../../../constants/PreferenceConstants"
 import { Logger, DeviceCollaborationUtils, GlobalStore } from "../../../../../../../Index"
-import { SCEmitter } from "../../../../exports"
+import { SCEmitter, UserStore } from "../../../../exports"
 import { SongConvertUtils } from "../../convert"
 import { RetryUtil } from "../../../../utils/CommonUtil"
 
@@ -106,10 +106,10 @@ export class PlayControl {
       store.isPaused = true
       const playOnStart = Settings.get<boolean>(SCPref.autoPlayOnLaunch) ?? false
       if (!playOnStart) shouldPauseOnStart = true
-      await PlayControl.playMusicByUrl(store.currentSong, UserManager.isLogged, store.currentPic as string, store.playMode)
+      await PlayControl.playMusicByUrl(store.currentSong, UserManager.isLogged, store.currentPic as string, store.playMode, true)
     }
   }
-  static async playMusicByUrl(song: Song, isLogged: boolean, picUrl: string = '', mode: number = 1) {
+  static async playMusicByUrl(song: Song, isLogged: boolean, picUrl: string = '', mode: number = 1, pauseOnStart: boolean = false) {
     const songId = song.id
     try {
       let artists = SongConvertUtils.getArtists(song.artists)
@@ -135,10 +135,14 @@ export class PlayControl {
       await PlayControl.saveCurrentSongInfo(mode, song, artists, picUrl)
       await LyricUtils.setLyric(song)
 
-      if (shouldPauseOnStart) {
+      if (pauseOnStart) {
         NowPlayingStore.isPaused = true
         return;
-      } // 设置完 metadata 就走，不动 AVSession
+        // 设置完 metadata 就走，不动 AVSession
+      } else {
+        shouldPauseOnStart = false
+        // 不是首次播放了，可以关掉正常进行了
+      }
 
       await AVSessionUtils.setDefaultMetadata(song, artists)
       await AVSessionUtils.activate()
@@ -286,6 +290,7 @@ export class PlayControl {
   static async stopMusic() {
     AVPlayerUtils.stop().then(() => {
       NowPlayingStore.isPlaying = false
+      NowPlayingStore.isPaused = false
       AVPlayerUtils.release()
     })
   }
@@ -376,8 +381,10 @@ export class PlayControl {
       if(cycleMode == 2) { PlayControl.playQueue(0) }
       else {
         if (NowPlayingStore.playTime >= NowPlayingStore.currentSong.duration) {
+          // 和启动暂停播放一致的逻辑
           shouldPauseOnStart = true;
-          await PlayControl.playQueue(PlayQueueUtils.currentQueueIndex)
+          const store = NowPlayingStore
+          await PlayControl.playMusicByUrl(store.currentSong, UserManager.isLogged, store.currentPic as string, store.playMode, true)
           NowPlayingStore.isPaused = true
           AVSessionUtils.pauseState(0)
         }
@@ -464,6 +471,8 @@ export class PlayControl {
   }
   static async clearCurrentSong() {
     await PlayControl.stopMusic()
+    await PlayControl.setPlayData(0, Song_INITIAL, '')
+    NowPlayingStore.isPlaying = false
     await PlayControl.saveCurrentSongInfo(0, Song_INITIAL, '','');
   }
 }

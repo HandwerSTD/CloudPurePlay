@@ -3,6 +3,38 @@
     {
       "name": "app_name",
       "value": "CloudPurePlay"
+    },
+    {
+      "name": "no_music_playing",
+      "value": "No music playing"
+    },
+    {
+      "name": "explore_music_to_start",
+      "value": "Explore your music library to start listening"
+    },
+    {
+      "name": "explore_music",
+      "value": "Explore Music"
+    },
+    {
+      "name": "daily_recommend",
+      "value": "Daily"
+    },
+    {
+      "name": "empty_state_tip",
+      "value": "Start your musical journey by browsing recommendations or your favorites"
+    },
+    {
+      "name": "empty_play_queue",
+      "value": "Empty Play Queue"
+    },
+    {
+      "name": "add_songs_to_play",
+      "value": "Add songs to start playing"
+    },
+    {
+      "name": "empty_queue",
+      "value": "No songs in queue"
     }
   ]
 }

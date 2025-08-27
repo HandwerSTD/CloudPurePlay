@@ -66,18 +66,51 @@ class PlayQueueUtils {
     }
   }
 
-  async queueDelete(index: number, goToFront: boolean = false) {
+  async queueDelete(index: number) {
+    /*
+     * 合理的逻辑：
+     * 如果删除当前播放之前/之后的歌曲，只修改队列
+     * 如果删除当前播放的歌曲：播放队列下一首歌，如果没有下一首歌就播放新的队列尾
+     * 如果队列为空了直接停止播放
+     * 如果为FM则禁止删除
+     */
     try {
-      if (index === playQueueStore.currentQueueIndex) {
-        await PlayControl.playNext()
+      // 边界检查：索引有效性验证
+      if (index < 0 || index >= playQueueStore.getQueueLength()) {
+        LogUtil.warn(TAG, `删除索引无效: ${index}, 队列长度: ${playQueueStore.getQueueLength()}`)
+        return
       }
-      playQueueStore.queue.splice(index, 1)
-      playQueueKV.put(SCQueueKV.queue, playQueueStore.queue)
-      if (index < playQueueStore.currentQueueIndex) {
-        this.setIndex(playQueueStore.currentQueueIndex - 1)
+
+      if (playQueueStore.getQueueLength() === 1) {
+        // 队列只有一首歌，清空队列并停止播放
+        playQueueStore.queue = []
+        playQueueStore.currentQueueIndex = -1
+        await PlayControl.clearCurrentSong()
       } else {
-        if (goToFront) this.setIndex(0)
+        if (index < playQueueStore.currentQueueIndex) {
+          // 删除当前播放之前的歌曲
+          playQueueStore.queue.splice(index, 1)
+          await this.setIndex(playQueueStore.currentQueueIndex - 1)
+        } else if (index === playQueueStore.currentQueueIndex) {
+          // 删除当前播放的歌曲
+          if (index === playQueueStore.getQueueLength() - 1) {
+            // 要删除队尾，先删除歌曲，然后播放之前的一首歌
+            playQueueStore.queue.splice(index, 1)
+            await this.setIndex(index - 1)
+            await PlayControl.playQueue(index - 1)
+          } else {
+            // 不是删除队尾，删除歌曲后播放新的当前位置歌曲
+            playQueueStore.queue.splice(index, 1)
+            await PlayControl.playQueue(index)
+          }
+        } else {
+          // 删除当前播放之后的歌曲
+          playQueueStore.queue.splice(index, 1)
+        }
       }
+
+      // 同步到存储
+      await this.syncQueueToStorage()
     } catch (e) {
       LogUtil.error(TAG, '删除失败 delete queue element error: ' + e.message())
     }
@@ -88,7 +121,7 @@ class PlayQueueUtils {
     playQueueStore.currentQueueIndex = -1
     playQueueKV.put(SCQueueKV.queue, playQueueStore.queue)
     playQueueKV.put(SCQueueKV.currentIndex, playQueueStore.currentQueueIndex)
-  }
+  } 
 
   async setIndex(index: number) {
     playQueueStore.currentQueueIndex = index
