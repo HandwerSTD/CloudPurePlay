@@ -142,3 +142,78 @@ export struct EmptyStateView {
     .alignItems(HorizontalAlign.Center)
   }
 }
+
+@ComponentV2
+export struct EmptyStateViewBar {
+  hdsSnackBar = new HdsSnackBar(this.getUIContext())
+
+  get todayIcon() {
+    return UIComponentUtils.getTodayIcon()
+  }
+
+  build() {
+    Row() {
+      Text($r('app.string.not_playing'))
+        .fontSize(20)
+        .fontColor(Color.White)
+        .fontWeight(FontWeight.Bold)
+        .opacity(0.7)
+        .layoutWeight(1)
+        .textAlign(TextAlign.Start)
+      Row({space: 12}) {
+        LightUpRoundedButton({
+          icon: $r('sys.symbol.heart_fill'),
+          customFontColor: [Color.White],
+          clickAction: () => {
+            FeaturedPlayUtils.playHeartMode((icon, msg) => {
+              if (this.hdsSnackBar) {
+                SnackBarUtils.showMessage(this.hdsSnackBar, icon, msg)
+              }
+            })
+          },
+          lightUpConfig: {
+            lightIntensity: 1.5,
+            lightHeight: 150,
+          }
+        })
+        // 每日推荐
+        LightUpRoundedButton({
+          icon: this.todayIcon,
+          customFontColor: [Color.White],
+          clickAction: () => {
+            FeaturedPlayUtils.playDailySongs((icon, msg) => {
+              if (this.hdsSnackBar) {
+                SnackBarUtils.showMessage(this.hdsSnackBar, icon, msg)
+              }
+            }, this.todayIcon)
+          },
+          lightUpConfig: {
+            lightIntensity: 1.5,
+            lightHeight: 150,
+          }
+        })
+
+        // 私人FM
+        LightUpRoundedButton({
+          icon: $r('sys.symbol.radiostation'),
+          customFontColor: [Color.White],
+          clickAction: () => {
+            FeaturedPlayUtils.playPersonalizedFM((icon, msg) => {
+              if (this.hdsSnackBar) {
+                SnackBarUtils.showMessage(this.hdsSnackBar, icon, msg)
+              }
+            })
+          },
+          lightUpConfig: {
+            lightIntensity: 1.5,
+            lightHeight: 150,
+          }
+        })
+      }
+    }
+    .width('100%')
+    .padding({left: 24,
+      right: 24,
+      top: 8, bottom: 8})
+  }
+}
