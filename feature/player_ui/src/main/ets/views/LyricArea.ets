@@ -1,4 +1,4 @@
-import { GlobalStore, Logger, LyricUtils, NowPlayingStore, PlayControl, SCEmitter } from "@handwer/base"
+import { GlobalStore, Logger, LyricUtils, NowPlayingStore, PlayControl, RetryUtil, SCEmitter } from "@handwer/base"
 import { Lyric, LyricStyle, LyricStyle_INITIAL } from "@handwer/api_adapter"
 import { LazyData } from "@pie/lazy-data"
 import { curves, LengthUnit, TextModifier } from "@kit.ArkUI"
@@ -35,7 +35,11 @@ export struct LyricComponent {
   }
 
   async aboutToAppear(): Promise<void> {
-    await this.getLyric()
+    RetryUtil.retry(2, async () => {
+      await this.getLyric()
+    }, async () => {
+      return this.lyric.length > 0;
+    }, 500)
     setTimeout(() => {
       this.scroller.scrollToIndex(NowPlayingStore.currentLyricIndex + 1, false, ScrollAlign.CENTER)
     }, 10)

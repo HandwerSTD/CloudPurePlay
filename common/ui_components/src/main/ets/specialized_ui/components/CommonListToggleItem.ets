@@ -81,7 +81,7 @@ export struct LightedCommonListToggleItem {
 
   build() {
     Column() {
-      LightUpLinedContainer({ lightUpConfig: {lightIntensity: 1, lightHeight: 120 }}) {
+      LightUpLinedContainer() {
         CommonListToggleItem({
           icon: this.icon,
           title: this.title,
@@ -97,7 +97,7 @@ export struct LightedCommonListToggleItem {
     }.backgroundColor($r('app.color.play_list_single_item_bg'))
     .borderRadius(20)
     .visualEffect(new hdsEffect.HdsEffectBuilder().pointLight({
-      illuminatedType: hdsEffect.PointLightIlluminatedType.BORDER
+      illuminatedType: hdsEffect.PointLightIlluminatedType.BORDER_CONTENT
     }).buildEffect())
   }
 }

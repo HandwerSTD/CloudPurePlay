@@ -27,7 +27,7 @@ export struct DataSourceSettings {
   @Builder CloudAPI() {
     ListItem() {
       Column() {
-        LightUpLinedContainer({ lightUpConfig: {lightIntensity: 1, lightHeight: 120 }}) {
+        LightUpLinedContainer() {
           CommonListItem({
             icon: $r('sys.symbol.play_circle_badge_music_note'),
             title: 'CloudAPI',
@@ -38,7 +38,7 @@ export struct DataSourceSettings {
       }.backgroundColor($r('app.color.play_list_single_item_bg'))
       .borderRadius(20)
       .visualEffect(new hdsEffect.HdsEffectBuilder().pointLight({
-        illuminatedType: hdsEffect.PointLightIlluminatedType.BORDER
+        illuminatedType: hdsEffect.PointLightIlluminatedType.BORDER_CONTENT
       }).buildEffect())
     }
   }
@@ -46,7 +46,7 @@ export struct DataSourceSettings {
   @Builder NavidromeAPI() {
     ListItem() {
       Column() {
-        LightUpLinedContainer({ lightUpConfig: {lightIntensity: 1, lightHeight: 120 }}) {
+        LightUpLinedContainer() {
           CommonListItem({
             icon: $r('sys.symbol.play_circle_badge_music_note'),
             title: 'NavidromeAPI',
@@ -57,7 +57,7 @@ export struct DataSourceSettings {
       }.backgroundColor($r('app.color.play_list_single_item_bg'))
       .borderRadius(20)
       .visualEffect(new hdsEffect.HdsEffectBuilder().pointLight({
-        illuminatedType: hdsEffect.PointLightIlluminatedType.BORDER
+        illuminatedType: hdsEffect.PointLightIlluminatedType.BORDER_CONTENT
       }).buildEffect())
     }
   }
@@ -135,6 +135,7 @@ export struct DeviceSelectorPanel {
           }) ?? []
         } else {
           SnackBarUtils.showMessage(GlobalStore.globalSnack!, $r('sys.symbol.eco_hop'), $r('app.string.need_dist_perm_to_sync'))
+          DistributedUtils.getPermission()
         }
       })
   }

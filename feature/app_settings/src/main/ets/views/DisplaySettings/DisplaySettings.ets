@@ -22,7 +22,7 @@ export struct DisplaySettings {
             ListItem().height($r('sys.float.ohos_id_navigation_bar_height'))
             ListItem() {
               LightedCommonListToggleItem({
-                icon: $r('sys.symbol.gearshape'),
+                icon: $r('sys.symbol.play_round_triangle'),
                 title: $r('app.string.show_player_on_launch'),
                 subtitle: $r('app.string.show_player_on_launch_desc'),
                 isOn: this.showPlayerOnLaunch,
@@ -34,7 +34,7 @@ export struct DisplaySettings {
             }
             ListItem() {
               LightedCommonListToggleItem({
-                icon: $r('sys.symbol.gearshape'),
+                icon: $r('sys.symbol.storagebox'),
                 title: $r('app.string.show_music_library_in_online'),
                 subtitle: $r('app.string.show_music_library_in_online_desc'),
                 isOn: this.showMusicLibraryInOnlineMusic,

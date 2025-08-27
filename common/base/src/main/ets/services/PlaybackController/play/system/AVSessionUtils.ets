@@ -146,10 +146,17 @@ class AVSessionUtils {
     if (this.isActivating) return // 等待激活完成
     try {
       const instance = await this.getInstance()
-      await instance.activate()
+      await instance.deactivate()
       this.isActivating = false
     } catch (e) {
       LogUtil.error(TAG, 'Error while deactivating' + e)
+    }
+  }
+
+  async destroy() {
+    if (this.instance) {
+      await this.instance.destroy()
+      this.instance = null
     }
   }
 

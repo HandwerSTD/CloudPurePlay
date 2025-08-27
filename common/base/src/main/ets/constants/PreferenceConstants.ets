@@ -14,5 +14,6 @@ export enum SCPref {
   showMusicLibraryInOnlineMusic,
 
   // 播放设置
-  autoPlayOnLaunch
+  autoPlayOnLaunch,
+  autoPlayFM
 }

@@ -33,7 +33,7 @@ export struct NavidromeAPI_Source {
       ListItem().height($r('sys.float.ohos_id_navigation_bar_height'))
       ListItem() {
         Row() {
-          LightUpLinedContainer({lightUpConfig: LightUpLinedDefaultConfig, overrideLightUpStat: this.focusedInput === 0 ? OverrideLightUpStat.ALWAYS_ENABLED : OverrideLightUpStat.ALWAYS_DISABLED}) {
+          LightUpLinedContainer({ overrideLightUpStat: this.focusedInput === 0 ? OverrideLightUpStat.ALWAYS_ENABLED : OverrideLightUpStat.ALWAYS_DISABLED}) {
             TextInput({placeholder: $r('app.string.api_source_addr'), text: this.apiSourceAddr!!})
               .type(InputType.URL)
               .TextInputEffect(0, (n) => this.focusedInput = n)
@@ -42,7 +42,7 @@ export struct NavidromeAPI_Source {
       }
       ListItem() {
         Row() {
-          LightUpLinedContainer({lightUpConfig: LightUpLinedDefaultConfig, overrideLightUpStat: this.focusedInput === 1 ? OverrideLightUpStat.ALWAYS_ENABLED : OverrideLightUpStat.ALWAYS_DISABLED}) {
+          LightUpLinedContainer({ overrideLightUpStat: this.focusedInput === 1 ? OverrideLightUpStat.ALWAYS_ENABLED : OverrideLightUpStat.ALWAYS_DISABLED}) {
             TextInput({placeholder: $r('app.string.api_username'), text: this.apiUserName!!})
               .type(InputType.USER_NAME)
               .TextInputEffect(1, (n) => this.focusedInput = n)
@@ -51,7 +51,7 @@ export struct NavidromeAPI_Source {
       }
       ListItem() {
         Row() {
-          LightUpLinedContainer({lightUpConfig: LightUpLinedDefaultConfig, overrideLightUpStat: this.focusedInput === 2 ? OverrideLightUpStat.ALWAYS_ENABLED : OverrideLightUpStat.ALWAYS_DISABLED}) {
+          LightUpLinedContainer({ overrideLightUpStat: this.focusedInput === 2 ? OverrideLightUpStat.ALWAYS_ENABLED : OverrideLightUpStat.ALWAYS_DISABLED}) {
             TextInput({placeholder: $r('app.string.api_password'), text: this.apiPassword!!})
               .type(InputType.Password)
               .TextInputEffect(2, (n) => this.focusedInput = n)

@@ -7,9 +7,11 @@ export struct PlaybackSettings {
   @Local pageOpacity: number = 1
 
   @Local autoPlayOnLaunch: boolean = false
+  @Local autoPlayFMOnLaunch: boolean = false
 
   aboutToAppear(): void {
     this.autoPlayOnLaunch = Settings.get<boolean>(SCPref.autoPlayOnLaunch) ?? false
+    this.autoPlayFMOnLaunch = Settings.get<boolean>(SCPref.autoPlayFM) ?? true
   }
 
   build() {
@@ -20,15 +22,32 @@ export struct PlaybackSettings {
             ListItem().height($r('sys.float.ohos_id_navigation_bar_height'))
             ListItem() {
               LightedCommonListToggleItem({
-                icon: $r('sys.symbol.play'),
+                icon: $r('sys.symbol.phone_and_chevron_forward'),
                 title: $r('app.string.auto_play_on_launch'),
                 subtitle: $r('app.string.auto_play_on_launch_desc'),
                 isOn: this.autoPlayOnLaunch,
                 onToggleChange: (val) => {
                   this.autoPlayOnLaunch = val
                   Settings.put(SCPref.autoPlayOnLaunch, val)
+                  if (!val) {
+                    this.autoPlayFMOnLaunch = false
+                    Settings.put(SCPref.autoPlayFM, false)
+                  }
                 }
               })
+            }
+            if (this.autoPlayOnLaunch) {
+              ListItem() {
+                LightedCommonListToggleItem({
+                  icon: $r('sys.symbol.radiostation'),
+                  title: $r('app.string.auto_play_fm_on_launch_empty'),
+                  isOn: this.autoPlayFMOnLaunch,
+                  onToggleChange: (val) => {
+                    this.autoPlayFMOnLaunch = val
+                    Settings.put(SCPref.autoPlayFM, val)
+                  }
+                })
+              }.transition(TransitionEffect.OPACITY.animation({duration: 300}))
             }
             ListItem().height(12)
           }.padding({left: 12, right: 12})

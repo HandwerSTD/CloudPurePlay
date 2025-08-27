@@ -55,7 +55,7 @@ export struct MainPage {
 
   @Builder DataSource() {
     Column() {
-      LightUpLinedContainer({ lightUpConfig: {lightIntensity: 1, lightHeight: 120 }}) {
+      LightUpLinedContainer() {
         CommonListItem({
           icon: $r('sys.symbol.play_circle_badge_music_note'),
           title: $r('app.string.data_source'),
@@ -66,13 +66,13 @@ export struct MainPage {
     }.backgroundColor($r('app.color.play_list_single_item_bg'))
     .borderRadius(20)
     .visualEffect(new hdsEffect.HdsEffectBuilder().pointLight({
-      illuminatedType: hdsEffect.PointLightIlluminatedType.BORDER
+      illuminatedType: hdsEffect.PointLightIlluminatedType.BORDER_CONTENT
     }).buildEffect())
   }
 
   @Builder MultiDevice() {
     Column() {
-      LightUpLinedContainer({ lightUpConfig: {lightIntensity: 1, lightHeight: 120 }}) {
+      LightUpLinedContainer() {
         CommonListItem({
           icon: $r('sys.symbol.Interconnection_ic_multiscreen_collaboration'),
           title: $r('app.string.mission_continue'),
@@ -83,13 +83,13 @@ export struct MainPage {
     }.backgroundColor($r('app.color.play_list_single_item_bg'))
     .borderRadius(20)
     .visualEffect(new hdsEffect.HdsEffectBuilder().pointLight({
-      illuminatedType: hdsEffect.PointLightIlluminatedType.BORDER
+      illuminatedType: hdsEffect.PointLightIlluminatedType.BORDER_CONTENT
     }).buildEffect())
   }
 
   @Builder DisplaySettingsBuilder() {
     Column() {
-      LightUpLinedContainer({ lightUpConfig: {lightIntensity: 1, lightHeight: 120 }}) {
+      LightUpLinedContainer() {
         CommonListItem({
           icon: $r('sys.symbol.square_grid_2x2'),
           title: $r('app.string.display_settings'),
@@ -100,13 +100,13 @@ export struct MainPage {
     }.backgroundColor($r('app.color.play_list_single_item_bg'))
     .borderRadius(20)
     .visualEffect(new hdsEffect.HdsEffectBuilder().pointLight({
-      illuminatedType: hdsEffect.PointLightIlluminatedType.BORDER
+      illuminatedType: hdsEffect.PointLightIlluminatedType.BORDER_CONTENT
     }).buildEffect())
   }
 
   @Builder PlaybackSettingsBuilder() {
     Column() {
-      LightUpLinedContainer({ lightUpConfig: {lightIntensity: 1, lightHeight: 120 }}) {
+      LightUpLinedContainer() {
         CommonListItem({
           icon: $r('sys.symbol.play'),
           title: $r('app.string.playback_settings'),
@@ -117,13 +117,13 @@ export struct MainPage {
     }.backgroundColor($r('app.color.play_list_single_item_bg'))
     .borderRadius(20)
     .visualEffect(new hdsEffect.HdsEffectBuilder().pointLight({
-      illuminatedType: hdsEffect.PointLightIlluminatedType.BORDER
+      illuminatedType: hdsEffect.PointLightIlluminatedType.BORDER_CONTENT
     }).buildEffect())
   }
 
   @Builder AboutApp() {
     Column() {
-      LightUpLinedContainer({ lightUpConfig: {lightIntensity: 1, lightHeight: 120 }}) {
+      LightUpLinedContainer() {
         CommonListItem({
           icon: $r('sys.symbol.doc_plaintext_and_pencil'),
           title: $r('app.string.join_group'),
@@ -133,7 +133,7 @@ export struct MainPage {
             startQQGroupAbility(getContext() as common.UIAbilityContext, 982093132)
           })
       }
-      LightUpLinedContainer({ lightUpConfig: {lightIntensity: 1, lightHeight: 120 }}) {
+      LightUpLinedContainer() {
         CommonListItem({
           icon: $r('sys.symbol.info_circle'),
           title: $r('app.string.about_this_app'),
@@ -145,7 +145,7 @@ export struct MainPage {
     }.backgroundColor($r('app.color.play_list_single_item_bg'))
     .borderRadius(20)
     .visualEffect(new hdsEffect.HdsEffectBuilder().pointLight({
-      illuminatedType: hdsEffect.PointLightIlluminatedType.BORDER
+      illuminatedType: hdsEffect.PointLightIlluminatedType.BORDER_CONTENT
     }).buildEffect())
 
   }

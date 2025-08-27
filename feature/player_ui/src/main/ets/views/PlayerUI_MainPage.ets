@@ -556,7 +556,6 @@ export struct MainPage {
     if (this.shouldShowEmptyState) {
       // 空状态时显示简化的导航栏
       Row() {
-
         EmptyStateViewBar()
           .onClick(() => {
             this.showExplore = false

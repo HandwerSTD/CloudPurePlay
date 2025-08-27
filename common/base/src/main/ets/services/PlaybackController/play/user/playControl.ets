@@ -106,7 +106,7 @@ export class PlayControl {
       store.isPaused = true
       const playOnStart = Settings.get<boolean>(SCPref.autoPlayOnLaunch) ?? false
       if (!playOnStart) shouldPauseOnStart = true
-      await PlayControl.playMusicByUrl(store.currentSong, UserManager.isLogged, store.currentPic as string, store.playMode, true)
+      await PlayControl.playMusicByUrl(store.currentSong, UserManager.isLogged, store.currentPic as string, store.playMode, !playOnStart)
     }
   }
   static async playMusicByUrl(song: Song, isLogged: boolean, picUrl: string = '', mode: number = 1, pauseOnStart: boolean = false) {
@@ -474,5 +474,6 @@ export class PlayControl {
     await PlayControl.setPlayData(0, Song_INITIAL, '')
     NowPlayingStore.isPlaying = false
     await PlayControl.saveCurrentSongInfo(0, Song_INITIAL, '','');
+    await AVSessionUtils.destroy()
   }
 }

@@ -9,7 +9,7 @@ import {
   INSTANCE_TYPE, User,
 } from '@handwer/api_adapter'
 import { UserManager } from './Network/UserManager'
-import { SCEmitter, SCPref } from '../exports'
+import { FeaturedPlayUtils, SCEmitter, SCPref } from '../exports'
 import { EmitterUtil } from '@pura/harmony-utils'
 
 export class ServiceInitUtils {
@@ -30,6 +30,11 @@ export class ServiceInitUtils {
     await PlayControl.init()
     // 初始化用户信息
     await UserManager.init()
+    if (Settings.get<boolean>(SCPref.autoPlayFM) === true) {
+      if (playQueueUtils.getQueueLength() === 0) {
+        FeaturedPlayUtils.playPersonalizedFM(() => {})
+      }
+    }
   }
   static loadPresetPreferences() {
     if (Settings.get<boolean>(SCPref.useMissionContinue) === undefined) {
@@ -38,6 +43,9 @@ export class ServiceInitUtils {
     // 启动时自动显示Player
     if (Settings.get<boolean>(SCPref.showPlayerOnLaunch) === undefined) {
       Settings.put(SCPref.showPlayerOnLaunch, true)
+    }
+    if (Settings.get<boolean>(SCPref.autoPlayFM) === undefined) {
+      Settings.put(SCPref.autoPlayFM, true)
     }
   }
   static async reInit(newInstanceType: INSTANCE_TYPE, newUser: User, newPasswd: string, newRequestContext: Object) {

@@ -10,7 +10,7 @@ export struct LightUpContainer {
   @Param overrideLightUpStat: OverrideLightUpStat = OverrideLightUpStat.NO_OVERRIDE
   // @Param restrictLightBorder: boolean = false
   @Param lightAnimationParam: AnimateParam = {
-    duration: 300, curve: Curve.EaseInOut
+    duration: 100, curve: Curve.EaseInOut
   }
 
 
@@ -75,7 +75,7 @@ export struct LightUpContainer {
 @ComponentV2
 export struct LightUpLinedContainer {
   @Param lightUpConfig: LightUpConfig = LightUpLinedDefaultConfig
-  @Param lightNum: number = 5
+  @Param lightNum: number = 10
   @Param usePressShadow: boolean = true
   @BuilderParam child: () => void
 
@@ -83,7 +83,7 @@ export struct LightUpLinedContainer {
   @Param overrideLightUpStat: OverrideLightUpStat = OverrideLightUpStat.NO_OVERRIDE
   // @Param restrictLightBorder: boolean = false
   @Param lightAnimationParam: AnimateParam = {
-    duration: 300, curve: Curve.EaseInOut
+    duration: 100, curve: Curve.EaseInOut
   }
 
 

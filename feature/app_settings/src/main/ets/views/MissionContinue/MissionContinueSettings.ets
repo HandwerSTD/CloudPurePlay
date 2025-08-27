@@ -30,6 +30,7 @@ export struct MissionContinueSettings {
     ListItem() {
       LightedCommonListItem({
         title: $r('app.string.settings_enable_mission_continue'),
+        icon: $r('sys.symbol.Interconnection_ic_multiscreen_collaboration'),
         trailing: () => {
           this.FullSwitchTrailing()
         }

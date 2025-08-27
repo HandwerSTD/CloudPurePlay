@@ -567,6 +567,10 @@
     {
       "name": "auto_play_on_launch_desc",
       "value": "启动应用时自动开始播放音乐"
+    },
+    {
+      "name": "auto_play_fm_on_launch_empty",
+      "value": "启动时无歌自动播放私人FM"
     }
   ]
 }
