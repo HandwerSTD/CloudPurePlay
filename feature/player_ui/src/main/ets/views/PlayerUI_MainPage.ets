@@ -246,10 +246,12 @@ export struct MainPage {
             }
           }),
           new ActionBarButton({
-            baseIcon: $r('sys.symbol.speaker_wave_3'),
+            baseIcon: $r('sys.symbol.gearshape'),
             width: LengthMetrics.vp(40),
             onClick: () => {
-
+              this.isTopAreaExpand = false
+              this.isBottomAreaExpand = false
+              this.consoleSheet = !this.consoleSheet
             }
           }),
         ]
