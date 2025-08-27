@@ -3,6 +3,7 @@ import { SingleDeviceViewModel } from "../services/DistributionMgr/DistributionV
 import { WindowAvoidanceData } from "../utils/WindowUtil"
 import { HdsSnackBar } from "@kit.UIDesignKit"
 import { common } from "@kit.AbilityKit"
+import { PrefDataModel } from "./PreferenceDataModel"
 
 @ObservedV2
 class GlobalStore {
@@ -34,6 +35,8 @@ class GlobalStore {
   @Trace isInForeground: boolean = true
 
   @Trace isDarkMode: boolean = false
+
+  @Trace pref: PrefDataModel = new PrefDataModel()
 
   globalSnack?: HdsSnackBar
   contextFaker?: common.UIAbilityContext

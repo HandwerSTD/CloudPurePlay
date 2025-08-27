@@ -557,6 +557,22 @@
       "value": "Prioritize music library content when entering online music"
     },
     {
+      "name": "navigation_right_hand_mode",
+      "value": "Navigation Right-Hand Mode"
+    },
+    {
+      "name": "navigation_right_hand_mode_desc",
+      "value": "Adjust navigation buttons for right-hand operation"
+    },
+    {
+      "name": "player_two_column_right_hand_mode",
+      "value": "Player Two-Column Right-Hand Mode"
+    },
+    {
+      "name": "player_two_column_right_hand_mode_desc",
+      "value": "Optimize right-hand experience in two-column player layout"
+    },
+    {
       "name": "playback_settings",
       "value": "Playback Settings"
     },

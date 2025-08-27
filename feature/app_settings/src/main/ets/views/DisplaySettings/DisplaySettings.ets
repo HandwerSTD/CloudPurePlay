@@ -1,4 +1,4 @@
-import { SCPref, Settings } from "@handwer/base"
+import { GlobalStore, SCPref, Settings } from "@handwer/base"
 import { HDS_TITLE_CONFIG_STYLE, LightedCommonListToggleItem } from "@handwer/ui_components"
 import { HdsNavigation, HdsNavigationTitleMode, HdsNavigationAttribute } from "@kit.UIDesignKit"
 
@@ -8,6 +8,24 @@ export struct DisplaySettings {
 
   @Local showPlayerOnLaunch: boolean = false
   @Local showMusicLibraryInOnlineMusic: boolean = false
+
+  pref = GlobalStore.pref
+  get navigationRightHandMode() {
+    return this.pref.tabRightHand
+  }
+  get playerTwoColumnRightHandMode() {
+    return this.pref.playerRightHand
+  }
+  set navigationRightHandMode(val: boolean) {
+    this.getUIContext().animateTo({duration: 300}, () => {
+      this.pref.tabRightHand = val
+    })
+  }
+  set playerTwoColumnRightHandMode(val: boolean) {
+    this.getUIContext().animateTo({duration: 300}, () => {
+      this.pref.playerRightHand = val
+    })
+  }
 
   aboutToAppear(): void {
     this.showPlayerOnLaunch = Settings.get<boolean>(SCPref.showPlayerOnLaunch) ?? false
@@ -41,6 +59,30 @@ export struct DisplaySettings {
                 onToggleChange: (val) => {
                   this.showMusicLibraryInOnlineMusic = val
                   Settings.put(SCPref.showMusicLibraryInOnlineMusic, val)
+                }
+              })
+            }
+            ListItem() {
+              LightedCommonListToggleItem({
+                icon: $r('sys.symbol.hand_draw'),
+                title: $r('app.string.navigation_right_hand_mode'),
+                subtitle: $r('app.string.navigation_right_hand_mode_desc'),
+                isOn: this.navigationRightHandMode,
+                onToggleChange: (val) => {
+                  this.navigationRightHandMode = val
+                  Settings.put(SCPref.navigationRightHandMode, val)
+                }
+              })
+            }
+            ListItem() {
+              LightedCommonListToggleItem({
+                icon: $r('sys.symbol.rectangle_split_2x1'),
+                title: $r('app.string.player_two_column_right_hand_mode'),
+                subtitle: $r('app.string.player_two_column_right_hand_mode_desc'),
+                isOn: this.playerTwoColumnRightHandMode,
+                onToggleChange: (val) => {
+                  this.playerTwoColumnRightHandMode = val
+                  Settings.put(SCPref.playerTwoColumnRightHandMode, val)
                 }
               })
             }

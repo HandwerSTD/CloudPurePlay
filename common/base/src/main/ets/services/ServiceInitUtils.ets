@@ -9,7 +9,7 @@ import {
   INSTANCE_TYPE, User,
 } from '@handwer/api_adapter'
 import { UserManager } from './Network/UserManager'
-import { FeaturedPlayUtils, SCEmitter, SCPref } from '../exports'
+import { FeaturedPlayUtils, GlobalStore, SCEmitter, SCPref } from '../exports'
 import { EmitterUtil } from '@pura/harmony-utils'
 
 export class ServiceInitUtils {
@@ -17,6 +17,7 @@ export class ServiceInitUtils {
     // 初始化全局设置
     Settings.init()
     ServiceInitUtils.loadPresetPreferences()
+    ServiceInitUtils.loadViewPref()
     // 初始化 API
     InstanceSwitcher.InstanceType = Settings.get<INSTANCE_TYPE>(SCPref.apiInstanceType) ?? INSTANCE_TYPE.CLOUD
     APIConfigUtils.loadRequestContext(Settings.get(SCPref.currentAPIConfig) ?? APIConfigUtils.EmptyConfig)
@@ -35,6 +36,11 @@ export class ServiceInitUtils {
         FeaturedPlayUtils.playPersonalizedFM(() => {})
       }
     }
+  }
+  static loadViewPref() {
+    const pref = GlobalStore.pref
+    pref.tabRightHand = Settings.get<boolean>(SCPref.navigationRightHandMode) ?? false
+    pref.playerRightHand = Settings.get<boolean>(SCPref.playerTwoColumnRightHandMode) ?? false
   }
   static loadPresetPreferences() {
     if (Settings.get<boolean>(SCPref.useMissionContinue) === undefined) {

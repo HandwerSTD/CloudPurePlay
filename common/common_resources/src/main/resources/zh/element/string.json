@@ -557,6 +557,22 @@
       "value": "进入在线音乐时优先显示音乐库内容"
     },
     {
+      "name": "navigation_right_hand_mode",
+      "value": "导航栏右手模式"
+    },
+    {
+      "name": "navigation_right_hand_mode_desc",
+      "value": "将导航栏按钮调整到适合右手操作的位置"
+    },
+    {
+      "name": "player_two_column_right_hand_mode",
+      "value": "播放页双栏右手模式"
+    },
+    {
+      "name": "player_two_column_right_hand_mode_desc",
+      "value": "在双栏布局的播放页中优化右手操作体验"
+    },
+    {
       "name": "playback_settings",
       "value": "播放设置"
     },

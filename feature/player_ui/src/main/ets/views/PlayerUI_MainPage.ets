@@ -703,6 +703,7 @@ export struct MainPage {
       this.showExplore = true
       this.explorePageOpacity = 1
     }
+    this.onRightHandMode()
   }
 
   @Builder BackgroundFlow() {
@@ -742,6 +743,29 @@ export struct MainPage {
     }.width('100%').height('100%')
   }
 
+  @Monitor('gs.pref.playerRightHand')
+  onRightHandMode() {
+    if (this.gs.pref.playerRightHand && !ResponsiveUtil.widthCheck(['sm'])) {
+      this.swiperArr = [1, 0]
+    } else {
+      this.swiperArr = [0, 1]
+    }
+  }
+  @Local swiperArr: number[] = [0, 1]
+  @Builder SwiperItem(index: number) {
+    if (index === 0) {
+      if (!this.showExplore) {
+        // Normal
+        this.NowPlayingArea()
+      } else {
+        // Bottom Bar
+        this.NowPlayingArea_Bar()
+      }
+    } else {
+      this.LyricArea()
+    }
+  }
+
   build() {
     Stack() {
       this.BackgroundFlow()
@@ -752,14 +776,9 @@ export struct MainPage {
             this.LightUpProgress()
           }
           Swiper() {
-            if (!this.showExplore) {
-              // Normal
-              this.NowPlayingArea()
-            } else {
-              // Bottom Bar
-              this.NowPlayingArea_Bar()
-            }
-            this.LyricArea()
+            ForEach(this.swiperArr, (index: number) => {
+              this.SwiperItem(index)
+            })
           }.vertical(false)
           .displayCount(ResponsiveUtil.widthCheck(['md','lg','xl']) && !this.shouldShowEmptyState ? 2 : 1)
           .indicator(false)
@@ -788,6 +807,9 @@ export struct MainPage {
       .padding({
         top: this.gs.wd.top === 0 ? 12 : this.gs.wd.top,
         // bottom: this.gs.wd.bottom
+      })
+      .onAreaChange(() => {
+        this.onRightHandMode()
       })
       .height('100%')
     }

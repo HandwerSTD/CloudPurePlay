@@ -1,19 +1,21 @@
 export enum SCPref {
-  theme = 1,
-  notFirstOpen,
-  cacheSet,
-  audioQuality,
+  theme = 'theme',
+  notFirstOpen = 'notFirstOpen',
+  cacheSet = 'cacheSet',
+  audioQuality = 'audioQuality',
 
-  apiInstanceType,
-  currentAPIConfig,
+  apiInstanceType = 'apiInstanceType',
+  currentAPIConfig = 'currentAPIConfig',
 
-  useMissionContinue,
+  useMissionContinue = 'useMissionContinue',
 
   // 显示设置
-  showPlayerOnLaunch,
-  showMusicLibraryInOnlineMusic,
+  showPlayerOnLaunch = 'showPlayerOnLaunch',
+  showMusicLibraryInOnlineMusic = 'showMusicLibraryInOnlineMusic',
+  navigationRightHandMode = 'navigationRightHandMode',
+  playerTwoColumnRightHandMode = 'playerTwoColumnRightHandMode',
 
   // 播放设置
-  autoPlayOnLaunch,
-  autoPlayFM
+  autoPlayOnLaunch = 'autoPlayOnLaunch',
+  autoPlayFM = 'autoPlayFM'
 }
