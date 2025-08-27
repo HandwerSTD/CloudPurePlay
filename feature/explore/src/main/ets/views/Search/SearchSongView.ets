@@ -223,7 +223,7 @@ export struct SearchSongView {
       this.searchSongs = []
     } else {
       // 首先从本地歌曲中搜索
-      const localResults = this.allSongs.filter((val) => {
+      const localResults = this.allSongs.filter((val): boolean => {
         return val.name.toLowerCase().includes(this.searchContent.toLowerCase()) ||
         SongConvertUtils.getArtists(val.artists).toLowerCase().includes(this.searchContent.toLowerCase())
       }).slice(0, 50) // 限制结果数量

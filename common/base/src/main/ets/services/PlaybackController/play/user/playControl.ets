@@ -306,7 +306,16 @@ export class PlayControl {
   }
 
   static async seekMusic(time: number) {
-    await AVPlayerUtils.seek(time)
+    if (shouldPauseOnStart) {
+      shouldPauseOnStart = false
+      const store = NowPlayingStore
+      await PlayControl.playMusicByUrl(store.currentSong, UserManager.isLogged, store.currentPic as string, store.playMode)
+      setTimeout(() => {
+        AVPlayerUtils.seek(time)
+      }, 300)
+    } else {
+      await AVPlayerUtils.seek(time)
+    }
   }
 
   static async playQueue(index: number) {
