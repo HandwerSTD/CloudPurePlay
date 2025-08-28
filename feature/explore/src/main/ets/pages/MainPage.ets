@@ -95,38 +95,7 @@ struct MainPage_Shell {
       })
       .backgroundBlurStyle(BlurStyle.BACKGROUND_THICK)
   }
-  @Local actionBtns: ActionBarButton[] = [
-    new ActionBarButton({
-      baseIcon: $r('sys.symbol.cloud_and_stars'),
-      width: LengthMetrics.vp(40),
-      backgroundColor: this.shouldTabItemLight(0) ? ColorMetrics.numeric(0xFFFFFFFF) : undefined,
-      baseIconSymbolGlyphModifier: this.shouldTabItemLight(0) ?
-        new SymbolGlyphModifier().fontColor([Color.Black]) : undefined,
-      onClick: () => {
-        this.tabController.changeIndex(0)
-      }
-    }),
 
-    new ActionBarButton({
-      baseIcon: $r('sys.symbol.storagebox'),
-      backgroundColor: this.shouldTabItemLight(1) ? ColorMetrics.numeric(0xFFFFFFFF) : undefined,
-      baseIconSymbolGlyphModifier: this.shouldTabItemLight(1) ? new SymbolGlyphModifier().fontColor([Color.Black]) : undefined,
-      width: LengthMetrics.vp(40),
-      onClick: () => {
-        this.tabController.changeIndex(1)
-      }
-    }),
-
-    new ActionBarButton({
-      baseIcon: $r('sys.symbol.gearshape'),
-      backgroundColor: this.settingsSheet ? ColorMetrics.numeric(0xFFFFFFFF) : undefined,
-      baseIconSymbolGlyphModifier: this.settingsSheet ? new SymbolGlyphModifier().fontColor([Color.Black]) : undefined,
-      width: LengthMetrics.vp(40),
-      onClick: () => {
-        this.settingsSheet = true
-      }
-    })
-  ]
   @Builder ActionButton_ActionBar() {
     Row() {
       HdsActionBar({
@@ -135,8 +104,88 @@ struct MainPage_Shell {
           this.TopAreaActionButton_ActionBar_PrimaryButton()
         },
         primaryButtonBuilderWidth: LengthMetrics.vp(this.primaryWidth),
-        startButtons: !this.gs.pref.tabRightHand ? undefined: this.actionBtns,
-        endButtons: this.gs.pref.tabRightHand ? undefined: this.actionBtns,
+        endButtons: [
+          new ActionBarButton({
+            baseIcon: $r('sys.symbol.cloud_and_stars'),
+            width: LengthMetrics.vp(40),
+            backgroundColor: this.shouldTabItemLight(0) ? ColorMetrics.numeric(0xFFFFFFFF) : undefined,
+            baseIconSymbolGlyphModifier: this.shouldTabItemLight(0) ?
+              new SymbolGlyphModifier().fontColor([Color.Black]) : undefined,
+            onClick: () => {
+              this.tabController.changeIndex(0)
+            }
+          }),
+
+          new ActionBarButton({
+            baseIcon: $r('sys.symbol.storagebox'),
+            backgroundColor: this.shouldTabItemLight(1) ? ColorMetrics.numeric(0xFFFFFFFF) : undefined,
+            baseIconSymbolGlyphModifier: this.shouldTabItemLight(1) ? new SymbolGlyphModifier().fontColor([Color.Black]) : undefined,
+            width: LengthMetrics.vp(40),
+            onClick: () => {
+              this.tabController.changeIndex(1)
+            }
+          }),
+
+          new ActionBarButton({
+            baseIcon: $r('sys.symbol.gearshape'),
+            backgroundColor: this.settingsSheet ? ColorMetrics.numeric(0xFFFFFFFF) : undefined,
+            baseIconSymbolGlyphModifier: this.settingsSheet ? new SymbolGlyphModifier().fontColor([Color.Black]) : undefined,
+            width: LengthMetrics.vp(40),
+            onClick: () => {
+              this.settingsSheet = true
+            }
+          })
+        ],
+        actionBarStyle: new ActionBarStyle({
+          backgroundBlurStyle: BlurStyle.COMPONENT_THIN,
+        })
+      })
+        .hitTestBehavior(this.isTabExpand ? HitTestMode.Default : HitTestMode.Transparent)
+    }.hitTestBehavior(this.isTabExpand ? HitTestMode.Default : HitTestMode.Transparent)
+    .margin({bottom: 12, left: 24, right: 24})
+    .transition(TransitionEffect.OPACITY.animation({duration: 300}))
+  }
+
+  @Builder ActionButton_ActionBar_RightHanded() {
+    Row() {
+      HdsActionBar({
+        isExpand: this.isTabExpand!!,
+        primaryButtonBuilder: () => {
+          this.TopAreaActionButton_ActionBar_PrimaryButton()
+        },
+        primaryButtonBuilderWidth: LengthMetrics.vp(this.primaryWidth),
+        startButtons: [
+          new ActionBarButton({
+            baseIcon: $r('sys.symbol.cloud_and_stars'),
+            width: LengthMetrics.vp(40),
+            backgroundColor: this.shouldTabItemLight(0) ? ColorMetrics.numeric(0xFFFFFFFF) : undefined,
+            baseIconSymbolGlyphModifier: this.shouldTabItemLight(0) ?
+              new SymbolGlyphModifier().fontColor([Color.Black]) : undefined,
+            onClick: () => {
+              this.tabController.changeIndex(0)
+            }
+          }),
+
+          new ActionBarButton({
+            baseIcon: $r('sys.symbol.storagebox'),
+            backgroundColor: this.shouldTabItemLight(1) ? ColorMetrics.numeric(0xFFFFFFFF) : undefined,
+            baseIconSymbolGlyphModifier: this.shouldTabItemLight(1) ? new SymbolGlyphModifier().fontColor([Color.Black]) : undefined,
+            width: LengthMetrics.vp(40),
+            onClick: () => {
+              this.tabController.changeIndex(1)
+            }
+          }),
+
+          new ActionBarButton({
+            baseIcon: $r('sys.symbol.gearshape'),
+            backgroundColor: this.settingsSheet ? ColorMetrics.numeric(0xFFFFFFFF) : undefined,
+            baseIconSymbolGlyphModifier: this.settingsSheet ? new SymbolGlyphModifier().fontColor([Color.Black]) : undefined,
+            width: LengthMetrics.vp(40),
+            onClick: () => {
+              this.settingsSheet = true
+            }
+          })
+        ],
         actionBarStyle: new ActionBarStyle({
           backgroundBlurStyle: BlurStyle.COMPONENT_THIN,
         })
@@ -163,7 +212,11 @@ struct MainPage_Shell {
           this.currentTabIndex = target
         })
         if (this.showFloatingTab && !this.shouldDisableTab) {
-          this.ActionButton_ActionBar()
+          if (this.gs.pref.tabRightHand) {
+            this.ActionButton_ActionBar_RightHanded()
+          } else {
+            this.ActionButton_ActionBar()
+          }
         }
       }.width('100%').height('100%')
       .onTouch((event) => {
