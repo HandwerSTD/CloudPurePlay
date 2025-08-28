@@ -8,10 +8,12 @@ export class SnackBarUtils {
       title: message,
       content: sub_msg
     }, {
-
     }, {
       backgroundBlurStyle: BlurStyle.COMPONENT_REGULAR,
-      duration: duration ?? 3000
+      duration: duration ?? 3000,
+      pressBackCallback: () => {
+        snackbar.dismiss()
+      }
     })
   }
 }
