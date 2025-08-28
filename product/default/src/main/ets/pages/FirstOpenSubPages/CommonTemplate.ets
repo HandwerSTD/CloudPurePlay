@@ -51,7 +51,7 @@ export struct ImageTitleWelcomeTemplate {
               this.footer()
             }
             if (this.useButtonFooter) {
-              LightUpLinedContainer({usePressShadow: false}) {
+              LightUpLinedContainer({usePressShadow: false, lightNum: ResponsiveUtil.chooseByWidth([10, 12])}) {
                 Button(this.buttonFooterText)
                   .width('100%')
                   .onClick(() => {
@@ -67,7 +67,7 @@ export struct ImageTitleWelcomeTemplate {
       }.visualEffect(new hdsEffect.HdsEffectBuilder().pointLight({
         illuminatedType: hdsEffect.PointLightIlluminatedType.CONTENT
       }).buildEffect())
-      .padding({bottom: 48})
+      .padding({bottom: 48, left: '20%', right: '20%'})
     }.width('100%').height('100%')
     .edgeEffect(EdgeEffect.Spring, {
       alwaysEnabled: false
@@ -82,24 +82,60 @@ export struct SymbolTitle {
   @Param iconSize: number = 50
   @Param @Require gradientColor: ResourceColor[]
 
+  @Local snapshot: PixelMap | undefined = undefined
+
+  @Local headerId: string | undefined = undefined
+
+  aboutToAppear(): void {
+    this.headerId = this.icon.id.toString()+Math.random().toPrecision(5).toString()
+  }
+
   @Builder customHeader() {
-    Column() {
-      SymbolGlyph(this.icon)
-        .fontColor([Color.White])
-        .fontWeight(FontWeight.Normal)
-        .fontSize(this.iconSize)
+    Stack() {
+      Column() {
+        SymbolGlyph(this.icon)
+          .fontColor([Color.White])
+          .fontWeight(FontWeight.Normal)
+          .fontSize(this.iconSize)
+      }
+      .id(this.headerId)
+      .width(100)
+      .height(100)
+      .justifyContent(FlexAlign.Center)
+      .borderRadius(24)
+      .linearGradient({
+        angle: 135,
+        colors: [[this.gradientColor[0], 0], [this.gradientColor[1], 1]]
+      })
+      .foregroundEffect({
+        radius: 128
+      })
+      // .borderRadius(24)
+      .brightness(1.1)
+      .saturate(3)
+      // .translate({y: 8})
+      // .scale({x: 1.2, y: 1.2})
+
+      Column() {
+        SymbolGlyph(this.icon)
+          .fontColor([Color.White])
+          .fontWeight(FontWeight.Normal)
+          .fontSize(this.iconSize)
+      }
+      .id(this.headerId)
+      .width(100)
+      .height(100)
+      .justifyContent(FlexAlign.Center)
+      .borderRadius(24)
+      .linearGradient({
+        angle: 135,
+        colors: [[this.gradientColor[0], 0], [this.gradientColor[1], 1]]
+      })
+      .shadow(ShadowStyle.OUTER_FLOATING_SM)
     }
-    .width(100)
-    .height(100)
-    .justifyContent(FlexAlign.Center)
-    .borderRadius(24)
-    .linearGradient({
-      angle: -75,
-      colors: [[this.gradientColor[0], 0], [this.gradientColor[1], 1]]
-    })
-    .shadow(ShadowStyle.OUTER_FLOATING_SM)
   }
   build() {
     this.customHeader()
   }
 }
+

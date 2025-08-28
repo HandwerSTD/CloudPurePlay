@@ -9,7 +9,7 @@ export struct WebDAV {
   @Builder header() {
     SymbolTitle({
       icon: $r('sys.symbol.music_note_icolud'),
-      gradientColor: [0xa9def5, 0x7f86cc],
+      gradientColor: [0x8e2de2, 0x4a00e0],
     })
   }
 

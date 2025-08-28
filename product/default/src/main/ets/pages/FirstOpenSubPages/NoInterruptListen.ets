@@ -9,7 +9,7 @@ export struct NoInterruptListen {
   @Builder header() {
     SymbolTitle({
       icon: $r('sys.symbol.play_circle_badge_music_note'),
-      gradientColor: [0xa9def5, 0x7f86cc],
+      gradientColor: [0xfba6b9, 0x3d46e7],
     })
   }
 

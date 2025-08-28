@@ -171,6 +171,7 @@ export struct NavidromeAPI_Source {
 }
 @Extend(TextInput) function TextInputEffect(index: number, changeIndex: (stat: number) => void) {
   .fontColor(Color.White)
+  .placeholderColor(Color.White)
   .maxLines(1)
   .onFocus(() => {
     changeIndex(index)

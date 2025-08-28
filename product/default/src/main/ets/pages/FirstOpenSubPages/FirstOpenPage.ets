@@ -26,7 +26,14 @@ struct FirstOpenPage {
           message: '请阅读并同意《关于表情快传隐私的声明》'
         })
       } else {
-        this.controller.showNext()
+        if (!this.showFlow) {
+          this.showFlow = true
+          setTimeout(() => {
+            this.controller.showNext()
+          }, 200)
+        } else {
+          this.controller.showNext()
+        }
       }
     }
   },{
@@ -161,7 +168,6 @@ struct FirstOpenPage {
           }.width('100%')
           .onChange((index) => {
             this.nowIndex = index
-            if (index === 1) this.showFlow = true
           })
           .disableSwipe(!this.agreed) // 不同意不让进
           .loop(false)

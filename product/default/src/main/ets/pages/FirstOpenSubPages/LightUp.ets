@@ -9,7 +9,7 @@ export struct LightUp {
   @Builder header() {
     SymbolTitle({
       icon: $r('sys.symbol.light_painting'),
-      gradientColor: [0xc5a7ee, 0xbfdff2],
+      gradientColor: [0x02c1f8, 0x025fea],
     })
   }
   @Builder QuickButtons() {
@@ -121,7 +121,7 @@ export struct LightUp {
   build() {
     ImageTitleWelcomeTemplate({
       title: '生长在「光」上',
-      subtitle: '一款生长在光上的音乐播放器。基于最新 HarmonyOS 光场效果，让每一次播放都在光影之间流动。纯粹聆听，前所未有的「光」体验。',
+      subtitle: '一款生长在光上的音乐播放器。基于最新 HarmonyOS 光场效果，让每一次播放都在光影之间流动。纯粹聆听，前所未有的「光」体验。\n\n光场设计元素遍布在《云净听》中，无论是播放按钮，还是封面图片，或者精致歌词，都有「光」的流动，\n\n点击下方按钮，体验「光」。',
       customImage: this.header,
       footer: () => {
         this.footer()
