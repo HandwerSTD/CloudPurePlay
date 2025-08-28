@@ -4,6 +4,7 @@ import { ImageTitleWelcomeTemplate } from "./CommonTemplate"
 @ComponentV2
 export struct OpenWelcome {
   @Param @Require setResult: (val: boolean) => void
+  @Param @Require showedFlow: boolean
 
   @Builder footer() {
     Row() {
@@ -30,7 +31,8 @@ export struct OpenWelcome {
       ImageTitleWelcomeTemplate({
         title: ' 欢迎！',
         subtitle: '《云净听》| 音乐播放器',
-        image: $r('app.media.app_layered_image'),
+        image: $r('app.media.app_background'),
+        useDefaultTextColor: !this.showedFlow,
         footer: () => { this.footer() }
       })
     }.width('100%').height('100%')

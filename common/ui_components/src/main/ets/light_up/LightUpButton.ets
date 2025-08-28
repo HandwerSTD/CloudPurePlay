@@ -65,7 +65,7 @@ export struct LightUpRoundedButton {
         SymbolGlyph(this.icon)
           .fontWeight(this.customFontWeight)
           .fontSize(this.customFontSize ? this.customFontSize: 24)
-          .fontColor(this.customFontColor ? this.customFontColor : [$r('sys.color.font_primary')])
+          .fontColor(this.customFontColor ? this.customFontColor : [Color.White])
           .hitTestBehavior(HitTestMode.Transparent)
       }
     }.borderRadius(this.customFontSize ? this.customFontSize*2 : 48)
@@ -298,17 +298,33 @@ export struct LightUpIconTextButton {
   @Param @Require icon: Resource
   @Param @Require title: ResourceStr
 
+  @Local lighted: boolean = false
+
+  get fontColor() {
+    if (this.lighted) return ThemeManager.getBrand()
+    return Color.White
+  }
+
   build() {
-    LightUpCommonButton({
-      clickAction: this.clickAction,
-      lightUpConfig: { lightIntensity: 1, lightHeight: 240},
-      customPadding: 16,
-      useBorder: true
-    }) {
-      Row({space: 12}) {
-        SymbolGlyph(this.icon).fontColor([Color.White]).fontWeight(FontWeight.Bold)
-        Text(this.title).fontColor(Color.White)
+    Column() {
+      LightUpCommonButton({
+        clickAction: this.clickAction,
+        lightUpConfig: { lightIntensity: 1, lightHeight: 240},
+        customPadding: 16,
+        useBorder: true
+      }) {
+        Row({space: 12}) {
+          SymbolGlyph(this.icon).fontColor([this.fontColor]).fontWeight(FontWeight.Bold)
+          Text(this.title).fontColor(this.fontColor)
+        }
       }
     }
+    .onTouch((event) => {
+      if (event.type === TouchType.Down) {
+        this.lighted = true
+      } else if (event.type === TouchType.Up || event.type === TouchType.Cancel) {
+        this.lighted = false
+      }
+    })
   }
 }

@@ -12,6 +12,7 @@ export struct ImageTitleWelcomeTemplate {
   @Param useButtonFooter: boolean = false
   @Param buttonFooterOnClick: () => void = () => {}
   @Param buttonFooterText: ResourceStr = ''
+  @Param useDefaultTextColor: boolean = false
 
   build() {
     Scroll() {
@@ -36,9 +37,9 @@ export struct ImageTitleWelcomeTemplate {
             Text(this.title)
               .fontSize(20)
               .fontWeight(FontWeight.Bold)
-              .fontColor(Color.White)
+              .fontColor(this.useDefaultTextColor ? $r('sys.color.font_primary') : Color.White)
             Text(this.subtitle)
-              .fontColor(Color.White)
+              .fontColor(this.useDefaultTextColor ? $r('sys.color.font_primary') : Color.White)
           }
           .margin(24)
 
@@ -66,9 +67,39 @@ export struct ImageTitleWelcomeTemplate {
       }.visualEffect(new hdsEffect.HdsEffectBuilder().pointLight({
         illuminatedType: hdsEffect.PointLightIlluminatedType.CONTENT
       }).buildEffect())
+      .padding({bottom: 48})
     }.width('100%').height('100%')
     .edgeEffect(EdgeEffect.Spring, {
       alwaysEnabled: false
     }).scrollBar(BarState.Off)
+    .clip(false)
+  }
+}
+
+@ComponentV2
+export struct SymbolTitle {
+  @Param @Require icon: Resource
+  @Param iconSize: number = 50
+  @Param @Require gradientColor: ResourceColor[]
+
+  @Builder customHeader() {
+    Column() {
+      SymbolGlyph(this.icon)
+        .fontColor([Color.White])
+        .fontWeight(FontWeight.Normal)
+        .fontSize(this.iconSize)
+    }
+    .width(100)
+    .height(100)
+    .justifyContent(FlexAlign.Center)
+    .borderRadius(24)
+    .linearGradient({
+      angle: -75,
+      colors: [[this.gradientColor[0], 0], [this.gradientColor[1], 1]]
+    })
+    .shadow(ShadowStyle.OUTER_FLOATING_SM)
+  }
+  build() {
+    this.customHeader()
   }
 }
