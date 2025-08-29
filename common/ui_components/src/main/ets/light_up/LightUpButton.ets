@@ -57,6 +57,11 @@ export struct LightUpRoundedButton {
     }.offset({y: -7})
   }
 
+  get FontColor() {
+    if (this.intensity > 0 || this.overrideLightUpStat === OverrideLightUpStat.ALWAYS_ENABLED) return [ThemeManager.getBrand()]
+    return this.customFontColor ? this.customFontColor : [Color.White]
+  }
+
   build() {
     Column() {
       if (this.isChevron) {
@@ -65,7 +70,7 @@ export struct LightUpRoundedButton {
         SymbolGlyph(this.icon)
           .fontWeight(this.customFontWeight)
           .fontSize(this.customFontSize ? this.customFontSize: 24)
-          .fontColor(this.customFontColor ? this.customFontColor : [Color.White])
+          .fontColor(this.FontColor)
           .hitTestBehavior(HitTestMode.Transparent)
       }
     }.borderRadius(this.customFontSize ? this.customFontSize*2 : 48)
@@ -297,11 +302,12 @@ export struct LightUpIconTextButton {
   @Param @Require lightUpConfig: LightUpConfig
   @Param @Require icon: Resource
   @Param @Require title: ResourceStr
+  @Param overrideLightStat: OverrideLightUpStat = OverrideLightUpStat.NO_OVERRIDE
 
   @Local lighted: boolean = false
 
   get fontColor() {
-    if (this.lighted) return ThemeManager.getBrand()
+    if (this.lighted || this.overrideLightStat === OverrideLightUpStat.ALWAYS_ENABLED) return ThemeManager.getBrand()
     return Color.White
   }
 
@@ -311,7 +317,8 @@ export struct LightUpIconTextButton {
         clickAction: this.clickAction,
         lightUpConfig: { lightIntensity: 1, lightHeight: 240},
         customPadding: 16,
-        useBorder: true
+        useBorder: true,
+        overrideLightUpStat: this.overrideLightStat
       }) {
         Row({space: 12}) {
           SymbolGlyph(this.icon).fontColor([this.fontColor]).fontWeight(FontWeight.Bold)

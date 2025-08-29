@@ -149,38 +149,44 @@ struct FirstOpenPage {
         if (this.showFlow) {
           this.BackgroundFlow()
         }
-        Stack({alignContent: Alignment.Bottom}) {
-          Swiper(this.controller) {
-            OpenWelcome({
-              setResult: (val) => { this.agreed = val },
-              showedFlow: this.showFlow
+        Column() {
+          Stack({alignContent: Alignment.Bottom}) {
+            Swiper(this.controller) {
+              OpenWelcome({
+                setResult: (val) => { this.agreed = val },
+                showedFlow: this.showFlow
+              })
+              LightUp()
+              WebDAV()
+              NoInterruptListen()
+              PersonalFM()
+              MissionContinue()
+              FinalWelcome({
+                onFinish: () => {
+                  this.jumpToApp()
+                }
+              }).clip(false)
+            }.width('100%')
+            .onChange((index) => {
+              this.nowIndex = index
             })
-            LightUp()
-            WebDAV()
-            NoInterruptListen()
-            PersonalFM()
-            MissionContinue()
-            FinalWelcome({
-              onFinish: () => {
-                this.jumpToApp()
-              }
+            .disableSwipe(!this.showFlow) // 第一下必须点下一步，加载出动效，然后才允许随意滑动
+            .loop(false)
+            .indicator(false)
+            .layoutWeight(1)
+            .clip(false)
+            MyStepper({
+              nowIndex: this.nowIndex,
+              configuration: this.stepperConfig
             }).clip(false)
-          }.width('100%')
-          .onChange((index) => {
-            this.nowIndex = index
-          })
-          .disableSwipe(!this.agreed) // 不同意不让进
-          .loop(false)
-          .indicator(false)
-          .layoutWeight(1)
-          .clip(false)
-          MyStepper({
-            nowIndex: this.nowIndex,
-            configuration: this.stepperConfig
-          }).clip(false)
+              .hitTestBehavior(HitTestMode.Transparent)
+          }
+          .padding({ top: this.st.wd.top, bottom: this.st.wd.bottom })
+          .height('100%')
         }
-        .padding({ top: this.st.wd.top, bottom: this.st.wd.bottom })
-        .height('100%')
+        .visualEffect(new hdsEffect.HdsEffectBuilder().pointLight({
+          illuminatedType: hdsEffect.PointLightIlluminatedType.CONTENT
+        }).buildEffect())
       }
     }
     .width('100%')

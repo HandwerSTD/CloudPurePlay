@@ -1,10 +1,23 @@
-import { LightUpIconTextButton, LightUpRoundedButton, UIComponentUtils, LightUpDefaultConfig } from "@handwer/ui_components";
+import { LightUpIconTextButton, LightUpRoundedButton, UIComponentUtils, LightUpDefaultConfig,
+  OverrideLightUpStat } from "@handwer/ui_components";
 import { ImageTitleWelcomeTemplate, SymbolTitle } from "./CommonTemplate";
 import { LengthMetrics } from "@kit.ArkUI";
-import { ResponsiveUtil } from "@handwer/base";
+import { Logger, ResponsiveUtil } from "@handwer/base";
 
 @ComponentV2
 export struct LightUp {
+  @Local autoLightIndex: number = -1
+
+  shouldAutoLight(index: number) {
+    return this.autoLightIndex === index ? OverrideLightUpStat.ALWAYS_ENABLED : OverrideLightUpStat.NO_OVERRIDE
+  }
+  updateAutoLight() {
+    let original = this.autoLightIndex
+    this.autoLightIndex = -1
+    setTimeout(() => {
+      this.autoLightIndex = (original + 1) % 3;
+    }, 1000)
+  }
 
   @Builder header() {
     SymbolTitle({
@@ -25,6 +38,7 @@ export struct LightUp {
               lightIntensity: 0.5,
               lightHeight: 50
             },
+            // overrideLightStat: this.shouldAutoLight(3),
             clickAction: () => {
             }
           })
@@ -38,6 +52,7 @@ export struct LightUp {
               lightIntensity: 0.5,
               lightHeight: 50
             },
+            // overrideLightStat: this.shouldAutoLight(4),
             clickAction: () => {
             }
           })
@@ -51,6 +66,7 @@ export struct LightUp {
               lightIntensity: 0.5,
               lightHeight: 50
             },
+            // overrideLightStat: this.shouldAutoLight(5),
             clickAction: () => {
             }
           })
@@ -72,9 +88,10 @@ export struct LightUp {
         customPadding: 12,
         clickAction: () => {
         },
+        overrideLightUpStat: this.shouldAutoLight(0),
         lightUpConfig: {
           lightIntensity: 1.5,
-          lightHeight: 50,
+          lightHeight: 100,
         }
       })
       // 每日推荐
@@ -83,11 +100,12 @@ export struct LightUp {
         customFontColor: [Color.White],
         customFontSize: 30,
         customPadding: 12,
+        overrideLightUpStat: this.shouldAutoLight(1),
         clickAction: () => {
         },
         lightUpConfig: {
           lightIntensity: 1.5,
-          lightHeight: 50,
+          lightHeight: 100,
         }
       })
 
@@ -97,35 +115,39 @@ export struct LightUp {
         customFontColor: [Color.White],
         customFontSize: 30,
         customPadding: 12,
+        overrideLightUpStat: this.shouldAutoLight(2),
         clickAction: () => {
         },
         lightUpConfig: {
           lightIntensity: 1.5,
-          lightHeight: 50,
+          lightHeight: 100,
         }
       })
     }.width('100%').justifyContent(FlexAlign.SpaceEvenly)
   }
 
+  @Local showFooter: boolean = true
   @Builder footer() {
-    Column() {
-
-      if (ResponsiveUtil.widthCheck(['sm'])) {
+    if (this.showFooter){
+      Column({space: 24}) {
         this.SmallQuickButtons()
-      } else {
         this.QuickButtons()
-      }
-    }.height('30%').justifyContent(FlexAlign.Start)
+      }.height('30%').justifyContent(FlexAlign.Start)
+      .transition(TransitionEffect.OPACITY.animation({duration: 500}))
+    }
   }
 
   build() {
     ImageTitleWelcomeTemplate({
       title: '生长在「光」上',
-      subtitle: '一款生长在光上的音乐播放器。基于最新 HarmonyOS 光场效果，让每一次播放都在光影之间流动。纯粹聆听，前所未有的「光」体验。\n\n光场设计元素遍布在《云净听》中，无论是播放按钮，还是封面图片，或者精致歌词，都有「光」的流动，\n\n点击下方按钮，体验「光」。',
+      subtitle: '一款生长在光上的音乐播放器。基于最新 HarmonyOS 光场效果，让每一次播放都在光影之间流动。纯粹聆听，前所未有的「光」体验。\n\n光场设计元素遍布在《云净听》中，无论是播放按钮，还是封面图片，或是精致歌词，都有「光」的流动，\n\n点击下方按钮，体验「光」。',
       customImage: this.header,
       footer: () => {
         this.footer()
       }
-    }).transition(TransitionEffect.OPACITY.animation({duration: 1000, delay: 1000}))
+    }).transition(TransitionEffect.OPACITY.animation({duration: 1000, delay: 1000}).combine(TransitionEffect.scale({
+      x: 1.2, y: 1.2
+    }).animation({duration: 1000, curve: Curve.EaseInOut, delay: 1000})))
+
   }
 }

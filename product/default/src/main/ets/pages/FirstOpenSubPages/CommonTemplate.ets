@@ -1,6 +1,7 @@
 import { ResponsiveUtil } from "@handwer/base"
 import { LightUpLinedContainer } from "@handwer/ui_components"
 import { hdsEffect } from "@kit.UIDesignKit"
+import { LengthMetrics } from "@kit.ArkUI"
 
 @ComponentV2
 export struct ImageTitleWelcomeTemplate {
@@ -33,11 +34,16 @@ export struct ImageTitleWelcomeTemplate {
           .padding(48)
           .height(ResponsiveUtil.PuraXOuterCheck() ? undefined : '40%')
 
-          Column({space: 12}) {
+          Column({space: 24}) {
             Text(this.title)
-              .fontSize(20)
-              .fontWeight(FontWeight.Bold)
+              .fontSize(24)
+              .fontWeight(FontWeight.Bolder)
               .fontColor(this.useDefaultTextColor ? $r('sys.color.font_primary') : Color.White)
+              .textShadow(this.useDefaultTextColor ? undefined: {
+                color: '#66ffffff',
+                radius: 24,
+                offsetY: 4
+              })
             Text(this.subtitle)
               .fontColor(this.useDefaultTextColor ? $r('sys.color.font_primary') : Color.White)
           }
@@ -64,14 +70,15 @@ export struct ImageTitleWelcomeTemplate {
             }
           }.margin(24).justifyContent(FlexAlign.Center)
         }
-      }.visualEffect(new hdsEffect.HdsEffectBuilder().pointLight({
-        illuminatedType: hdsEffect.PointLightIlluminatedType.CONTENT
-      }).buildEffect())
-      .padding({bottom: 48, left: '20%', right: '20%'})
+      }
+      .padding(ResponsiveUtil.chooseByWidth<Padding>([{bottom: 48}, {bottom: 48, left: '10%', right: '10%'}, {bottom: 48, left: '20%', right: '20%'}]))
     }.width('100%').height('100%')
     .edgeEffect(EdgeEffect.Spring, {
       alwaysEnabled: false
     }).scrollBar(BarState.Off)
+    .fadingEdge(true, {
+      fadingEdgeLength: LengthMetrics.percent(10)
+    })
     .clip(false)
   }
 }
@@ -113,7 +120,7 @@ export struct SymbolTitle {
       // .borderRadius(24)
       .brightness(1.1)
       .saturate(3)
-      // .translate({y: 8})
+      .translate({y: 8})
       // .scale({x: 1.2, y: 1.2})
 
       Column() {
@@ -131,7 +138,7 @@ export struct SymbolTitle {
         angle: 135,
         colors: [[this.gradientColor[0], 0], [this.gradientColor[1], 1]]
       })
-      .shadow(ShadowStyle.OUTER_FLOATING_SM)
+      .shadow(ShadowStyle.OUTER_DEFAULT_SM)
     }
   }
   build() {
