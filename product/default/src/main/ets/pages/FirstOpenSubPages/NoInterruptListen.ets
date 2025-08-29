@@ -121,14 +121,14 @@ struct SimulatedMusicPlayer_HideProgress {
           Column()
             .width(24)
             .height(24)
-            .backgroundColor('#4DFFFFFF')
+            .backgroundColor('#30FFFFFF') // 降低亮度
             .borderRadius(12)
 
           // 设置按钮
           Column()
             .width(24)
             .height(24)
-            .backgroundColor('#4DFFFFFF')
+            .backgroundColor('#30FFFFFF') // 降低亮度
             .borderRadius(12)
         }.width('100%').justifyContent(FlexAlign.SpaceBetween)
       }
@@ -160,14 +160,14 @@ struct SimulatedMusicPlayer_HideProgress {
             Column()
               .width(100)
               .height(6)
-              .backgroundColor('#CCFFFFFF')
+              .backgroundColor('#80FFFFFF') // 降低亮度
               .borderRadius(3)
 
             // 艺术家名
             Column()
               .width(80)
               .height(4)
-              .backgroundColor('#99FFFFFF')
+              .backgroundColor('#60FFFFFF') // 降低亮度
               .borderRadius(2)
           }.alignItems(HorizontalAlign.Start)
           .margin({ top: 16 })
@@ -178,7 +178,7 @@ struct SimulatedMusicPlayer_HideProgress {
             Column()
               .width(20)
               .height(20)
-              .backgroundColor('#4DFFFFFF')
+              .backgroundColor('#30FFFFFF') // 降低亮度
               .borderRadius(10)
           }
           .alignSelf(ItemAlign.End)
@@ -196,13 +196,13 @@ struct SimulatedMusicPlayer_HideProgress {
           Column()
             .height(2)
             .layoutWeight(0.4)
-            .backgroundColor('#CCFFFFFF')
+            .backgroundColor('#80FFFFFF') // 降低亮度
             .borderRadius(1)
 
           Column()
             .height(2)
             .layoutWeight(0.6)
-            .backgroundColor('#4DFFFFFF')
+            .backgroundColor('#30FFFFFF') // 降低亮度
             .borderRadius(1)
         }
         .width('80%')
@@ -212,7 +212,7 @@ struct SimulatedMusicPlayer_HideProgress {
           Column()
             .width(20)
             .height(3)
-            .backgroundColor('#99FFFFFF')
+            .backgroundColor('#60FFFFFF') // 降低亮度
             .borderRadius(1.5)
 
           Blank()
@@ -220,7 +220,7 @@ struct SimulatedMusicPlayer_HideProgress {
           Column()
             .width(20)
             .height(3)
-            .backgroundColor('#99FFFFFF')
+            .backgroundColor('#60FFFFFF') // 降低亮度
             .borderRadius(1.5)
         }
         .width('80%')
@@ -241,20 +241,20 @@ struct SimulatedMusicPlayer_HideProgress {
         Column()
           .width(28)
           .height(28)
-          .backgroundColor('#CCFFFFFF')
+          .backgroundColor('#70FFFFFF') // 降低亮度
           .borderRadius(14)
 
-        // 播放/暂停按钮 (大一些)
+        // 播放/暂停按钮 (大一些，可交互)
         Column()
           .width(40)
           .height(40)
-          .backgroundColor('#CCFFFFFF')
+          .backgroundColor('#70FFFFFF') // 降低亮度
           .borderRadius(20)
           .border({
-            width: this.isPlaying ? 0 : 2,
-            color: '#CCFFFFFF'
+            width: this.isPlaying ? 1 : 2,
+            color: this.isPlaying ? '#AAFFFFFF' : '#CCFFFFFF' // 高亮可交互状态
           })
-          .backgroundColor(this.isPlaying ? '#66FFFFFF' : Color.Transparent)
+          .backgroundColor(this.isPlaying ? '#40FFFFFF' : Color.Transparent) // 降低高亮亮度
           .onClick(() => {
             this.isPlaying = !this.isPlaying
           })
@@ -263,7 +263,7 @@ struct SimulatedMusicPlayer_HideProgress {
         Column()
           .width(28)
           .height(28)
-          .backgroundColor('#CCFFFFFF')
+          .backgroundColor('#70FFFFFF') // 降低亮度
           .borderRadius(14)
       }
       .justifyContent(FlexAlign.Center)
@@ -303,7 +303,7 @@ struct SimulatedMusicPlayer_ShowExplore {
           Column()
             .width(80)
             .height(4)
-            .backgroundColor('#99FFFFFF')
+            .backgroundColor('#60FFFFFF') // 降低亮度
             .borderRadius(2)
 
           Blank()
@@ -311,7 +311,7 @@ struct SimulatedMusicPlayer_ShowExplore {
           Column()
             .width(20)
             .height(20)
-            .backgroundColor('#4DFFFFFF')
+            .backgroundColor('#30FFFFFF') // 降低亮度
             .borderRadius(10)
         }
         .width('100%')
@@ -324,17 +324,17 @@ struct SimulatedMusicPlayer_ShowExplore {
             Column()
               .width(40)
               .height(40)
-              .backgroundColor('#4DFFFFFF')
+              .backgroundColor('#30FFFFFF') // 降低亮度
               .borderRadius(8)
             Column()
               .width(40)
               .height(40)
-              .backgroundColor('#4DFFFFFF')
+              .backgroundColor('#30FFFFFF') // 降低亮度
               .borderRadius(8)
             Column()
               .width(40)
               .height(40)
-              .backgroundColor('#4DFFFFFF')
+              .backgroundColor('#30FFFFFF') // 降低亮度
               .borderRadius(8)
           }
 
@@ -343,17 +343,17 @@ struct SimulatedMusicPlayer_ShowExplore {
             Column()
               .width(40)
               .height(40)
-              .backgroundColor('#4DFFFFFF')
+              .backgroundColor('#30FFFFFF') // 降低亮度
               .borderRadius(8)
             Column()
               .width(40)
               .height(40)
-              .backgroundColor('#4DFFFFFF')
+              .backgroundColor('#30FFFFFF') // 降低亮度
               .borderRadius(8)
             Column()
               .width(40)
               .height(40)
-              .backgroundColor('#4DFFFFFF')
+              .backgroundColor('#30FFFFFF') // 降低亮度
               .borderRadius(8)
           }
         }
@@ -378,16 +378,21 @@ struct SimulatedMusicPlayer_ShowExplore {
     Column() {
       // 中间内容区域
       Column({space: 12}) {
-        // 专辑封面区域
+        // 专辑封面区域 (可交互 - 点击切换Explore)
         Column()
           .width(120)
           .height(120)
-          .backgroundColor('#80FFFFFF')
+          .backgroundColor('#50FFFFFF') // 降低亮度
           .borderRadius(12)
           .shadow({
             radius: 8,
             color: '#33000000',
             offsetY: 4
+          })
+          // 高亮可交互区域
+          .border({
+            width: 1,
+            color: '#80FFFFFF'
           })
           .onClick(() => {
             this.toggleExplore()
@@ -400,25 +405,30 @@ struct SimulatedMusicPlayer_ShowExplore {
             Column()
               .width(100)
               .height(6)
-              .backgroundColor('#CCFFFFFF')
+              .backgroundColor('#80FFFFFF') // 降低亮度
               .borderRadius(3)
 
             // 艺术家名
             Column()
               .width(80)
               .height(4)
-              .backgroundColor('#99FFFFFF')
+              .backgroundColor('#60FFFFFF') // 降低亮度
               .borderRadius(2)
           }.alignItems(HorizontalAlign.Start)
 
-          // 底部控制按钮区域
+          // 底部控制按钮区域 (可交互 - 首页按钮)
           Column() {
             // 首页按钮
             Column()
               .width(20)
               .height(20)
-              .backgroundColor('#4DFFFFFF')
+              .backgroundColor('#30FFFFFF') // 降低亮度
               .borderRadius(10)
+              // 高亮可交互区域
+              .border({
+                width: 1,
+                color: '#80FFFFFF'
+              })
               .onClick(() => {
                 this.toggleExplore()
               })
@@ -436,22 +446,22 @@ struct SimulatedMusicPlayer_ShowExplore {
         Column()
           .width(28)
           .height(28)
-          .backgroundColor('#CCFFFFFF')
+          .backgroundColor('#70FFFFFF') // 降低亮度
           .borderRadius(14)
 
         // 播放/暂停按钮 (大一些)
         Column()
           .width(40)
           .height(40)
-          .backgroundColor('#CCFFFFFF')
+          .backgroundColor('#70FFFFFF') // 降低亮度
           .borderRadius(20)
-          .backgroundColor('#66FFFFFF')
+          .backgroundColor('#40FFFFFF') // 降低高亮亮度
 
         // 下一首按钮
         Column()
           .width(28)
           .height(28)
-          .backgroundColor('#CCFFFFFF')
+          .backgroundColor('#70FFFFFF') // 降低亮度
           .borderRadius(14)
       }
       .justifyContent(FlexAlign.Center)
@@ -468,12 +478,17 @@ struct SimulatedMusicPlayer_ShowExplore {
 
   @Builder BottomPlayerBar() {
     Row({ space: 12 }) {
-      // 小封面
+      // 小封面 (可交互 - 点击收起Explore)
       Column()
         .width(40)
         .height(40)
-        .backgroundColor('#80FFFFFF')
+        .backgroundColor('#50FFFFFF') // 降低亮度
         .borderRadius(8)
+        // 高亮可交互区域
+        .border({
+          width: 1,
+          color: '#80FFFFFF'
+        })
         .onClick(() => {
           this.toggleExplore()
         })
@@ -483,12 +498,12 @@ struct SimulatedMusicPlayer_ShowExplore {
         Column()
           .width(60)
           .height(4)
-          .backgroundColor('#CCFFFFFF')
+          .backgroundColor('#80FFFFFF') // 降低亮度
           .borderRadius(2)
         Column()
           .width(40)
           .height(3)
-          .backgroundColor('#99FFFFFF')
+          .backgroundColor('#60FFFFFF') // 降低亮度
           .borderRadius(1.5)
       }
       .alignItems(HorizontalAlign.Start)
@@ -498,7 +513,7 @@ struct SimulatedMusicPlayer_ShowExplore {
       Column()
         .width(32)
         .height(32)
-        .backgroundColor('#66FFFFFF')
+        .backgroundColor('#40FFFFFF') // 降低高亮亮度
         .borderRadius(16)
     }
     .width('100%')
@@ -517,19 +532,32 @@ struct SimulatedMusicPlayer_ShowExplore {
       Row() {
         // 右侧按钮组
         Row({ space: 12 }) {
-          // 首页按钮
+          // 首页按钮 (可交互)
           Column()
             .width(24)
             .height(24)
-            .backgroundColor('#4DFFFFFF')
+            .backgroundColor('#30FFFFFF') // 降低亮度
             .borderRadius(12)
+            // 高亮可交互区域
+            .border({
+              width: 1,
+              color: '#80FFFFFF'
+            })
+            .onClick(() => {
+              this.toggleExplore()
+            })
 
-          // 设置按钮
+          // 设置按钮 (可交互)
           Column()
             .width(24)
             .height(24)
-            .backgroundColor('#4DFFFFFF')
+            .backgroundColor('#30FFFFFF') // 降低亮度
             .borderRadius(12)
+            // 高亮可交互区域
+            .border({
+              width: 1,
+              color: '#80FFFFFF'
+            })
             .onClick(() => {
               this.toggleExplore()
             })
@@ -578,7 +606,7 @@ struct SimulatedMusicPlayer_PlayQueue {
       Column()
         .width(32)
         .height(4)
-        .backgroundColor('#4DFFFFFF')
+        .backgroundColor('#30FFFFFF') // 降低亮度
         .borderRadius(2)
         .margin({ top: 8, bottom: 16 })
 
@@ -591,12 +619,17 @@ struct SimulatedMusicPlayer_PlayQueue {
 
         Blank()
 
-        // 关闭按钮
+        // 关闭按钮 (可交互)
         Column()
           .width(20)
           .height(20)
-          .backgroundColor('#4DFFFFFF')
+          .backgroundColor('#30FFFFFF') // 降低亮度
           .borderRadius(10)
+          // 高亮可交互区域
+          .border({
+            width: 1,
+            color: '#80FFFFFF'
+          })
           .onClick(() => {
             this.togglePlayQueue()
           })
@@ -611,19 +644,19 @@ struct SimulatedMusicPlayer_PlayQueue {
           Column()
             .width(32)
             .height(32)
-            .backgroundColor('#80FFFFFF')
+            .backgroundColor('#50FFFFFF') // 降低亮度
             .borderRadius(4)
 
           Column({ space: 2 }) {
             Column()
               .width(80)
               .height(4)
-              .backgroundColor('#CCFFFFFF')
+              .backgroundColor('#80FFFFFF') // 降低亮度
               .borderRadius(2)
             Column()
               .width(60)
               .height(3)
-              .backgroundColor('#99FFFFFF')
+              .backgroundColor('#60FFFFFF') // 降低亮度
               .borderRadius(1.5)
           }
           .alignItems(HorizontalAlign.Start)
@@ -647,19 +680,19 @@ struct SimulatedMusicPlayer_PlayQueue {
             Column()
               .width(32)
               .height(32)
-              .backgroundColor('#4DFFFFFF')
+              .backgroundColor('#30FFFFFF') // 降低亮度
               .borderRadius(4)
 
             Column({ space: 2 }) {
               Column()
                 .width(70 + index * 5)
                 .height(4)
-                .backgroundColor('#99FFFFFF')
+                .backgroundColor('#60FFFFFF') // 降低亮度
                 .borderRadius(2)
               Column()
                 .width(50 + index * 3)
                 .height(3)
-                .backgroundColor('#66FFFFFF')
+                .backgroundColor('#40FFFFFF') // 降低亮度
                 .borderRadius(1.5)
             }
             .alignItems(HorizontalAlign.Start)
@@ -668,7 +701,7 @@ struct SimulatedMusicPlayer_PlayQueue {
             Column()
               .width(16)
               .height(16)
-              .backgroundColor('#4DFFFFFF')
+              .backgroundColor('#30FFFFFF') // 降低亮度
               .borderRadius(8)
           }
           .width('100%')
@@ -703,14 +736,14 @@ struct SimulatedMusicPlayer_PlayQueue {
             Column()
               .width(24)
               .height(24)
-              .backgroundColor('#4DFFFFFF')
+              .backgroundColor('#30FFFFFF') // 降低亮度
               .borderRadius(12)
 
             // 设置按钮
             Column()
               .width(24)
               .height(24)
-              .backgroundColor('#4DFFFFFF')
+              .backgroundColor('#30FFFFFF') // 降低亮度
               .borderRadius(12)
           }.width('100%').justifyContent(FlexAlign.SpaceBetween)
         }
@@ -724,7 +757,7 @@ struct SimulatedMusicPlayer_PlayQueue {
           Column()
             .width(120)
             .height(120)
-            .backgroundColor('#80FFFFFF')
+            .backgroundColor('#50FFFFFF') // 降低亮度
             .borderRadius(12)
             .shadow({
               radius: 8,
@@ -733,23 +766,30 @@ struct SimulatedMusicPlayer_PlayQueue {
             })
 
           Row() {
-            // 歌曲信息区域 (两行文字的模拟) - 点击打开播放队列
+            // 歌曲信息区域 (两行文字的模拟) - 点击打开播放队列 (可交互)
             Column({ space: 4 }) {
               // 歌曲名
               Column()
                 .width(100)
                 .height(6)
-                .backgroundColor('#CCFFFFFF')
+                .backgroundColor('#80FFFFFF') // 降低亮度
                 .borderRadius(3)
 
               // 艺术家名
               Column()
                 .width(80)
                 .height(4)
-                .backgroundColor('#99FFFFFF')
+                .backgroundColor('#60FFFFFF') // 降低亮度
                 .borderRadius(2)
             }
             .alignItems(HorizontalAlign.Start)
+            // 高亮可交互区域
+            .border({
+              width: 1,
+              color: '#80FFFFFF'
+            })
+            .borderRadius(4)
+            .padding(4)
             .onClick(() => {
               this.togglePlayQueue()
             })
@@ -760,7 +800,7 @@ struct SimulatedMusicPlayer_PlayQueue {
               Column()
                 .width(20)
                 .height(20)
-                .backgroundColor('#4DFFFFFF')
+                .backgroundColor('#30FFFFFF') // 降低亮度
                 .borderRadius(10)
             }
             .alignSelf(ItemAlign.End)
@@ -776,22 +816,22 @@ struct SimulatedMusicPlayer_PlayQueue {
           Column()
             .width(28)
             .height(28)
-            .backgroundColor('#CCFFFFFF')
+            .backgroundColor('#70FFFFFF') // 降低亮度
             .borderRadius(14)
 
           // 播放/暂停按钮 (大一些)
           Column()
             .width(40)
             .height(40)
-            .backgroundColor('#CCFFFFFF')
+            .backgroundColor('#70FFFFFF') // 降低亮度
             .borderRadius(20)
-            .backgroundColor('#66FFFFFF')
+            .backgroundColor('#40FFFFFF') // 降低高亮亮度
 
           // 下一首按钮
           Column()
             .width(28)
             .height(28)
-            .backgroundColor('#CCFFFFFF')
+            .backgroundColor('#70FFFFFF') // 降低亮度
             .borderRadius(14)
         }
         .justifyContent(FlexAlign.Center)
