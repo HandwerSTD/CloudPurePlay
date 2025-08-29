@@ -13,19 +13,67 @@ export struct NoInterruptListen {
     })
   }
 
-  @Builder footer() {
+  @Builder featureCard(symbol: Resource, msg: string) {
     Column() {
-      // 展示模拟的播放器界面
-      SimulatedMusicPlayer()
-        .alignSelf(ItemAlign.Center)
+
+      SymbolTitle({
+        icon: symbol,
+        gradientColor: [0xe4b7d4, 0xbc97d4]
+      }).padding({top: 24})
+      Text(msg)
+        .fontColor(Color.White)
+        .padding(24)
+    }.layoutWeight(ResponsiveUtil.chooseByWidth([0, 1]))
+  }
+  @Builder PlayerUI() {
+    Flex({direction: ResponsiveUtil.chooseByWidth([FlexDirection.ColumnReverse, FlexDirection.Row]), justifyContent: FlexAlign.SpaceBetween, alignItems: ItemAlign.Center}) {
+      SimulatedMusicPlayer_HideProgress()
+      this.featureCard($r('sys.symbol.identify_song'), '隐藏式进度条，点击显示，界面更清爽')
     }
+    .height(ResponsiveUtil.chooseByWidth([540, 320]))
+    .width('100%')
+  }
+
+  @Builder ShowExplore() {
+    Flex({direction: ResponsiveUtil.chooseByWidth([FlexDirection.ColumnReverse, FlexDirection.Row]), justifyContent: FlexAlign.SpaceBetween, alignItems: ItemAlign.Center}) {
+      SimulatedMusicPlayer_ShowExplore()
+      this.featureCard($r('sys.symbol.house'), '设计始终以播放器为核心，专注自在听歌，点击右上角按钮进入探索页')
+    }
+    .height(ResponsiveUtil.chooseByWidth([540, 320]))
+    .width('100%')
+  }
+
+  @Builder PlayQueue() {
+    Flex({direction: ResponsiveUtil.chooseByWidth([FlexDirection.ColumnReverse, FlexDirection.Row]), justifyContent: FlexAlign.SpaceBetween, alignItems: ItemAlign.Center}) {
+      SimulatedMusicPlayer_PlayQueue()
+      this.featureCard($r('sys.symbol.list_bullet'), '点击歌曲信息打开播放队列，管理播放列表')
+    }
+    .height(ResponsiveUtil.chooseByWidth([540, 320]))
+    .width('100%')
+  }
+
+  @Builder footer() {
+    Row() {
+      Swiper() {
+        this.PlayerUI()
+        this.ShowExplore()
+        this.PlayQueue()
+      }
+      // .autoPlay(true)
+      // .interval(4000)
+      .indicator(false)
+    }
+    .width('100%')
     .justifyContent(FlexAlign.Center)
+    .backgroundColor($r('app.color.play_list_single_item_bg'))
+    .borderRadius(24)
+    .padding({bottom: 24, left: 12, right: 12, top: ResponsiveUtil.chooseByWidth([0, 24])})
   }
 
   build() {
     ImageTitleWelcomeTemplate({
       title: '「不打扰」的纯净听歌',
-      subtitle: '极简 UX 设计，只保留必要的控制，多余元素自动隐藏，点击即可呼出。一切设计，都是为了纯净聆听。',
+      subtitle: '极简 UX 设计，只保留必要的控制，多余元素自动隐藏，给你更清爽的听歌体验。一切设计，都是为了纯净聆听。',
       customImage: this.header,
       footer: () => {
         this.footer()
@@ -35,7 +83,7 @@ export struct NoInterruptListen {
 }
 
 @ComponentV2
-struct SimulatedMusicPlayer {
+struct SimulatedMusicPlayer_HideProgress {
   @Local isPlaying: boolean = true
   @Local showProgress: boolean = false
   private progressTimeoutHandler?: number
@@ -75,7 +123,7 @@ struct SimulatedMusicPlayer {
             .height(24)
             .backgroundColor('#4DFFFFFF')
             .borderRadius(12)
-          
+
           // 设置按钮
           Column()
             .width(24)
@@ -87,7 +135,7 @@ struct SimulatedMusicPlayer {
       .width('100%')
       .height(40)
       .padding({ left: 16, right: 16 })
-      
+
       // 中间内容区域
       Column({space: 12}) {
         // 专辑封面区域
@@ -195,7 +243,7 @@ struct SimulatedMusicPlayer {
           .height(28)
           .backgroundColor('#CCFFFFFF')
           .borderRadius(14)
-        
+
         // 播放/暂停按钮 (大一些)
         Column()
           .width(40)
@@ -210,7 +258,7 @@ struct SimulatedMusicPlayer {
           .onClick(() => {
             this.isPlaying = !this.isPlaying
           })
-        
+
         // 下一首按钮
         Column()
           .width(28)
@@ -227,9 +275,557 @@ struct SimulatedMusicPlayer {
     .padding(12)
     .backgroundColor('#331A1A1A')
     .borderRadius(16)
-    .animation({ 
-      duration: 300, 
-      curve: Curve.EaseInOut 
+    .animation({
+      duration: 300,
+      curve: Curve.EaseInOut
     })
+  }
+}
+
+
+@ComponentV2
+struct SimulatedMusicPlayer_ShowExplore {
+  @Local showExplore: boolean = false
+  @Local exploreOpacity: number = 0
+
+  // 模拟展开/收起动画
+  private toggleExplore() {
+    this.showExplore = !this.showExplore
+    this.exploreOpacity = this.showExplore ? 1 : 0
+  }
+
+  @Builder ExploreArea() {
+    Column() {
+      // 模拟Explore页面内容
+      Column() {
+        // 标题区域
+        Row() {
+          Column()
+            .width(80)
+            .height(4)
+            .backgroundColor('#99FFFFFF')
+            .borderRadius(2)
+
+          Blank()
+
+          Column()
+            .width(20)
+            .height(20)
+            .backgroundColor('#4DFFFFFF')
+            .borderRadius(10)
+        }
+        .width('100%')
+        .margin({ bottom: 16 })
+
+        // 内容网格
+        Column({ space: 8 }) {
+          // 第一行
+          Row({ space: 8 }) {
+            Column()
+              .width(40)
+              .height(40)
+              .backgroundColor('#4DFFFFFF')
+              .borderRadius(8)
+            Column()
+              .width(40)
+              .height(40)
+              .backgroundColor('#4DFFFFFF')
+              .borderRadius(8)
+            Column()
+              .width(40)
+              .height(40)
+              .backgroundColor('#4DFFFFFF')
+              .borderRadius(8)
+          }
+
+          // 第二行
+          Row({ space: 8 }) {
+            Column()
+              .width(40)
+              .height(40)
+              .backgroundColor('#4DFFFFFF')
+              .borderRadius(8)
+            Column()
+              .width(40)
+              .height(40)
+              .backgroundColor('#4DFFFFFF')
+              .borderRadius(8)
+            Column()
+              .width(40)
+              .height(40)
+              .backgroundColor('#4DFFFFFF')
+              .borderRadius(8)
+          }
+        }
+      }
+      .width('100%')
+      .height(180)
+      .padding(12)
+      .backgroundColor('#1A000000')
+      .borderRadius(12)
+      .margin({ bottom: 8 })
+    }.height(this.exploreOpacity === 0 ? 0 : undefined)
+    .layoutWeight(this.exploreOpacity === 0 ? 0 : 1)
+    .width('100%')
+    .opacity(this.exploreOpacity)
+    .animation({
+      duration: 300,
+      curve: Curve.EaseInOut
+    })
+  }
+
+  @Builder NormalPlayerArea() {
+    Column() {
+      // 中间内容区域
+      Column({space: 12}) {
+        // 专辑封面区域
+        Column()
+          .width(120)
+          .height(120)
+          .backgroundColor('#80FFFFFF')
+          .borderRadius(12)
+          .shadow({
+            radius: 8,
+            color: '#33000000',
+            offsetY: 4
+          })
+          .onClick(() => {
+            this.toggleExplore()
+          })
+
+        Row() {
+          // 歌曲信息区域 (两行文字的模拟)
+          Column({ space: 4 }) {
+            // 歌曲名
+            Column()
+              .width(100)
+              .height(6)
+              .backgroundColor('#CCFFFFFF')
+              .borderRadius(3)
+
+            // 艺术家名
+            Column()
+              .width(80)
+              .height(4)
+              .backgroundColor('#99FFFFFF')
+              .borderRadius(2)
+          }.alignItems(HorizontalAlign.Start)
+
+          // 底部控制按钮区域
+          Column() {
+            // 首页按钮
+            Column()
+              .width(20)
+              .height(20)
+              .backgroundColor('#4DFFFFFF')
+              .borderRadius(10)
+              .onClick(() => {
+                this.toggleExplore()
+              })
+          }
+          .alignSelf(ItemAlign.End)
+        }.width('100%').justifyContent(FlexAlign.SpaceBetween).padding({left: 16, right: 16})
+      }
+      .justifyContent(FlexAlign.Center)
+      .alignItems(HorizontalAlign.Center)
+      .margin({bottom: 12})
+
+      // 播放控制区域
+      Row({ space: 20 }) {
+        // 上一首按钮
+        Column()
+          .width(28)
+          .height(28)
+          .backgroundColor('#CCFFFFFF')
+          .borderRadius(14)
+
+        // 播放/暂停按钮 (大一些)
+        Column()
+          .width(40)
+          .height(40)
+          .backgroundColor('#CCFFFFFF')
+          .borderRadius(20)
+          .backgroundColor('#66FFFFFF')
+
+        // 下一首按钮
+        Column()
+          .width(28)
+          .height(28)
+          .backgroundColor('#CCFFFFFF')
+          .borderRadius(14)
+      }
+      .justifyContent(FlexAlign.Center)
+      .width('100%')
+    }
+    .layoutWeight(this.showExplore ? 0 : 1)
+    .opacity(this.showExplore ? 0 : 1)
+    .height(this.showExplore ? 0 : undefined)
+    .animation({
+      duration: 300,
+      curve: Curve.EaseInOut
+    })
+  }
+
+  @Builder BottomPlayerBar() {
+    Row({ space: 12 }) {
+      // 小封面
+      Column()
+        .width(40)
+        .height(40)
+        .backgroundColor('#80FFFFFF')
+        .borderRadius(8)
+        .onClick(() => {
+          this.toggleExplore()
+        })
+
+      // 歌曲信息
+      Column({ space: 2 }) {
+        Column()
+          .width(60)
+          .height(4)
+          .backgroundColor('#CCFFFFFF')
+          .borderRadius(2)
+        Column()
+          .width(40)
+          .height(3)
+          .backgroundColor('#99FFFFFF')
+          .borderRadius(1.5)
+      }
+      .alignItems(HorizontalAlign.Start)
+      .layoutWeight(1)
+
+      // 播放按钮
+      Column()
+        .width(32)
+        .height(32)
+        .backgroundColor('#66FFFFFF')
+        .borderRadius(16)
+    }
+    .width('100%')
+    .height(56)
+    .padding({ left: 12, right: 12 })
+    .opacity(this.showExplore ? 1 : 0)
+    .animation({
+      duration: 300,
+      curve: Curve.EaseInOut
+    })
+  }
+
+  build() {
+    Column() {
+      // 顶部区域 - 模拟操作按钮
+      Row() {
+        // 右侧按钮组
+        Row({ space: 12 }) {
+          // 首页按钮
+          Column()
+            .width(24)
+            .height(24)
+            .backgroundColor('#4DFFFFFF')
+            .borderRadius(12)
+
+          // 设置按钮
+          Column()
+            .width(24)
+            .height(24)
+            .backgroundColor('#4DFFFFFF')
+            .borderRadius(12)
+            .onClick(() => {
+              this.toggleExplore()
+            })
+        }.width('100%').justifyContent(FlexAlign.SpaceBetween)
+      }
+      .width('100%')
+      .height(40)
+      .padding({ left: 16, right: 16 })
+
+      // Explore区域
+      this.ExploreArea()
+
+      // 正常播放器区域
+      this.NormalPlayerArea()
+
+      // 底部播放栏
+      this.BottomPlayerBar()
+    }
+    .width(200)
+    .height(300)
+    .padding(12)
+    .backgroundColor('#331A1A1A')
+    .borderRadius(16)
+    .animation({
+      duration: 300,
+      curve: Curve.EaseInOut
+    })
+  }
+}
+
+
+@ComponentV2
+struct SimulatedMusicPlayer_PlayQueue {
+  @Local showPlayQueue: boolean = false
+  @Local playQueueOpacity: number = 0
+
+  // 切换播放队列显示状态
+  private togglePlayQueue() {
+    this.showPlayQueue = !this.showPlayQueue
+    this.playQueueOpacity = this.showPlayQueue ? 1 : 0
+  }
+
+  @Builder PlayQueueSheet() {
+    Column() {
+      // 顶部把手
+      Column()
+        .width(32)
+        .height(4)
+        .backgroundColor('#4DFFFFFF')
+        .borderRadius(2)
+        .margin({ top: 8, bottom: 16 })
+
+      // 标题
+      Row() {
+        Text('播放队列')
+          .fontSize(14)
+          .fontColor(Color.White)
+          .fontWeight(FontWeight.Medium)
+
+        Blank()
+
+        // 关闭按钮
+        Column()
+          .width(20)
+          .height(20)
+          .backgroundColor('#4DFFFFFF')
+          .borderRadius(10)
+          .onClick(() => {
+            this.togglePlayQueue()
+          })
+      }
+      .width('100%')
+      .margin({ bottom: 12 })
+
+      // 队列列表
+      Column({ space: 8 }) {
+        // 当前播放的歌曲
+        Row({ space: 8 }) {
+          Column()
+            .width(32)
+            .height(32)
+            .backgroundColor('#80FFFFFF')
+            .borderRadius(4)
+
+          Column({ space: 2 }) {
+            Column()
+              .width(80)
+              .height(4)
+              .backgroundColor('#CCFFFFFF')
+              .borderRadius(2)
+            Column()
+              .width(60)
+              .height(3)
+              .backgroundColor('#99FFFFFF')
+              .borderRadius(1.5)
+          }
+          .alignItems(HorizontalAlign.Start)
+          .layoutWeight(1)
+
+          // 播放指示
+          Column()
+            .width(4)
+            .height(16)
+            .backgroundColor('#66FF6B')
+            .borderRadius(2)
+        }
+        .width('100%')
+        .padding({ left: 8, right: 8, top: 6, bottom: 6 })
+        .backgroundColor('#1AFFFFFF')
+        .borderRadius(8)
+
+        // 队列中的其他歌曲
+        ForEach([1, 2, 3], (index: number) => {
+          Row({ space: 8 }) {
+            Column()
+              .width(32)
+              .height(32)
+              .backgroundColor('#4DFFFFFF')
+              .borderRadius(4)
+
+            Column({ space: 2 }) {
+              Column()
+                .width(70 + index * 5)
+                .height(4)
+                .backgroundColor('#99FFFFFF')
+                .borderRadius(2)
+              Column()
+                .width(50 + index * 3)
+                .height(3)
+                .backgroundColor('#66FFFFFF')
+                .borderRadius(1.5)
+            }
+            .alignItems(HorizontalAlign.Start)
+            .layoutWeight(1)
+
+            Column()
+              .width(16)
+              .height(16)
+              .backgroundColor('#4DFFFFFF')
+              .borderRadius(8)
+          }
+          .width('100%')
+          .padding({ left: 8, right: 8, top: 6, bottom: 6 })
+        })
+      }
+      .alignItems(HorizontalAlign.Start)
+    }
+    .width('100%')
+    .height(200)
+    .padding(12)
+    .backgroundColor('#CC000000')
+    .backgroundBlurStyle(BlurStyle.BACKGROUND_REGULAR)
+    .borderRadius({ topLeft: 16, topRight: 16 })
+    .opacity(this.playQueueOpacity)
+    .translate({ y: this.showPlayQueue ? 0 : 150 })
+    .animation({
+      duration: 300,
+      curve: Curve.EaseInOut
+    })
+  }
+
+  build() {
+    Stack({ alignContent: Alignment.Bottom }) {
+      // 主播放器界面
+      Column() {
+        // 顶部区域 - 模拟操作按钮
+        Row() {
+          // 右侧按钮组
+          Row({ space: 12 }) {
+            // 首页按钮
+            Column()
+              .width(24)
+              .height(24)
+              .backgroundColor('#4DFFFFFF')
+              .borderRadius(12)
+
+            // 设置按钮
+            Column()
+              .width(24)
+              .height(24)
+              .backgroundColor('#4DFFFFFF')
+              .borderRadius(12)
+          }.width('100%').justifyContent(FlexAlign.SpaceBetween)
+        }
+        .width('100%')
+        .height(40)
+        .padding({ left: 16, right: 16 })
+
+        // 中间内容区域
+        Column({space: 12}) {
+          // 专辑封面区域
+          Column()
+            .width(120)
+            .height(120)
+            .backgroundColor('#80FFFFFF')
+            .borderRadius(12)
+            .shadow({
+              radius: 8,
+              color: '#33000000',
+              offsetY: 4
+            })
+
+          Row() {
+            // 歌曲信息区域 (两行文字的模拟) - 点击打开播放队列
+            Column({ space: 4 }) {
+              // 歌曲名
+              Column()
+                .width(100)
+                .height(6)
+                .backgroundColor('#CCFFFFFF')
+                .borderRadius(3)
+
+              // 艺术家名
+              Column()
+                .width(80)
+                .height(4)
+                .backgroundColor('#99FFFFFF')
+                .borderRadius(2)
+            }
+            .alignItems(HorizontalAlign.Start)
+            .onClick(() => {
+              this.togglePlayQueue()
+            })
+
+            // 底部控制按钮区域
+            Column() {
+              // 模拟喜欢按钮
+              Column()
+                .width(20)
+                .height(20)
+                .backgroundColor('#4DFFFFFF')
+                .borderRadius(10)
+            }
+            .alignSelf(ItemAlign.End)
+          }.width('100%').justifyContent(FlexAlign.SpaceBetween).padding({left: 16, right: 16})
+        }
+        .justifyContent(FlexAlign.Center)
+        .alignItems(HorizontalAlign.Center)
+        .margin({bottom: 12})
+
+        // 播放控制区域
+        Row({ space: 20 }) {
+          // 上一首按钮
+          Column()
+            .width(28)
+            .height(28)
+            .backgroundColor('#CCFFFFFF')
+            .borderRadius(14)
+
+          // 播放/暂停按钮 (大一些)
+          Column()
+            .width(40)
+            .height(40)
+            .backgroundColor('#CCFFFFFF')
+            .borderRadius(20)
+            .backgroundColor('#66FFFFFF')
+
+          // 下一首按钮
+          Column()
+            .width(28)
+            .height(28)
+            .backgroundColor('#CCFFFFFF')
+            .borderRadius(14)
+        }
+        .justifyContent(FlexAlign.Center)
+        .width('100%')
+        .margin({ bottom: 20 })
+      }
+      .width(200)
+      .height(300)
+      .padding(12)
+      .backgroundColor('#331A1A1A')
+      .borderRadius(16)
+
+      // 播放队列半模态
+      this.PlayQueueSheet()
+
+      // 背景遮罩
+      if (this.showPlayQueue) {
+        Column()
+          .width('100%')
+          .height('100%')
+          .backgroundColor('#33000000')
+          .onClick(() => {
+            this.togglePlayQueue()
+          })
+          .opacity(this.playQueueOpacity * 0.5)
+          .animation({
+            duration: 300,
+            curve: Curve.EaseInOut
+          })
+      }
+    }
+    .width(200)
+    .height(300)
+    .clip(true)
+    .borderRadius(16)
   }
 }
