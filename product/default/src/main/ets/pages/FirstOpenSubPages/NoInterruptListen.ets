@@ -23,6 +23,13 @@ struct OverlayClickSymbol {
 @ComponentV2
 export struct NoInterruptListen {
 
+  get flexParam(): FlexOptions {
+    return {direction: ResponsiveUtil.chooseByWidth([FlexDirection.ColumnReverse, FlexDirection.Row]), justifyContent: FlexAlign.SpaceBetween, alignItems: ItemAlign.Center, space: {main: LengthMetrics.vp(ResponsiveUtil.chooseByWidth([0, 24]))}}
+  }
+  get flexPadding(): Padding {
+    return ResponsiveUtil.chooseByWidth<Padding>([{left: 12, right: 12}, {left:24, right: 24}])
+  }
+
   @Builder header() {
     SymbolTitle({
       icon: $r('sys.symbol.play_circle_badge_music_note'),
@@ -39,34 +46,37 @@ export struct NoInterruptListen {
       }).padding({top: 24})
       Text(msg)
         .fontColor(Color.White)
-        .padding(24)
+        .padding({top: 24})
     }.layoutWeight(ResponsiveUtil.chooseByWidth([0, 1]))
   }
   @Builder PlayerUI() {
-    Flex({direction: ResponsiveUtil.chooseByWidth([FlexDirection.ColumnReverse, FlexDirection.Row]), justifyContent: FlexAlign.SpaceBetween, alignItems: ItemAlign.Center}) {
+    Flex(this.flexParam) {
       SimulatedMusicPlayer_HideProgress()
       this.featureCard($r('sys.symbol.identify_song'), '隐藏式进度条，点击显示，界面更清爽')
     }
     .height(ResponsiveUtil.chooseByWidth([540, 320]))
     .width('100%')
+    .padding(this.flexPadding)
   }
 
   @Builder ShowExplore() {
-    Flex({direction: ResponsiveUtil.chooseByWidth([FlexDirection.ColumnReverse, FlexDirection.Row]), justifyContent: FlexAlign.SpaceBetween, alignItems: ItemAlign.Center}) {
+    Flex(this.flexParam) {
       SimulatedMusicPlayer_ShowExplore()
-      this.featureCard($r('sys.symbol.house'), '设计始终以播放器为核心，专注自在听歌，点击右上角按钮进入探索页')
+      this.featureCard($r('sys.symbol.house'), '在播放器页面，点击右上角按钮进入探索页，在探索页点击底部封面返回播放器')
     }
     .height(ResponsiveUtil.chooseByWidth([540, 320]))
     .width('100%')
+    .padding(this.flexPadding)
   }
 
   @Builder PlayQueue() {
-    Flex({direction: ResponsiveUtil.chooseByWidth([FlexDirection.ColumnReverse, FlexDirection.Row]), justifyContent: FlexAlign.SpaceBetween, alignItems: ItemAlign.Center}) {
+    Flex(this.flexParam) {
       SimulatedMusicPlayer_PlayQueue()
       this.featureCard($r('sys.symbol.list_bullet'), '点击歌曲信息打开播放队列，管理播放列表')
     }
     .height(ResponsiveUtil.chooseByWidth([540, 320]))
     .width('100%')
+    .padding(this.flexPadding)
   }
 
   @Builder footer() {
@@ -78,13 +88,13 @@ export struct NoInterruptListen {
       }
       // .autoPlay(true)
       // .interval(4000)
-      .indicator(false)
+      // .indicator
     }
     .width('100%')
     .justifyContent(FlexAlign.Center)
     .backgroundColor($r('app.color.play_list_single_item_bg'))
     .borderRadius(24)
-    .padding({bottom: 24, left: 24, right: 24, top: ResponsiveUtil.chooseByWidth([0, 24])})
+    .padding({bottom: 24, top: ResponsiveUtil.chooseByWidth([0, 24])})
     .visualEffect(new hdsEffect.HdsEffectBuilder().pointLight({
       illuminatedType: hdsEffect.PointLightIlluminatedType.CONTENT
     }).buildEffect())
@@ -110,7 +120,7 @@ struct SimulatedMusicPlayer_HideProgress {
 
   // 模拟显示进度条的方法
   private showProgressBar() {
-    const showProgressBarTime = 3000 // 3秒
+    const showProgressBarTime = 1500 // 3秒
 
     if (this.progressTimeoutHandler) {
       clearTimeout(this.progressTimeoutHandler)
@@ -153,7 +163,7 @@ struct SimulatedMusicPlayer_HideProgress {
   aboutToAppear(): void {
     this.interval = setInterval(() => {
       this.animator()
-    }, 300+3000+ 1000)
+    }, 300+1500+ 1000)
   }
 
   aboutToDisappear(): void {
@@ -329,11 +339,39 @@ struct SimulatedMusicPlayer_HideProgress {
 struct SimulatedMusicPlayer_ShowExplore {
   @Local showExplore: boolean = false
   @Local exploreOpacity: number = 0
+  @Local anim_TapScale: boolean = false
 
   // 模拟展开/收起动画
   private toggleExplore() {
     this.showExplore = !this.showExplore
     this.exploreOpacity = this.showExplore ? 1 : 0
+  }
+
+  @Builder tap() {
+    OverlayClickSymbol()
+      .scale(this.anim_TapScale ? {x: 0.9, y: 0.9} : undefined)
+      .animation({duration: 300})
+      .translate({x: 10, y: 10})
+  }
+
+  animator() {
+    this.anim_TapScale = true;
+    setTimeout(() => {
+      this.anim_TapScale = false;
+      this.toggleExplore()
+    }, 300)
+  }
+
+  interval?: number
+
+  aboutToAppear(): void {
+    this.interval = setInterval(() => {
+      this.animator()
+    }, 300+3000)
+  }
+
+  aboutToDisappear(): void {
+    clearInterval(this.interval)
   }
 
   @Builder ExploreArea() {
@@ -446,6 +484,7 @@ struct SimulatedMusicPlayer_ShowExplore {
           .onClick(() => {
             this.toggleExplore()
           })
+          .overlay(this.tap)
         }.width('100%').justifyContent(FlexAlign.SpaceBetween)
       }
       .width('100%')
@@ -545,6 +584,7 @@ struct SimulatedMusicPlayer_ShowExplore {
         .onClick(() => {
           this.toggleExplore()
         })
+        .overlay(this.tap)
 
       // 歌曲信息
       Column({ space: 2 }) {
@@ -608,11 +648,39 @@ struct SimulatedMusicPlayer_ShowExplore {
 struct SimulatedMusicPlayer_PlayQueue {
   @Local showPlayQueue: boolean = false
   @Local playQueueOpacity: number = 0
+  @Local anim_TapScale: boolean = false
 
   // 切换播放队列显示状态
   private togglePlayQueue() {
     this.showPlayQueue = !this.showPlayQueue
     this.playQueueOpacity = this.showPlayQueue ? 1 : 0
+  }
+
+  @Builder tap() {
+    OverlayClickSymbol()
+      .scale(this.anim_TapScale ? {x: 0.9, y: 0.9} : undefined)
+      .animation({duration: 300})
+      .translate({x: 40, y: 20})
+  }
+
+  animator() {
+    this.anim_TapScale = true;
+    setTimeout(() => {
+      this.anim_TapScale = false;
+      this.togglePlayQueue()
+    }, 300)
+  }
+
+  interval?: number
+
+  aboutToAppear(): void {
+    this.interval = setInterval(() => {
+      this.animator()
+    }, 300+2000)
+  }
+
+  aboutToDisappear(): void {
+    clearInterval(this.interval)
   }
 
   @Builder PlayQueueSheet() {
@@ -813,6 +881,7 @@ struct SimulatedMusicPlayer_PlayQueue {
             .onClick(() => {
               this.togglePlayQueue()
             })
+            .overlay(this.tap)
 
             // 底部控制按钮区域
             Column() {
