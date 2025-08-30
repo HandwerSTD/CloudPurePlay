@@ -201,13 +201,13 @@ struct SimulatedMusicPlayer_HideProgress {
         Column()
           .width(120)
           .height(120)
-          .backgroundColor('#CCFFFFFF')
+          .backgroundColor('#88FFFFFF')
           .borderRadius(12)
-          .shadow({
-            radius: 32,
-            color: '#AAFFFFFF',
-            offsetY: 4
-          })
+          // .shadow({
+          //   radius: 32,
+          //   color: '#AAFFFFFF',
+          //   offsetY: 4
+          // })
           .onClick(() => {
             this.showProgressBar()
           })
@@ -220,14 +220,14 @@ struct SimulatedMusicPlayer_HideProgress {
             Column()
               .width(100)
               .height(6)
-              .backgroundColor('#80FFFFFF') 
+              .backgroundColor('#40FFFFFF')
               .borderRadius(3)
 
             // 艺术家名
             Column()
               .width(80)
               .height(4)
-              .backgroundColor('#60FFFFFF') 
+              .backgroundColor('#40FFFFFF')
               .borderRadius(2)
           }.alignItems(HorizontalAlign.Start)
           .margin({ top: 16 })
@@ -256,13 +256,13 @@ struct SimulatedMusicPlayer_HideProgress {
           Column()
             .height(2)
             .layoutWeight(0.4)
-            .backgroundColor('#80FFFFFF') 
+            .backgroundColor('#DDFFFFFF')
             .borderRadius(1)
 
           Column()
             .height(2)
             .layoutWeight(0.6)
-            .backgroundColor('#30FFFFFF') 
+            .backgroundColor('#FFFFFF')
             .borderRadius(1)
         }
         .width('80%')
@@ -272,20 +272,28 @@ struct SimulatedMusicPlayer_HideProgress {
           Column()
             .width(20)
             .height(3)
-            .backgroundColor('#60FFFFFF') 
+            .backgroundColor('#FFFFFF')
             .borderRadius(1.5)
+            .shadow({
+              radius: 4,
+              color: '#AAFFFFFF',
+            })
 
           Blank()
 
           Column()
             .width(20)
             .height(3)
-            .backgroundColor('#60FFFFFF') 
+            .backgroundColor('#FFFFFF')
             .borderRadius(1.5)
+            .shadow({
+              radius: 4,
+              color: '#AAFFFFFF',
+            })
         }
         .width('80%')
         .margin({ top: 4 })
-      }
+      }.brightness(1.3)
       .alignItems(HorizontalAlign.Center)
       .margin({ bottom: 16 })
       .height(this.showProgress ? undefined : 0)
