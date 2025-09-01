@@ -13,13 +13,51 @@ export struct MissionContinue {
     })
   }
 
+  @Local showPhone: boolean = false
+  interval?: number
+
+  aboutToAppear(): void {
+    this.interval = setInterval(() => {
+      this.showPhone = !this.showPhone
+    }, 2000)
+  }
+  aboutToDisappear(): void {
+    clearInterval(this.interval)
+  }
+
+  @Builder footer() {
+    Scroll() {
+      Row() {
+        Row({space: 12}) {
+          SimulatedPhone({
+            showMusicPlayer: this.showPhone
+          })
+          SimulatedFoldable({
+            showMusicPlayer: !this.showPhone
+          })
+        }
+        .scale(ResponsiveUtil.chooseByWidth<ScaleOptions | undefined>([{x: 0.6, y: 0.6}, undefined]))
+        .opacity(0.7)
+      }.width(ResponsiveUtil.chooseByWidth<Length | undefined>([420, undefined]))
+      .justifyContent(FlexAlign.Center)
+    }.scrollable(ScrollDirection.Horizontal)
+    .fadingEdge(true, {
+      fadingEdgeLength: LengthMetrics.percent(10)
+    })
+    .scrollBar(BarState.Off)
+    .edgeEffect(EdgeEffect.Spring,{
+      alwaysEnabled: false
+    })
+
+  }
+
   build() {
     ImageTitleWelcomeTemplate({
       title: '应用接续，音乐流转',
-      subtitle: '基于 HarmonyOS 应用接续功能，音乐随时随你走。在手机开始，在平板延续。无缝切换，音乐从不间断。你的聆听，自然流动。',
+      subtitle: '基于 HarmonyOS 应用接续功能，音乐随时随你走。无缝切换，音乐从不间断；你的聆听，自然流动。',
       customImage: this.header,
       footer: () => {
-
+        this.footer()
       }
     })
   }
@@ -28,27 +66,175 @@ export struct MissionContinue {
 
 @ComponentV2
 struct SimulatedPhone {
+  @Param showMusicPlayer: boolean = false
+
+  // 桌面应用图标网格 (6x4)
+  @Builder desktopGrid() {
+    Column({space: 12}) {
+      // 应用图标网格
+      Column({space: 12}) {
+        ForEach([0, 1, 2, 3, 4, 5], (rowIndex: number) => {
+          Row({space: 12}) {
+            ForEach([0, 1, 2, 3], (colIndex: number) => {
+              // 应用图标
+              Column()
+                .width(24)
+                .height(24)
+                .backgroundColor('#40FFFFFF')
+                .borderRadius(6)
+            })
+          }
+        })
+      }
+
+      // Dock栏
+      Row({space: 12}) {
+        ForEach([0, 1, 2, 3], (index: number) => {
+          Column()
+            .width(24)
+            .height(24)
+            .backgroundColor('#60FFFFFF')
+            .borderRadius(7)
+        })
+        Column()
+          .width(24)
+          .height(24)
+          .backgroundColor('#E47546')
+          .borderRadius(6)
+      }
+      .justifyContent(FlexAlign.Center)
+      .padding({top: 16})
+      .margin({top: 20})
+    }.justifyContent(FlexAlign.SpaceBetween)
+    .padding(16)
+    .height('100%')
+    .transition(TransitionEffect.asymmetric(TransitionEffect.OPACITY.animation({duration: 500, delay: 150}), undefined))
+  }
+
   build() {
     Column() {
-      SimulatedMusicPlayer()
-    }.borderRadius(16)
+      if (this.showMusicPlayer) {
+        SimulatedMusicPlayer().borderRadius(12)
+          .transition(TransitionEffect.OPACITY.animation({duration: 300, curve: Curve.EaseInOut}).combine(TransitionEffect.scale({
+            x: 0.1, y: 0.1
+          }).animation({duration: 500,curve: Curve.ExtremeDeceleration})))
+      } else {
+        this.desktopGrid()
+      }
+    }
+    .width(200)
+    .height(300)
+    .backgroundColor('#661A1A1A')
+    .borderRadius(16)
     .clip(true)
     .border({
       width: 2,
-      color: '#99000000'
+      color: '#33000000'
+    })
+    .animation({
+      duration: 400,
+      curve: Curve.EaseInOut
     })
   }
 }
+
 @ComponentV2
 struct SimulatedFoldable {
+  @Param showMusicPlayer: boolean = false
+
+  // 桌面应用图标网格 (6x8)
+  @Builder desktopGrid() {
+    Column() {
+      Row() {
+        // 左侧屏幕
+        Column({space: 12}) {
+          // 应用图标网格 (左侧)
+          Column({space: 8}) {
+            ForEach([0, 1, 2, 3, 4, 5], (rowIndex: number) => {
+              Row({space: 12}) {
+                ForEach([0, 1, 2, 3], (colIndex: number) => {
+                  Column()
+                    .width(25)
+                    .height(25)
+                    .backgroundColor('#40FFFFFF')
+                    .borderRadius(5)
+                })
+              }
+            })
+          }
+        }
+        .padding(12)
+
+        // 右侧屏幕
+        Column({space: 12}) {
+          // 应用图标网格 (右侧)
+          Column({space: 8}) {
+            ForEach([0, 1, 2, 3, 4, 5], (rowIndex: number) => {
+              Row({space: 12}) {
+                ForEach([0, 1, 2, 3], (colIndex: number) => {
+                  Column()
+                    .width(25)
+                    .height(25)
+                    .backgroundColor('#40FFFFFF')
+                    .borderRadius(5)
+                })
+              }
+            })
+          }
+        }
+        .padding(12)
+      }.justifyContent(FlexAlign.Center)
+      .justifyContent(FlexAlign.SpaceAround)
+      .width('100%')
+
+      // 左侧Dock栏
+      Row({space: 8}) {
+        ForEach([0, 1, 2, 3, 4, 5], (index: number) => {
+          Column()
+            .width(24)
+            .height(24)
+            .backgroundColor('#60FFFFFF')
+            .borderRadius(6)
+        })
+        Column()
+          .width(24)
+          .height(24)
+          .backgroundColor('#E47546')
+          .borderRadius(6)
+      }
+      .justifyContent(FlexAlign.Center)
+      .margin({top: 12})
+    }.width('100%')
+
+    .transition(TransitionEffect.asymmetric(TransitionEffect.OPACITY.animation({duration: 500, delay: 150}), undefined))
+  }
+
   build() {
     Row() {
-      SimulatedMusicPlayer()
-      SimulatedLyricArea()
-    }.borderRadius(12).clip(true)
+      if (this.showMusicPlayer) {
+        Row() {
+          SimulatedMusicPlayer()
+          SimulatedLyricArea()
+        }.borderRadius(12)
+          .transition(TransitionEffect.OPACITY.animation({duration: 300, curve: Curve.EaseInOut}).combine(TransitionEffect.scale({
+            x: 0.1, y: 0.1
+          }).animation({duration: 500,curve: Curve.ExtremeDeceleration})))
+      } else {
+        this.desktopGrid()
+      }
+    }
+    .width(400)
+    .height(300)
+    .backgroundColor('#661A1A1A')
+    .borderRadius(12)
+    .clip(true)
     .border({
       width: 2,
-      color: '#99000000'
+      color: '#33000000'
+    })
+    .animation({
+      duration: 400,
+      curve: Curve.EaseInOut
     })
   }
 }
@@ -62,7 +248,7 @@ struct SimulatedMusicPlayer {
       Row() {
         // 右侧按钮组
         Row({ space: 12 }) {
-          // 首页按钮
+          // 首页按钮 - 点击可返回桌面
           Column()
             .width(24)
             .height(24)

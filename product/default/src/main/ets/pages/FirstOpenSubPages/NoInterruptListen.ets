@@ -52,7 +52,7 @@ export struct NoInterruptListen {
   @Builder PlayerUI() {
     Flex(this.flexParam) {
       SimulatedMusicPlayer_HideProgress()
-      this.featureCard($r('sys.symbol.identify_song'), '隐藏式进度条，点击显示，界面更清爽')
+      this.featureCard($r('sys.symbol.identify_song'), '隐藏式进度条，点击显示，自动隐藏，界面更清爽')
     }
     .height(ResponsiveUtil.chooseByWidth([540, 320]))
     .width('100%')
@@ -62,7 +62,7 @@ export struct NoInterruptListen {
   @Builder ShowExplore() {
     Flex(this.flexParam) {
       SimulatedMusicPlayer_ShowExplore()
-      this.featureCard($r('sys.symbol.house'), '在播放器页面，点击右上角按钮进入探索页，在探索页点击底部封面返回播放器')
+      this.featureCard($r('sys.symbol.house'), '在播放器页面，点击右上角按钮进入探索页；在探索页点击底部封面，可返回播放器')
     }
     .height(ResponsiveUtil.chooseByWidth([540, 320]))
     .width('100%')
@@ -86,9 +86,8 @@ export struct NoInterruptListen {
         this.ShowExplore()
         this.PlayQueue()
       }
-      // .autoPlay(true)
-      // .interval(4000)
-      // .indicator
+      .autoPlay(true)
+      .interval(8000)
     }
     .width('100%')
     .justifyContent(FlexAlign.Center)
