@@ -199,7 +199,7 @@ struct MainPage_Shell {
   build() {
     NavDestination() {
       Stack({alignContent: this.gs.pref.tabRightHand ? Alignment.BottomEnd : Alignment.BottomStart}) {
-        Tabs({controller: this.tabController, index: this.defaultTabIndex}) {
+        Tabs({controller: this.tabController, index: this.defaultTabIndex === -1 ? undefined : this.defaultTabIndex}) {
           TabContent() {
             ExplorePage()
           }
@@ -253,6 +253,9 @@ struct MainPage_Shell {
       this.currentTabIndex = 1
       this.defaultTabIndex = 1
     }
+    setTimeout(() => {
+      this.defaultTabIndex = -1
+    }, 500)
   }
 
   showTab() {
