@@ -5,9 +5,10 @@ import { ResponsiveUtil } from '@handwer/base'
 
 @ComponentV2
 export struct FinalWelcome {
+  @Param @Require show: boolean
   @Param @Require onFinish: () => void
 
-  @Local showFooter: boolean = true
+  @Local showFooter: boolean = false
   @Builder bottomButton() {
     if (this.showFooter) {
       LightUpLinedContainer({usePressShadow: false, lightNum: ResponsiveUtil.chooseByWidth([10, 12])}) {
@@ -34,5 +35,10 @@ export struct FinalWelcome {
     }).transition(TransitionEffect.OPACITY.animation({duration: 1000, delay: 1000}).combine(TransitionEffect.scale({
       x: 1.2, y: 1.2
     }).animation({duration: 1000, curve: Curve.EaseInOut, delay: 1000})))
+      .onAppear(() => {
+        setTimeout(() => {
+          this.showFooter = true
+        }, 1000)
+      })
   }
 }

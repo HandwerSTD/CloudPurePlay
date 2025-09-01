@@ -15,8 +15,10 @@ struct FirstOpenPage {
   st = GlobalStore
   @Local agreed: boolean = false
 
+  bgCtrl: hdsEffect.ShaderEffectController = new hdsEffect.ShaderEffectController()
   controller: SwiperController = new SwiperController()
   @Local nowIndex: number = 0
+  @Local animDuration: number = 3000
   stepperConfig: MyStepperConfig[] = [{
     // OpenWelcome
     nextLabel: $r('sys.string.stepper_next'),
@@ -28,8 +30,10 @@ struct FirstOpenPage {
       } else {
         if (!this.showFlow) {
           this.showFlow = true
+          this.bgMove()
           setTimeout(() => {
             this.controller.showNext()
+            this.showLightUp = true
           }, 200)
         } else {
           this.controller.showNext()
@@ -84,7 +88,9 @@ struct FirstOpenPage {
       this.controller.showPrevious()
     },
     onNext: () => {
+      this.bgMove()
       this.controller.showNext()
+      this.showFinal = true
     }
   },{
     // FinalWelcome
@@ -115,8 +121,9 @@ struct FirstOpenPage {
               params: {
                 colorSource: [Color.Black, Color.Blue, Color.Pink],
               },
+              controller: this.bgCtrl,
               animation: {
-                duration: 5000,
+                duration: this.animDuration,
                 autoPlay: true,
                 iterations: -1
               }
@@ -128,9 +135,9 @@ struct FirstOpenPage {
           .visualEffect(new hdsEffect.HdsEffectBuilder()
             .shaderEffect({
               effectType: hdsEffect.EffectType.UV_BACKGROUND_FLOW_LIGHT,
-              // controller: this.controller,
+              controller: this.bgCtrl,
               animation: {
-                duration: 5000,
+                duration: this.animDuration,
                 autoPlay: true,
                 iterations: -1
               }
@@ -142,6 +149,18 @@ struct FirstOpenPage {
   }
 
   @Local showFlow: boolean = false
+  @Local showLightUp: boolean = false
+  @Local showFinal: boolean = false
+
+  bgMove() {
+    this.animDuration = 1000
+    // this.bgCtrl.resume()
+    setTimeout(() => {
+      this.animDuration = 3000
+      // this.bgCtrl.resume()
+    }, 4000)
+  }
+
 
   build() {
     Row() {
@@ -156,12 +175,15 @@ struct FirstOpenPage {
                 setResult: (val) => { this.agreed = val },
                 showedFlow: this.showFlow
               })
-              LightUp()
+              LightUp({
+                show: this.showLightUp
+              })
               WebDAV()
               NoInterruptListen()
               PersonalFM()
               MissionContinue()
               FinalWelcome({
+                show: this.showFinal,
                 onFinish: () => {
                   this.jumpToApp()
                 }
@@ -175,6 +197,7 @@ struct FirstOpenPage {
             .indicator(false)
             .layoutWeight(1)
             .clip(false)
+            .cachedCount(0, false)
             MyStepper({
               nowIndex: this.nowIndex,
               configuration: this.stepperConfig
