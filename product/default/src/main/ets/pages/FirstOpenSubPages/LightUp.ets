@@ -105,7 +105,7 @@ export struct LightUp {
             offsetY: 4
           })
 
-      }.fontColor(Color.White)
+      }.fontColor(Color.White).margin({top: 12})
     }.width('100%').justifyContent(FlexAlign.Center)
   }
 
@@ -149,9 +149,7 @@ export struct LightUp {
       .justifyContent(FlexAlign.Center)
       .backgroundColor($r('app.color.play_list_single_item_bg'))
       .borderRadius(24)
-      // .visualEffect(new hdsEffect.HdsEffectBuilder().pointLight({
-      //   illuminatedType: hdsEffect.PointLightIlluminatedType.CONTENT
-      // }).buildEffect())
+      .transition(TransitionEffect.OPACITY.animation({duration: 500}))
     }
   }
 

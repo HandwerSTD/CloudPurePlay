@@ -25,7 +25,7 @@ struct FirstOpenPage {
     onNext: () => {
       if (!this.agreed) {
         promptAction.showToast({
-          message: '请阅读并同意《关于表情快传隐私的声明》'
+          message: '请阅读并同意《关于云净听和隐私的声明》'
         })
       } else {
         if (!this.showFlow) {

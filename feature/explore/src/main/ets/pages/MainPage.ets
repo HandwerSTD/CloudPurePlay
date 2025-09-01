@@ -220,7 +220,7 @@ struct MainPage_Shell {
         }
       }.width('100%').height('100%')
       .onTouch((event) => {
-        if (event.type === TouchType.Down) {
+        if (event.type === TouchType.Down && !this.shouldDisableTab) {
           this.showTab()
         }
       })

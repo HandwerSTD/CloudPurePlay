@@ -16,11 +16,12 @@ export struct OpenWelcome {
       Text() {
         Span('我已阅读并同意\n')// .fontColor($r('app.color.text_level2'))
           .fontSize(16)
+          .fontColor(this.showedFlow ? Color.White : undefined)
         Span('《关于云净听和隐私的声明》')// .fontColor($r('app.color.accent'))
           .fontColor($r('app.color.SkyBlue'))
           .fontSize(16)
           .onClick(() => {
-            WantUtil.toWebBrowser('https://agreement-drcn.hispace.dbankcloud.cn/index.html?lang=zh&agreementId=1571027495078094080')
+            WantUtil.toWebBrowser('https://agreement-drcn.hispace.dbankcloud.cn/index.html?lang=zh&agreementId=1765356433194391488')
           })
       }
     }

@@ -61,7 +61,7 @@ export struct NoInterruptListen {
   @Builder ShowExplore() {
     Flex(this.flexParam) {
       SimulatedMusicPlayer_ShowExplore()
-      this.featureCard($r('sys.symbol.house'), '在播放器页面，点击右上角按钮进入探索页；在探索页点击底部封面，可返回播放器')
+      this.featureCard($r('sys.symbol.house'), '在播放器页面，点击󰀦进入探索页；在探索页点击底部封面，可返回播放器，一镜到底，尽显优雅')
     }
     .height(ResponsiveUtil.chooseByWidth([540, 320]))
     .width('100%')
