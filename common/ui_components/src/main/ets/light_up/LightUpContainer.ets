@@ -83,7 +83,7 @@ export struct LightUpLinedContainer {
   @Param overrideLightUpStat: OverrideLightUpStat = OverrideLightUpStat.NO_OVERRIDE
   // @Param restrictLightBorder: boolean = false
   @Param lightAnimationParam: AnimateParam = {
-    duration: 100, curve: Curve.EaseInOut
+    duration: 200, curve: Curve.FastOutSlowIn
   }
 
 

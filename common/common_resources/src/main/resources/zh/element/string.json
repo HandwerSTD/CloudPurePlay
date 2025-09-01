@@ -587,6 +587,126 @@
     {
       "name": "auto_play_fm_on_launch_empty",
       "value": "启动时无歌自动播放私人FM"
+    },
+    {
+      "name": "first_open_page_private_cloud_music_player",
+      "value": "私有云音乐播放器"
+    },
+    {
+      "name": "first_open_page_private_cloud_desc",
+      "value": "连接你的私有云，直达你的音乐库。无需依赖流媒体，所有歌曲，始终掌握在你手中。\n\n现支持 Navidrome 协议服务器。\n\n在新手引导结束后，将会帮助你设置音乐源。"
+    },
+    {
+      "name": "first_open_page_instant_play_title",
+      "value": "开屏即听，无限推荐"
+    },
+    {
+      "name": "first_open_page_instant_play_desc",
+      "value": "启动应用即播放，少一步繁琐，多一点音乐。多种自动播放模式，无限推荐歌曲播放，始终新鲜。"
+    },
+    {
+      "name": "first_open_page_personal_fm_desc",
+      "value": "私人FM，无需选择，音乐自行流动。一首接一首，带来无尽惊喜。"
+    },
+    {
+      "name": "first_open_page_heart_mode_desc",
+      "value": "心动模式，一键播放，尽是心动，只播放你最爱的歌。"
+    },
+    {
+      "name": "first_open_page_daily_recommend_desc",
+      "value": "每日推荐，每天不同，每天遇见新的聆听。"
+    },
+    {
+      "name": "first_open_page_personal_fm_info",
+      "value": "私人FM：基于随机算法，从整个音乐库中随机挑选歌曲进行播放"
+    },
+    {
+      "name": "first_open_page_heart_mode_info",
+      "value": "心动模式：一键播放\"我喜欢的音乐\"歌单，无算法推荐"
+    },
+    {
+      "name": "first_open_page_daily_recommend_info",
+      "value": "每日推荐：基于算法，以日期为随机种子在音乐库中挑选歌曲组成歌单"
+    },
+    {
+      "name": "first_open_page_welcome_title",
+      "value": " 欢迎！"
+    },
+    {
+      "name": "first_open_page_app_name",
+      "value": "《云净听》| 音乐播放器"
+    },
+    {
+      "name": "first_open_page_agreement_prefix",
+      "value": "我已阅读并同意\n"
+    },
+    {
+      "name": "first_open_page_agreement_link",
+      "value": "《关于云净听和隐私的声明》"
+    },
+    {
+      "name": "first_open_page_no_interrupt_title",
+      "value": "「不打扰」的纯净听歌"
+    },
+    {
+      "name": "first_open_page_no_interrupt_desc",
+      "value": "极简 UX 设计，只保留必要的控制，多余元素自动隐藏，给你更清爽的听歌体验。一切设计，都是为了纯净聆听。"
+    },
+    {
+      "name": "first_open_page_hidden_progress_desc",
+      "value": "隐藏式进度条，点击显示，自动隐藏，界面更清爽"
+    },
+    {
+      "name": "first_open_page_explore_navigation_desc",
+      "value": "在播放器页面，点击󰀦进入探索页；在探索页点击底部封面，可返回播放器，一镜到底，尽显优雅"
+    },
+    {
+      "name": "first_open_page_play_queue_desc",
+      "value": "点击歌曲信息打开播放队列，管理播放列表"
+    },
+    {
+      "name": "first_open_page_mission_continue_title",
+      "value": "应用接续，音乐流转"
+    },
+    {
+      "name": "first_open_page_mission_continue_desc",
+      "value": "基于 HarmonyOS 应用接续功能，音乐随时随你走。无缝切换，音乐从不间断；你的聆听，自然流动。"
+    },
+    {
+      "name": "first_open_page_light_up_title",
+      "value": "生长在「光」上"
+    },
+    {
+      "name": "first_open_page_light_up_desc",
+      "value": "一款生长在光上的音乐播放器。基于最新 HarmonyOS 光场效果，让每一次播放都在光影之间流动。纯粹聆听，前所未有的「光」体验。\n\n光场设计元素遍布在《云净听》中，无论是播放按钮，还是封面图片，或是精致歌词，都有「光」的流动。"
+    },
+    {
+      "name": "first_open_page_light_experience_prefix",
+      "value": "点击按钮，体验"
+    },
+    {
+      "name": "first_open_page_light_word",
+      "value": "「光」"
+    },
+    {
+      "name": "first_open_page_cover_light_desc",
+      "value": "音乐封面发光，光影源自色彩本身，随着节奏与氛围轻微流动，让聆听更沉浸。"
+    },
+    {
+      "name": "first_open_page_agreement_toast",
+      "value": "请阅读并同意《关于云净听和隐私的声明》"
+    },
+    {
+      "name": "first_open_page_final_welcome_title",
+      "value": " 欢迎来到《云净听》!"
+    },
+    {
+      "name": "first_open_page_play_queue_title",
+      "value": "播放队列"
+    },
+    {
+      "name": "open_first_start",
+      "value": "查看新手引导"
     }
   ]
 }

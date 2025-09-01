@@ -14,10 +14,10 @@ export struct OpenWelcome {
           this.setResult(isOn)
         })
       Text() {
-        Span('我已阅读并同意\n')// .fontColor($r('app.color.text_level2'))
+        Span($r('app.string.first_open_page_agreement_prefix'))// .fontColor($r('app.color.text_level2'))
           .fontSize(16)
           .fontColor(this.showedFlow ? Color.White : undefined)
-        Span('《关于云净听和隐私的声明》')// .fontColor($r('app.color.accent'))
+        Span($r('app.string.first_open_page_agreement_link'))// .fontColor($r('app.color.accent'))
           .fontColor($r('app.color.SkyBlue'))
           .fontSize(16)
           .onClick(() => {
@@ -30,8 +30,8 @@ export struct OpenWelcome {
   build() {
     Column() {
       ImageTitleWelcomeTemplate({
-        title: ' 欢迎！',
-        subtitle: '《云净听》| 音乐播放器',
+        title: $r('app.string.first_open_page_welcome_title'),
+        subtitle: $r('app.string.first_open_page_app_name'),
         image: $r('app.media.app_background'),
         useDefaultTextColor: !this.showedFlow,
         footer: () => { this.footer() }

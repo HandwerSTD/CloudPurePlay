@@ -22,8 +22,8 @@ export struct WebDAV {
 
   build() {
     ImageTitleWelcomeTemplate({
-      title: '私有云音乐播放器',
-      subtitle: '连接你的私有云，直达你的音乐库。无需依赖流媒体，所有歌曲，始终掌握在你手中。\n\n现支持 Navidrome 协议服务器。\n\n在新手引导结束后，将会帮助你设置音乐源。',
+      title: $r('app.string.first_open_page_private_cloud_music_player'),
+      subtitle: $r('app.string.first_open_page_private_cloud_desc'),
       customImage: this.header,
       footer: () => {
         this.footer()

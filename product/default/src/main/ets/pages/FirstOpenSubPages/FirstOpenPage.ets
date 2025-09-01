@@ -25,7 +25,7 @@ struct FirstOpenPage {
     onNext: () => {
       if (!this.agreed) {
         promptAction.showToast({
-          message: '请阅读并同意《关于云净听和隐私的声明》'
+          message: $r('app.string.first_open_page_agreement_toast')
         })
       } else {
         if (!this.showFlow) {
@@ -153,7 +153,7 @@ struct FirstOpenPage {
   @Local showFinal: boolean = false
 
   bgMove() {
-    this.animDuration = 1000
+    this.animDuration = 2000
     // this.bgCtrl.resume()
     setTimeout(() => {
       this.animDuration = 3000

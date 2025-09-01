@@ -11,6 +11,7 @@ import { NavidromeAPI_Source } from "../views/DataSource/NavidromeAPI";
 import { MissionContinueSettings } from "../views/MissionContinue/MissionContinueSettings";
 import { DisplaySettings } from "../views/DisplaySettings/DisplaySettings";
 import { PlaybackSettings } from "../views/PlaybackSettings/PlaybackSettings";
+import { router } from "@kit.ArkUI";
 
 @ComponentV2
 export struct MainPage {
@@ -123,6 +124,19 @@ export struct MainPage {
 
   @Builder AboutApp() {
     Column() {
+      LightUpLinedContainer() {
+        CommonListItem({
+          icon: $r('sys.symbol.bolt_lightbulb_max'),
+          title: $r('app.string.open_first_start'),
+        })
+          .onClick(() => {
+            // SnackBarUtils.showMessage(this.snack, $r('sys.symbol.doc_plaintext_and_pencil'), $r('app.string.opening_group'))
+            // startQQGroupAbility(getContext() as common.UIAbilityContext, 982093132)
+            router.replaceUrl({
+              url: 'pages/FirstOpenSubPages/FirstOpenPage'
+            })
+          })
+      }
       LightUpLinedContainer() {
         CommonListItem({
           icon: $r('sys.symbol.doc_plaintext_and_pencil'),

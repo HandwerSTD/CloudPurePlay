@@ -37,7 +37,7 @@ export struct NoInterruptListen {
     })
   }
 
-  @Builder featureCard(symbol: Resource, msg: string) {
+  @Builder featureCard(symbol: Resource, msg: ResourceStr) {
     Column() {
       SymbolTitle({
         icon: symbol,
@@ -51,7 +51,7 @@ export struct NoInterruptListen {
   @Builder PlayerUI() {
     Flex(this.flexParam) {
       SimulatedMusicPlayer_HideProgress()
-      this.featureCard($r('sys.symbol.identify_song'), '隐藏式进度条，点击显示，自动隐藏，界面更清爽')
+      this.featureCard($r('sys.symbol.identify_song'), $r('app.string.first_open_page_hidden_progress_desc'))
     }
     .height(ResponsiveUtil.chooseByWidth([540, 320]))
     .width('100%')
@@ -61,7 +61,7 @@ export struct NoInterruptListen {
   @Builder ShowExplore() {
     Flex(this.flexParam) {
       SimulatedMusicPlayer_ShowExplore()
-      this.featureCard($r('sys.symbol.house'), '在播放器页面，点击󰀦进入探索页；在探索页点击底部封面，可返回播放器，一镜到底，尽显优雅')
+      this.featureCard($r('sys.symbol.house'), $r('app.string.first_open_page_explore_navigation_desc'))
     }
     .height(ResponsiveUtil.chooseByWidth([540, 320]))
     .width('100%')
@@ -71,7 +71,7 @@ export struct NoInterruptListen {
   @Builder PlayQueue() {
     Flex(this.flexParam) {
       SimulatedMusicPlayer_PlayQueue()
-      this.featureCard($r('sys.symbol.list_bullet'), '点击歌曲信息打开播放队列，管理播放列表')
+      this.featureCard($r('sys.symbol.list_bullet'), $r('app.string.first_open_page_play_queue_desc'))
     }
     .height(ResponsiveUtil.chooseByWidth([540, 320]))
     .width('100%')
@@ -100,8 +100,8 @@ export struct NoInterruptListen {
 
   build() {
     ImageTitleWelcomeTemplate({
-      title: '「不打扰」的纯净听歌',
-      subtitle: '极简 UX 设计，只保留必要的控制，多余元素自动隐藏，给你更清爽的听歌体验。一切设计，都是为了纯净聆听。',
+      title: $r('app.string.first_open_page_no_interrupt_title'),
+      subtitle: $r('app.string.first_open_page_no_interrupt_desc'),
       customImage: this.header,
       footer: () => {
         this.footer()
@@ -701,7 +701,7 @@ struct SimulatedMusicPlayer_PlayQueue {
 
       // 标题
       Row() {
-        Text('播放队列')
+        Text($r('app.string.first_open_page_play_queue_title'))
           .fontSize(14)
           .fontColor(Color.White)
           .fontWeight(FontWeight.Medium)

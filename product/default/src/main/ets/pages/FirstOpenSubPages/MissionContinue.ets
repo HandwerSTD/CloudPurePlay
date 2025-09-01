@@ -53,8 +53,8 @@ export struct MissionContinue {
 
   build() {
     ImageTitleWelcomeTemplate({
-      title: '应用接续，音乐流转',
-      subtitle: '基于 HarmonyOS 应用接续功能，音乐随时随你走。无缝切换，音乐从不间断；你的聆听，自然流动。',
+      title: $r('app.string.first_open_page_mission_continue_title'),
+      subtitle: $r('app.string.first_open_page_mission_continue_desc'),
       customImage: this.header,
       footer: () => {
         this.footer()

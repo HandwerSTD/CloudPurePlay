@@ -96,8 +96,8 @@ export struct LightUp {
         })
       }
       Text() {
-        Span('点击按钮，体验')
-        Span('「光」')
+        Span($r('app.string.first_open_page_light_experience_prefix'))
+        Span($r('app.string.first_open_page_light_word'))
           .fontWeight(FontWeight.Bolder)
           .textShadow({
             color: '#88ffffff',
@@ -126,7 +126,7 @@ export struct LightUp {
           gradientColor: [0x96c2e2, 0x6fa3d0]
         }).offset({x: 80}).scale({x: 1.1, y: 1.1, centerX: '0%'})
       }.alignContent(Alignment.Center)
-      Text('音乐封面发光，光影源自色彩本身，随着节奏与氛围轻微流动，让聆听更沉浸。')
+      Text($r('app.string.first_open_page_cover_light_desc'))
         .fontColor(Color.White)
         .padding(24)
     }.justifyContent(FlexAlign.Center)
@@ -156,8 +156,8 @@ export struct LightUp {
   build() {
     if (this.show) {
       ImageTitleWelcomeTemplate({
-        title: '生长在「光」上',
-        subtitle: '一款生长在光上的音乐播放器。基于最新 HarmonyOS 光场效果，让每一次播放都在光影之间流动。纯粹聆听，前所未有的「光」体验。\n\n光场设计元素遍布在《云净听》中，无论是播放按钮，还是封面图片，或是精致歌词，都有「光」的流动。',
+        title: $r('app.string.first_open_page_light_up_title'),
+        subtitle: $r('app.string.first_open_page_light_up_desc'),
         customImage: this.header,
         footer: () => {
           this.footer()

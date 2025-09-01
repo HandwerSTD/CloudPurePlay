@@ -26,7 +26,7 @@ export struct FinalWelcome {
   }
   build() {
     ImageTitleWelcomeTemplate({
-      title: ' 欢迎来到《云净听》!',
+      title: $r('app.string.first_open_page_final_welcome_title'),
       // subtitle: '',
       image: $r('app.media.layered_image'),
       footer: () => {

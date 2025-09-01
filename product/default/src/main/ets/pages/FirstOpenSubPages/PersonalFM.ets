@@ -1,10 +1,12 @@
-import { LightUpIconTextButton, LightUpRoundedButton, UIComponentUtils, LightUpDefaultConfig,
+import {
+  LightUpRoundedButton,
+  LightUpDefaultConfig,
   LightUpLinedContainer,
-  CommonListItem} from "@handwer/ui_components";
-import { ImageTitleWelcomeTemplate, SymbolTitle } from "./CommonTemplate";
-import { LengthMetrics, Position } from "@kit.ArkUI";
-import { ResponsiveUtil } from "@handwer/base";
-import { hdsEffect } from "@kit.UIDesignKit";
+  CommonListItem
+} from "@handwer/ui_components"
+import { SymbolTitle, ImageTitleWelcomeTemplate } from "./CommonTemplate"
+import { hdsEffect } from "@kit.UIDesignKit"
+
 
 @ComponentV2
 export struct PersonalFM {
@@ -16,7 +18,7 @@ export struct PersonalFM {
     })
   }
 
-  @Builder featureCard(symbol: Resource, msg: string) {
+  @Builder featureCard(symbol: Resource, msg: ResourceStr) {
     Column() {
 
       Blank().height(24)
@@ -34,9 +36,9 @@ export struct PersonalFM {
     Stack({alignContent: Alignment.TopEnd}) {
       Row() {
         Swiper() {
-          this.featureCard($r('sys.symbol.radiostation'), '私人FM，无需选择，音乐自行流动。一首接一首，带来无尽惊喜。')
-          this.featureCard($r('sys.symbol.heart'), '心动模式，一键播放，尽是心动，只播放你最爱的歌。')
-          this.featureCard($r('sys.symbol.calendar_31_a'), '每日推荐，每天不同，每天遇见新的聆听。')
+          this.featureCard($r('sys.symbol.radiostation'), $r('app.string.first_open_page_personal_fm_desc'))
+          this.featureCard($r('sys.symbol.heart'), $r('app.string.first_open_page_heart_mode_desc'))
+          this.featureCard($r('sys.symbol.calendar_31_a'), $r('app.string.first_open_page_daily_recommend_desc'))
         }.autoPlay(true)
       }.width('100%')
       .justifyContent(FlexAlign.Center)
@@ -68,21 +70,21 @@ export struct PersonalFM {
       LightUpLinedContainer() {
         CommonListItem({
           icon: $r('sys.symbol.radiostation'),
-          title: '私人FM：基于随机算法，从整个音乐库中随机挑选歌曲进行播放',
+          title: $r('app.string.first_open_page_personal_fm_info'),
           trailing: () => {}
         })
       }
       LightUpLinedContainer() {
         CommonListItem({
           icon: $r('sys.symbol.heart_fill'),
-          title: '心动模式：一键播放“我喜欢的音乐”歌单，无算法推荐',
+          title: $r('app.string.first_open_page_heart_mode_info'),
           trailing: () => {}
         })
       }
       LightUpLinedContainer() {
         CommonListItem({
           icon: $r('sys.symbol.calendar_31_a'),
-          title: '每日推荐：基于算法，以日期为随机种子在音乐库中挑选歌曲组成歌单',
+          title: $r('app.string.first_open_page_daily_recommend_info'),
           trailing: () => {}
         })
       }
@@ -94,8 +96,8 @@ export struct PersonalFM {
 
   build() {
     ImageTitleWelcomeTemplate({
-      title: '开屏即听，无限推荐',
-      subtitle: '启动应用即播放，少一步繁琐，多一点音乐。多种自动播放模式，无限推荐歌曲播放，始终新鲜。',
+      title: $r('app.string.first_open_page_instant_play_title'),
+      subtitle: $r('app.string.first_open_page_instant_play_desc'),
       customImage: this.header,
       footer: () => {
         this.customFooter()
