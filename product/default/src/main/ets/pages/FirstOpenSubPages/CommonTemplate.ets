@@ -89,14 +89,6 @@ export struct SymbolTitle {
   @Param iconSize: number = 50
   @Param @Require gradientColor: ResourceColor[]
 
-  @Local snapshot: PixelMap | undefined = undefined
-
-  @Local headerId: string | undefined = undefined
-
-  aboutToAppear(): void {
-    this.headerId = this.icon.id.toString()+Math.random().toPrecision(5).toString()
-  }
-
   @Builder customHeader() {
     Stack() {
       Column() {
@@ -105,7 +97,6 @@ export struct SymbolTitle {
           .fontWeight(FontWeight.Normal)
           .fontSize(this.iconSize)
       }
-      .id(this.headerId)
       .width(100)
       .height(100)
       .justifyContent(FlexAlign.Center)
@@ -129,7 +120,6 @@ export struct SymbolTitle {
           .fontWeight(FontWeight.Normal)
           .fontSize(this.iconSize)
       }
-      .id(this.headerId)
       .width(100)
       .height(100)
       .justifyContent(FlexAlign.Center)

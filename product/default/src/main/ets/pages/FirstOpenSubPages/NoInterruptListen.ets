@@ -39,7 +39,6 @@ export struct NoInterruptListen {
 
   @Builder featureCard(symbol: Resource, msg: string) {
     Column() {
-
       SymbolTitle({
         icon: symbol,
         gradientColor: [0xe4b7d4, 0xbc97d4]
@@ -374,7 +373,7 @@ struct SimulatedMusicPlayer_ShowExplore {
   aboutToAppear(): void {
     this.interval = setInterval(() => {
       this.animator()
-    }, 300+3000)
+    }, 300+2000)
   }
 
   aboutToDisappear(): void {
