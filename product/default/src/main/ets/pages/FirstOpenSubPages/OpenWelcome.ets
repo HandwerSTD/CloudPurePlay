@@ -32,7 +32,7 @@ export struct OpenWelcome {
       ImageTitleWelcomeTemplate({
         title: $r('app.string.first_open_page_welcome_title'),
         subtitle: $r('app.string.first_open_page_app_name'),
-        image: $r('app.media.app_background'),
+        image: $r('app.media.ff'),
         useDefaultTextColor: !this.showedFlow,
         footer: () => { this.footer() }
       })

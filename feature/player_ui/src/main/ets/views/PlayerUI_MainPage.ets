@@ -814,7 +814,7 @@ export struct MainPage {
         this.onRightHandMode()
       })
       .height('100%')
-    }
+    }.backgroundColor(Color.Black)
   }
 
   private handleSliderChange = (value: number, mode: SliderChangeMode) => {

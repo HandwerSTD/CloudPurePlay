@@ -1,8 +1,6 @@
-import { LightUpIconTextButton, LightUpRoundedButton, UIComponentUtils, LightUpDefaultConfig,
-  OverrideLightUpStat } from "@handwer/ui_components";
+import { LightUpIconTextButton, LightUpRoundedButton
+} from "@handwer/ui_components";
 import { ImageTitleWelcomeTemplate, SymbolTitle } from "./CommonTemplate";
-import { LengthMetrics } from "@kit.ArkUI";
-import { Logger, ResponsiveUtil } from "@handwer/base";
 
 @ComponentV2
 export struct LightUp {

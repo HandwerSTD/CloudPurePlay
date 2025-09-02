@@ -28,7 +28,7 @@ export struct FinalWelcome {
     ImageTitleWelcomeTemplate({
       title: $r('app.string.first_open_page_final_welcome_title'),
       // subtitle: '',
-      image: $r('app.media.layered_image'),
+      image: $r('app.media.ff'),
       footer: () => {
         this.bottomButton()
       }

@@ -19,7 +19,7 @@
         "description": "$string:DefaultAbility_desc",
         "icon": "$media:layered_image",
         "label": "$string:DefaultAbility_label",
-        "startWindowIcon": "$media:startIcon",
+        "startWindowIcon": "$media:layered_image",
         "startWindowBackground": "$color:start_window_background",
         "exported": true,
         "continuable": true,
