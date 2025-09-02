@@ -1,0 +1,11 @@
+{
+  "module": {
+    "name": "wearable_music_library_test",
+    "type": "feature",
+    "deviceTypes": [
+      "wearable"
+    ],
+    "deliveryWithInstall": true,
+    "installationFree": false
+  }
+}

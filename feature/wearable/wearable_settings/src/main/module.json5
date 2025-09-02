@@ -1,11 +1,8 @@
 {
   "module": {
-    "name": "common_resources",
+    "name": "wearable_settings",
     "type": "har",
     "deviceTypes": [
-      "default",
-      "tablet",
-      "2in1",
       "wearable"
     ]
   }

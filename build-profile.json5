@@ -111,6 +111,22 @@
           ]
         }
       ]
+    },
+    {
+      "name": "wearable_player_ui",
+      "srcPath": "./feature/wearable/wearable_player_ui",
+    },
+    {
+      "name": "wearable_music_library",
+      "srcPath": "./feature/wearable/wearable_music_library",
+    },
+    {
+      "name": "wearable_explore",
+      "srcPath": "./feature/wearable/wearable_explore",
+    },
+    {
+      "name": "wearable_settings",
+      "srcPath": "./feature/wearable/wearable_settings",
     }
   ]
 }
