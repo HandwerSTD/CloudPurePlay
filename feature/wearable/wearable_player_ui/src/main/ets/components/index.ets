@@ -2,4 +2,4 @@ export { WearableEmptyStateView, WearableEmptyStateViewBar } from './WearableEmp
 export { WearableEmptyQueueView } from './WearableEmptyQueueView'
 export { WearableImageCover, WearableImageCoverThumbnail } from './WearableImageCover'
 export { WearablePlaybackControlComponent } from './WearablePlaybackControlComponent'
-export { MainPage } from './MainPage'
+export { MainPage } from './WearablePlayerUI'

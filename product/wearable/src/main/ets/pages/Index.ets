@@ -1,4 +1,3 @@
-import { SCApp } from '@handwer/base'
 import { WearablePlayerUI } from '@handwer/wearable_player_ui'
 
 @Entry

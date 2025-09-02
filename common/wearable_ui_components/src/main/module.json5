@@ -1,0 +1,11 @@
+{
+  "module": {
+    "name": "wearable_ui_components",
+    "type": "har",
+    "deviceTypes": [
+      "default",
+      "tablet",
+      "2in1"
+    ]
+  }
+}

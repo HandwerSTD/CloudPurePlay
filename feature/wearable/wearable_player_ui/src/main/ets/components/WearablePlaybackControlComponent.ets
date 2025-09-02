@@ -1,15 +1,9 @@
 import { NowPlayingStore, PlayControl } from "@handwer/base"
-import { LightUpRoundedButton, LightUpConfig } from "@handwer/ui_components"
+import {  ActionButton } from "@handwer/wearable_ui_components"
 import { ClickUtil } from "@pura/harmony-utils"
 import { curves } from "@kit.ArkUI"
 
 const nps = NowPlayingStore
-
-const WEARABLE_CONTROL_CONFIG: LightUpConfig = {
-  lightIntensity: 1,
-  lightHeight: 120,
-  lightBloom: 0.2
-}
 
 @ComponentV2
 export struct WearablePlaybackControlComponent {
@@ -41,7 +35,7 @@ export struct WearablePlaybackControlComponent {
   @Builder PlaybackButtons() {
     Row({ space: this.spacing }) {
       // 上一曲
-      LightUpRoundedButton({
+       ActionButton({
         icon: $r('sys.symbol.backward_end_fill'),
         customFontColor: [Color.White],
         clickAction: () => {
@@ -49,13 +43,13 @@ export struct WearablePlaybackControlComponent {
             PlayControl.playPre()
           }, 500)
         },
-        lightUpConfig: WEARABLE_CONTROL_CONFIG
+        
       })
       .width(this.buttonSize)
       .height(this.buttonSize)
 
       // 播放/暂停 - 中央按钮
-      LightUpRoundedButton({
+       ActionButton({
         icon: nps.isPlaying && !nps.isPaused ? $r('sys.symbol.pause_fill') : $r('sys.symbol.play_fill'),
         customFontColor: [Color.White],
         clickAction: () => {
@@ -67,7 +61,7 @@ export struct WearablePlaybackControlComponent {
             }
           }, 300)
         },
-        lightUpConfig: WEARABLE_CONTROL_CONFIG
+        
       })
       .width(this.centerButtonSize)
       .height(this.centerButtonSize)
@@ -78,7 +72,7 @@ export struct WearablePlaybackControlComponent {
       })
 
       // 下一曲
-      LightUpRoundedButton({
+       ActionButton({
         icon: $r('sys.symbol.forward_end_fill'),
         customFontColor: [Color.White],
         clickAction: () => {
@@ -86,7 +80,7 @@ export struct WearablePlaybackControlComponent {
             PlayControl.playNext()
           }, 500)
         },
-        lightUpConfig: WEARABLE_CONTROL_CONFIG
+        
       })
       .width(this.buttonSize)
       .height(this.buttonSize)

@@ -1,17 +1,14 @@
-import { Logger, NowPlayingStore, PlayControl, PlayQueueStore, PlayQueueUtils, SongConvertUtils } from "@handwer/base"
+import { NowPlayingStore, PlayControl, PlayQueueStore, PlayQueueUtils, SongConvertUtils } from "@handwer/base"
 import { CycleMode, Song } from "@handwer/api_adapter"
-import { LightUpRoundedButton } from "@handwer/ui_components"
-import { curves } from "@kit.ArkUI"
+import {  ActionButton } from "@handwer/wearable_ui_components"
 import { ClickUtil } from "@pura/harmony-utils"
 import { WearableEmptyQueueView } from "../components/WearableEmptyQueueView"
-import { HdsSnackBar } from "@kit.UIDesignKit"
 
 const nps = NowPlayingStore
 
 @ComponentV2  
 export struct WearablePlayQueueView {
   @Param @Require onClose: () => void
-  hdsSnackBar = new HdsSnackBar(this.getUIContext())
   
   pq = PlayQueueStore
 
@@ -27,16 +24,12 @@ export struct WearablePlayQueueView {
         .fontColor(Color.White)
         .layoutWeight(1)
 
-      LightUpRoundedButton({
+       ActionButton({
         icon: $r('sys.symbol.xmark'),
         customFontColor: [Color.White],
         clickAction: () => {
           this.onClose()
         },
-        lightUpConfig: {
-          lightIntensity: 1,
-          lightHeight: 80
-        }
       })
       .width(28)
       .height(28)
@@ -94,7 +87,7 @@ export struct WearablePlayQueueView {
         .layoutWeight(1)
 
         // 移除按钮
-        LightUpRoundedButton({
+         ActionButton({
           icon: $r('sys.symbol.minus'),
           customFontColor: [Color.White],
           clickAction: () => {
@@ -102,10 +95,6 @@ export struct WearablePlayQueueView {
               PlayQueueUtils.queueDelete(index)
             }, 300)
           },
-          lightUpConfig: {
-            lightIntensity: 0.8,
-            lightHeight: 60
-          }
         })
         .width(24)
         .height(24)
@@ -132,9 +121,7 @@ export struct WearablePlayQueueView {
       this.QueueHeader()
 
       if (this.isQueueEmpty) {
-        WearableEmptyQueueView({
-          hdsSnackBar: this.hdsSnackBar
-        })
+        WearableEmptyQueueView()
         .layoutWeight(1)
       } else {
         List() {
@@ -151,30 +138,22 @@ export struct WearablePlayQueueView {
 
       // 底部功能按钮
       Row({ space: 12 }) {
-        LightUpRoundedButton({
+         ActionButton({
           icon: $r('sys.symbol.shuffle'),
           customFontColor: [Color.White],
           clickAction: () => {
             PlayQueueUtils.changeCycleMode(CycleMode.random)
           },
-          lightUpConfig: {
-            lightIntensity: 1,
-            lightHeight: 80
-          }
         })
         .width(32)
         .height(32)
 
-        LightUpRoundedButton({
+         ActionButton({
           icon: $r('sys.symbol.xmark'),
           customFontColor: [Color.White],
           clickAction: () => {
             PlayQueueUtils.cleanQueue()
           },
-          lightUpConfig: {
-            lightIntensity: 1,
-            lightHeight: 80
-          }
         })
         .width(32)
         .height(32)

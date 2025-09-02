@@ -1,19 +1,9 @@
-import { FeaturedPlayUtils, ResponsiveUtil } from "@handwer/base"
-import { LightUpRoundedButton, LightUpConfig, SnackBarUtils, UIComponentUtils,
-  LightUpIconTextButton,
-  LightUpDefaultConfig} from "@handwer/ui_components"
-import { curves, SymbolGlyphModifier } from "@kit.ArkUI"
-import { HdsSnackBar } from "@kit.UIDesignKit"
-
-const WEARABLE_LIGHT_QUEUE_EMPTY_CONFIG: LightUpConfig = {
-  lightIntensity: 1.2,
-  lightHeight: 100,
-  lightBloom: 0.2
-}
+import { FeaturedPlayUtils } from "@handwer/base"
+import {  ActionButton, UIComponentUtils} from "@handwer/wearable_ui_components"
+import { promptAction } from "@kit.ArkUI"
 
 @ComponentV2
 export struct WearableEmptyQueueView {
-  @Param @Require hdsSnackBar: HdsSnackBar
 
   get todayIcon() {
     return UIComponentUtils.getTodayIcon()
@@ -55,49 +45,40 @@ export struct WearableEmptyQueueView {
       // 快速开始按钮组 - 手表上垂直排列
       Column({ space: 10 }) {
         // 我喜欢的音乐
-        LightUpRoundedButton({
+         ActionButton({
           icon: $r('sys.symbol.heart_fill'),
           customFontColor: [Color.White],
           clickAction: () => {
             FeaturedPlayUtils.playHeartMode((icon, msg) => {
-              if (this.hdsSnackBar) {
-                SnackBarUtils.showMessage(this.hdsSnackBar, icon, msg)
-              }
+              promptAction.openToast({message: msg})
             })
           },
-          lightUpConfig: WEARABLE_LIGHT_QUEUE_EMPTY_CONFIG
         })
         .width(36)
         .height(36)
 
         // 每日推荐
-        LightUpRoundedButton({
+         ActionButton({
           icon: this.todayIcon,
           customFontColor: [Color.White],
           clickAction: () => {
             FeaturedPlayUtils.playDailySongs((icon, msg) => {
-              if (this.hdsSnackBar) {
-                SnackBarUtils.showMessage(this.hdsSnackBar, icon, msg)
-              }
+              promptAction.openToast({message: msg})
             }, this.todayIcon)
           },
-          lightUpConfig: WEARABLE_LIGHT_QUEUE_EMPTY_CONFIG
         })
         .width(36)
         .height(36)
 
         // 私人FM
-        LightUpRoundedButton({
+         ActionButton({
           icon: $r('sys.symbol.radiostation'),
           customFontColor: [Color.White],
           clickAction: () => {
             FeaturedPlayUtils.playPersonalizedFM((icon, msg) => {
-              if (this.hdsSnackBar) {
-                SnackBarUtils.showMessage(this.hdsSnackBar, icon, msg)
-              }
+              promptAction.openToast({message: msg})
             })
           },
-          lightUpConfig: WEARABLE_LIGHT_QUEUE_EMPTY_CONFIG
         })
         .width(36)
         .height(36)

@@ -1,5 +1,4 @@
-import { Logger, NowPlayingStore, PlayQueueUtils, ResponsiveUtil } from "@handwer/base"
-import { hdsEffect } from "@kit.UIDesignKit"
+import { Logger, NowPlayingStore, PlayQueueUtils } from "@handwer/base"
 import { curves } from "@kit.ArkUI"
 import { cacheDownload } from "@kit.BasicServicesKit"
 import { ClickUtil } from "@pura/harmony-utils"

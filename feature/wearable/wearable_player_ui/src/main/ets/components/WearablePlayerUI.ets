@@ -7,11 +7,10 @@ import {
   SongLike,
   UserStore } from "@handwer/base"
 import { PLAYMODE, Song_INITIAL } from "@handwer/api_adapter"
-import { LightUpRoundedButton, LightUpConfig, SnackBarUtils,
-  UIComponentUtils} from "@handwer/ui_components"
-import { curves } from "@kit.ArkUI"
+import {  ActionButton,
+  UIComponentUtils} from "@handwer/wearable_ui_components"
+import { promptAction } from "@kit.ArkUI"
 import { ClickUtil } from "@pura/harmony-utils"
-import { HdsSnackBar } from "@kit.UIDesignKit"
 import { WearableImageCover } from "./WearableImageCover"
 import { WearableEmptyStateView } from "./WearableEmptyStateView"
 import { WearableEmptyQueueView } from "./WearableEmptyQueueView"
@@ -21,22 +20,8 @@ import { WearablePlaybackControlComponent } from "./WearablePlaybackControlCompo
 
 const nps = NowPlayingStore
 
-// 手表专用的轻量化光效配置
-const WEARABLE_LIGHT_BTN_CONFIG: LightUpConfig = {
-  lightIntensity: 1.2,
-  lightHeight: 100,
-  lightBloom: 0.2
-}
-
-const WEARABLE_LIGHT_PLAYBACK_CONFIG: LightUpConfig = {
-  lightIntensity: 0.8,
-  lightHeight: 150,
-  lightBloom: 0.1,
-}
-
 @ComponentV2
 export struct MainPage {
-  hdsSnackBar = new HdsSnackBar(this.getUIContext())
   gs = GlobalStore
   user = UserStore
   _nps = NowPlayingStore
@@ -83,7 +68,7 @@ export struct MainPage {
   @Builder WearablePlaybackControl() {
     Row({ space: 16 }) { // 手表上使用更紧凑的间距
       // 上一曲
-      LightUpRoundedButton({
+       ActionButton({
         icon: $r('sys.symbol.backward_end_fill'),
         customFontColor: [Color.White],
         clickAction: () => {
@@ -91,13 +76,13 @@ export struct MainPage {
             PlayControl.playPre()
           }, 500)
         },
-        lightUpConfig: WEARABLE_LIGHT_PLAYBACK_CONFIG
+
       })
       .width(36)
       .height(36)
 
       // 播放/暂停 - 中央按钮稍大
-      LightUpRoundedButton({
+       ActionButton({
         icon: nps.isPlaying && !nps.isPaused ? $r('sys.symbol.pause_fill') : $r('sys.symbol.play_fill'),
         customFontColor: [Color.White],
         clickAction: () => {
@@ -109,13 +94,13 @@ export struct MainPage {
             }
           }, 300)
         },
-        lightUpConfig: WEARABLE_LIGHT_PLAYBACK_CONFIG
+
       })
       .width(48)
       .height(48)
 
       // 下一曲
-      LightUpRoundedButton({
+       ActionButton({
         icon: $r('sys.symbol.forward_end_fill'),
         customFontColor: [Color.White],
         clickAction: () => {
@@ -123,7 +108,7 @@ export struct MainPage {
             PlayControl.playNext()
           }, 500)
         },
-        lightUpConfig: WEARABLE_LIGHT_PLAYBACK_CONFIG
+
       })
       .width(36)
       .height(36)
@@ -136,51 +121,51 @@ export struct MainPage {
   @Builder WearableFunctionButtons() {
     Row({ space: 8 }) { // 减少间距以适应更多按钮
       // 喜欢按钮
-      LightUpRoundedButton({
+       ActionButton({
         icon: nps.isLiked ? $r('sys.symbol.heart_fill') : $r('sys.symbol.heart'),
         customFontColor: nps.isLiked ? [Color.Red] : [Color.White],
         clickAction: () => {
           SongLike.likeThisSong((icon, msg) => {
-            SnackBarUtils.showMessage(this.hdsSnackBar, icon, msg)
+            promptAction.openToast({message: msg})
           })
         },
-        lightUpConfig: WEARABLE_LIGHT_BTN_CONFIG
+
       })
       .width(28)
       .height(28)
 
       // 循环模式
-      LightUpRoundedButton({
+       ActionButton({
         icon: UIComponentUtils.getQueueCycleModeIcon(PlayQueueStore.cycleMode),
         customFontColor: [Color.White],
         clickAction: () => {
           PlayQueueUtils.changeCycleMode()
         },
-        lightUpConfig: WEARABLE_LIGHT_BTN_CONFIG
+
       })
       .width(28)
       .height(28)
 
       // 播放队列
-      LightUpRoundedButton({
+       ActionButton({
         icon: $r('sys.symbol.list_xmark'),
         customFontColor: [Color.White],
         clickAction: () => {
           this.showQueueSheet = true
         },
-        lightUpConfig: WEARABLE_LIGHT_BTN_CONFIG
+
       })
       .width(28)
       .height(28)
 
       // 歌词按钮
-      LightUpRoundedButton({
+       ActionButton({
         icon: $r('sys.symbol.lyrics_square'),
         customFontColor: [Color.White],
         clickAction: () => {
           this.showLyrics = !this.showLyrics
         },
-        lightUpConfig: WEARABLE_LIGHT_BTN_CONFIG
+
       })
       .width(28)
       .height(28)
@@ -217,45 +202,10 @@ export struct MainPage {
   @Builder WearableNowPlayingArea() {
     if (this.shouldShowEmptyState) {
       WearableEmptyStateView({
-        hdsSnackBar: this.hdsSnackBar,
         onExploreClick: () => {
           this.showExplore = true
         }
       })
-    } else if (this.showLyrics) {
-      // 歌词显示模式
-      Column({ space: 8 }) {
-        // 顶部歌曲信息
-        this.WearableSongInfo()
-        
-        // 歌词区域
-        WearableLyricComponent({
-          miniMode: false
-        })
-        .layoutWeight(1)
-        .width('100%')
-        
-        // 底部播放控制
-        WearablePlaybackControlComponent({
-          s_size: 'small',
-          showProgress: false
-        })
-        
-        // 返回按钮
-        LightUpRoundedButton({
-          icon: $r('sys.symbol.chevron_left'),
-          customFontColor: [Color.White],
-          clickAction: () => {
-            this.showLyrics = false
-          },
-          lightUpConfig: WEARABLE_LIGHT_BTN_CONFIG
-        })
-        .height(32)
-        .alignSelf(ItemAlign.Center)
-      }
-      .width('100%')
-      .height('100%')
-      .padding(8)
     } else {
       Column({ space: 16 }) {
         // 封面区域 - 占据主要空间
@@ -263,7 +213,7 @@ export struct MainPage {
           nowPlayingCoverImg: this.nowPlayingCoverImg,
           handleLike: () => {
             SongLike.likeThisSong((icon, msg) => {
-              SnackBarUtils.showMessage(this.hdsSnackBar, icon, msg)
+              promptAction.openToast({message: msg})
             })
           },
           resetNewBackgroundColor: (colors: ResourceColor[]) => {
@@ -296,9 +246,7 @@ export struct MainPage {
   // ---- 队列空状态 ----
   @Builder s_size() {
     if (this.isQueueEmpty) {
-      WearableEmptyQueueView({
-        hdsSnackBar: this.hdsSnackBar
-      })
+      WearableEmptyQueueView()
     }
   }
 

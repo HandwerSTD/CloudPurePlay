@@ -1,6 +1,5 @@
-import { GlobalStore, Logger, LyricUtils, NowPlayingStore, PlayControl, RetryUtil } from "@handwer/base"
-import { Lyric, LyricStyle, LyricStyle_INITIAL } from "@handwer/api_adapter"
-import { curves } from "@kit.ArkUI"
+import { GlobalStore, Logger, LyricUtils, NowPlayingStore, RetryUtil } from "@handwer/base"
+import { Lyric, LyricStyle } from "@handwer/api_adapter"
 
 const TAG = '[WearableLyricArea]'
 

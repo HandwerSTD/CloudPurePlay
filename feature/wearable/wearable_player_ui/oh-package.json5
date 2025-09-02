@@ -8,7 +8,7 @@
   "dependencies": {
     "@handwer/base": "file:../../../common/base",
     "@handwer/api_adapter": "file:../../../apis/api_adapter",
-    "@handwer/ui_components": "file:../../../common/ui_components",
+    "@handwer/wearable_ui_components": "file:../../../common/wearable_ui_components",
     "@pura/harmony-utils": "^1.3.6"
   }
 }

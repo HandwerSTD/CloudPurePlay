@@ -12,7 +12,6 @@
     "@handwer/wearable_explore": "file:../../feature/wearable/wearable_explore",
     "@handwer/wearable_music_library": "file:../../feature/wearable/wearable_music_library",
     "@handwer/wearable_settings": "file:../../feature/wearable/wearable_settings",
-    "@handwer/ui_components": "file:../../common/ui_components"
   }
 }
 

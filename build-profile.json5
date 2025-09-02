@@ -127,6 +127,10 @@
     {
       "name": "wearable_settings",
       "srcPath": "./feature/wearable/wearable_settings",
+    },
+    {
+      "name": "wearable_ui_components",
+      "srcPath": "./common/wearable_ui_components",
     }
   ]
 }
