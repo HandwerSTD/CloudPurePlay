@@ -1,0 +1,50 @@
+{
+  "module": {
+    "name": "wearable",
+    "type": "entry",
+    "description": "$string:module_desc",
+    "mainElement": "WearableEntryAbility",
+    "deviceTypes": [
+      "wearable"
+    ],
+    "deliveryWithInstall": true,
+    "installationFree": false,
+    "pages": "$profile:main_pages",
+    "abilities": [
+      {
+        "name": "WearableEntryAbility",
+        "srcEntry": "./ets/wearableentryability/WearableEntryAbility.ets",
+        "description": "$string:WearableEntryAbility_desc",
+        "icon": "$media:layered_image",
+        "label": "$string:WearableEntryAbility_label",
+        "startWindowIcon": "$media:startIcon",
+        "startWindowBackground": "$color:start_window_background",
+        "exported": true,
+        "skills": [
+          {
+            "entities": [
+              "entity.system.home"
+            ],
+            "actions": [
+              "ohos.want.action.home"
+            ]
+          }
+        ]
+      }
+    ],
+    "extensionAbilities": [
+      {
+        "name": "WearableBackupAbility",
+        "srcEntry": "./ets/wearablebackupability/WearableBackupAbility.ets",
+        "type": "backup",
+        "exported": false,
+        "metadata": [
+          {
+            "name": "ohos.extension.backup",
+            "resource": "$profile:backup_config"
+          }
+        ],
+      }
+    ]
+  }
+}

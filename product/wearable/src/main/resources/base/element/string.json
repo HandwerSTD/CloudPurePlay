@@ -1,0 +1,16 @@
+{
+  "string": [
+    {
+      "name": "module_desc",
+      "value": "module description"
+    },
+    {
+      "name": "WearableEntryAbility_desc",
+      "value": "description"
+    },
+    {
+      "name": "WearableEntryAbility_label",
+      "value": "label"
+    }
+  ]
+}
