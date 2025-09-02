@@ -63,6 +63,7 @@ export default class WearableEntryAbility extends UIAbility {
         return;
       }
       hilog.info(DOMAIN, 'testTag', 'Succeeded in loading the content.');
+      this.appStartUp(windowStage)
     });
   }
 

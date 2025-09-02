@@ -1,7 +1,6 @@
 import { DistributionSyncResult } from "../services/DistributionMgr/DistributionUtils"
 import { SingleDeviceViewModel } from "../services/DistributionMgr/DistributionViewModels"
 import { WindowAvoidanceData } from "../utils/WindowUtil"
-import { HdsSnackBar } from "@kit.UIDesignKit"
 import { common } from "@kit.AbilityKit"
 import { PrefDataModel } from "./PreferenceDataModel"
 
@@ -38,7 +37,7 @@ class GlobalStore {
 
   @Trace pref: PrefDataModel = new PrefDataModel()
 
-  globalSnack?: HdsSnackBar
+  globalSnack?: Object
   contextFaker?: common.UIAbilityContext
 }
 

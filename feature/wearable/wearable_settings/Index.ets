@@ -1,1 +1,1 @@
-export { MainPage } from './src/main/ets/components/MainPage';
+export { MainPage as WearableSettings } from './src/main/ets/components/MainPage';
