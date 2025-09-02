@@ -1,9 +1,14 @@
 {
   "name": "@handwer/wearable_player_ui",
   "version": "1.0.0",
-  "description": "Please describe the basic information.",
+  "description": "Wearable version of player UI module, optimized for smart watch devices.",
   "main": "Index.ets",
   "author": "",
   "license": "Apache-2.0",
-  "dependencies": {}
+  "dependencies": {
+    "@handwer/base": "file:../../../common/base",
+    "@handwer/api_adapter": "file:../../../apis/api_adapter",
+    "@handwer/ui_components": "file:../../../common/ui_components",
+    "@pura/harmony-utils": "^1.3.6"
+  }
 }
