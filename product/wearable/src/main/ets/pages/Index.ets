@@ -3,6 +3,7 @@ import { WearablePlayerUI } from '@handwer/wearable_player_ui'
 import { WearableSettings } from '@handwer/wearable_settings'
 import { RetryLoginPanel } from './views/RetryLoginPanel'
 import { ArcSwiper } from '@ohos.arkui.ArcSwiper'
+import { WearableMusicLibrary } from '@handwer/wearable_music_library'
 
 @Entry
 @ComponentV2
@@ -33,6 +34,7 @@ struct Index {
       Column() {
         ArcSwiper() {
           WearablePlayerUI()
+          WearableMusicLibrary()
         }
       }
       .bindSheet(this.consoleSheet!!, this.SettingsPanel, {

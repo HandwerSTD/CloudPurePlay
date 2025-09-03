@@ -1,1 +1,2 @@
-export { MainPage } from './src/main/ets/components/MainPage';
+export { MainPage as WearableMusicLibrary } from './src/main/ets/components/MainPage';
+
