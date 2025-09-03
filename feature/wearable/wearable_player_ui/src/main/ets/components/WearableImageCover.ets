@@ -9,7 +9,6 @@ const nps = NowPlayingStore
 @ComponentV2
 export struct WearableImageCover {
   @Param @Require nowPlayingCoverImg: ResourceStr
-  @Param @Require handleLike: () => void = () => {}
   @Param useLight: boolean = false
   @Param useCoverAmbBreathe: boolean = false
   @Event resetNewBackgroundColor: (colors: ResourceColor[]) => void
@@ -97,7 +96,6 @@ export struct WearableImageCover {
           .draggable(false)
           .id('coverFakerUnder')
           .ImageFaker(() => {
-            this.handleLike()
           })
           .onComplete(() => {
             ClickUtil.debounce(async () => {
@@ -108,7 +106,6 @@ export struct WearableImageCover {
         Image(this.nowPlayingCoverFaker)
           .draggable(false)
           .ImageFaker(() => {
-            this.handleLike()
           }, false)
           .opacity(this.coverFakerVisibility === Visibility.Visible ? 1 : 0 )
           .animation(this.useCoverFaker ? {duration: 800} : undefined)
@@ -140,7 +137,6 @@ export struct WearableImageCover {
   })
   .borderRadius(16) // 手表上使用较小的圆角
   .shadow(useShadow ? ShadowStyle.OUTER_DEFAULT_SM : undefined) // 使用较小的阴影
-  .margin(nps.isPaused ? 8 : 6) // 手表上使用较小的边距
   .animation({ curve: curves.springMotion(0.7, 0.4) })
   .gesture(
     TapGesture({

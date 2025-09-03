@@ -6,6 +6,7 @@ import {
   InstanceSwitcher
 } from "@handwer/api_adapter"
 import { SCApp, Logger, ServiceInitUtils, GlobalStore } from "@handwer/base"
+import { ArcConst } from "@handwer/wearable_ui_components"
 import { ArcList,ArcListAttribute, ArcListItem,ArcListItemAttribute, promptAction } from "@kit.ArkUI"
 import { DialogHelper } from "@pura/harmony-dialog"
 import { generate_APIFinishWelcome_PageParams } from "./APIFinishWelcome"
@@ -30,7 +31,7 @@ export struct NavidromeAPI_Source {
             .placeholderColor($r('sys.color.font_secondary'))
             .maxLines(1)
             .backgroundColor($r('app.color.play_list_single_item_bg'))
-            .borderRadius(12)
+            .borderRadius('50%')
             .padding(16)
             .onChange((value: string) => {
               this.apiSourceAddr = value
@@ -43,6 +44,7 @@ export struct NavidromeAPI_Source {
             })
         }
       }
+      .width(ArcConst.ARC_LIST_W)
       ArcListItem() {
         Column() {
           TextInput({ placeholder: $r('app.string.api_username'), text: this.apiUserName })
@@ -51,7 +53,7 @@ export struct NavidromeAPI_Source {
             .placeholderColor($r('sys.color.font_secondary'))
             .maxLines(1)
             .backgroundColor($r('app.color.play_list_single_item_bg'))
-            .borderRadius(12)
+            .borderRadius('50%')
             .padding(16)
             .onChange((value: string) => {
               this.apiUserName = value
@@ -64,6 +66,7 @@ export struct NavidromeAPI_Source {
             })
         }
       }
+      .width(ArcConst.ARC_LIST_W)
       ArcListItem() {
         Column() {
           TextInput({ placeholder: $r('app.string.api_password'), text: this.apiPassword })
@@ -72,7 +75,7 @@ export struct NavidromeAPI_Source {
             .placeholderColor($r('sys.color.font_secondary'))
             .maxLines(1)
             .backgroundColor($r('app.color.play_list_single_item_bg'))
-            .borderRadius(12)
+            .borderRadius('50%')
             .padding(16)
             .onChange((value: string) => {
               this.apiPassword = value
@@ -85,6 +88,7 @@ export struct NavidromeAPI_Source {
             })
         }
       }
+      .width(ArcConst.ARC_LIST_W)
       ArcListItem() {
         Button($r('app.string.check_connectivity'))
           .width('100%')
@@ -94,10 +98,8 @@ export struct NavidromeAPI_Source {
             this.checkConnect()
           })
       }
-      ArcListItem().height(12)
-    }
-    .padding({ left: 12, right: 12 })
-    .layoutWeight(1)
+      .width(ArcConst.ARC_LIST_W)
+    }.space(ArcConst.ARC_LIST_SPC)
   }
 
   aboutToAppear(): void {
@@ -112,26 +114,6 @@ export struct NavidromeAPI_Source {
   build() {
     NavDestination() {
       Column() {
-        // Title Bar
-        Row() {
-          Image($r('sys.symbol.chevron_backward'))
-            .width(24)
-            .height(24)
-            .fillColor(Color.White)
-            .onClick(() => {
-              this.pageStack.pop()
-            })
-          Text('Navidrome')
-            .fontSize(18)
-            .fontWeight(FontWeight.Medium)
-            .fontColor(Color.White)
-            .margin({ left: 12 })
-          Blank()
-        }
-        .width('100%')
-        .height(56)
-        .padding({ left: 16, right: 16 })
-
         this.Main()
       }
       .width('100%')

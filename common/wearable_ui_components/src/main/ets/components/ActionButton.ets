@@ -20,7 +20,7 @@ export struct ActionButton {
       .gesture((this.longPressAction === undefined) ? undefined : (LongPressGesture().onAction(() => {
         this.longPressAction!()
       })))
-      .backgroundColor(this.customBgColor ? this.customBgColor : $r('sys.color.comp_background_secondary'))
+      .backgroundColor(this.customBgColor ? this.customBgColor : '#33000000')
       .padding(8)
       .clickEffect({
         level: ClickEffectLevel.LIGHT

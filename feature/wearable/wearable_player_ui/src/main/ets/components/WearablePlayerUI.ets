@@ -7,9 +7,8 @@ import {
   SongLike,
   UserStore } from "@handwer/base"
 import { PLAYMODE, Song_INITIAL } from "@handwer/api_adapter"
-import {  ActionButton,
-  UIComponentUtils} from "@handwer/wearable_ui_components"
-import { promptAction } from "@kit.ArkUI"
+import {  ActionButton, ArcConst, UIComponentUtils} from "@handwer/wearable_ui_components"
+import { ArcSwiper, ArcSwiperAttribute, promptAction } from "@kit.ArkUI"
 import { ClickUtil } from "@pura/harmony-utils"
 import { WearableImageCover } from "./WearableImageCover"
 import { WearableEmptyStateView } from "./WearableEmptyStateView"
@@ -29,12 +28,12 @@ export struct MainPage {
 
   @Consumer(SCApp.settingsSheet) consoleSheet: boolean = false
   @Provider(SCApp.playQueueSheet) showQueueSheet: boolean = false
-  @Provider(SCApp.exploreSheet) showExplore: boolean = false
   @Provider(SCApp.showAddToPlaylistSheet) showAddToPlaylistSheet: boolean = false
 
   @Local backgroundFlowingColors: ResourceColor[] = [Color.Black, Color.Blue, Color.Pink]
   @Local isCompactMode: boolean = false // 手表紧凑模式切换
   @Local showLyrics: boolean = false // 显示歌词
+
 
   get nowPlayingCoverImg() {
     if (nps.currentSong === Song_INITIAL) {
@@ -65,57 +64,51 @@ export struct MainPage {
   }
 
   // ---- 手表专用的简化控制按钮 ----
-  @Builder WearablePlaybackControl() {
-    Row({ space: 16 }) { // 手表上使用更紧凑的间距
-      // 上一曲
-       ActionButton({
-        icon: $r('sys.symbol.backward_end_fill'),
-        customFontColor: [Color.White],
-        clickAction: () => {
-          ClickUtil.throttle(() => {
-            PlayControl.playPre()
-          }, 500)
-        },
-
-      })
-      .width(36)
-      .height(36)
-
-      // 播放/暂停 - 中央按钮稍大
-       ActionButton({
-        icon: nps.isPlaying && !nps.isPaused ? $r('sys.symbol.pause_fill') : $r('sys.symbol.play_fill'),
-        customFontColor: [Color.White],
-        clickAction: () => {
-          ClickUtil.throttle(() => {
-            if(nps.isPaused) {
-              PlayControl.resumeMusic()
-            } else {
-              PlayControl.pauseMusic()
-            }
-          }, 300)
-        },
-
-      })
-      .width(48)
-      .height(48)
-
-      // 下一曲
-       ActionButton({
-        icon: $r('sys.symbol.forward_end_fill'),
-        customFontColor: [Color.White],
-        clickAction: () => {
-          ClickUtil.throttle(() => {
-            PlayControl.playNext()
-          }, 500)
-        },
-
-      })
-      .width(36)
-      .height(36)
-    }
-    .justifyContent(FlexAlign.SpaceEvenly)
-    .width('100%')
-  }
+  // @Builder WearablePlaybackControl() {
+  //   Row() { // 手表上使用更紧凑的间距
+  //     // 上一曲
+  //      ActionButton({
+  //       icon: $r('sys.symbol.backward_end_fill'),
+  //       customFontColor: [Color.White],
+  //       clickAction: () => {
+  //         ClickUtil.throttle(() => {
+  //           PlayControl.playPre()
+  //         }, 500)
+  //       },
+  //     })
+  //
+  //     // 播放/暂停 - 中央按钮稍大
+  //      ActionButton({
+  //       icon: nps.isPlaying && !nps.isPaused ? $r('sys.symbol.pause_fill') : $r('sys.symbol.play_fill'),
+  //       customFontColor: [Color.White],
+  //       clickAction: () => {
+  //         ClickUtil.throttle(() => {
+  //           if(nps.isPaused) {
+  //             PlayControl.resumeMusic()
+  //           } else {
+  //             PlayControl.pauseMusic()
+  //           }
+  //         }, 300)
+  //       },
+  //     })
+  //        // .scale(nps.isPaused ? undefined : {x: 1.3, y: 1.3})
+  //        // .animation({duration: 500, curve: Curve.Ease})
+  //
+  //     // 下一曲
+  //      ActionButton({
+  //       icon: $r('sys.symbol.forward_end_fill'),
+  //       customFontColor: [Color.White],
+  //       clickAction: () => {
+  //         ClickUtil.throttle(() => {
+  //           PlayControl.playNext()
+  //         }, 500)
+  //       },
+  //
+  //     })
+  //   }
+  //   .justifyContent(FlexAlign.SpaceEvenly)
+  //   .width('100%')
+  // }
 
   // ---- 手表专用的功能按钮行 ----
   @Builder WearableFunctionButtons() {
@@ -123,6 +116,7 @@ export struct MainPage {
       // 喜欢按钮
        ActionButton({
         icon: nps.isLiked ? $r('sys.symbol.heart_fill') : $r('sys.symbol.heart'),
+         customFontSize: 14,
         customFontColor: nps.isLiked ? [Color.Red] : [Color.White],
         clickAction: () => {
           SongLike.likeThisSong((icon, msg) => {
@@ -131,44 +125,27 @@ export struct MainPage {
         },
 
       })
-      .width(28)
-      .height(28)
 
       // 循环模式
        ActionButton({
         icon: UIComponentUtils.getQueueCycleModeIcon(PlayQueueStore.cycleMode),
+         customFontSize: 14,
         customFontColor: [Color.White],
         clickAction: () => {
           PlayQueueUtils.changeCycleMode()
         },
 
       })
-      .width(28)
-      .height(28)
 
       // 播放队列
        ActionButton({
         icon: $r('sys.symbol.list_xmark'),
+         customFontSize: 14,
         customFontColor: [Color.White],
         clickAction: () => {
           this.showQueueSheet = true
         },
-
       })
-      .width(28)
-      .height(28)
-
-      // 歌词按钮
-       ActionButton({
-        icon: $r('sys.symbol.lyrics_square'),
-        customFontColor: [Color.White],
-        clickAction: () => {
-          this.showLyrics = !this.showLyrics
-        },
-
-      })
-      .width(28)
-      .height(28)
     }
     .justifyContent(FlexAlign.SpaceEvenly)
     .width('100%')
@@ -203,25 +180,10 @@ export struct MainPage {
     if (this.shouldShowEmptyState) {
       WearableEmptyStateView({
         onExploreClick: () => {
-          this.showExplore = true
         }
       })
     } else {
       Column({ space: 16 }) {
-        // 封面区域 - 占据主要空间
-        WearableImageCover({
-          nowPlayingCoverImg: this.nowPlayingCoverImg,
-          handleLike: () => {
-            SongLike.likeThisSong((icon, msg) => {
-              promptAction.openToast({message: msg})
-            })
-          },
-          resetNewBackgroundColor: (colors: ResourceColor[]) => {
-            this.backgroundFlowingColors = colors
-          }
-        })
-        .layoutWeight(1)
-        .width('80%') // 手表上封面不要太大
 
         // 歌曲信息
         this.WearableSongInfo()
@@ -243,46 +205,92 @@ export struct MainPage {
     }
   }
 
-  // ---- 队列空状态 ----
-  @Builder s_size() {
-    if (this.isQueueEmpty) {
-      WearableEmptyQueueView()
-    }
-  }
-
-  build() {
+  @Builder PlayerUI() {
     Stack() {
+      WearableImageCover({
+        nowPlayingCoverImg: this.nowPlayingCoverImg,
+        resetNewBackgroundColor: (colors: ResourceColor[]) => {
+          this.backgroundFlowingColors = colors
+        }
+      }).foregroundBlurStyle(BlurStyle.BACKGROUND_THIN)
       // 背景渐变
-      Column()
-        .width('100%')
-        .height('100%')
-        .linearGradient({
-          colors: this.backgroundFlowingColors.map((color, index) => [color, index / (this.backgroundFlowingColors.length - 1)]),
-          direction: GradientDirection.Bottom
-        })
-        .animation({
-          duration: 2000,
-          curve: Curve.Ease
-        })
+      // Column()
+      //   .width('100%')
+      //   .height('100%')
+      //   .linearGradient({
+      //     colors: this.backgroundFlowingColors.map((color, index) => [color, index / (this.backgroundFlowingColors.length - 1)]),
+      //     direction: GradientDirection.Bottom
+      //   })
+      //   .animation({
+      //     duration: 2000,
+      //     curve: Curve.Ease
+      //   })
 
       // 主内容区域
       this.WearableNowPlayingArea()
-
-      // 队列弹窗
-      if (this.showQueueSheet) {
-        WearablePlayQueueView({
-          onClose: () => {
-            this.showQueueSheet = false
-          }
-        })
-        .width('95%')
-        .height('95%')
-        .transition(TransitionEffect.OPACITY.combine(TransitionEffect.scale({ x: 0.8, y: 0.8 })))
-      }
     }
-    .width('100%')
-    .height('100%')
-    .borderRadius('50%') // 手表圆形屏幕适配
+    .width(ArcConst.MAX_LEN)
+    .height(ArcConst.MAX_LEN)
+    .borderRadius('50%')
     .clip(true)
+  }
+  @Builder LyricUI() {
+
+    Stack() {
+      WearableImageCover({
+        nowPlayingCoverImg: this.nowPlayingCoverImg,
+        resetNewBackgroundColor: (colors: ResourceColor[]) => {
+          this.backgroundFlowingColors = colors
+        }
+      }).foregroundBlurStyle(BlurStyle.BACKGROUND_THIN)
+      // 背景渐变
+      // Column()
+      //   .width('100%')
+      //   .height('100%')
+      //   .linearGradient({
+      //     colors: this.backgroundFlowingColors.map((color, index) => [color, index / (this.backgroundFlowingColors.length - 1)]),
+      //     direction: GradientDirection.Bottom
+      //   })
+      //   .animation({
+      //     duration: 2000,
+      //     curve: Curve.Ease
+      //   })
+
+      WearableLyricComponent()
+    }
+    .width(ArcConst.MAX_LEN)
+    .height(ArcConst.MAX_LEN)
+    .borderRadius('50%')
+    .clip(true)
+  }
+  @Builder PlayQueue() {
+    WearablePlayQueueView({
+      onClose: () => {
+        this.showQueueSheet = false
+      }
+    })
+  }
+
+  build() {
+    ArcSwiper() {
+      WearableImageCover({
+        nowPlayingCoverImg: this.nowPlayingCoverImg,
+        resetNewBackgroundColor: (colors: ResourceColor[]) => {
+          this.backgroundFlowingColors = colors
+        }
+      })
+      this.PlayerUI()
+      this.LyricUI()
+    }.vertical(true).indicator(false)
+    .defaultFocus(true)
+    .index(1)
+    .width(ArcConst.MAX_LEN)
+    .height(ArcConst.MAX_LEN)
+    .bindSheet(this.showQueueSheet!!, this.PlayQueue, {
+      preferType: SheetType.CENTER,
+      backgroundColor: $r('app.color.ui_sheet_bg_col'),
+      blurStyle: BlurStyle.BACKGROUND_THICK,
+      showClose: false,
+    })
   }
 }

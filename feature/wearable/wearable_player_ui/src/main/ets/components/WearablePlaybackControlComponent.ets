@@ -20,7 +20,7 @@ export struct WearablePlaybackControlComponent {
   }
 
   get centerButtonSize(): number {
-    return this.buttonSize + 8
+    return this.buttonSize
   }
 
   get spacing(): number {
@@ -65,7 +65,7 @@ export struct WearablePlaybackControlComponent {
       })
       .width(this.centerButtonSize)
       .height(this.centerButtonSize)
-      .scale(nps.isPlaying && !nps.isPaused ? { x: 1.1, y: 1.1 } : { x: 1, y: 1 })
+      .scale(nps.isPlaying && !nps.isPaused ? { x: 1.2, y: 1.2 } : { x: 1.1, y: 1.1 })
       .animation({
         duration: 300,
         curve: curves.springMotion()
