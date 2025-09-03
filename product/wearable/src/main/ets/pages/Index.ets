@@ -2,6 +2,7 @@ import { GlobalStore, UserStore, SCApp, LoginStatus } from '@handwer/base'
 import { WearablePlayerUI } from '@handwer/wearable_player_ui'
 import { WearableSettings } from '@handwer/wearable_settings'
 import { RetryLoginPanel } from './views/RetryLoginPanel'
+import { ArcSwiper } from '@ohos.arkui.ArcSwiper'
 
 @Entry
 @ComponentV2
@@ -30,7 +31,9 @@ struct Index {
   build() {
     Row() {
       Column() {
-        WearablePlayerUI()
+        ArcSwiper() {
+          WearablePlayerUI()
+        }
       }
       .bindSheet(this.consoleSheet!!, this.SettingsPanel, {
         preferType: SheetType.CENTER,
@@ -57,7 +60,7 @@ struct Index {
       setTimeout(() => {
         this.connectTimeout = true
         this.onLoginStatusChange()
-      }, 3000)
+      }, 1500)
     })
   }
 }

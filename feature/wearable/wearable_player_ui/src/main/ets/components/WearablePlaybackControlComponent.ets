@@ -61,7 +61,6 @@ export struct WearablePlaybackControlComponent {
             }
           }, 300)
         },
-        
       })
       .width(this.centerButtonSize)
       .height(this.centerButtonSize)

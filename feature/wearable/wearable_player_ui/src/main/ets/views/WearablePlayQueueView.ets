@@ -66,7 +66,11 @@ export struct WearablePlayQueueView {
       .width('100%')
       .padding({ left: 8, right: 8, top: 8, bottom: 8 })
       .backgroundColor(song.song.id === nps.currentSong.id ? '#66FFFFFF' : '#33ffffff')
-      .borderRadius(666)
+      .border({
+        radius: 666,
+        color: Color.White,
+        width: song.song.id === nps.currentSong.id ? 1 : undefined
+      })
       .animation({
         duration: 300,
         curve: Curve.Ease
@@ -95,6 +99,7 @@ export struct WearablePlayQueueView {
         .width('100%')
         .space(LengthMetrics.px(30))
         .defaultFocus(true)
+        .fadingEdge(true)
       }
 
       // 底部功能按钮
@@ -125,8 +130,6 @@ export struct WearablePlayQueueView {
     }
     .width('100%')
     .height('100%')
-    .backgroundColor('#CC000000') // 半透明黑色背景
-    .borderRadius(16)
     .clip(true)
   }
 }

@@ -1,5 +1,6 @@
-import { GlobalStore, Logger, LyricUtils, NowPlayingStore, RetryUtil } from "@handwer/base"
+import { GlobalStore, Logger, LyricUtils, NowPlayingStore, RetryUtil, SCEmitter } from "@handwer/base"
 import { Lyric, LyricStyle } from "@handwer/api_adapter"
+import { EmitterUtil } from "@pura/harmony-utils"
 
 const TAG = '[WearableLyricArea]'
 
@@ -96,6 +97,16 @@ export struct WearableLyricComponent {
     .height('100%')
     .scrollBar(BarState.Off) // 手表上隐藏滚动条
     .edgeEffect(EdgeEffect.None)
+    .onAppear(() => {
+      EmitterUtil.onSubscribe(SCEmitter.LyricUpdate,
+        () => {
+          Logger.debug(TAG, `lyric update triggered`)
+          this.refreshLyric()
+        })
+    })
+    .onDisAppear(() => {
+      EmitterUtil.unSubscribe(SCEmitter.LyricUpdate)
+    })
   }
 }
 

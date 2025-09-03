@@ -63,53 +63,6 @@ export struct MainPage {
     this.showAddToPlaylistSheet = true
   }
 
-  // ---- 手表专用的简化控制按钮 ----
-  // @Builder WearablePlaybackControl() {
-  //   Row() { // 手表上使用更紧凑的间距
-  //     // 上一曲
-  //      ActionButton({
-  //       icon: $r('sys.symbol.backward_end_fill'),
-  //       customFontColor: [Color.White],
-  //       clickAction: () => {
-  //         ClickUtil.throttle(() => {
-  //           PlayControl.playPre()
-  //         }, 500)
-  //       },
-  //     })
-  //
-  //     // 播放/暂停 - 中央按钮稍大
-  //      ActionButton({
-  //       icon: nps.isPlaying && !nps.isPaused ? $r('sys.symbol.pause_fill') : $r('sys.symbol.play_fill'),
-  //       customFontColor: [Color.White],
-  //       clickAction: () => {
-  //         ClickUtil.throttle(() => {
-  //           if(nps.isPaused) {
-  //             PlayControl.resumeMusic()
-  //           } else {
-  //             PlayControl.pauseMusic()
-  //           }
-  //         }, 300)
-  //       },
-  //     })
-  //        // .scale(nps.isPaused ? undefined : {x: 1.3, y: 1.3})
-  //        // .animation({duration: 500, curve: Curve.Ease})
-  //
-  //     // 下一曲
-  //      ActionButton({
-  //       icon: $r('sys.symbol.forward_end_fill'),
-  //       customFontColor: [Color.White],
-  //       clickAction: () => {
-  //         ClickUtil.throttle(() => {
-  //           PlayControl.playNext()
-  //         }, 500)
-  //       },
-  //
-  //     })
-  //   }
-  //   .justifyContent(FlexAlign.SpaceEvenly)
-  //   .width('100%')
-  // }
-
   // ---- 手表专用的功能按钮行 ----
   @Builder WearableFunctionButtons() {
     Row({ space: 8 }) { // 减少间距以适应更多按钮
@@ -134,12 +87,11 @@ export struct MainPage {
         clickAction: () => {
           PlayQueueUtils.changeCycleMode()
         },
-
       })
 
       // 播放队列
        ActionButton({
-        icon: $r('sys.symbol.list_xmark'),
+        icon: $r('sys.symbol.music_note_list'),
          customFontSize: 14,
         customFontColor: [Color.White],
         clickAction: () => {
