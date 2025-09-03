@@ -1,0 +1,324 @@
+import { Album, PlayList, PlayListAPIUtils } from "@handwer/api_adapter"
+import { SCApp, UserManager, UserStore } from "@handwer/base"
+import { WearableMusicLibrarySearchView } from "../views/SearchView"
+import { WearableUserCard } from "../components/WearableUserCard"
+import { WearableMusicActionPanel } from "../components/WearableMusicActionPanel"
+import { WearableMusicLibraryConfig } from "../config/WearableMusicLibraryConfig"
+import { WearableMusicUtils } from "../utils/WearableMusicUtils"
+import { DialogHelper } from "@pura/harmony-dialog"
+import { LazyData } from "@pie/lazy-data"
+import { BackButtonUtils } from "@handwer/wearable_ui_components"
+import { promptAction } from "@kit.ArkUI"
+
+export function genId_WearableMusicLibraryPlaylist(id: string) {
+  return 'WearableMusicLibraryPlaylist_'+id
+}
+
+class SnackBarUtils {
+  static showMessage(str: ResourceStr) {
+    promptAction.openToast({
+      message: str
+    })
+  }
+}
+
+@ComponentV2
+export struct WearableMusicLibraryMainPage {
+  @Consumer(SCApp.shouldDisableTab) shouldDisableTab: boolean = false
+
+  @Consumer(SCApp.explorePageStack) pageStack: NavPathStack = new NavPathStack()
+  user = UserStore
+
+  @Local playlistDataSource: LazyData<PlayList> = new LazyData<PlayList>()
+
+  @Local showAlbum: boolean = false
+  @Local showSearchPage: boolean = false
+  @Local modifyPlaylist: boolean = false
+  @Local currentIndex: number = 0
+
+  isPlaylistCreated(list: PlayList) {
+    return list.userId === this.user.userId
+  }
+
+  @Builder PlayList_SingleItem(list: PlayList, index: number) {
+    Row() {
+      Image(WearableMusicUtils.getOptimizedImageUrl(list.coverImgUrl))
+        .width(WearableMusicLibraryConfig.THUMBNAIL_SIZE)
+        .height(WearableMusicLibraryConfig.THUMBNAIL_SIZE)
+        .borderRadius(WearableMusicLibraryConfig.CARD_RADIUS)
+        .draggable(false)
+        .margin({ right: 12 })
+      
+      Column() {
+        Text(WearableMusicUtils.truncateText(list.name))
+          .maxLines(1)
+          .textOverflow({overflow: TextOverflow.Ellipsis})
+          .fontSize(WearableMusicLibraryConfig.TITLE_FONT_SIZE)
+          .fontWeight(FontWeight.Bold)
+          .fontColor(WearableMusicLibraryConfig.PRIMARY_COLOR)
+        
+        Text(WearableMusicUtils.formatPlaylistInfo(list))
+          .fontSize(WearableMusicLibraryConfig.SUBTITLE_FONT_SIZE)
+          .fontColor(WearableMusicLibraryConfig.SECONDARY_COLOR)
+          .maxLines(1)
+      }
+      .alignItems(HorizontalAlign.Start)
+      .layoutWeight(1)
+
+      if (this.modifyPlaylist) {
+        SymbolGlyph(WearableMusicUtils.isUserCreatedPlaylist(list, this.user.userId) ? $r('sys.symbol.xmark') : $r('sys.symbol.heart_square_stack_fill'))
+          .fontSize(16)
+          .fontColor([WearableMusicLibraryConfig.PRIMARY_COLOR])
+      }
+    }
+    .width('100%')
+    .height(WearableMusicLibraryConfig.ITEM_HEIGHT)
+    .padding(12)
+    .backgroundColor(WearableMusicLibraryConfig.BACKGROUND_COLOR)
+    .borderRadius(WearableMusicLibraryConfig.CARD_RADIUS)
+    .clickEffect({
+      level: ClickEffectLevel.LIGHT
+    })
+    .onClick(() => {
+      // if (this.modifyPlaylist) {
+      //   this.onRemovePlaylist(index)
+      // } else {
+      //   this.onPlayListItemClicked(index)
+      // }
+    })
+  }
+
+  @Builder Album_SingleItem(list: Album, index: number) {
+    Row() {
+      Image(WearableMusicUtils.getOptimizedImageUrl(list.picUrl))
+        .width(WearableMusicLibraryConfig.THUMBNAIL_SIZE)
+        .height(WearableMusicLibraryConfig.THUMBNAIL_SIZE)
+        .borderRadius(WearableMusicLibraryConfig.CARD_RADIUS)
+        .draggable(false)
+        .margin({ right: 12 })
+      
+      Column() {
+        Text(WearableMusicUtils.truncateText(list.name))
+          .maxLines(1)
+          .textOverflow({overflow: TextOverflow.Ellipsis})
+          .fontSize(WearableMusicLibraryConfig.TITLE_FONT_SIZE)
+          .fontWeight(FontWeight.Bold)
+          .fontColor(WearableMusicLibraryConfig.PRIMARY_COLOR)
+        
+        Text(WearableMusicUtils.formatAlbumInfo(list))
+          .fontSize(WearableMusicLibraryConfig.SUBTITLE_FONT_SIZE)
+          .fontColor(WearableMusicLibraryConfig.SECONDARY_COLOR)
+          .maxLines(1)
+      }
+      .alignItems(HorizontalAlign.Start)
+      .layoutWeight(1)
+    }
+    .width('100%')
+    .height(WearableMusicLibraryConfig.ITEM_HEIGHT)
+    .padding(12)
+    .backgroundColor(WearableMusicLibraryConfig.BACKGROUND_COLOR)
+    .borderRadius(WearableMusicLibraryConfig.CARD_RADIUS)
+    .clickEffect({
+      level: ClickEffectLevel.LIGHT
+    })
+    .onClick(() => {
+      this.onPushAlbum(list)
+    })
+  }
+
+  @Builder UserInfo() {
+    WearableUserCard({
+      showAlbum: this.showAlbum,
+      onToggleView: () => {
+        this.showAlbum = !this.showAlbum
+      }
+    })
+  }
+
+  @Builder ContentList() {
+    Column() {
+      this.UserInfo()
+      
+      List({ space: WearableMusicLibraryConfig.ITEM_SPACING }) {
+        if (this.showAlbum) {
+          ForEach(UserStore.userSubAlbum.slice(0, WearableMusicLibraryConfig.MAX_VISIBLE_ITEMS), (list: Album, index) => {
+            ListItem() {
+              this.Album_SingleItem(list, index)
+            }
+          })
+        } else {
+          LazyForEach(this.playlistDataSource, (list: PlayList, index) => {
+            ListItem() {
+              this.PlayList_SingleItem(list, index)
+            }
+          }, (val: PlayList, index) => `${val.id}_${val.coverImgUrl}_${val.name}_${val.trackCount}_${index}`)
+        }
+      }
+      .width('100%')
+      .layoutWeight(1)
+      .scrollBar(BarState.Auto)
+    }
+    .width('100%')
+    .height('100%')
+    .padding(16)
+  }
+
+  @Builder HeaderButtons() {
+    WearableMusicActionPanel({
+      showEditMode: this.modifyPlaylist,
+      showAddButton: this.modifyPlaylist && !this.showAlbum,
+      onSearchClick: () => {
+        this.showSearchPage = !this.showSearchPage
+      },
+      onEditClick: () => {
+        this.modifyPlaylist = !this.modifyPlaylist
+      },
+      onAddClick: () => {
+      }
+    })
+  }
+
+  @Builder MainContent() {
+    Column() {
+      this.HeaderButtons()
+      this.ContentList()
+    }
+    .width('100%')
+    .height('100%')
+    .translate(this.showSearchPage ? {
+      y: '20%'
+    } : undefined)
+    .scale(this.showSearchPage ? { x: 0.9, y: 0.9 } : undefined)
+    .animation(WearableMusicUtils.getWearableAnimationConfig())
+  }
+
+  @Builder SearchOverlay() {
+    if (this.showSearchPage) {
+      WearableMusicLibrarySearchView({
+        isSearchAlbum: this.showAlbum,
+        closeSearch: () => {
+          this.showSearchPage = false
+        },
+        openPlaylist: (playlist) => {
+          this.onPushPlaylist(playlist)
+        }
+      })
+        .transition(TransitionEffect.OPACITY.animation({duration: 500}))
+        .backgroundColor(Color.Black)
+        .zIndex(10)
+    }
+  }
+
+  aboutToAppear(): void {
+    this.setData()
+    BackButtonUtils.registerBackButton({
+      id: 'wearableMusicLibrary_showSearch',
+      judge: () => {
+        return this.showSearchPage
+      },
+      action: () => {
+        this.showSearchPage = false
+      }
+    })
+    BackButtonUtils.registerBackButton({
+      id: 'wearableMusicLibrary_modifyPlaylist',
+      judge: () => {
+        return this.modifyPlaylist
+      },
+      action: () => {
+        this.modifyPlaylist = false
+      }
+    })
+  }
+
+  aboutToDisappear(): void {
+    BackButtonUtils.unregisterBackButton('wearableMusicLibrary_showSearch')
+    BackButtonUtils.unregisterBackButton('wearableMusicLibrary_modifyPlaylist')
+  }
+
+  @Monitor('user.userPlaylists')
+  setData() {
+    this.playlistDataSource.setData(this.user.userPlaylists)
+    this.playlistDataSource.notifyDataReload()
+  }
+
+  @Monitor('showSearchPage')
+  onShowSearch() {
+    this.shouldDisableTab = this.showSearchPage
+  }
+
+  build() {
+    Stack() {
+      this.MainContent()
+      this.SearchOverlay()
+    }
+    .height('100%')
+    .width('100%')
+  }
+
+  onPlayListItemClicked(index: number) {
+    this.onPushPlaylist(this.user.userPlaylists[index])
+  }
+
+  onCreateNewPlaylist(res: string) {
+    const id = DialogHelper.showLoadingDialog()
+    PlayListAPIUtils.createPlayList(res, false)
+      .then((res): Promise<void> | undefined => {
+        if (res) {
+          SnackBarUtils.showMessage($r('app.string.create_new_playlist_success'));
+          return UserManager.fetchUserPlaylists();
+        } else {
+          SnackBarUtils.showMessage($r('app.string.create_new_playlist_failed'));
+          return
+        }
+      })
+      .catch(() => {
+        SnackBarUtils.showMessage($r('app.string.create_new_playlist_failed'));
+        return
+      })
+      .finally(() => {
+        DialogHelper.closeDialog(id)
+        this.modifyPlaylist = false
+      })
+  }
+
+
+  onPushPlaylist(playlist: PlayList) {
+    // const params = generatePageParams_PlayListDetail(playlist)
+    // const handlePop = (val: PopInfo) => {
+    //   const result = val.result as PlaylistDetail_PopReturn
+    //   if (result.removed) {
+    //     const p = this.user.userPlaylists.findIndex((v) => v.id === playlist.id)
+    //     if (p !== -1) this.user.userPlaylists.splice(p, 1)
+    //   }
+    //   this.setData()
+    // }
+    //
+    // this.pageStack.pushPath({
+    //   name: 'PlaylistDetail',
+    //   param: params,
+    //   onPop: (val) => {
+    //     handlePop(val)
+    //   }
+    // }, true)
+  }
+
+  onPushAlbum(album: Album) {
+    // const params = generatePageParams_AlbumDetail(album)
+    // const handlePop = (val: PopInfo) => {
+    //   const result = val.result as Album_PopReturn
+    //   if (result.removed) {
+    //     const p = this.user.userSubAlbum.findIndex((v) => v.id === album.id)
+    //     if (p !== -1) this.user.userSubAlbum.splice(p, 1)
+    //   }
+    // }
+    //
+    // this.pageStack.pushPath({
+    //   name: 'AlbumDetail',
+    //   param: params,
+    //   onPop: (val) => {
+    //     handlePop(val)
+    //   }
+    // }, true)
+  }
+}

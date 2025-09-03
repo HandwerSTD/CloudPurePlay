@@ -1,0 +1,11 @@
+{
+  "app": {
+    "bundleName": "top.handwer.cloudpureplay",
+    "patchVersionCode": 2000021,
+    "versionCode": 1000001
+  },
+  "module": {
+    "name": "wearable",
+    "type": "hotreload"
+  }
+}
