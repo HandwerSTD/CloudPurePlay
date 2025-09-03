@@ -1,5 +1,6 @@
 import { InstanceSwitcher } from "@handwer/api_adapter"
 import { UserManager, UserStore } from "@handwer/base"
+import { ArcConst } from "@handwer/wearable_ui_components"
 
 @ComponentV2
 export struct WearableUserCard {
@@ -36,7 +37,7 @@ export struct WearableUserCard {
           .fontSize(16)
           .fontColor([$r('sys.color.font_primary')])
       }
-      .backgroundColor($r('app.color.common_card_item_background'))
+      // .backgroundColor($r('app.color.common_card_item_background'))
       .width(32)
       .height(32)
       .onClick(() => {
@@ -46,7 +47,7 @@ export struct WearableUserCard {
     .width('100%')
     .padding(12)
     .backgroundColor($r('app.color.common_card_item_background'))
-    .borderRadius(8)
+    .borderRadius(ArcConst.ARC_LIST_RAD)
     .clickEffect({ level: ClickEffectLevel.LIGHT })
     .onClick(() => {
       UserManager.fetchUserInfo()

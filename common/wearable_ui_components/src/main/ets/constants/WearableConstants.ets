@@ -6,5 +6,6 @@ export class ArcConst {
 
   static readonly ARC_LIST_W = '410px'
   static readonly ARC_LIST_H = '130px'
+  static readonly ARC_LIST_RAD = '65px'
   static readonly ARC_LIST_SPC = LengthMetrics.px(20)
 }

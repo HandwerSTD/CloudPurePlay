@@ -2,6 +2,8 @@ import { Album, PlayList } from "@handwer/api_adapter"
 import { UserStore } from "@handwer/base"
 import { WearableMusicLibraryConfig } from "../config/WearableMusicLibraryConfig"
 import { WearableMusicUtils } from "../utils/WearableMusicUtils"
+import { ArcList, ArcListItem, ArcListAttribute, ArcListItemAttribute } from "@kit.ArkUI"
+import { ArcConst } from "@handwer/wearable_ui_components"
 
 @ComponentV2
 export struct WearableMusicLibrarySearchView {
@@ -21,7 +23,7 @@ export struct WearableMusicLibrarySearchView {
         .borderRadius(WearableMusicLibraryConfig.CARD_RADIUS)
         .draggable(false)
         .margin({ right: 12 })
-      
+
       Column() {
         Text(WearableMusicUtils.truncateText(list.name))
           .maxLines(1)
@@ -29,7 +31,7 @@ export struct WearableMusicLibrarySearchView {
           .fontSize(WearableMusicLibraryConfig.TITLE_FONT_SIZE)
           .fontWeight(FontWeight.Bold)
           .fontColor(WearableMusicLibraryConfig.PRIMARY_COLOR)
-        
+
         Text(WearableMusicUtils.formatPlaylistInfo(list))
           .fontSize(WearableMusicLibraryConfig.SUBTITLE_FONT_SIZE)
           .fontColor(WearableMusicLibraryConfig.SECONDARY_COLOR)
@@ -40,16 +42,19 @@ export struct WearableMusicLibrarySearchView {
     }
     .width('100%')
     .height(WearableMusicLibraryConfig.ITEM_HEIGHT)
-    .padding(12)
+    .padding({left: 4, right: 8})
     .backgroundColor(WearableMusicLibraryConfig.BACKGROUND_COLOR)
     .borderRadius(WearableMusicLibraryConfig.CARD_RADIUS)
     .clickEffect({
       level: ClickEffectLevel.LIGHT
     })
     .onClick(() => {
-      this.onPlayListItemClicked(index)
+      // if (this.modifyPlaylist) {
+      //   this.onRemovePlaylist(index)
+      // } else {
+      //   this.onPlayListItemClicked(index)
+      // }
     })
-    .transition(TransitionEffect.OPACITY.animation({duration: WearableMusicLibraryConfig.TRANSITION_DURATION}))
   }
 
   @Builder Album_SingleItem(list: Album, index: number) {
@@ -60,7 +65,7 @@ export struct WearableMusicLibrarySearchView {
         .borderRadius(WearableMusicLibraryConfig.CARD_RADIUS)
         .draggable(false)
         .margin({ right: 12 })
-      
+
       Column() {
         Text(WearableMusicUtils.truncateText(list.name))
           .maxLines(1)
@@ -68,7 +73,7 @@ export struct WearableMusicLibrarySearchView {
           .fontSize(WearableMusicLibraryConfig.TITLE_FONT_SIZE)
           .fontWeight(FontWeight.Bold)
           .fontColor(WearableMusicLibraryConfig.PRIMARY_COLOR)
-        
+
         Text(WearableMusicUtils.formatAlbumInfo(list))
           .fontSize(WearableMusicLibraryConfig.SUBTITLE_FONT_SIZE)
           .fontColor(WearableMusicLibraryConfig.SECONDARY_COLOR)
@@ -79,87 +84,93 @@ export struct WearableMusicLibrarySearchView {
     }
     .width('100%')
     .height(WearableMusicLibraryConfig.ITEM_HEIGHT)
-    .padding(12)
+    .padding({left: 4, right: 8})
     .backgroundColor(WearableMusicLibraryConfig.BACKGROUND_COLOR)
     .borderRadius(WearableMusicLibraryConfig.CARD_RADIUS)
     .clickEffect({
       level: ClickEffectLevel.LIGHT
     })
     .onClick(() => {
-      this.onAlbumItemClicked(index)
+      // this.onPushAlbum(list)
     })
-    .transition(TransitionEffect.OPACITY.animation({duration: WearableMusicLibraryConfig.TRANSITION_DURATION}))
   }
 
   @Builder SearchResults() {
-    if (this.searchContent === '') {
-      Column() {
-        SymbolGlyph($r('sys.symbol.magnifyingglass'))
-          .fontColor([$r('sys.color.font_tertiary')])
-          .fontSize(32)
-          .margin({bottom: 8})
-        Text($r('app.string.search_my_music'))
-          .fontColor($r('sys.color.font_tertiary'))
-          .fontSize(16)
-          .fontWeight(FontWeight.Medium)
-          .margin({bottom: 4})
-        Text($r('app.string.search_in_library'))
-          .fontColor($r('sys.color.font_tertiary'))
-          .fontSize(12)
-          .textAlign(TextAlign.Center)
-          .opacity(0.8)
-      }
-      .layoutWeight(1)
-      .justifyContent(FlexAlign.Center)
-    } else {
-      List({ space: WearableMusicLibraryConfig.ITEM_SPACING }) {
-        if (this.isSearchAlbum) {
-          if (this.searchAlbums.length === 0) {
-            ListItem() {
-              Column() {
-                Text($r('app.string.common_empty_content'))
-                  .fontColor(WearableMusicLibraryConfig.TERTIARY_COLOR)
-                  .fontSize(WearableMusicLibraryConfig.TITLE_FONT_SIZE)
-                  .textAlign(TextAlign.Center)
-              }
-              .width('100%')
-              .justifyContent(FlexAlign.Center)
-              .height(100)
+
+      ArcList({initialIndex: 1}) {
+        ArcListItem() {
+          this.SearchHeader()
+        }.width(ArcConst.ARC_LIST_W)
+        if (this.searchContent === '') {
+          ArcListItem() {
+            Column() {
+              SymbolGlyph($r('sys.symbol.magnifyingglass'))
+                .fontColor([$r('sys.color.font_tertiary')])
+                .fontSize(32)
+                .margin({bottom: 8})
+              Text($r('app.string.search_my_music'))
+                .fontColor($r('sys.color.font_tertiary'))
+                .fontSize(16)
+                .fontWeight(FontWeight.Medium)
+                .margin({bottom: 4})
+              Text($r('app.string.search_in_library'))
+                .fontColor($r('sys.color.font_tertiary'))
+                .fontSize(12)
+                .textAlign(TextAlign.Center)
+                .opacity(0.8)
             }
-          } else {
-            ForEach(WearableMusicUtils.filterSearchResults(this.searchAlbums), (list: Album, index) => {
-              ListItem() {
-                this.Album_SingleItem(list, index)
-              }
-            })
+            .layoutWeight(1)
+            .justifyContent(FlexAlign.Center)
           }
         } else {
-          if (this.searchPlaylists.length === 0) {
-            ListItem() {
-              Column() {
-                Text($r('app.string.common_empty_content'))
-                  .fontColor(WearableMusicLibraryConfig.TERTIARY_COLOR)
-                  .fontSize(WearableMusicLibraryConfig.TITLE_FONT_SIZE)
-                  .textAlign(TextAlign.Center)
+          if (this.isSearchAlbum) {
+            if (this.searchAlbums.length === 0) {
+              ArcListItem() {
+                Column() {
+                  Text($r('app.string.common_empty_content'))
+                    .fontColor(WearableMusicLibraryConfig.TERTIARY_COLOR)
+                    .fontSize(WearableMusicLibraryConfig.TITLE_FONT_SIZE)
+                    .textAlign(TextAlign.Center)
+                }
+                .width('100%')
+                .justifyContent(FlexAlign.Center)
+                .height(100)
               }
-              .width('100%')
-              .justifyContent(FlexAlign.Center)
-              .height(100)
+            } else {
+              ForEach(WearableMusicUtils.filterSearchResults(this.searchAlbums), (list: Album, index) => {
+                ArcListItem() {
+                  this.Album_SingleItem(list, index)
+                }.width(ArcConst.ARC_LIST_W)
+              })
             }
           } else {
-            ForEach(WearableMusicUtils.filterSearchResults(this.searchPlaylists), (list: PlayList, index) => {
-              ListItem() {
-                this.PlayList_SingleItem(list, index)
+            if (this.searchPlaylists.length === 0) {
+              ArcListItem() {
+                Column() {
+                  Text($r('app.string.common_empty_content'))
+                    .fontColor(WearableMusicLibraryConfig.TERTIARY_COLOR)
+                    .fontSize(WearableMusicLibraryConfig.TITLE_FONT_SIZE)
+                    .textAlign(TextAlign.Center)
+                }
+                .width('100%')
+                .justifyContent(FlexAlign.Center)
+                .height(100)
               }
-            })
+            } else {
+              ForEach(WearableMusicUtils.filterSearchResults(this.searchPlaylists), (list: PlayList, index) => {
+                ArcListItem() {
+                  this.PlayList_SingleItem(list, index)
+                }.width(ArcConst.ARC_LIST_W)
+              })
+            }
           }
         }
       }
       .width('100%')
       .layoutWeight(1)
       .scrollBar(BarState.Auto)
-      .edgeEffect(EdgeEffect.Spring, {alwaysEnabled: true})
-    }
+      .space(ArcConst.ARC_LIST_SPC)
+      .fadingEdge(true)
   }
 
   @Builder SearchHeader() {
@@ -205,12 +216,10 @@ export struct WearableMusicLibrarySearchView {
 
   build() {
     Column() {
-      this.SearchHeader()
       this.SearchResults()
     }
     .height('100%')
     .width('100%')
-    .padding(16)
   }
 
   onPlayListItemClicked(index: number) {

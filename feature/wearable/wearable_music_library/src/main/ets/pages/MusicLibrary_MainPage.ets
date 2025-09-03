@@ -7,8 +7,8 @@ import { WearableMusicLibraryConfig } from "../config/WearableMusicLibraryConfig
 import { WearableMusicUtils } from "../utils/WearableMusicUtils"
 import { DialogHelper } from "@pura/harmony-dialog"
 import { LazyData } from "@pie/lazy-data"
-import { BackButtonUtils } from "@handwer/wearable_ui_components"
-import { promptAction } from "@kit.ArkUI"
+import { ArcConst, BackButtonUtils } from "@handwer/wearable_ui_components"
+import { ArcList, ArcListItem, promptAction, ArcListAttribute, ArcListItemAttribute } from "@kit.ArkUI"
 
 export function genId_WearableMusicLibraryPlaylist(id: string) {
   return 'WearableMusicLibraryPlaylist_'+id
@@ -24,7 +24,7 @@ class SnackBarUtils {
 
 @ComponentV2
 export struct WearableMusicLibraryMainPage {
-  @Consumer(SCApp.shouldDisableTab) shouldDisableTab: boolean = false
+  @Consumer(SCApp.settingsSheet) showSettings: boolean = false
 
   @Consumer(SCApp.explorePageStack) pageStack: NavPathStack = new NavPathStack()
   user = UserStore
@@ -73,7 +73,7 @@ export struct WearableMusicLibraryMainPage {
     }
     .width('100%')
     .height(WearableMusicLibraryConfig.ITEM_HEIGHT)
-    .padding(12)
+    .padding({left: 4, right: 8})
     .backgroundColor(WearableMusicLibraryConfig.BACKGROUND_COLOR)
     .borderRadius(WearableMusicLibraryConfig.CARD_RADIUS)
     .clickEffect({
@@ -115,7 +115,7 @@ export struct WearableMusicLibraryMainPage {
     }
     .width('100%')
     .height(WearableMusicLibraryConfig.ITEM_HEIGHT)
-    .padding(12)
+    .padding({left: 4, right: 8})
     .backgroundColor(WearableMusicLibraryConfig.BACKGROUND_COLOR)
     .borderRadius(WearableMusicLibraryConfig.CARD_RADIUS)
     .clickEffect({
@@ -136,51 +136,40 @@ export struct WearableMusicLibraryMainPage {
   }
 
   @Builder ContentList() {
-    Column() {
+    ArcListItem() {
       this.UserInfo()
-      
-      List({ space: WearableMusicLibraryConfig.ITEM_SPACING }) {
-        if (this.showAlbum) {
-          ForEach(UserStore.userSubAlbum.slice(0, WearableMusicLibraryConfig.MAX_VISIBLE_ITEMS), (list: Album, index) => {
-            ListItem() {
-              this.Album_SingleItem(list, index)
-            }
-          })
-        } else {
-          LazyForEach(this.playlistDataSource, (list: PlayList, index) => {
-            ListItem() {
-              this.PlayList_SingleItem(list, index)
-            }
-          }, (val: PlayList, index) => `${val.id}_${val.coverImgUrl}_${val.name}_${val.trackCount}_${index}`)
-        }
-      }
-      .width('100%')
-      .layoutWeight(1)
-      .scrollBar(BarState.Auto)
+    }.width(ArcConst.ARC_LIST_W)
+    if (this.showAlbum) {
+      ForEach(UserStore.userSubAlbum.slice(0, WearableMusicLibraryConfig.MAX_VISIBLE_ITEMS), (list: Album, index) => {
+        ArcListItem() {
+          this.Album_SingleItem(list, index)
+        }.width(ArcConst.ARC_LIST_W)
+      })
+    } else {
+      LazyForEach(this.playlistDataSource, (list: PlayList, index) => {
+        ArcListItem() {
+          this.PlayList_SingleItem(list, index)
+        }.width(ArcConst.ARC_LIST_W)
+      }, (val: PlayList, index) => `${val.id}_${val.coverImgUrl}_${val.name}_${val.trackCount}_${index}`)
     }
-    .width('100%')
-    .height('100%')
-    .padding(16)
   }
 
   @Builder HeaderButtons() {
     WearableMusicActionPanel({
-      showEditMode: this.modifyPlaylist,
-      showAddButton: this.modifyPlaylist && !this.showAlbum,
       onSearchClick: () => {
         this.showSearchPage = !this.showSearchPage
       },
-      onEditClick: () => {
-        this.modifyPlaylist = !this.modifyPlaylist
-      },
-      onAddClick: () => {
+      onSettingsClick: () => {
+        this.showSettings = !this.showSettings
       }
     })
   }
 
   @Builder MainContent() {
-    Column() {
-      this.HeaderButtons()
+    ArcList({initialIndex: 1}) {
+      ArcListItem() {
+        this.HeaderButtons()
+      }.width(ArcConst.ARC_LIST_W)
       this.ContentList()
     }
     .width('100%')
@@ -188,8 +177,11 @@ export struct WearableMusicLibraryMainPage {
     .translate(this.showSearchPage ? {
       y: '20%'
     } : undefined)
+    .space(ArcConst.ARC_LIST_SPC)
     .scale(this.showSearchPage ? { x: 0.9, y: 0.9 } : undefined)
+    // .foregroundBlurStyle(this.showSearchPage ? BlurStyle.BACKGROUND_REGULAR : undefined)
     .animation(WearableMusicUtils.getWearableAnimationConfig())
+    .fadingEdge(true)
   }
 
   @Builder SearchOverlay() {
@@ -203,8 +195,8 @@ export struct WearableMusicLibraryMainPage {
           this.onPushPlaylist(playlist)
         }
       })
-        .transition(TransitionEffect.OPACITY.animation({duration: 500}))
-        .backgroundColor(Color.Black)
+        .transition(TransitionEffect.OPACITY.animation({duration: 300}))
+        .backgroundBlurStyle(this.showSearchPage ? BlurStyle.BACKGROUND_THICK: undefined)
         .zIndex(10)
     }
   }
@@ -240,11 +232,6 @@ export struct WearableMusicLibraryMainPage {
   setData() {
     this.playlistDataSource.setData(this.user.userPlaylists)
     this.playlistDataSource.notifyDataReload()
-  }
-
-  @Monitor('showSearchPage')
-  onShowSearch() {
-    this.shouldDisableTab = this.showSearchPage
   }
 
   build() {
