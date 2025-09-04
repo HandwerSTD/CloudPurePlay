@@ -2,7 +2,7 @@ import { GlobalStore, UserStore, SCApp, LoginStatus } from '@handwer/base'
 import { WearablePlayerUI } from '@handwer/wearable_player_ui'
 import { WearableSettings } from '@handwer/wearable_settings'
 import { RetryLoginPanel } from './views/RetryLoginPanel'
-import { ArcSwiper, ArcSwiperController } from '@ohos.arkui.ArcSwiper'
+import { ArcSwiper, ArcSwiperController, ArcSwiperAttribute } from '@ohos.arkui.ArcSwiper'
 import { WearableMusicLibrary } from '@handwer/wearable_music_library'
 
 @Entry
@@ -38,7 +38,7 @@ struct Index {
         ArcSwiper(this.controller) {
           WearablePlayerUI()
           WearableMusicLibrary()
-        }
+        }.height('100%')
       }
       .bindSheet(this.consoleSheet!!, this.SettingsPanel, {
         preferType: SheetType.CENTER,

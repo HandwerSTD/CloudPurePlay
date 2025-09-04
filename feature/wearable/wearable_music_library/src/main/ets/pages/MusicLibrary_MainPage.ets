@@ -7,19 +7,13 @@ import { WearableMusicLibraryConfig } from "../config/WearableMusicLibraryConfig
 import { WearableMusicUtils } from "../utils/WearableMusicUtils"
 import { DialogHelper } from "@pura/harmony-dialog"
 import { LazyData } from "@pie/lazy-data"
-import { ArcConst, BackButtonUtils } from "@handwer/wearable_ui_components"
+import { ArcConst, BackButtonUtils,
+  generatePageParams_WearableAlbumDetail,
+  generatePageParams_WearablePlayListDetail } from "@handwer/wearable_ui_components"
 import { ArcList, ArcListItem, promptAction, ArcListAttribute, ArcListItemAttribute } from "@kit.ArkUI"
 
 export function genId_WearableMusicLibraryPlaylist(id: string) {
   return 'WearableMusicLibraryPlaylist_'+id
-}
-
-class SnackBarUtils {
-  static showMessage(str: ResourceStr) {
-    promptAction.openToast({
-      message: str
-    })
-  }
 }
 
 @ComponentV2
@@ -83,11 +77,7 @@ export struct WearableMusicLibraryMainPage {
       level: ClickEffectLevel.LIGHT
     })
     .onClick(() => {
-      // if (this.modifyPlaylist) {
-      //   this.onRemovePlaylist(index)
-      // } else {
-      //   this.onPlayListItemClicked(index)
-      // }
+      this.onPlayListItemClicked(index)
     })
   }
 
@@ -261,65 +251,20 @@ export struct WearableMusicLibraryMainPage {
     this.onPushPlaylist(this.user.userPlaylists[index])
   }
 
-  onCreateNewPlaylist(res: string) {
-    const id = DialogHelper.showLoadingDialog()
-    PlayListAPIUtils.createPlayList(res, false)
-      .then((res): Promise<void> | undefined => {
-        if (res) {
-          SnackBarUtils.showMessage($r('app.string.create_new_playlist_success'));
-          return UserManager.fetchUserPlaylists();
-        } else {
-          SnackBarUtils.showMessage($r('app.string.create_new_playlist_failed'));
-          return
-        }
-      })
-      .catch(() => {
-        SnackBarUtils.showMessage($r('app.string.create_new_playlist_failed'));
-        return
-      })
-      .finally(() => {
-        DialogHelper.closeDialog(id)
-        this.modifyPlaylist = false
-      })
-  }
-
-
   onPushPlaylist(playlist: PlayList) {
-    // const params = generatePageParams_PlayListDetail(playlist)
-    // const handlePop = (val: PopInfo) => {
-    //   const result = val.result as PlaylistDetail_PopReturn
-    //   if (result.removed) {
-    //     const p = this.user.userPlaylists.findIndex((v) => v.id === playlist.id)
-    //     if (p !== -1) this.user.userPlaylists.splice(p, 1)
-    //   }
-    //   this.setData()
-    // }
-    //
-    // this.pageStack.pushPath({
-    //   name: 'PlaylistDetail',
-    //   param: params,
-    //   onPop: (val) => {
-    //     handlePop(val)
-    //   }
-    // }, true)
+    const params = generatePageParams_WearablePlayListDetail(playlist)
+    this.pageStack.pushPath({
+      name: 'PlaylistDetail',
+      param: params,
+    }, true)
   }
 
   onPushAlbum(album: Album) {
-    // const params = generatePageParams_AlbumDetail(album)
-    // const handlePop = (val: PopInfo) => {
-    //   const result = val.result as Album_PopReturn
-    //   if (result.removed) {
-    //     const p = this.user.userSubAlbum.findIndex((v) => v.id === album.id)
-    //     if (p !== -1) this.user.userSubAlbum.splice(p, 1)
-    //   }
-    // }
-    //
-    // this.pageStack.pushPath({
-    //   name: 'AlbumDetail',
-    //   param: params,
-    //   onPop: (val) => {
-    //     handlePop(val)
-    //   }
-    // }, true)
+    const params = generatePageParams_WearableAlbumDetail(album)
+
+    this.pageStack.pushPath({
+      name: 'AlbumDetail',
+      param: params,
+    }, true)
   }
 }

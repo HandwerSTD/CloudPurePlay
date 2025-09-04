@@ -83,28 +83,13 @@ export struct WearablePlaylistDetail {
     Column() {
       ArcCommonListItem({
         icon: $r('sys.symbol.list_interrupt'),
-        title: $r('app.string.add_next_play')
+        title: $r('app.string.add_next_play'),
+        customBgColor: Color.Transparent
       })
         .onClick(() => {
           PlayQueueUtils.queueAdd(PLAYMODE.SINGLE, SongConvertUtils.PlaylistSong2NormalSong(song), SongConvertUtils.getArtists(song.ar), '', song.al.picUrl)
         })
-      
-      ArcCommonListItem({
-        icon: $r('sys.symbol.add_songlist'),
-        title: $r('app.string.add_song_to_list')
-      })
-        .onClick(() => {
-          this.addSongToList(song)
-        })
-      
-      ArcCommonListItem({
-        icon: $r('sys.symbol.trash'),
-        title: $r('app.string.remove_song_from_list')
-      })
-        .onClick(() => {
-          this.removeSongFromPlaylist(song)
-        })
-    }.padding(8).borderRadius(12)
+    }.borderRadius(12)
   }
 
   @Builder TopArea() {
@@ -113,7 +98,6 @@ export struct WearablePlaylistDetail {
         WearableImageCover({
           nowPlayingCoverImg: this.playListInfo.coverImgUrl
         })
-          .width('60%').aspectRatio(1)
         
         Text(this.playListInfo.name)
           .fontWeight(FontWeight.Bold).fontSize(16).fontColor(Color.White)
@@ -131,7 +115,7 @@ export struct WearablePlaylistDetail {
   }
 
   build() {
-    Column() {
+    NavDestination() {
       ArcList() {
         this.TopArea()
 
@@ -167,9 +151,15 @@ export struct WearablePlaylistDetail {
     }
     .height('100%')
     .width('100%')
-    .justifyContent(FlexAlign.Start)
-    .onAppear(() => {
+    .hideTitleBar(true)
+    .onReady((context) => {
+      const params = context.pathInfo.param as Record<string, Object>
+      if (params) {
+        this.playListInfo = params['playListInfo'] as PlayList
+      }
       this.onStart()
+    })
+    .onAppear(() => {
       EmitterUtil.onSubscribe(SCEmitter.PlaylistContentUpdate, (data: PlaylistContentUpdateInfo) => {
         this.onReceivePlayListSongUpdate(data)
       })

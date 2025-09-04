@@ -136,9 +136,9 @@ export struct MainPage {
           ArcListItem() {
             this.DataSource()
           }.width(ArcConst.ARC_LIST_W)
-          ArcListItem() {
-            this.DisplaySettingsBuilder()
-          }.width(ArcConst.ARC_LIST_W)
+          // ArcListItem() {
+          //   this.DisplaySettingsBuilder()
+          // }.width(ArcConst.ARC_LIST_W)
           ArcListItem() {
             this.PlaybackSettingsBuilder()
           }.width(ArcConst.ARC_LIST_W)

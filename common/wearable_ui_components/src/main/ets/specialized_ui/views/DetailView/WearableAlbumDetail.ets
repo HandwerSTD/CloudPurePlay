@@ -73,20 +73,13 @@ export struct WearableAlbumDetail {
     Column() {
       ArcCommonListItem({
         icon: $r('sys.symbol.list_interrupt'),
-        title: $r('app.string.add_next_play')
+        title: $r('app.string.add_next_play'),
+        customBgColor: Color.Transparent
       })
         .onClick(() => {
           PlayQueueUtils.queueAdd(PLAYMODE.SINGLE, SongConvertUtils.PlaylistSong2NormalSong(song), SongConvertUtils.getArtists(song.ar), '', song.al.picUrl)
         })
-      
-      ArcCommonListItem({
-        icon: $r('sys.symbol.add_songlist'),
-        title: $r('app.string.add_song_to_list')
-      })
-        .onClick(() => {
-          this.addSongToList(song)
-        })
-    }.padding(8).borderRadius(12)
+    }.borderRadius(12)
   }
 
   @Builder TopArea() {
@@ -95,7 +88,6 @@ export struct WearableAlbumDetail {
         WearableImageCover({
           nowPlayingCoverImg: this.albumInfo.picUrl
         })
-          .width('60%').aspectRatio(1)
         
         Text(this.albumInfo.name)
           .fontWeight(FontWeight.Bold).fontSize(16).fontColor(Color.White)
@@ -108,12 +100,12 @@ export struct WearableAlbumDetail {
           icon: $r('sys.symbol.play_fill'),
           title: $r('app.string.common_play_button_play_num', this.albumInfo.size)
         })
-      }.padding(12)
+      }.padding(12).width('100%')
     }.width(ArcConst.ARC_LIST_W)
   }
 
   build() {
-    Column() {
+    NavDestination() {
       ArcList() {
         this.TopArea()
 
@@ -131,13 +123,13 @@ export struct WearableAlbumDetail {
               },
               isPlaying: song.s.id === this.nps.currentSong.id
             })
-            .bindContextMenu(song.showMenu!!, this.PlayListItemContextMenu(song.s), {
-              backgroundBlurStyle: BlurStyle.BACKGROUND_THICK,
-              hapticFeedbackMode: HapticFeedbackMode.AUTO
-            })
-            .gesture(LongPressGesture().onAction(() => {
-              song.showMenu = true
-            }))
+              .bindContextMenu(song.showMenu!!, this.PlayListItemContextMenu(song.s), {
+                backgroundBlurStyle: BlurStyle.BACKGROUND_THICK,
+                hapticFeedbackMode: HapticFeedbackMode.AUTO
+              })
+              .gesture(LongPressGesture().onAction(() => {
+                song.showMenu = true
+              }))
           }.width(ArcConst.ARC_LIST_W)
           .visibility(this.isLoading ? Visibility.Hidden : Visibility.Visible)
           .transition(TransitionEffect.OPACITY.animation({duration: 300}))
@@ -146,12 +138,15 @@ export struct WearableAlbumDetail {
       .space(ArcConst.ARC_LIST_SPC)
       .fadingEdge(true)
       .height('100%')
-    }
+    }.hideTitleBar(true)
     .height('100%')
     .width('100%')
-    .justifyContent(FlexAlign.Start)
-    .onAppear(() => {
+    .onReady((context) => {
       // Initialize with parameter from navigation
+      const params = context.pathInfo.param as Record<string, Object>
+      if (params) {
+        this.albumInfo = params['albumInfo'] as Album
+      }
       this.onStart()
     })
     .opacity(this.pageOpacity)
