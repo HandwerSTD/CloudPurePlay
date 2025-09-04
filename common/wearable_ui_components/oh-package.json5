@@ -1,11 +1,13 @@
 {
   "name": "@handwer/wearable_ui_components",
   "version": "1.0.0",
-  "description": "Please describe the basic information.",
+  "description": "Wearable UI components with specialized views for music playback and library management.",
   "main": "Index.ets",
   "author": "",
   "license": "Apache-2.0",
   "dependencies": {
-    "@handwer/common_resources": "file:../common_resources"
+    "@handwer/common_resources": "file:../common_resources",
+    "@handwer/api_adapter": "file:../../apis/api_adapter",
+    "@handwer/base": "file:../base"
   }
 }

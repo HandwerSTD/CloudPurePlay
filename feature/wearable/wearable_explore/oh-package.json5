@@ -1,9 +1,14 @@
 {
   "name": "@handwer/wearable_explore",
   "version": "1.0.0",
-  "description": "Please describe the basic information.",
+  "description": "Wearable explore module with search and album browsing functionality.",
   "main": "Index.ets",
   "author": "",
   "license": "Apache-2.0",
-  "dependencies": {}
+  "dependencies": {
+    "@handwer/base": "file:../../../common/base",
+    "@handwer/api_adapter": "file:../../../apis/api_adapter",
+    "@handwer/wearable_ui_components": "file:../../../common/wearable_ui_components",
+    "@handwer/common_resources": "file:../../../common/common_resources"
+  }
 }
