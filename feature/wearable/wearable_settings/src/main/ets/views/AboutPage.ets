@@ -1,4 +1,6 @@
 import { GlobalStore, SCApp } from "@handwer/base";
+import { ArcList, ArcListAttribute, ArcListItem, ArcListItemAttribute } from "@kit.ArkUI";
+import { ArcConst } from "@handwer/wearable_ui_components";
 
 @ComponentV2
 export struct AboutPage {
@@ -15,60 +17,47 @@ export struct AboutPage {
   build() {
     NavDestination() {
       Column() {
-        // Title Bar
-        Row() {
-          Image($r('sys.symbol.chevron_backward'))
-            .width(24)
-            .height(24)
-            .fillColor(Color.White)
-            .onClick(() => {
-              this.settingsPageStack.pop()
-            })
-          Text($r('app.string.about_this_app'))
-            .fontSize(18)
-            .fontWeight(FontWeight.Medium)
-            .fontColor(Color.White)
-            .margin({ left: 12 })
-          Blank()
-        }
-        .width('100%')
-        .height(56)
-        .padding({ left: 16, right: 16 })
-
-        Column() {
-          Column() {
-            Image($r('sys.media.ohos_app_icon'))
-              .width(60)
-              .height(60)
-              .onClick(() => {
-                ++this.logCounter;
-                if (this.logCounter > 5) {
-                  // this.settingsPageStack.pushPathByName('LogPage', [])
-                }
-              })
-            Text($r('app.string.app_name'))
-              .margin({ top: 12 })
-              .fontSize(18)
-              .fontWeight(FontWeight.Medium)
-              .fontColor(Color.White)
-            Text(this.version)
-              .fontColor($r('sys.color.font_secondary'))
-              .fontSize(14)
-              .margin({ top: 4 })
+        ArcList() {
+          ArcListItem() {
+            Column() {
+              Image($r('sys.media.ohos_app_icon'))
+                .width(60)
+                .height(60)
+                .onClick(() => {
+                  ++this.logCounter;
+                  if (this.logCounter > 5) {
+                    // this.settingsPageStack.pushPathByName('LogPage', [])
+                  }
+                })
+              Text($r('app.string.app_name'))
+                .margin({ top: 12 })
+                .fontSize(18)
+                .fontWeight(FontWeight.Medium)
+                .fontColor(Color.White)
+              Text(this.version)
+                .fontColor($r('sys.color.font_secondary'))
+                .fontSize(14)
+                .margin({ top: 4 })
+            }
+            .padding({ top: 48 })
           }
-          .padding({ top: 48 })
-
-          Column() {
-            Text($r('app.string.about_info'))
-              .fontSize(12)
-              .fontColor($r('sys.color.font_secondary'))
-              .textAlign(TextAlign.Center)
+          .width(ArcConst.ARC_LIST_W)
+          
+          ArcListItem() {
+            Column() {
+              Text($r('app.string.about_info'))
+                .fontSize(12)
+                .fontColor($r('sys.color.font_secondary'))
+                .textAlign(TextAlign.Center)
+            }
+            .justifyContent(FlexAlign.Center)
+            .padding({ bottom: 48 })
           }
-          .margin({ top: 48 })
+          .width(ArcConst.ARC_LIST_W)
         }
+        .space(ArcConst.ARC_LIST_SPC)
+        .fadingEdge(true)
         .layoutWeight(1)
-        .justifyContent(FlexAlign.SpaceBetween)
-        .padding({ bottom: 48 })
       }
       .height('100%')
       .width('100%')

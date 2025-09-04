@@ -100,6 +100,7 @@ export struct NavidromeAPI_Source {
       }
       .width(ArcConst.ARC_LIST_W)
     }.space(ArcConst.ARC_LIST_SPC)
+    .fadingEdge(true)
   }
 
   aboutToAppear(): void {

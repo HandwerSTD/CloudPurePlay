@@ -63,6 +63,7 @@ export struct APIFinishWelcome {
         this.Main()
       }.defaultFocus(true)
       .space(ArcConst.ARC_LIST_SPC)
+      .fadingEdge(true)
       .width(ArcConst.MAX_LEN)
     }
     .hideTitleBar(true)

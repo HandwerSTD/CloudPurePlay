@@ -5,5 +5,7 @@
   "main": "Index.ets",
   "author": "",
   "license": "Apache-2.0",
-  "dependencies": {}
+  "dependencies": {
+    "@handwer/common_resources": "file:../common_resources"
+  }
 }

@@ -48,6 +48,7 @@ export struct DisplaySettings {
               }
             })
           }
+          .width(ArcConst.ARC_LIST_W)
           ArcListItem() {
             ArcCommonListToggleItem({
               icon: $r('sys.symbol.storagebox'),
@@ -59,6 +60,7 @@ export struct DisplaySettings {
               }
             })
           }
+          .width(ArcConst.ARC_LIST_W)
           ArcListItem() {
             ArcCommonListToggleItem({
               icon: $r('sys.symbol.hand_draw'),
@@ -70,6 +72,7 @@ export struct DisplaySettings {
               }
             })
           }
+          .width(ArcConst.ARC_LIST_W)
           ArcListItem() {
             ArcCommonListToggleItem({
               icon: $r('sys.symbol.rectangle_split_2x1'),
@@ -81,11 +84,13 @@ export struct DisplaySettings {
               }
             })
           }
+          .width(ArcConst.ARC_LIST_W)
         }
         .focusable(true)
         .focusOnTouch(true)
         .defaultFocus(true)
         .space(ArcConst.ARC_LIST_SPC)
+        .fadingEdge(true)
         .layoutWeight(1)
       }
       .width('100%')

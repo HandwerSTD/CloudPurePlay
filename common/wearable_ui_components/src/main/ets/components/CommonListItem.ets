@@ -59,5 +59,6 @@ export struct ArcCommonListItem {
     .justifyContent(FlexAlign.Start)
     .height(ArcConst.ARC_LIST_H)
     .width(ArcConst.ARC_LIST_W)
+    .backgroundColor($r('app.color.play_list_single_item_bg'))
   }
 }

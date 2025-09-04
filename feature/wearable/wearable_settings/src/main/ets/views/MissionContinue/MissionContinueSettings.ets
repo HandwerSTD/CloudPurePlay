@@ -32,11 +32,13 @@ export struct MissionContinueSettings {
               }
             })
           }
+          .width(ArcConst.ARC_LIST_W)
         }
         .focusable(true)
         .focusOnTouch(true)
         .defaultFocus(true)
         .space(ArcConst.ARC_LIST_SPC)
+        .fadingEdge(true)
         .layoutWeight(1)
       }
       .width('100%')

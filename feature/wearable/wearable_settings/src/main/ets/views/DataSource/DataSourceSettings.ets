@@ -25,8 +25,7 @@ export struct DataSourceSettings {
         this.pushPage('CloudAPI_Source', {})
       })
     }
-    .backgroundColor($r('app.color.play_list_single_item_bg'))
-    .borderRadius(50)
+    .width(ArcConst.ARC_LIST_W)
   }
 
   @Builder NavidromeAPI() {
@@ -39,8 +38,7 @@ export struct DataSourceSettings {
         this.pushPage('NavidromeAPI_Source', {})
       })
     }
-    .backgroundColor($r('app.color.play_list_single_item_bg'))
-    .borderRadius(50)
+    .width(ArcConst.ARC_LIST_W)
   }
 
   @Builder DataSyncPanel() {
@@ -75,6 +73,7 @@ export struct DataSourceSettings {
         .focusOnTouch(true)
         .defaultFocus(true)
         .space(ArcConst.ARC_LIST_SPC)
+        .fadingEdge(true)
       }
       .width('100%')
       .height('100%')

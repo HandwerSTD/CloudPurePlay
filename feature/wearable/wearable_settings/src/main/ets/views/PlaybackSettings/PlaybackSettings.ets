@@ -34,6 +34,7 @@ export struct PlaybackSettings {
               }
             })
           }
+          .width(ArcConst.ARC_LIST_W)
           if (this.autoPlayOnLaunch) {
             ArcListItem() {
               ArcCommonListToggleItem({
@@ -46,6 +47,7 @@ export struct PlaybackSettings {
                 }
               })
             }
+            .width(ArcConst.ARC_LIST_W)
             .transition(TransitionEffect.OPACITY.animation({ duration: 300 }))
           }
         }
@@ -53,6 +55,7 @@ export struct PlaybackSettings {
         .focusOnTouch(true)
         .defaultFocus(true)
         .space(ArcConst.ARC_LIST_SPC)
+        .fadingEdge(true)
         .layoutWeight(1)
       }
       .width('100%')
