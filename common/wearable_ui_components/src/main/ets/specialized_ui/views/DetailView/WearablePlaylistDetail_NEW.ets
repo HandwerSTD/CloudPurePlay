@@ -17,7 +17,6 @@ import {
   SpecialPlayMode,
   UserManager,
   UserStore } from "@handwer/base";
-import { HdsSnackBar } from "@kit.UIDesignKit";
 import { LazyData } from "@pie/lazy-data";
 import { ArcList, ArcListItem, ArcListAttribute, ArcListItemAttribute } from "@kit.ArkUI";
 import { EmitterUtil } from "@pura/harmony-utils";
@@ -34,7 +33,6 @@ const TAG = '[WearablePlaylistDetail]'
 export struct WearablePlaylistDetail {
   @Local pageOpacity: number = 1;
   @Local playListInfo: PlayList = PlayList_INITIAL;
-  snack = new HdsSnackBar(this.getUIContext())
 
   nps = NowPlayingStore
   @Local isLoading: boolean = false;
@@ -73,7 +71,7 @@ export struct WearablePlaylistDetail {
       icon: !this.isSongLiked(song) ?  $r('sys.symbol.heart') : $r('sys.symbol.heart_fill'),
       clickAction: () => {
         SongLike.likeSong(song.id, (icon, msg) => {
-          SnackBarUtils.showMessage(this.snack, icon, msg)
+          SnackBarUtils.showMessage([], icon, msg)
         })
       },
       customFontColor: [!this.isSongLiked(song) ? Color.White : Color.Red],
@@ -262,7 +260,7 @@ export struct WearablePlaylistDetail {
     }
     try {
       const playName = (songIndex !== undefined ? this.fullPlayListDetail[songIndex].name : this.playListInfo.name)
-      SnackBarUtils.showMessage(this.snack, $r('sys.symbol.music_note_list'), $r('app.string.start_playing_le_NAME_ge_', playName))
+      SnackBarUtils.showMessage([], $r('sys.symbol.music_note_list'), $r('app.string.start_playing_le_NAME_ge_', playName))
       const queue = PlayQueueUtils.makeQueueByPlaylist(this.fullPlayListDetail)
       await PlayQueueUtils.cleanQueue()
       await PlayQueueUtils.queueAddArray(queue)
@@ -270,7 +268,7 @@ export struct WearablePlaylistDetail {
       NowPlayingStore.specialPlayMode = SpecialPlayMode.DISABLED
     } catch (e) {
       Logger.error(TAG, `play full list failed: ${JSON.stringify(e)}`)
-      SnackBarUtils.showMessage(this.snack, $r('sys.symbol.music_note_list'), $r('app.string.start_playing_list_failed'))
+      SnackBarUtils.showMessage([], $r('sys.symbol.music_note_list'), $r('app.string.start_playing_list_failed'))
     }
   }
 
@@ -279,17 +277,17 @@ export struct WearablePlaylistDetail {
     PlayListAPIUtils.PlayListOperation("del", this.playListInfo.id, song.id)
       .then((res) => {
         if (res) {
-          SnackBarUtils.showMessage(this.snack, $r('sys.symbol.trash'), $r('app.string.remove_song_success'))
+          SnackBarUtils.showMessage([], $r('sys.symbol.trash'), $r('app.string.remove_song_success'))
           this.fullPlayListDetail.splice(index, 1)
           this.fullPlayListDataSource.deleteData(index)
           this.fullPlayListDataSource.notifyDataReload()
           this.updateThisPlaylistLength()
         } else {
-          SnackBarUtils.showMessage(this.snack, $r('sys.symbol.trash'), $r('app.string.remove_song_failed'))
+          SnackBarUtils.showMessage([], $r('sys.symbol.trash'), $r('app.string.remove_song_failed'))
         }
       })
       .catch(() => {
-        SnackBarUtils.showMessage(this.snack, $r('sys.symbol.trash'), $r('app.string.remove_song_failed'))
+        SnackBarUtils.showMessage([], $r('sys.symbol.trash'), $r('app.string.remove_song_failed'))
       })
   }
 

@@ -13,7 +13,6 @@ import {
   SongConvertUtils, SongLike,
   SpecialPlayMode,
   UserStore } from "@handwer/base";
-import { HdsSnackBar } from "@kit.UIDesignKit";
 import { ArcList, ArcListItem, ArcListAttribute, ArcListItemAttribute } from "@kit.ArkUI";
 import { WearablePlaylistSongViewModel } from "./WearablePlaylistDetailViewmodel";
 import { ActionButton, ActionIconTextButton } from "../../../components/ActionButton";
@@ -31,7 +30,6 @@ export interface WearableAlbum_PopReturn {
 @ComponentV2
 export struct WearableAlbumDetail {
   @Local pageOpacity: number = 1;
-  snack = new HdsSnackBar(this.getUIContext())
 
   nps = NowPlayingStore
   @Local isLoading: boolean = false;
@@ -63,7 +61,7 @@ export struct WearableAlbumDetail {
       icon: !this.isSongLiked(song) ?  $r('sys.symbol.heart') : $r('sys.symbol.heart_fill'),
       clickAction: () => {
         SongLike.likeSong(song.id, (icon, msg) => {
-          SnackBarUtils.showMessage(this.snack, icon, msg)
+          SnackBarUtils.showMessage([], icon, msg)
         })
       },
       customFontColor: [!this.isSongLiked(song) ? Color.White : Color.Red],
@@ -168,7 +166,7 @@ export struct WearableAlbumDetail {
     }
     try {
       const playName = (songIndex !== undefined ? this.fullPlayListDetail[songIndex].s.name : this.albumInfo.name)
-      SnackBarUtils.showMessage(this.snack, $r('sys.symbol.music_note_list'), $r('app.string.start_playing_le_NAME_ge_', playName))
+      SnackBarUtils.showMessage([], $r('sys.symbol.music_note_list'), $r('app.string.start_playing_le_NAME_ge_', playName))
       const queue = PlayQueueUtils.makeQueueByPlaylist(this.fullPlayListDetail.map((v) => v.s))
       await PlayQueueUtils.cleanQueue()
       await PlayQueueUtils.queueAddArray(queue)
@@ -176,7 +174,7 @@ export struct WearableAlbumDetail {
       NowPlayingStore.specialPlayMode = SpecialPlayMode.DISABLED
     } catch (e) {
       Logger.error(TAG, `play full list failed: ${JSON.stringify(e)}`)
-      SnackBarUtils.showMessage(this.snack, $r('sys.symbol.music_note_list'), $r('app.string.start_playing_list_failed'))
+      SnackBarUtils.showMessage([], $r('sys.symbol.music_note_list'), $r('app.string.start_playing_list_failed'))
     }
   }
 

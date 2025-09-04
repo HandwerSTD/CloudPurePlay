@@ -4,7 +4,6 @@ import { WearableSettings } from '@handwer/wearable_settings'
 import { RetryLoginPanel } from './views/RetryLoginPanel'
 import { ArcSwiper } from '@ohos.arkui.ArcSwiper'
 import { WearableMusicLibrary } from '@handwer/wearable_music_library'
-import { WearableExplorePageBuilder } from '@handwer/wearable_explore'
 
 @Entry
 @ComponentV2
@@ -34,7 +33,6 @@ struct Index {
     Row() {
       Column() {
         ArcSwiper() {
-          WearableExplorePageBuilder()
           WearablePlayerUI()
           WearableMusicLibrary()
         }

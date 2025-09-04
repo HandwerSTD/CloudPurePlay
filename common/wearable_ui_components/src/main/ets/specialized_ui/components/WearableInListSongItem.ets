@@ -18,7 +18,7 @@ export struct WearableInListSongItem {
       if (this.coverInfo) {
         WearableImageCover({
           nowPlayingCoverImg: this.coverInfo,
-          size: 40
+          ssize: 40
         })
       }
       
@@ -26,7 +26,7 @@ export struct WearableInListSongItem {
         Text(this.songName)
           .fontSize(14)
           .fontWeight(FontWeight.Medium)
-          .fontColor(this.isPlaying ? $r('app.color.brand_fg') : $r('sys.color.font_primary'))
+          .fontColor(this.isPlaying ? $r('app.color.blue') : $r('sys.color.font_primary'))
           .maxLines(1)
           .textOverflow({ overflow: TextOverflow.Ellipsis })
           .width('100%')
@@ -34,7 +34,7 @@ export struct WearableInListSongItem {
         
         Text(this.songArtist)
           .fontSize(12)
-          .fontColor(this.isPlaying ? $r('app.color.brand_fg') : $r('sys.color.font_secondary'))
+          .fontColor(this.isPlaying ? $r('app.color.blue') : $r('sys.color.font_secondary'))
           .maxLines(1)
           .textOverflow({ overflow: TextOverflow.Ellipsis })
           .width('100%')

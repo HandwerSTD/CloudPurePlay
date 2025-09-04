@@ -9,7 +9,6 @@
     "@handwer/base": "file:../../common/base",
     "@handwer/api_adapter": "file:../../apis/api_adapter",
     "@handwer/wearable_player_ui": "file:../../feature/wearable/wearable_player_ui",
-    "@handwer/wearable_explore": "file:../../feature/wearable/wearable_explore",
     "@handwer/wearable_music_library": "file:../../feature/wearable/wearable_music_library",
     "@handwer/wearable_settings": "file:../../feature/wearable/wearable_settings",
   }

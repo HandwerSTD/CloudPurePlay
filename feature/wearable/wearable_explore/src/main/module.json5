@@ -1,9 +1,0 @@
-{
-  "module": {
-    "name": "wearable_explore",
-    "type": "har",
-    "deviceTypes": [
-      "wearable"
-    ]
-  }
-}
