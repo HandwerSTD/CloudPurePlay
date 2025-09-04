@@ -35,6 +35,7 @@ export class SCApp {
   static registerBackButton = 'registerBackButton'
   static shouldDisableTab = 'shouldDisableTab'
   static retryLoginSheet: string = 'retryLoginSheet'
+  static wearable_goToPlayer = 'wearable_goToPlayer'
 }
 
 export class SCGlobal {

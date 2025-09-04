@@ -1,8 +1,8 @@
-import { Album, PlayList, PlayListAPIUtils } from "@handwer/api_adapter"
+import { Album, AlbumAPIUtils, PlayList, PlayListAPIUtils } from "@handwer/api_adapter"
 import { SCApp, UserManager, UserStore } from "@handwer/base"
 import { WearableMusicLibrarySearchView } from "../views/SearchView"
 import { WearableUserCard } from "../components/WearableUserCard"
-import { WearableMusicActionPanel } from "../components/WearableMusicActionPanel"
+import { WearableMusicActionPanel, WearableMusicQuickButtons } from "../components/WearableMusicActionPanel"
 import { WearableMusicLibraryConfig } from "../config/WearableMusicLibraryConfig"
 import { WearableMusicUtils } from "../utils/WearableMusicUtils"
 import { DialogHelper } from "@pura/harmony-dialog"
@@ -24,6 +24,7 @@ class SnackBarUtils {
 
 @ComponentV2
 export struct WearableMusicLibraryMainPage {
+  @Consumer(SCApp.wearable_goToPlayer) goToPlayer: () => void = () => {}
   @Consumer(SCApp.settingsSheet) showSettings: boolean = false
 
   @Consumer(SCApp.explorePageStack) pageStack: NavPathStack = new NavPathStack()
@@ -35,6 +36,8 @@ export struct WearableMusicLibraryMainPage {
   @Local showSearchPage: boolean = false
   @Local modifyPlaylist: boolean = false
   @Local currentIndex: number = 0
+
+  @Local albums: Album[] = []
 
   isPlaylistCreated(list: PlayList) {
     return list.userId === this.user.userId
@@ -139,8 +142,11 @@ export struct WearableMusicLibraryMainPage {
     ArcListItem() {
       this.UserInfo()
     }.width(ArcConst.ARC_LIST_W)
+    ArcListItem() {
+      WearableMusicQuickButtons()
+    }.width(ArcConst.ARC_LIST_W)
     if (this.showAlbum) {
-      ForEach(UserStore.userSubAlbum.slice(0, WearableMusicLibraryConfig.MAX_VISIBLE_ITEMS), (list: Album, index) => {
+      ForEach(this.albums, (list: Album, index) => {
         ArcListItem() {
           this.Album_SingleItem(list, index)
         }.width(ArcConst.ARC_LIST_W)
@@ -203,6 +209,7 @@ export struct WearableMusicLibraryMainPage {
 
   aboutToAppear(): void {
     this.setData()
+    this.fetchAlbums()
     BackButtonUtils.registerBackButton({
       id: 'wearableMusicLibrary_showSearch',
       judge: () => {
@@ -221,6 +228,13 @@ export struct WearableMusicLibraryMainPage {
         this.modifyPlaylist = false
       }
     })
+  }
+
+  fetchAlbums() {
+    AlbumAPIUtils.getAllAlbums('alphabeticalByName', 10000)
+      .then((res) => {
+        this.albums = res
+      })
   }
 
   aboutToDisappear(): void {

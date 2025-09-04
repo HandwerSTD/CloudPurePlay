@@ -2,7 +2,7 @@ import { GlobalStore, UserStore, SCApp, LoginStatus } from '@handwer/base'
 import { WearablePlayerUI } from '@handwer/wearable_player_ui'
 import { WearableSettings } from '@handwer/wearable_settings'
 import { RetryLoginPanel } from './views/RetryLoginPanel'
-import { ArcSwiper } from '@ohos.arkui.ArcSwiper'
+import { ArcSwiper, ArcSwiperController } from '@ohos.arkui.ArcSwiper'
 import { WearableMusicLibrary } from '@handwer/wearable_music_library'
 
 @Entry
@@ -11,6 +11,7 @@ struct Index {
   gs = GlobalStore
   user = UserStore
 
+  @Provider(SCApp.wearable_goToPlayer) goToPlayer: () => void = () => {}
   @Provider(SCApp.settingsSheet) consoleSheet: boolean = false
 
   @Local showLoginPanel: boolean = false
@@ -29,10 +30,12 @@ struct Index {
     WearableSettings()
   }
 
+  controller: ArcSwiperController = new ArcSwiperController()
+
   build() {
     Row() {
       Column() {
-        ArcSwiper() {
+        ArcSwiper(this.controller) {
           WearablePlayerUI()
           WearableMusicLibrary()
         }
@@ -42,6 +45,11 @@ struct Index {
         backgroundColor: $r('app.color.ui_sheet_bg_col'),
         blurStyle: BlurStyle.BACKGROUND_THICK,
         showClose: false,
+      })
+      .onAppear(() => {
+        this.goToPlayer = () => {
+          this.controller.showPrevious()
+        }
       })
     }
     .bindSheet(this.showLoginPanel!!, this.retryLoginPanel, {

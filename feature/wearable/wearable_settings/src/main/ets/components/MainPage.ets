@@ -6,7 +6,7 @@ import { router } from "@kit.ArkUI";
 import { AboutPage } from "../views/AboutPage";
 import { APIFinishWelcome } from "../views/DataSource/APIFinishWelcome";
 import { CloudAPI_Source } from "../views/DataSource/CloudAPI";
-import { DataSourceSettings } from "../views/DataSource/DataSourceSettings";
+import { DataSourceSettings, DeviceSelectorPanel } from "../views/DataSource/DataSourceSettings";
 import { NavidromeAPI_Source } from "../views/DataSource/NavidromeAPI";
 import { DisplaySettings } from "../views/DisplaySettings/DisplaySettings";
 import { MissionContinueSettings } from "../views/MissionContinue/MissionContinueSettings";
@@ -49,6 +49,8 @@ export struct MainPage {
       DisplaySettings()
     } else if (name === 'PlaybackSettings') {
       PlaybackSettings()
+    } else if (name === 'DataSyncPanel') {
+      DeviceSelectorPanel()
     }
   }
 
@@ -143,12 +145,12 @@ export struct MainPage {
           ArcListItem() {
             this.MultiDevice()
           }.width(ArcConst.ARC_LIST_W)
-          ArcListItem() {
-            this.OpenFirstStart()
-          }.width(ArcConst.ARC_LIST_W)
-          ArcListItem() {
-            this.JoinGroup()
-          }.width(ArcConst.ARC_LIST_W)
+          // ArcListItem() {
+          //   this.OpenFirstStart()
+          // }.width(ArcConst.ARC_LIST_W)
+          // ArcListItem() {
+          //   this.JoinGroup()
+          // }.width(ArcConst.ARC_LIST_W)
           ArcListItem() {
             this.AboutApp()
           }.width(ArcConst.ARC_LIST_W)

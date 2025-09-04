@@ -30,6 +30,7 @@ class DistributedUtil {
       promptAction.showToast({
         message: $r('app.string.dist_service_failed')
       })
+        this.getPermission()
     })
   }
   dispose() {

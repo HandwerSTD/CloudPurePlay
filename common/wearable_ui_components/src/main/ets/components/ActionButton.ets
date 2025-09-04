@@ -40,7 +40,7 @@ export struct ActionCommonButton {
   @Param @Require clickAction: () => void
   @BuilderParam child: () => void
 
-  @Param customBgColor: ResourceColor | undefined = $r('sys.color.comp_background_secondary')
+  @Param customBgColor: ResourceColor | undefined = '#33000000'
   @Param customPadding: Padding | number | undefined = undefined
   @Param customBorderRadius: Length | undefined = 500 // infinity
   @Param useBorder: boolean = false

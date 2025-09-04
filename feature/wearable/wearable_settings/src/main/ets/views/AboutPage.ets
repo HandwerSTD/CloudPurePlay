@@ -20,9 +20,9 @@ export struct AboutPage {
         ArcList() {
           ArcListItem() {
             Column() {
-              Image($r('sys.media.ohos_app_icon'))
+              Image($r('app.media.icon'))
                 .width(60)
-                .height(60)
+                .height(60).borderRadius(999)
                 .onClick(() => {
                   ++this.logCounter;
                   if (this.logCounter > 5) {

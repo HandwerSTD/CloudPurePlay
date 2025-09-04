@@ -94,7 +94,7 @@ export class AlbumAPIUtils {
 
   static async getAllAlbums(
     type: 'random' | 'newest' | 'highest' | 'frequent' | 'recent' | 'alphabeticalByName' | 'alphabeticalByArtist' | 'starred' | 'byYear' | 'byGenre',
-    size: number = 10,
+    size: number = 1000,
     offset: number = 0,
     fromYear?: number,
     toYear?: number,
