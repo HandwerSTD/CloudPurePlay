@@ -1,6 +1,5 @@
 import { APIConfigUtils, InstanceSwitcher, PlayQueue, Song } from "@handwer/api_adapter";
 import { AbilityConstant, common } from "@kit.AbilityKit";
-import { MD5 } from "@pura/harmony-utils";
 import { NowPlayingStore, SCPref, Settings } from "../../exports";
 import { playQueueStore } from "../../services/PlaybackController/queue/PlayQueueStore";
 
@@ -16,16 +15,14 @@ export class DeviceCollaborationUtils {
     context.setMissionContinueState(AbilityConstant.ContinueState.INACTIVE)
   }
   static async generateContinueData() {
-    const requestAPI = `${InstanceSwitcher.InstanceTypeName}_${JSON.stringify(APIConfigUtils.NowRequestContext ?? '')}`
     return {
-      requestContextHash: MD5.digestSync(requestAPI),
+      requestContextHash: APIConfigUtils.getRequestContextIdentifier(),
       nowPlayingStore: JSON.stringify(NowPlayingStore.toExportable()),
       playQueueStore: JSON.stringify(playQueueStore.toExportable())
     } as MissionContinueData
   }
   static checkContinueData(contextHash: string) {
-    const requestAPI = `${InstanceSwitcher.InstanceTypeName}_${JSON.stringify(APIConfigUtils.NowRequestContext ?? '')}`
-    return MD5.digestSync(requestAPI) === contextHash;
+    return APIConfigUtils.getRequestContextIdentifier() === contextHash;
   }
   static async applyContinuation(data: MissionContinueData) {
     NowPlayingStore.fromExportable(JSON.parse(data.nowPlayingStore))

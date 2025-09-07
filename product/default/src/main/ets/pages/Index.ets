@@ -1,8 +1,9 @@
-import { GlobalStore, LoginStatus, SCApp, UserStore} from '@handwer/base'
+import { GlobalStore, LoginStatus, OuterWantDataModel, SCApp, UserStore} from '@handwer/base'
 import { PlayerUI } from '@handwer/player_ui'
 import { SettingsMainPage } from '@handwer/app_settings'
 import { HdsSnackBar } from '@kit.UIDesignKit'
 import { RetryLoginPanel } from '../views/RetryLoginPanel'
+import { NewConfigPanel } from './OuterWantPanels/NewConfigPanel'
 
 const TAG = '[Index]'
 
@@ -15,15 +16,30 @@ struct Index {
   @Provider(SCApp.settingsSheet) consoleSheet: boolean = false
 
   @Local showLoginPanel: boolean = false
+  @Local showOuterWantPanel: boolean = false
   @Local connectTimeout: boolean = false
 
   @Monitor('user.loginStatus')
   onLoginStatusChange() {
-    this.showLoginPanel = UserStore.loginStatus !== LoginStatus.LOGGED && this.connectTimeout
+    this.showLoginPanel = (UserStore.loginStatus !== LoginStatus.LOGGED && this.connectTimeout) || UserStore.loginStatus === LoginStatus.NOT_LOGGED
+  }
+  @Monitor('gs.outerWant')
+  onOuterWant() {
+    if (this.gs.outerWant.type !== '') {
+      this.showOuterWantPanel = true
+    } else {
+      this.showOuterWantPanel = false
+    }
   }
 
   @Builder retryLoginPanel() {
     RetryLoginPanel()
+  }
+
+  @Builder OuterWantPanel() {
+    if (this.gs.outerWant.type === 'new_config') {
+      NewConfigPanel()
+    }
   }
 
   @Builder SettingsPanel() {
@@ -33,7 +49,18 @@ struct Index {
   build() {
     Row() {
       Column() {
-        PlayerUI()
+        Column() {
+          PlayerUI()
+        }
+        .bindSheet(this.showOuterWantPanel!!, this.OuterWantPanel, {
+          preferType: SheetType.CENTER,
+          backgroundColor: $r('app.color.ui_sheet_bg_col'),
+          blurStyle: BlurStyle.BACKGROUND_THICK,
+          showClose: false,
+          onWillDisappear: () => {
+            this.gs.outerWant = new OuterWantDataModel('', {})
+          }
+        })
       }
       .bindSheet(this.consoleSheet!!, this.SettingsPanel, {
         preferType: SheetType.CENTER,

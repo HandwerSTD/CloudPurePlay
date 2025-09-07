@@ -7,10 +7,13 @@ import {
   GlobalStore,
   KVStoreUtil, Logger, LogStorage,
   MissionContinueData,
+  OuterWantDataModel,
   SCPref,
   ServiceInitUtils,
   Settings, SpiderMan, ThemeManager, WindowUtil } from '@handwer/base';
 import { DialogHelper } from '@pura/harmony-dialog';
+import { url } from '@kit.ArkTS'
+import { APIConfigUtils } from '@handwer/api_adapter';
 
 const DOMAIN = 0xA0FF;
 const TAG = '[MainAbility]'
@@ -104,7 +107,21 @@ export default class MainAbility extends UIAbility {
     }
   }
   onHandleWant(want: Want) {
-
+    Logger.debug(`received NewWant`)
+    if (want.uri) {
+      // load by uri
+      const d = url.URL.parseURL(want.uri)
+      if (d.protocol === 'cloudpureplay:') {
+        if (d.hostname.startsWith('handwer.top')) {
+          const res = APIConfigUtils.getConfigFromShareLink(want.uri)
+          const api = res[1], config = res[0]
+          GlobalStore.outerWant = new OuterWantDataModel('new_config', {
+            "apiName": api,
+            "apiConfig": config!
+          })
+        }
+      }
+    }
   }
 
   async appStartUp(windowStage: window.WindowStage) {

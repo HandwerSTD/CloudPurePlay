@@ -4,6 +4,7 @@
  * 用于对 Navidrome 的配置信息进行增删查改
  */
 
+import { MD5 } from '@pura/harmony-utils'
 import { NavidromeRequestContext as RequestContext } from '../api/request/RequestContext'
 import commonRequest, { getNowRequestContext, setupRequestContext } from '../api/request/RequestUtil'
 
@@ -12,6 +13,10 @@ const TAG = 'NavidromeAPIConfigUtils'
 export class NavidromeAPIConfigUtils {
   static getRequestContext(): RequestContext | null {
     return getNowRequestContext()
+  }
+  static getRequestContextIdentifier(): string {
+    const ctx = getNowRequestContext()
+    return MD5.digestSync(`baseURL: ${ctx.baseUrl};username: ${ctx.username};passwd: ${ctx.password ?? ''};`)
   }
   static setRequestContext(context: RequestContext) {
     setupRequestContext(context)

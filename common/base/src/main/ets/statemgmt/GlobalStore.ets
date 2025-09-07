@@ -3,6 +3,7 @@ import { SingleDeviceViewModel } from "../services/DistributionMgr/DistributionV
 import { WindowAvoidanceData } from "../utils/WindowUtil"
 import { common } from "@kit.AbilityKit"
 import { PrefDataModel } from "./PreferenceDataModel"
+import { OuterWantDataModel } from "./OuterWantDataModel"
 
 @ObservedV2
 class GlobalStore {
@@ -36,6 +37,8 @@ class GlobalStore {
   @Trace isDarkMode: boolean = false
 
   @Trace pref: PrefDataModel = new PrefDataModel()
+
+  @Trace outerWant: OuterWantDataModel = new OuterWantDataModel('', {})
 
   globalSnack?: Object
   contextFaker?: common.UIAbilityContext

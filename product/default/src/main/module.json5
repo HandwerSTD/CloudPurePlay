@@ -31,6 +31,17 @@
             "actions": [
               "action.system.home"
             ]
+          },
+          {
+            "actions": [
+              'ohos.want.action.viewData'
+            ],
+            "uris": [
+              {
+                "scheme": 'cloudpureplay',
+                "host": "handwer.top"
+              }
+            ]
           }
         ],
         "backgroundModes": ['audioPlayback', 'dataTransfer']

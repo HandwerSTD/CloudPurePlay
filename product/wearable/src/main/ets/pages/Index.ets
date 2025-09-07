@@ -19,7 +19,7 @@ struct Index {
 
   @Monitor('user.loginStatus')
   onLoginStatusChange() {
-    this.showLoginPanel = UserStore.loginStatus !== LoginStatus.LOGGED && this.connectTimeout
+    this.showLoginPanel = (UserStore.loginStatus !== LoginStatus.LOGGED && this.connectTimeout) || UserStore.loginStatus === LoginStatus.NOT_LOGGED
   }
 
   @Builder retryLoginPanel() {

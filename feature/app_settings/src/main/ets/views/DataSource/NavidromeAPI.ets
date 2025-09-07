@@ -74,6 +74,7 @@ export struct NavidromeAPI_Source {
     }.padding({left: 12, right: 12})
   }
   aboutToAppear(): void {
+    // 默认加载基础Config
     const ctx = NavidromeAPIConfigUtils.getRequestContext()
     if (ctx) {
       this.apiSourceAddr = ctx.baseUrl;
@@ -105,6 +106,7 @@ export struct NavidromeAPI_Source {
     })
     .onReady((ctx) => {
       if (ctx.pathInfo.param) {
+        // 优先加载传参过来的Config
         const req = ((ctx.pathInfo.param) as Record<string, Object>)['context'] as NavidromeRequestContext
         if (req) {
           this.apiSourceAddr = req.baseUrl

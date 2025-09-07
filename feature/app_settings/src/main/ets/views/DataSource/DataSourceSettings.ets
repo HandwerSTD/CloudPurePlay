@@ -1,19 +1,24 @@
 import {
-  InstanceSwitcher,} from "@handwer/api_adapter"
+  APIConfigUtils, InstanceSwitcher,} from "@handwer/api_adapter"
 import { UserManager, SCApp, Logger, ServiceInitUtils, SingleDeviceViewModel,
   DeviceSelectorViewModel,
   DeviceIcon,
   DistributedUtils,
-  GlobalStore} from "@handwer/base"
+  GlobalStore,
+  UserStore,
+  LoginStatus} from "@handwer/base"
 import { CommonListItem, HDS_TITLE_CONFIG_STYLE,
   LightUpDefaultConfig,
   LightUpLinedContainer, LightUpLinedDefaultConfig,
   LightUpRoundedButton,
   OverrideLightUpStat,
   SnackBarUtils} from "@handwer/ui_components"
+import { TextModifier, SymbolGlyphModifier } from '@kit.ArkUI'
 import { hdsEffect, HdsNavigation,
   HdsNavigationTitleMode, HdsNavigationAttribute,
-  HdsSnackBar } from "@kit.UIDesignKit"
+  HdsSnackBar, HdsListItemCard, PrefixImage, SuffixIcon } from "@kit.UIDesignKit"
+import { pasteboard } from "@kit.BasicServicesKit"
+import { common } from "@kit.AbilityKit"
 
 @ComponentV2
 export struct DataSourceSettings {
@@ -77,6 +82,54 @@ export struct DataSourceSettings {
       })
     }
   }
+  @Builder LoadedAPICard() {
+    if (UserStore.loginStatus === LoginStatus.LOGGED) {
+      ListItem() {
+        HdsListItemCard({
+          prefixItem: new PrefixImage({
+            image: UserStore.user.data.profile.avatarUrl,
+          }),
+          textItem: {
+            primaryText: {
+              text: $r('app.string.api_switch_from_what', InstanceSwitcher.InstanceTypeName),
+              modifier: new TextModifier().fontColor(Color.White)
+            },
+            secondaryText: {
+              text: UserStore.userNickname,
+              modifier: new TextModifier().fontColor(Color.White)
+            },
+          },
+          suffixItem: new SuffixIcon({
+            iconValue: {
+              symbol: new SymbolGlyphModifier($r('sys.symbol.share')).fontColor([Color.White]),
+            },
+            onClick: () => {
+              AlertDialog.show({
+                title: '分享链接',
+                message: APIConfigUtils.sharePlainAPILink()
+              })
+              setTimeout(() => {
+                (this.getUIContext().getHostContext() as common.UIAbilityContext)
+                  .openLink(APIConfigUtils.sharePlainAPILink(), {
+                    appLinkingOnly: false
+                  })
+              })
+            }
+          }),
+          cardBackgroundColor: $r('app.color.play_list_single_item_bg'),
+          // cardWidth: '100%'
+        })
+      }
+    }
+  }
+
+  aboutToAppear(): void {
+    if (GlobalStore.outerWant.type === 'new_config') {
+      const api = GlobalStore.outerWant.data['apiName'] as string
+      const apiType = InstanceSwitcher.getTypeByName(api)
+      this.pageStack.replacePathByName(this.apiPage[apiType], {'context': GlobalStore.outerWant.data['apiConfig']} as Record<string, Object>);
+    }
+  }
 
   build() {
     NavDestination() {
@@ -84,9 +137,10 @@ export struct DataSourceSettings {
         Column() {
           List({space: 12}) {
             ListItem().height($r('sys.float.ohos_id_navigation_bar_height'))
-            this.DataSyncPanel()
+            this.LoadedAPICard()
             this.CloudAPI()
             this.NavidromeAPI()
+            this.DataSyncPanel()
             ListItem().height(12)
           }.padding({left: 12, right: 12})
         }
