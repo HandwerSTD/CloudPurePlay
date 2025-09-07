@@ -39,8 +39,8 @@ export struct NewConfigPanel {
   }
   @Builder footer() {
     Column({space: 12}) {
-      Text('下滑面板以关闭').fontColor(Color.White)
-      Button('开始使用')
+      Text($r('app.string.first_open_page_panel_close_hint')).fontColor(Color.White)
+      Button($r('app.string.first_open_page_start_use'))
         .onClick(() => {
           this.openDataSourceSettings()
         })
@@ -52,8 +52,8 @@ export struct NewConfigPanel {
     NavDestination() {
       ImageTitleWelcomeTemplate({
         customImage: this.header,
-        title: '外部分享的配置',
-        subtitle: `接收到来自 ${(this.want?.data['apiName'])} 的配置，点击下方按钮以配置。`,
+        title: $r('app.string.first_open_page_external_share_config'),
+        subtitle: $r('app.string.first_open_page_external_config_subtitle', this.want?.data['apiName'] ?? ''),
         footer: () => {
           this.footer()
         }

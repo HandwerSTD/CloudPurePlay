@@ -707,6 +707,22 @@
     {
       "name": "open_first_start",
       "value": "查看新手引导"
+    },
+    {
+      "name": "first_open_page_panel_close_hint",
+      "value": "下滑面板以关闭"
+    },
+    {
+      "name": "first_open_page_start_use",
+      "value": "开始使用"
+    },
+    {
+      "name": "first_open_page_external_share_config",
+      "value": "外部分享的配置"
+    },
+    {
+      "name": "first_open_page_external_config_subtitle",
+      "value": "接收到来自 %s 的配置，点击下方按钮以配置。"
     }
   ]
 }
