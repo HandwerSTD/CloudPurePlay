@@ -3,7 +3,7 @@ import { UserStore, ResponsiveUtil, SCApp, FeaturedPlayUtils, NowPlayingStore, G
   PlayQueueUtils,
   SongConvertUtils,
   PlayControl,
-  SpecialPlayMode,
+  PlaySourceData,
   Logger,
   SCEmitter,
   ThemeManager,
@@ -413,7 +413,7 @@ struct RecommendForYouCard {
       await PlayQueueUtils.queueAdd(PLAYMODE.SINGLE, song, SongConvertUtils.getArtists(song.artists), '', song.album.picUrl)
       await PlayControl.playNext()
 
-      NowPlayingStore.specialPlayMode = SpecialPlayMode.DISABLED
+      NowPlayingStore.nowPlayingSource = PlaySourceData.DISABLED
     } catch (e) {
       Logger.error(`play full list failed: ${JSON.stringify(e)}`)
       SnackBarUtils.showMessage(GlobalStore.globalSnack!, $r('sys.symbol.music_note_list'), $r('app.string.start_playing_failed'))
@@ -435,7 +435,7 @@ struct RecommendForYouCard {
       await PlayQueueUtils.cleanQueue()
       await PlayQueueUtils.queueAddArray(queue)
       await PlayControl.playQueue(songIndex ?? 0)
-      NowPlayingStore.specialPlayMode = SpecialPlayMode.DISABLED
+      NowPlayingStore.nowPlayingSource = PlaySourceData.DISABLED
     } catch (e) {
       Logger.error(`play full list failed: ${JSON.stringify(e)}`)
       SnackBarUtils.showMessage(GlobalStore.globalSnack!, $r('sys.symbol.music_note_list'), $r('app.string.start_playing_list_failed'))

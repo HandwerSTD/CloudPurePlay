@@ -14,7 +14,7 @@ import {
   SCEmitter,
   SCGlobal,
   SongConvertUtils, SongLike,
-  SpecialPlayMode,
+  PlaySourceData,
   UserManager,
   UserStore } from "@handwer/base";
 import { LazyData } from "@pie/lazy-data";
@@ -255,7 +255,7 @@ export struct WearablePlaylistDetail {
       await PlayQueueUtils.cleanQueue()
       await PlayQueueUtils.queueAddArray(queue)
       await PlayControl.playQueue(songIndex ?? 0)
-      NowPlayingStore.specialPlayMode = SpecialPlayMode.DISABLED
+      NowPlayingStore.nowPlayingSource = PlaySourceData.DISABLED
     } catch (e) {
       Logger.error(TAG, `play full list failed: ${JSON.stringify(e)}`)
       SnackBarUtils.showMessage([], $r('sys.symbol.music_note_list'), $r('app.string.start_playing_list_failed'))

@@ -6,7 +6,7 @@ import { UserManager } from "../../../Network/UserManager"
 import UserStore from "../../../Network/UserStore"
 import PlayQueueUtils from "../../queue/PlayQueueUtils"
 import NowPlayingStore from "../NowPlayingStore"
-import { SpecialPlayMode, PlayControl } from "../user/playControl"
+import { PlaySourceData, PlayControl } from "../user/playControl"
 
 const TAG = '[FeaturedPlayUtils]'
 
@@ -17,14 +17,14 @@ export class FeaturedPlayUtils {
       nps.isPlayerLoading = true
       try {
         // AppStorage.setOrCreate(StorageConstants.IS_PERSONAL_FM, true)
-        nps.specialPlayMode = SpecialPlayMode.PERSONAL_FM_DEFAULT
+        nps.nowPlayingSource = PlaySourceData.PERSONAL_FM
         await PlayQueueUtils.cleanQueue()
         showToastCallback($r('sys.symbol.radiostation'), $r('app.string.start_playing_personal_fm'))
         await PlayControl.playNext()
       } catch (e) {
         // ToastUtil.showToast('获取私人FM曲目失败')
         showToastCallback($r('sys.symbol.radiostation'), $r('app.string.start_playing_personal_fm_failed'))
-        nps.specialPlayMode = SpecialPlayMode.DISABLED
+        nps.nowPlayingSource = PlaySourceData.DISABLED
       } finally {
         setTimeout(() => {
           nps.isPlayerLoading = false
@@ -52,7 +52,7 @@ export class FeaturedPlayUtils {
             })
           Logger.debug(TAG, `set heart mode completed`)
           await PlayControl.playQueue(0)
-          nps.specialPlayMode = SpecialPlayMode.HEART_MODE
+          nps.nowPlayingSource = PlaySourceData.HEART_MODE
         } catch (e) {
           showToastCallback($r('sys.symbol.opticaldisc_badge_heart'), $r('app.string.start_playing_heart_mode_failed'))
           Logger.error(TAG, `play heart mode failed: ${JSON.stringify(e)}`)
@@ -102,7 +102,7 @@ export class FeaturedPlayUtils {
         await PlayQueueUtils.queueAddArray(queue)
         PlayControl.playQueue(songIndex)
         showToastCallback(todayIcon, $r('app.string.start_playing_daily_songs'))
-        NowPlayingStore.specialPlayMode = SpecialPlayMode.DAILY_LIST
+        NowPlayingStore.nowPlayingSource = PlaySourceData.DAILY_LIST
       } catch (e) {
         showToastCallback(todayIcon, $r('app.string.start_playing_daily_songs_failed'))
       }

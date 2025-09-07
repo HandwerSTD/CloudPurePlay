@@ -11,7 +11,7 @@ import {
   SCApp,
   SCGlobal,
   SongConvertUtils, SongLike,
-  SpecialPlayMode,
+  PlaySourceData,
   UserStore } from "@handwer/base";
 import { ArcList, ArcListItem, ArcListAttribute, ArcListItemAttribute } from "@kit.ArkUI";
 import { WearablePlaylistSongViewModel } from "./WearablePlaylistDetailViewmodel";
@@ -166,7 +166,7 @@ export struct WearableAlbumDetail {
       await PlayQueueUtils.cleanQueue()
       await PlayQueueUtils.queueAddArray(queue)
       await PlayControl.playQueue(songIndex ?? 0)
-      NowPlayingStore.specialPlayMode = SpecialPlayMode.DISABLED
+      NowPlayingStore.nowPlayingSource = PlaySourceData.DISABLED
     } catch (e) {
       Logger.error(TAG, `play full list failed: ${JSON.stringify(e)}`)
       SnackBarUtils.showMessage([], $r('sys.symbol.music_note_list'), $r('app.string.start_playing_list_failed'))

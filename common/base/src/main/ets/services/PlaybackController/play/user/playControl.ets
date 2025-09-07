@@ -23,13 +23,39 @@ import { RetryUtil } from "../../../../utils/CommonUtil"
 
 const TAG = '[playerControl] '
 
-export enum SpecialPlayMode {
+export enum PlaySourceDataType {
   DISABLED = -1,
   PERSONAL_FM_DEFAULT = 0,
   PERSONAL_FM_FAMILIAR = 1,
   PERSONAL_FM_EXPLORE = 2,
   HEART_MODE = 3,
-  DAILY_LIST = 4
+  DAILY_LIST = 4,
+  PLAY_LIST = 5,
+  ALBUM = 6
+}
+
+@ObservedV2
+export class PlaySourceData {
+  @Trace PlaySourceDataType: PlaySourceDataType = -1
+  @Trace PlaySourceDataId: string = ''
+
+  constructor(type: PlaySourceDataType, id: string) {
+    this.PlaySourceDataType = type
+    this.PlaySourceDataId = id
+  }
+
+  static get PERSONAL_FM() {
+    return new PlaySourceData(PlaySourceDataType.PERSONAL_FM_DEFAULT, '')
+  }
+  static get HEART_MODE() {
+    return new PlaySourceData(PlaySourceDataType.HEART_MODE, '')
+  }
+  static get DAILY_LIST() {
+    return new PlaySourceData(PlaySourceDataType.DAILY_LIST, '')
+  }
+  static get DISABLED() {
+    return new PlaySourceData(-1, '')
+  }
 }
 
 const playControlKV = new PreferenceUtils('PlayControl')
@@ -98,7 +124,7 @@ export class PlayControl {
     store.currentArtists = kv.get('CurrentArtists') ?? store.currentArtists
     store.currentPic = kv.get('CurrentImage') ?? store.currentPic
     store.playMode = kv.get('PlayMode') ?? store.playMode
-    store.specialPlayMode = kv.get('isPersonalFMState') ?? store.specialPlayMode
+    store.nowPlayingSource = kv.get('nowPlayingSource') ?? store.nowPlayingSource
     Logger.debug(TAG, `load store info = ${JSON.stringify(store)}`)
     await AVPlayerUtils.init()
     if (store.currentSong !== Song_INITIAL) {
@@ -467,7 +493,7 @@ export class PlayControl {
     playControlKV.put('CurrentArtists', artists)
     playControlKV.put('CurrentImage', imgUrl)
     playControlKV.put('CurrentQueueIndex', PlayQueueUtils.currentQueueIndex)
-    playControlKV.put('isPersonalFMState', NowPlayingStore.specialPlayMode)
+    playControlKV.put('nowPlayingSource', NowPlayingStore.nowPlayingSource)
   }
   static async clearCurrentSong() {
     await PlayControl.stopMusic()

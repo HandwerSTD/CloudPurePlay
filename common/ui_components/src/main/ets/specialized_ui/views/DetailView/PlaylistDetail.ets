@@ -15,9 +15,10 @@ import {
   SCEmitter,
   SCGlobal,
   SongConvertUtils, SongLike,
-  SpecialPlayMode,
+  PlaySourceData,
   UserManager,
-  UserStore } from "@handwer/base";
+  UserStore,
+  PlaySourceDataType} from "@handwer/base";
 import { hdsEffect, HdsNavDestination, HdsNavDestinationAttribute, HdsNavigationAttribute,
   HdsNavigation,
   HdsNavigationTitleMode,
@@ -524,7 +525,7 @@ export struct PlaylistDetail {
       await PlayQueueUtils.cleanQueue()
       await PlayQueueUtils.queueAddArray(queue)
       await PlayControl.playQueue(songIndex ?? 0)
-      NowPlayingStore.specialPlayMode = SpecialPlayMode.DISABLED
+      NowPlayingStore.nowPlayingSource = new PlaySourceData(PlaySourceDataType.PLAY_LIST, this.playListInfo.id)
     } catch (e) {
       Logger.error(TAG, `play full list failed: ${JSON.stringify(e)}`)
       SnackBarUtils.showMessage(this.snack, $r('sys.symbol.music_note_list'), $r('app.string.start_playing_list_failed'))
@@ -658,7 +659,7 @@ export struct PlaylistDetail {
     try {
       const queue = PlayQueueUtils.makeQueueByPlaylist(this.fullPlayListDetail)
       await PlayQueueUtils.queueAddArray(queue)
-      NowPlayingStore.specialPlayMode = SpecialPlayMode.DISABLED
+      // NowPlayingStore.nowPlayingSource = PlaySourceData.DISABLED
       SnackBarUtils.showMessage(this.snack, $r('sys.symbol.music_note_list'), $r('app.string.add_next_play_success'))
     } catch (e) {
       Logger.error(TAG, `play full list failed: ${JSON.stringify(e)}`)
@@ -671,7 +672,7 @@ export struct PlaylistDetail {
       await PlayQueueUtils.cleanQueue()
       await PlayQueueUtils.queueAddArray(queue)
       await PlayControl.playQueue(0)
-      NowPlayingStore.specialPlayMode = SpecialPlayMode.PERSONAL_FM_DEFAULT
+      NowPlayingStore.nowPlayingSource = PlaySourceData.PERSONAL_FM
       SnackBarUtils.showMessage(this.snack, $r('sys.symbol.music_note_list'), $r('app.string.add_to_personal_fm_success'))
     } catch (e) {
       Logger.error(TAG, `play full list failed: ${JSON.stringify(e)}`)

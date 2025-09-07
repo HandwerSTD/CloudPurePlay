@@ -1,5 +1,6 @@
 import { ThemeManager } from "@handwer/base";
 import { DialogAction, DialogHelper } from "@pura/harmony-dialog";
+import { KnockShareDialogBuilder } from "../specialized_ui/views/KnockShareDialog";
 
 export class DialogUtils {
   static showAlertDialog(uiContext: UIContext, title: ResourceStr, msg: ResourceStr, onCancel: () => void, onAccept: () => void) {
@@ -30,4 +31,20 @@ export class DialogUtils {
       theme: ThemeManager.getTheme()
     })
   }
+  static showKnockShareDialog(onWillDisappear: VoidCallback = () => {}) {
+    return DialogHelper.showCustomContentDialog({
+      contentBuilder: KnockShareDialogBuilder,
+      buttons: [],
+      title: '',
+      autoCancel: true,
+      backgroundBlurStyle: BlurStyle.BACKGROUND_REGULAR,
+      shadow: ShadowStyle.OUTER_FLOATING_SM,
+      alignment: DialogAlignment.Center,
+      backCancel: true,
+      onWillDisappear: () => {
+        onWillDisappear()
+      }
+    })
+  }
 }
+

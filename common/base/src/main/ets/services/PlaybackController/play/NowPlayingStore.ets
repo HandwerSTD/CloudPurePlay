@@ -1,5 +1,5 @@
 import { LyricStyle, LyricStyle_INITIAL, PLAYMODE, Song, Song_INITIAL } from '@handwer/api_adapter'
-import { SpecialPlayMode as SpecialPlayMode } from './user/playControl'
+import { PlaySourceData, PlaySourceDataType } from './user/playControl'
 interface ExportableNowPlayingStore {
   isPlayerLoading: boolean
 
@@ -21,7 +21,7 @@ interface ExportableNowPlayingStore {
   fileName: string
   isLocalFile: boolean
 
-  specialPlayMode: SpecialPlayMode
+  PlaySourceData: PlaySourceData
 }
 
 @ObservedV2
@@ -46,21 +46,19 @@ class NowPlayingStore {
   @Trace fileName: string = ''
   @Trace isLocalFile: boolean = false
 
-  @Trace specialPlayMode: SpecialPlayMode = -1
+  @Trace nowPlayingSource: PlaySourceData = new PlaySourceData(-1, '')
 
   get isPersonalFM(): boolean {
-    return this.specialPlayMode === SpecialPlayMode.PERSONAL_FM_DEFAULT
-      || this.specialPlayMode === SpecialPlayMode.PERSONAL_FM_FAMILIAR
-      || this.specialPlayMode === SpecialPlayMode.PERSONAL_FM_EXPLORE
+    return this.nowPlayingSource.PlaySourceDataType === PlaySourceDataType.PERSONAL_FM_DEFAULT
   }
   get isHeartMode(): boolean {
-    return this.specialPlayMode === SpecialPlayMode.HEART_MODE
+    return this.nowPlayingSource.PlaySourceDataType === PlaySourceDataType.HEART_MODE
   }
   get isDailyListMode(): boolean {
-    return this.specialPlayMode === SpecialPlayMode.DAILY_LIST
+    return this.nowPlayingSource.PlaySourceDataType === PlaySourceDataType.DAILY_LIST
   }
   get personalFmMode() {
-    return this.specialPlayMode
+    return this.nowPlayingSource.PlaySourceDataType
   }
 
   /** 转换为可导出的对象 */
@@ -85,7 +83,7 @@ class NowPlayingStore {
       fileName: this.fileName,
       isLocalFile: this.isLocalFile,
 
-      specialPlayMode: this.specialPlayMode,
+      PlaySourceData: this.nowPlayingSource,
     }
   }
 
@@ -111,7 +109,7 @@ class NowPlayingStore {
     this.fileName = data.fileName ?? ''
     this.isLocalFile = data.isLocalFile ?? false
 
-    this.specialPlayMode = data.specialPlayMode ?? -1
+    this.nowPlayingSource = data.PlaySourceData ?? new PlaySourceData(-1, '')
   }
 }
 

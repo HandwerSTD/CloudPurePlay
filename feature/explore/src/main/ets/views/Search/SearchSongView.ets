@@ -8,7 +8,7 @@ import {
   ResponsiveUtil,
   SCApp,
   SongConvertUtils,
-  SpecialPlayMode } from "@handwer/base"
+  PlaySourceData } from "@handwer/base"
 import {
   InListSongItem,
   LightUpContainer,
@@ -260,7 +260,7 @@ export struct SearchSongView {
       await PlayQueueUtils.cleanQueue()
       await PlayQueueUtils.queueAdd(1, song, '', '', song.album.picUrl) // SINGLE模式
       await PlayControl.playQueue(0)
-      NowPlayingStore.specialPlayMode = SpecialPlayMode.DISABLED
+      NowPlayingStore.nowPlayingSource = PlaySourceData.DISABLED
     } catch (e) {
       Logger.error(TAG, `play single failed: ${JSON.stringify(e)}`)
       SnackBarUtils.showMessage(GlobalStore.globalSnack!, $r('sys.symbol.play_circle_badge_music_note'),

@@ -12,6 +12,7 @@ export * from './utils/BackgroundTaskManager';
 export { default as DistributedUtils } from './utils/Distribution/DistributionUtils'
 export * from './utils/Distribution/DistributionViewModels'
 export * from './utils/Distribution/DeviceCollaborationUtils'
+export * from './utils/Distribution/ShareUtils'
 
 export { default as GlobalStore } from './statemgmt/GlobalStore';
 export * from './theme/ThemeUtils'; 

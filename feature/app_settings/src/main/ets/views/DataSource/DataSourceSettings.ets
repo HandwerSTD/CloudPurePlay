@@ -6,8 +6,12 @@ import { UserManager, SCApp, Logger, ServiceInitUtils, SingleDeviceViewModel,
   DistributedUtils,
   GlobalStore,
   UserStore,
-  LoginStatus} from "@handwer/base"
-import { CommonListItem, HDS_TITLE_CONFIG_STYLE,
+  LoginStatus,
+  ShareUtils,
+  NowPlayingStore} from "@handwer/base"
+import { CommonListItem,
+  DialogUtils,
+  HDS_TITLE_CONFIG_STYLE,
   LightUpDefaultConfig,
   LightUpLinedContainer, LightUpLinedDefaultConfig,
   LightUpRoundedButton,
@@ -19,6 +23,8 @@ import { hdsEffect, HdsNavigation,
   HdsSnackBar, HdsListItemCard, PrefixImage, SuffixIcon } from "@kit.UIDesignKit"
 import { pasteboard } from "@kit.BasicServicesKit"
 import { common } from "@kit.AbilityKit"
+import { systemShare } from "@kit.ShareKit"
+import { uniformTypeDescriptor } from "@kit.ArkData"
 
 @ComponentV2
 export struct DataSourceSettings {
@@ -104,16 +110,19 @@ export struct DataSourceSettings {
               symbol: new SymbolGlyphModifier($r('sys.symbol.share')).fontColor([Color.White]),
             },
             onClick: () => {
-              AlertDialog.show({
-                title: '分享链接',
-                message: APIConfigUtils.sharePlainAPILink()
-              })
-              setTimeout(() => {
-                (this.getUIContext().getHostContext() as common.UIAbilityContext)
-                  .openLink(APIConfigUtils.sharePlainAPILink(), {
-                    appLinkingOnly: false
-                  })
-              })
+              const thumbnailUri = UserStore.user.data.profile.avatarUrl as string
+              ShareUtils.startKnockShare(this.getUIContext().getHostContext()?.getApplicationContext()!,
+                (onClose): string => {
+                  return DialogUtils.showKnockShareDialog(onClose);
+                }, (target) => {
+                  let shareData: systemShare.SharedData = new systemShare.SharedData({
+                    utd: uniformTypeDescriptor.UniformDataType.HYPERLINK,
+                    uri: APIConfigUtils.sharePlainAPILink(),
+                    title: InstanceSwitcher.InstanceTypeName,
+                    thumbnailUri: thumbnailUri
+                  });
+                  target.share(shareData)
+                })
             }
           }),
           cardBackgroundColor: $r('app.color.play_list_single_item_bg'),

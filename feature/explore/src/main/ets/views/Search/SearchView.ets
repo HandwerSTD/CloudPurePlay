@@ -19,7 +19,7 @@ import {
   PlayQueueUtils,
   ResponsiveUtil, SCApp,
   SongConvertUtils,
-  SpecialPlayMode,
+  PlaySourceData,
   UserManager,
   UserStore } from "@handwer/base"
 import { SearchSongView } from "./SearchSongView"
@@ -245,7 +245,7 @@ struct SongCard {
       await PlayQueueUtils.queueAdd(PLAYMODE.SINGLE, song, SongConvertUtils.getArtists(song.artists), '', song.album.picUrl)
       await PlayControl.playNext()
 
-      NowPlayingStore.specialPlayMode = SpecialPlayMode.DISABLED
+      NowPlayingStore.nowPlayingSource = PlaySourceData.DISABLED
     } catch (e) {
       Logger.error(`play full list failed: ${JSON.stringify(e)}`)
       SnackBarUtils.showMessage(GlobalStore.globalSnack!, $r('sys.symbol.music_note_list'), $r('app.string.start_playing_failed'))
