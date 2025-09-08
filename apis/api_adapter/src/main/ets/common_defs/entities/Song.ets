@@ -8,6 +8,13 @@ export interface Artist {
   name: string
 }
 
+export interface CustomAPIConfig {
+  apiType: number
+  apiAddr: string
+  apiUserName: string
+  apiPasswd: string
+}
+
 /**
  * 单曲
  */
@@ -18,7 +25,8 @@ export interface Song {
   album: Album
   duration: number
   alias: string[]
-  fee: number
+  fee: number,
+  customAPI?: CustomAPIConfig
 }
 
 interface SearchResultBody {

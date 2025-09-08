@@ -1,7 +1,8 @@
 import { hdsEffect } from '@kit.UIDesignKit'
-import { LightUpConfig, LightUpDefaultConfig, OverrideLightUpStat } from './LightUpConfig'
+import { LightUpConfig, LightUpDefaultConfig, LightUpLinedDefaultConfig, OverrideLightUpStat } from './LightUpConfig'
 import { curves } from '@kit.ArkUI'
 import { ThemeManager } from '@handwer/base'
+import { LightUpLinedContainer } from '../../../../Index'
 
 @ComponentV2
 export struct LightUpRoundedButton {
@@ -333,5 +334,72 @@ export struct LightUpIconTextButton {
         this.lighted = false
       }
     })
+  }
+}
+
+
+@ComponentV2
+export struct LightUpLongButton {
+  @Param @Require clickAction: () => void
+  @Param @Require icon: Resource
+  @Param @Require title: ResourceStr
+  @Param overrideLightUpStat: OverrideLightUpStat = OverrideLightUpStat.NO_OVERRIDE
+
+  @Param isEmphasized: boolean = true
+  @Param lightUpConfig: LightUpConfig = LightUpLinedDefaultConfig
+
+  @Local lighted: boolean = false
+
+  get fontColor() {
+    if (this.lighted || this.overrideLightUpStat === OverrideLightUpStat.ALWAYS_ENABLED) return ThemeManager.getBrand()
+    return Color.White
+  }
+
+
+  build() {
+    LightUpLinedContainer({
+      overrideLightUpStat: this.overrideLightUpStat,
+      lightUpConfig: this.lightUpConfig,
+      lightNum: 10
+    }) {
+      Button() {
+        Row({space: 12}) {
+          SymbolGlyph(this.icon).fontColor([this.fontColor]).fontWeight(FontWeight.Bold)
+          Text(this.title).fontColor(this.fontColor)
+        }
+      }
+      .border({
+        radius: '50%',
+        width: this.isEmphasized ? 1.5 : 0.5,
+        color: (this.isEmphasized ? '#ff' : '#66') + 'ffffff'
+      })
+      .backgroundColor(this.isEmphasized ? '#33ffffff' : '#11ffffff')
+      .padding(12)
+      .visualEffect(new hdsEffect.HdsEffectBuilder()
+        .pressShadow(this.lighted ? hdsEffect.PressShadowType.BLEND_GRADIENT : 0)
+        .pointLight({
+          illuminatedType: hdsEffect.PointLightIlluminatedType.BORDER_CONTENT
+        })
+        .buildEffect())
+      .animation({
+        duration: 300,
+        curve: Curve.EaseInOut
+      })
+      .clickEffect({
+        level: ClickEffectLevel.HEAVY
+      })
+      //-------------------------------------
+      .onClick(() => {
+        this.clickAction()
+      })
+      .width('100%')
+      .onTouch((event) => {
+        if (event.type === TouchType.Down) {
+          this.lighted = true
+        } else if (event.type === TouchType.Up || event.type === TouchType.Cancel) {
+          this.lighted = false
+        }
+      })
+    }
   }
 }

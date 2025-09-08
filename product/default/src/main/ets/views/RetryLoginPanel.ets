@@ -9,7 +9,7 @@ import { EmitterUtil } from "@pura/harmony-utils";
 import { ImageTitleWelcomeTemplate } from "../pages/FirstOpenSubPages/CommonTemplate";
 import { LoginAPIUtils, User_INITIAL } from "@handwer/api_adapter";
 import { DialogHelper, SpinKit } from "@pura/harmony-dialog";
-import { LightUpLinedContainer } from "@handwer/ui_components";
+import { LightUpLinedContainer, LightUpLongButton } from "@handwer/ui_components";
 
 @ComponentV2
 export struct RetryLoginPanel {
@@ -163,42 +163,38 @@ export struct LoginFailedContent {
   }
   @Builder customFooter() {
     Column({space: 12}) {
-      LightUpLinedContainer({usePressShadow: false}) {
-        Button($r('app.string.switch_account')).width('100%')
-          .buttonStyle(ButtonStyleMode.NORMAL)
-          .onClick(() => {
-            this.openDataSourceSettings()
-          })
-          .visualEffect(new hdsEffect.HdsEffectBuilder().pointLight({
-            illuminatedType: hdsEffect.PointLightIlluminatedType.BORDER
-          }).buildEffect())
-      }
+      LightUpLongButton({
+        icon: $r('sys.symbol.leave_home_fill'),
+        title: $r('app.string.switch_account'),
+        clickAction: () => {
+          this.openDataSourceSettings()
+        },
+        isEmphasized: false
+      })
 
-      LightUpLinedContainer({usePressShadow: false}) {
-        Button($r('app.string.check_connectivity')).width('100%')
-          .onClick(() => {
-            const id = DialogHelper.showLoadingDialog()
-            LoginAPIUtils.getLoginStatus((val) => {
-              if (val.data.profile.userId !== User_INITIAL.data.profile.userId) {
-                UserManager.init()
-                  .then(() => {
-                    EmitterUtil.post(SCEmitter.UserInfoReInit, {})
-                  })
-                  .finally(() => {
-                    DialogHelper.closeDialog(id)
-                  })
-              } else {
-                DialogHelper.closeDialog(id)
-              }
-            })
-              .catch(() => {
-                DialogHelper.closeDialog(id)
-              })
+      LightUpLongButton({
+        icon: $r('sys.symbol.arrow_clockwise'),
+        title: $r('app.string.check_connectivity'),
+        clickAction: () => {
+          const id = DialogHelper.showLoadingDialog()
+          LoginAPIUtils.getLoginStatus((val) => {
+            if (val.data.profile.userId !== User_INITIAL.data.profile.userId) {
+              UserManager.init()
+                .then(() => {
+                  EmitterUtil.post(SCEmitter.UserInfoReInit, {})
+                })
+                .finally(() => {
+                  DialogHelper.closeDialog(id)
+                })
+            } else {
+              DialogHelper.closeDialog(id)
+            }
           })
-          .visualEffect(new hdsEffect.HdsEffectBuilder().pointLight({
-            illuminatedType: hdsEffect.PointLightIlluminatedType.BORDER
-          }).buildEffect())
-      }
+            .catch(() => {
+              DialogHelper.closeDialog(id)
+            })
+        }
+      })
     }
   }
 

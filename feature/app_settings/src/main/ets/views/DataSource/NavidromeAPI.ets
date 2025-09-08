@@ -11,7 +11,8 @@ import {
   LightUpLinedDefaultConfig,
   OverrideLightUpStat,
   HDS_TITLE_CONFIG_STYLE,
-  SnackBarUtils
+  SnackBarUtils,
+  LightUpLongButton
 } from "@handwer/ui_components"
 import { DialogHelper } from "@pura/harmony-dialog"
 import { generate_APIFinishWelcome_PageParams } from "./APIFinishWelcome"
@@ -59,16 +60,13 @@ export struct NavidromeAPI_Source {
         }.RowLightUpEffect()
       }
       ListItem() {
-        LightUpLinedContainer() {
-          Button($r('app.string.check_connectivity'))
-            .visualEffect(new hdsEffect.HdsEffectBuilder().pointLight({
-              illuminatedType: hdsEffect.PointLightIlluminatedType.BORDER,
-            }))
-            .width('100%')
-            .onClick(() => {
-              this.checkConnect()
-            })
-        }
+        LightUpLongButton({
+          title: $r('app.string.check_connectivity'),
+          icon: $r('sys.symbol.cloud_and_stars'),
+          clickAction: () => {
+            this.checkConnect()
+          }
+        })
       }
       ListItem().height(12)
     }.padding({left: 12, right: 12})
