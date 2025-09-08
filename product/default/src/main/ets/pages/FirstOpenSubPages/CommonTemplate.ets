@@ -1,5 +1,5 @@
 import { ResponsiveUtil } from "@handwer/base"
-import { LightUpLinedContainer } from "@handwer/ui_components"
+import { LightUpLinedContainer, LightUpLongButton } from "@handwer/ui_components"
 import { hdsEffect } from "@kit.UIDesignKit"
 import { LengthMetrics } from "@kit.ArkUI"
 
@@ -57,16 +57,12 @@ export struct ImageTitleWelcomeTemplate {
               this.footer()
             }
             if (this.useButtonFooter) {
-              LightUpLinedContainer({usePressShadow: false, lightNum: ResponsiveUtil.chooseByWidth([10, 12])}) {
-                Button(this.buttonFooterText)
-                  .width('100%')
-                  .onClick(() => {
-                    this.buttonFooterOnClick()
-                  })
-                  .visualEffect(new hdsEffect.HdsEffectBuilder().pointLight({
-                    illuminatedType: hdsEffect.PointLightIlluminatedType.BORDER
-                  }).buildEffect())
-              }
+              LightUpLongButton({
+                title: this.buttonFooterText,
+                clickAction: () => {
+                  this.buttonFooterOnClick()
+                }
+              })
             }
           }.margin(24).justifyContent(FlexAlign.Center)
         }

@@ -1,7 +1,7 @@
 import { InstanceSwitcher, INSTANCE_TYPE } from "@handwer/api_adapter"
 import { SCApp } from "@handwer/base"
 import {
-  HDS_TITLE_CONFIG_STYLE
+  HDS_TITLE_CONFIG_STYLE, LightUpLongButton
 } from "@handwer/ui_components"
 import { HdsNavigation, HdsNavigationTitleMode, HdsNavigationAttribute } from "@kit.UIDesignKit"
 
@@ -44,12 +44,14 @@ export struct APIFinishWelcome {
             .fontColor(Color.White)
         }
       }
-      Button($r('app.string.start_use'))
-        .width('100%')
-        .onClick(() => {
+      LightUpLongButton({
+        title: $r('app.string.start_use'),
+        icon: $r('sys.symbol.checkmark'),
+        clickAction: () => {
           this.onReInit?.()
           this.settingsSheet = false;
-        })
+        }
+      })
     }.padding({left: 12, right: 12, top: $r('sys.float.ohos_id_navigation_bar_height'), bottom: 12})
     .justifyContent(FlexAlign.SpaceBetween)
     .height('100%')

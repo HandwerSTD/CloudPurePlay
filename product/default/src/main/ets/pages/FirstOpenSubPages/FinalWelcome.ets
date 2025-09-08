@@ -11,17 +11,6 @@ export struct FinalWelcome {
   @Local showFooter: boolean = false
   @Builder bottomButton() {
     if (this.showFooter) {
-      // LightUpLinedContainer({usePressShadow: false, lightNum: ResponsiveUtil.chooseByWidth([10, 12])}) {
-      //   Button($r('app.string.start_use'))
-      //     .width('100%')
-      //     .onClick(() => {
-      //       this.onFinish()
-      //     })
-      //     .visualEffect(new hdsEffect.HdsEffectBuilder().pointLight({
-      //       illuminatedType: hdsEffect.PointLightIlluminatedType.BORDER
-      //     }).buildEffect())
-      //     .transition(TransitionEffect.OPACITY.animation({duration: 500}))
-      // }
       LightUpLongButton({
         title: $r('app.string.first_open_page_start_use'),
         icon: $r('sys.symbol.checkmark'),

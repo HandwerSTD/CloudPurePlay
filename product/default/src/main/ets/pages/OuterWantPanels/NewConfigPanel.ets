@@ -1,5 +1,6 @@
 import { SettingsMainPage } from "@handwer/app_settings"
 import { GlobalContext, GlobalStore, OuterWantDataModel, SCApp, SCGlobal } from "@handwer/base"
+import { LightUpLongButton } from "@handwer/ui_components"
 import { HdsSnackBar } from "@kit.UIDesignKit"
 import { ImageTitleWelcomeTemplate, SymbolTitle } from "../FirstOpenSubPages/CommonTemplate"
 
@@ -40,11 +41,13 @@ export struct NewConfigPanel {
   @Builder footer() {
     Column({space: 12}) {
       Text($r('app.string.first_open_page_panel_close_hint')).fontColor(Color.White)
-      Button($r('app.string.first_open_page_start_use'))
-        .onClick(() => {
+      LightUpLongButton({
+        title: $r('app.string.first_open_page_start_use'),
+        icon: $r('sys.symbol.download'),
+        clickAction: () => {
           this.openDataSourceSettings()
-        })
-        .width('100%')
+        }
+      })
     }
   }
 

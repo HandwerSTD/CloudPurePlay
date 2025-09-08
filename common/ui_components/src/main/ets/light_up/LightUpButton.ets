@@ -341,11 +341,11 @@ export struct LightUpIconTextButton {
 @ComponentV2
 export struct LightUpLongButton {
   @Param @Require clickAction: () => void
-  @Param @Require icon: Resource
   @Param @Require title: ResourceStr
   @Param overrideLightUpStat: OverrideLightUpStat = OverrideLightUpStat.NO_OVERRIDE
 
   @Param isEmphasized: boolean = true
+  @Param icon: Resource | undefined = undefined
   @Param lightUpConfig: LightUpConfig = LightUpLinedDefaultConfig
 
   @Local lighted: boolean = false
@@ -364,7 +364,9 @@ export struct LightUpLongButton {
     }) {
       Button() {
         Row({space: 12}) {
-          SymbolGlyph(this.icon).fontColor([this.fontColor]).fontWeight(FontWeight.Bold)
+          if (this.icon) {
+            SymbolGlyph(this.icon).fontColor([this.fontColor]).fontWeight(FontWeight.Bold)
+          }
           Text(this.title).fontColor(this.fontColor)
         }
       }

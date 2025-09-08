@@ -6,10 +6,6 @@ export class ShareUtils {
   static startKnockShare(ctx: common.ApplicationContext, onOpenDialog: (onClose: () => void) => string, onHandleShareTarget: (target: harmonyShare.SharableTarget) => void) {
     // 注册两个监听：knock和statechange
     // 先打开 dialog，dialog关闭时会一同取消监听knock和statechange
-    const id = onOpenDialog(() => {
-      harmonyShare.off("knockShare")
-      ctx.off("applicationStateChange", callback)
-    })
     const callback: ApplicationStateChangeCallback = {
       onApplicationForeground() {
 
@@ -20,7 +16,12 @@ export class ShareUtils {
         DialogHelper.closeDialog(id)
       }
     }
+    const id = onOpenDialog(() => {
+      harmonyShare.off("knockShare")
+      ctx.off("applicationStateChange", callback)
+    })
     // 启动分享，如果分享成功了则交给处理函数，不注销任何监听，可以再次发起分享
+    ctx.on("applicationStateChange", callback)
     harmonyShare.on("knockShare", (target) => {
       onHandleShareTarget(target)
     })
