@@ -8,6 +8,7 @@ import { WebDAV } from './WebDAV';
 import { NoInterruptListen } from './NoInterruptListen';
 import { PersonalFM } from './PersonalFM';
 import { MissionContinue } from './MissionContinue';
+import { MultiInteractions } from './Interactions';
 
 @Entry
 @ComponentV2
@@ -72,6 +73,16 @@ struct FirstOpenPage {
     }
   },{
     // PersonalFM
+    previousLabel: $r('sys.string.stepper_back'),
+    nextLabel: $r('sys.string.stepper_next'),
+    onPrevious: () => {
+      this.controller.showPrevious()
+    },
+    onNext: () => {
+      this.controller.showNext()
+    }
+  },{
+    // MultiInteractions
     previousLabel: $r('sys.string.stepper_back'),
     nextLabel: $r('sys.string.stepper_next'),
     onPrevious: () => {
@@ -181,6 +192,7 @@ struct FirstOpenPage {
               WebDAV()
               NoInterruptListen()
               PersonalFM()
+              MultiInteractions()
               MissionContinue()
               FinalWelcome({
                 show: this.showFinal,
