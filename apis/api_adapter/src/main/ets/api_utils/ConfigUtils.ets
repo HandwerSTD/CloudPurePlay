@@ -19,6 +19,12 @@ export {
 
 export {NavidromeAPIConfigUtils, NavidromeRequestContext} from './navidrome_api_adapter/NavidromeAPI_ConfigExports'
 
+export interface CommonRequestConfig {
+  apiAddr: string
+  apiUser: string
+  apiPasswd: string
+}
+
 export class APIConfigUtils {
   static loadRequestContext(context: Object) {
     if (InstanceSwitcher.InstanceType === INSTANCE_TYPE.CLOUD) {
@@ -60,6 +66,18 @@ export class APIConfigUtils {
       throw Error('API Unimplemented')
     }
   }
+  static get requestConfig(): CommonRequestConfig {
+    if (InstanceSwitcher.InstanceType === INSTANCE_TYPE.NAVIDROME) {
+      const ctx = APIConfigUtils.NowRequestContext as NavidromeRequestContext
+      return {
+        apiAddr: ctx.baseUrl,
+        apiUser: ctx.username,
+        apiPasswd: ctx.password!
+      }
+    } else {
+      throw Error('API Unimplemented')
+    }
+  }
 
   /**
    * 生成该 API Config 的标识符，用于判断两个 API Config 是否指向相同音乐库
@@ -76,7 +94,7 @@ export class APIConfigUtils {
   }
   static sharePlainAPILink() {
     const data = encodeURIComponent(JSON.stringify(APIConfigUtils.NowRequestContext))
-    return `cloudpureplay://handwer.top/share?type=plain&api=${InstanceSwitcher.InstanceTypeName}&data=${data}`
+    return `cloudpureplay://shareConfig/share?type=plain&api=${InstanceSwitcher.InstanceTypeName}&data=${data}`
   }
   static shareEncryptedAPILink() {
 

@@ -8,6 +8,8 @@ import {
   KVStoreUtil, Logger, LogStorage,
   MissionContinueData,
   OuterWantDataModel,
+  PlayControl,
+  RetryUtil,
   SCPref,
   ServiceInitUtils,
   Settings, SpiderMan, ThemeManager, WindowUtil } from '@handwer/base';
@@ -112,12 +114,16 @@ export default class MainAbility extends UIAbility {
       // load by uri
       const d = url.URL.parseURL(want.uri)
       if (d.protocol === 'cloudpureplay:') {
-        if (d.hostname.startsWith('handwer.top')) {
+        if (d.hostname.startsWith('shareConfig')) {
           const res = APIConfigUtils.getConfigFromShareLink(want.uri)
           const api = res[1], config = res[0]
           GlobalStore.outerWant = new OuterWantDataModel('new_config', {
             "apiName": api,
             "apiConfig": config!
+          })
+        } else if (d.hostname.startsWith('shareSong')) {
+          GlobalStore.outerWant = new OuterWantDataModel('share_song', {
+            "url": want.uri
           })
         }
       }

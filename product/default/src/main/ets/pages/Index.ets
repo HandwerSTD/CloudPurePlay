@@ -1,9 +1,11 @@
-import { GlobalStore, LoginStatus, OuterWantDataModel, SCApp, UserStore} from '@handwer/base'
+import { GlobalStore, LoginStatus, OuterWantDataModel, PlayControl, SCApp, UserStore} from '@handwer/base'
 import { PlayerUI } from '@handwer/player_ui'
 import { SettingsMainPage } from '@handwer/app_settings'
 import { HdsSnackBar } from '@kit.UIDesignKit'
 import { RetryLoginPanel } from '../views/RetryLoginPanel'
 import { NewConfigPanel } from './OuterWantPanels/NewConfigPanel'
+import { ReceiveShareSongPanel } from './OuterWantPanels/ReceiveShareSong'
+import { stylusInteraction } from '@kit.Penkit'
 
 const TAG = '[Index]'
 
@@ -31,6 +33,22 @@ struct Index {
       this.showOuterWantPanel = false
     }
   }
+  @Monitor('gs.isInForeground')
+  onForegroundSwitch() {
+    const playNext = () => {
+      PlayControl.playNext()
+    }
+    const pausePlay = () => {
+
+    }
+    if (this.gs.isInForeground) {
+      stylusInteraction.on("squeeze", playNext)
+      stylusInteraction.on("doubleTap", playNext)
+    } else {
+      stylusInteraction.off("squeeze", playNext)
+      stylusInteraction.off("doubleTap", playNext)
+    }
+  }
 
   @Builder retryLoginPanel() {
     RetryLoginPanel()
@@ -39,6 +57,8 @@ struct Index {
   @Builder OuterWantPanel() {
     if (this.gs.outerWant.type === 'new_config') {
       NewConfigPanel()
+    } else if (this.gs.outerWant.type === 'share_song') {
+      ReceiveShareSongPanel()
     }
   }
 
@@ -85,9 +105,11 @@ struct Index {
     .onAppear(() => {
       this.gs.globalSnack = new HdsSnackBar(this.getUIContext())
       this.onLoginStatusChange()
+      this.onOuterWant()
       setTimeout(() => {
         this.connectTimeout = true
         this.onLoginStatusChange()
+        this.onOuterWant()
       }, 3000)
     })
   }

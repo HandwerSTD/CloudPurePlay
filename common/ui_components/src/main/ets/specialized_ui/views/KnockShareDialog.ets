@@ -22,9 +22,9 @@ export struct LoadingView {
       Text() {
         Span('已准备好')
           .fontSize(14)
-        Span('\n碰一碰分享')
+        Span('\n碰一碰分享 / 隔空抓取')
           .fontWeight(FontWeight.Bold)
-          .fontSize(24)
+          .fontSize(20)
           .textShadow({
             radius: 12,
             color: '#aaffffff'

@@ -43,7 +43,7 @@ const instance = axios.create({
 
 export const generateRequestTokenSync = () => {
   let request: Record<string, string>
-  const ctx = JSON.parse(JSON.stringify(currentContext)) as RequestContext
+  const ctx = getNowRequestContext()
 
   // ===== 生成认证参数 =====
   let authParams: Record<string, string>

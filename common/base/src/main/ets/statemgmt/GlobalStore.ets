@@ -40,6 +40,8 @@ class GlobalStore {
 
   @Trace outerWant: OuterWantDataModel = new OuterWantDataModel('', {})
 
+  @Trace initialized: boolean = false
+
   globalSnack?: Object
   contextFaker?: common.UIAbilityContext
 }

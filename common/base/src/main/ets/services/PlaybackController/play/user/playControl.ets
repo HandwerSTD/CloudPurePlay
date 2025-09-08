@@ -1,6 +1,10 @@
 import {
+  APIConfigUtils,
   CycleMode,
-  PlayConstants, Song, SongAPIUtils, SongPlayResult, Song_INITIAL } from "@handwer/api_adapter"
+  InstanceSwitcher,
+  PlayConstants,
+  PLAYMODE,
+  Song, SongAPIUtils, SongPlayResult, Song_INITIAL } from "@handwer/api_adapter"
 import { EmitterUtil, FileUtil, LogUtil, RandomUtil, ToastUtil } from "@pura/harmony-utils"
 import { FileUtils } from "../../../../utils/FileUtil"
 import LyricUtils from "../../lyric/LyricUtils"
@@ -19,6 +23,7 @@ import { Logger, DeviceCollaborationUtils, GlobalStore } from "../../../../../..
 import { SCEmitter, UserStore } from "../../../../exports"
 import { SongConvertUtils } from "../../convert"
 import { RetryUtil } from "../../../../utils/CommonUtil"
+import { url } from "@kit.ArkTS"
 
 
 const TAG = '[playerControl] '
@@ -31,7 +36,8 @@ export enum PlaySourceDataType {
   HEART_MODE = 3,
   DAILY_LIST = 4,
   PLAY_LIST = 5,
-  ALBUM = 6
+  ALBUM = 6,
+  OUTER = 7
 }
 
 @ObservedV2
@@ -501,5 +507,29 @@ export class PlayControl {
     NowPlayingStore.isPlaying = false
     await PlayControl.saveCurrentSongInfo(0, Song_INITIAL, '','');
     await AVSessionUtils.destroy()
+  }
+
+  static generateShareLink() {
+    const song = JSON.parse(JSON.stringify(NowPlayingStore.currentSong)) as Song
+    const config = APIConfigUtils.requestConfig
+    song.customAPI = {
+      apiType: InstanceSwitcher.InstanceType,
+      apiAddr: config.apiAddr,
+      apiUserName: config.apiUser,
+      apiPasswd: config.apiPasswd
+    }
+    const data = encodeURIComponent(JSON.stringify(song))
+    return `cloudpureplay://shareSong/share?type=plain&data=${data}`
+  }
+
+  static playSongFromShareLink(link: string) {
+    const u = url.URL.parseURL(link)
+    const type = u.params.get('type')
+    const data = JSON.parse(u.params.get('data') ?? '{}') as Song
+    if (type === 'plain') {
+      // TODO: set up temporary request context
+      // TODO: playMusicByUrl
+    }
+    return [null, '']
   }
 }

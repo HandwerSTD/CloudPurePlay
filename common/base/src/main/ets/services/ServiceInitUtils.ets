@@ -36,6 +36,7 @@ export class ServiceInitUtils {
         FeaturedPlayUtils.playPersonalizedFM(() => {})
       }
     }
+    GlobalStore.initialized = true
   }
   static loadViewPref() {
     const pref = GlobalStore.pref

@@ -8,15 +8,17 @@ import { FeaturedPlayUtils,
   SCGlobal,
   SCPref,
   Settings,
+  ShareUtils,
   SongConvertUtils,
   SongLike,
   ThemeManager,
   UserStore } from "@handwer/base"
-import { PLAYMODE, Song_INITIAL } from "@handwer/api_adapter"
+import { APIConfigUtils, InstanceSwitcher, PLAYMODE, Song_INITIAL } from "@handwer/api_adapter"
 import { LightUpRoundedButton, LightUpConfig, LightUpDefaultConfig, OverrideLightUpStat, LightUpBorderRoundButton, SnackBarUtils,
   UIComponentUtils,
   LightUpContainer,
-  AddToPlaylistSheet} from "@handwer/ui_components"
+  AddToPlaylistSheet,
+  DialogUtils} from "@handwer/ui_components"
 import { ColorMetrics, curves, LengthMetrics, SymbolGlyphModifier } from "@kit.ArkUI"
 import { ClickUtil } from "@pura/harmony-utils"
 import { HdsActionBar, ActionBarButton, hdsEffect, HdsSnackBar } from "@kit.UIDesignKit"
@@ -25,6 +27,8 @@ import { ImageCover, ImageCoverThumbnail } from "../components/ImageCover"
 import { PlayQueueViewBuilder } from "./PlayQueueView"
 import { ExplorePageBuilder } from "@handwer/explore"
 import { EmptyStateView, EmptyStateViewBar } from "../components/EmptyStateView"
+import { unifiedDataChannel, uniformTypeDescriptor } from "@kit.ArkData"
+import { systemShare } from "@kit.ShareKit"
 
 const nps = NowPlayingStore
 const LIGHT_TOP_BTN_SM: LightUpConfig = {
@@ -181,6 +185,24 @@ export struct MainPage {
             width: LengthMetrics.vp(40),
             onClick: () => {
               this.showAddToPlaylist()
+            }
+          }),
+          new ActionBarButton({
+            baseIcon: $r('sys.symbol.share'),
+            width: LengthMetrics.vp(40),
+            onClick: () => {
+              ShareUtils.startKnockShare(this.getUIContext().getHostContext()?.getApplicationContext()!,
+                (onClose): string => {
+                  return DialogUtils.showKnockShareDialog(onClose);
+                }, (target) => {
+                  let shareData: systemShare.SharedData = new systemShare.SharedData({
+                    utd: uniformTypeDescriptor.UniformDataType.HYPERLINK,
+                    uri: PlayControl.generateShareLink(),
+                    title: NowPlayingStore.currentSong.name,
+                    thumbnailUri: NowPlayingStore.currentPic as string
+                  });
+                  target.share(shareData)
+                })
             }
           }),
         ]

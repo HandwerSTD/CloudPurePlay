@@ -13,16 +13,21 @@ export class ShareUtils {
       onApplicationBackground() {
         // 注册后台监听，切回后台不再分享，并关闭弹窗
         harmonyShare.off("knockShare")
+        harmonyShare.off("gesturesShare")
         DialogHelper.closeDialog(id)
       }
     }
     const id = onOpenDialog(() => {
       harmonyShare.off("knockShare")
+      harmonyShare.off("gesturesShare")
       ctx.off("applicationStateChange", callback)
     })
     // 启动分享，如果分享成功了则交给处理函数，不注销任何监听，可以再次发起分享
     ctx.on("applicationStateChange", callback)
     harmonyShare.on("knockShare", (target) => {
+      onHandleShareTarget(target)
+    })
+    harmonyShare.on("gesturesShare", (target) => {
       onHandleShareTarget(target)
     })
   }
