@@ -1,4 +1,4 @@
-import { GlobalStore, LoginStatus, OuterWantDataModel, PlayControl, SCApp, UserStore} from '@handwer/base'
+import { GlobalStore, Logger, LoginStatus, OuterWantDataModel, PlayControl, SCApp, UserStore} from '@handwer/base'
 import { PlayerUI } from '@handwer/player_ui'
 import { SettingsMainPage } from '@handwer/app_settings'
 import { HdsSnackBar } from '@kit.UIDesignKit'
@@ -16,9 +16,9 @@ struct Index {
   user = UserStore
 
   @Provider(SCApp.settingsSheet) consoleSheet: boolean = false
+  @Provider(SCApp.outerWantPanel) showOuterWantPanel: boolean = false
 
   @Local showLoginPanel: boolean = false
-  @Local showOuterWantPanel: boolean = false
   @Local connectTimeout: boolean = false
 
   @Monitor('user.loginStatus')

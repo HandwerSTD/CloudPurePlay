@@ -140,6 +140,11 @@ export struct PlayQueueSingleItem {
           .animation({curve: this.moveSpring})
       }.layoutWeight(1)
 
+      if (this.item.song.customAPI) {
+        Text('来自外部')
+          .fontColor(Color.White)
+          .padding({right: 12})
+      }
       if (!NowPlayingStore.isPersonalFM) {
         LightUpRoundedButton({
           icon: $r('sys.symbol.xmark'),

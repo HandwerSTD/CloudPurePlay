@@ -4,7 +4,12 @@ import {
   InstanceSwitcher,
   PlayConstants,
   PLAYMODE,
-  Song, SongAPIUtils, SongPlayResult, Song_INITIAL } from "@handwer/api_adapter"
+  Song, SongAPIUtils, SongPlayResult, Song_INITIAL,
+  INSTANCE_TYPE,
+  CustomAPIConfig,
+  NavidromeRequestContext,
+  Cloud_RequestContext,
+  RealIP_INITIAL } from "@handwer/api_adapter"
 import { EmitterUtil, FileUtil, LogUtil, RandomUtil, ToastUtil } from "@pura/harmony-utils"
 import { FileUtils } from "../../../../utils/FileUtil"
 import LyricUtils from "../../lyric/LyricUtils"
@@ -65,6 +70,96 @@ export class PlaySourceData {
 }
 
 const playControlKV = new PreferenceUtils('PlayControl')
+
+// 临时API上下文管理器
+class TemporaryAPIContext {
+  private static originalInstanceType: INSTANCE_TYPE | null = null
+  private static originalRequestContext: Object | null = null
+  private static isActive: boolean = false
+  
+  /**
+   * 设置临时API上下文
+   * @param customAPI 自定义API配置
+   */
+  static async setupTemporary(customAPI: CustomAPIConfig): Promise<void> {
+    if (TemporaryAPIContext.isActive) {
+      Logger.warn(TAG, '临时API上下文已激活，跳过重复设置')
+      return
+    }
+    
+    try {
+      // 保存当前配置
+      TemporaryAPIContext.originalInstanceType = InstanceSwitcher.InstanceType
+      TemporaryAPIContext.originalRequestContext = APIConfigUtils.NowRequestContext
+      
+      // 切换到自定义API
+      InstanceSwitcher.InstanceType = customAPI.apiType as INSTANCE_TYPE
+      
+      // 根据API类型设置对应的请求上下文
+      if (customAPI.apiType === INSTANCE_TYPE.NAVIDROME) {
+        const navidromeContext: NavidromeRequestContext = {
+          baseUrl: customAPI.apiAddr,
+          username: customAPI.apiUserName,
+          password: customAPI.apiPasswd
+        }
+        APIConfigUtils.loadRequestContext(navidromeContext)
+      } else if (customAPI.apiType === INSTANCE_TYPE.CLOUD) {
+        const cloudContext: Cloud_RequestContext = {
+          baseUrl: customAPI.apiAddr,
+          cookie: { 
+            cookie: customAPI.apiPasswd,
+            customCookie: ''
+          },
+          realIp: {
+            toggle: false,
+            realIp: '116.25.146.177'
+          }
+        }
+        APIConfigUtils.loadRequestContext(cloudContext)
+      }
+      
+      TemporaryAPIContext.isActive = true
+      Logger.debug(TAG, `临时API上下文已设置: ${customAPI.apiAddr}`)
+    } catch (error) {
+      Logger.error(TAG, `设置临时API上下文失败: ${error}`)
+      throw Error(error)
+    }
+  }
+  
+  /**
+   * 恢复原始配置
+   */
+  static async restore(): Promise<void> {
+    if (!TemporaryAPIContext.isActive) {
+      return
+    }
+    
+    try {
+      if (TemporaryAPIContext.originalInstanceType !== null) {
+        InstanceSwitcher.InstanceType = TemporaryAPIContext.originalInstanceType
+      }
+      
+      if (TemporaryAPIContext.originalRequestContext) {
+        APIConfigUtils.loadRequestContext(TemporaryAPIContext.originalRequestContext)
+      }
+      
+      TemporaryAPIContext.isActive = false
+      TemporaryAPIContext.originalInstanceType = null
+      TemporaryAPIContext.originalRequestContext = null
+      
+      Logger.debug(TAG, '临时API上下文已恢复')
+    } catch (error) {
+      Logger.error(TAG, `恢复API上下文失败: ${error}`)
+    }
+  }
+  
+  /**
+   * 检查是否正在使用临时API上下文
+   */
+  static get isUsingTemporary(): boolean {
+    return TemporaryAPIContext.isActive
+  }
+}
 
 // 播放重试管理器
 export class PlayRetryManager {
@@ -143,16 +238,30 @@ export class PlayControl {
   }
   static async playMusicByUrl(song: Song, isLogged: boolean, picUrl: string = '', mode: number = 1, pauseOnStart: boolean = false) {
     const songId = song.id
+    let usingCustomAPI = false
+    
     try {
+      // 检查是否需要使用自定义API
+      if (song.customAPI) {
+        Logger.debug(TAG, `检测到自定义API配置，切换API上下文: ${song.customAPI.apiAddr}`)
+        await TemporaryAPIContext.setupTemporary(song.customAPI)
+        usingCustomAPI = true
+      }
+      
       let artists = SongConvertUtils.getArtists(song.artists)
       await PlayControl.setPlayData(mode, song, artists)
       await AVPlayerUtils.reset()
+      
       const isAccessible = SongAPIUtils.checkMusic(song.id).then(() => {
         if(!isAccessible) {
           ToastUtil.showToast('当前歌曲仅支持试听或无版权')
         }
       })
-      SongLike.isThisSongLiked(song.id)
+      if (!song.customAPI) {
+        SongLike.isThisSongLiked(song.id)
+      } else {
+        NowPlayingStore.isLiked = false
+      }
       let localPath: string = ''
       let tempArtists: string = artists
       const songNameLength = (typeof song.name === 'string' ? song.name.length : 0)
@@ -192,16 +301,26 @@ export class PlayControl {
         const songPlay: SongPlayResult = await SongAPIUtils.getSongUrl(song.id, quality ? PlayConstants.QUALITY[quality] : "standard", isLogged)
         NowPlayingStore.isLocalFile = false
         let proxyUrl = await AudioCacheUtils.getProxyUrl(songPlay.data[0].url)
-        Logger.debug(TAG, `playMusicByUrl got final data, set url = ${proxyUrl ?? songPlay.data[0].url}`)
+        Logger.debug(TAG, `playMusicByUrl got final data, set url`)
         await AVPlayerUtils.setUrl(proxyUrl ?? songPlay.data[0].url)
       }
       
       // 播放成功，清除重试记录
       PlayRetryManager.onPlaySuccess(songId)
       DeviceCollaborationUtils.setCanMissionContinue(GlobalStore.contextFaker!)
+      if (usingCustomAPI) {
+        NowPlayingStore.nowPlayingSource = new PlaySourceData(PlaySourceDataType.OUTER, song.id)
+      } else {
+        NowPlayingStore.nowPlayingSource = new PlaySourceData(PlaySourceDataType.DISABLED, song.id)
+      }
     } catch (e) {
       LogUtil.error(TAG, '播放出错: ' + e)
       await PlayControl.handlePlaybackError(songId, song, isLogged, picUrl, mode)
+    } finally {
+      // 确保在任何情况下都恢复原始配置
+      if (usingCustomAPI) {
+        await TemporaryAPIContext.restore()
+      }
     }
   }
 
@@ -519,17 +638,29 @@ export class PlayControl {
       apiPasswd: config.apiPasswd
     }
     const data = encodeURIComponent(JSON.stringify(song))
-    return `cloudpureplay://shareSong/share?type=plain&data=${data}`
+    return `cloudpureplay://shareSong/share?type=plain&songName=${encodeURIComponent(song.name)}&data=${data}`
   }
 
-  static playSongFromShareLink(link: string) {
-    const u = url.URL.parseURL(link)
-    const type = u.params.get('type')
-    const data = JSON.parse(u.params.get('data') ?? '{}') as Song
-    if (type === 'plain') {
-      // TODO: set up temporary request context
-      // TODO: playMusicByUrl
+  static async playSongFromShareLink(link: string): Promise<[boolean, string]> {
+    try {
+      const u = url.URL.parseURL(link)
+      const type = u.params.get('type')
+      const data = JSON.parse(u.params.get('data') ?? '{}') as Song
+      
+      if (type === 'plain' && data.customAPI) {
+        Logger.debug(TAG, `从分享链接播放歌曲: ${data.name}，使用自定义API: ${data.customAPI.apiAddr}`)
+        
+        // 直接调用 playMusicByUrl，它会自动处理 customAPI
+        await PlayQueueUtils.queueAdd(PLAYMODE.SINGLE, data, SongConvertUtils.getArtists(data.artists), '', data.album.picUrl)
+        await PlayControl.playNext()
+        
+        return [true, '播放成功']
+      } else {
+        return [false, '无效的分享链接或缺少API配置']
+      }
+    } catch (error) {
+      Logger.error(TAG, `播放分享歌曲失败: ${error}`)
+      return [false, `播放失败: ${error}`]
     }
-    return [null, '']
   }
 }

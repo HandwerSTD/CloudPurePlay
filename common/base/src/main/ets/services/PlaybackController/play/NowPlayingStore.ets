@@ -60,6 +60,9 @@ class NowPlayingStore {
   get personalFmMode() {
     return this.nowPlayingSource.PlaySourceDataType
   }
+  get isPlayingOuter(): boolean {
+    return this.nowPlayingSource.PlaySourceDataType === PlaySourceDataType.OUTER
+  }
 
   /** 转换为可导出的对象 */
   toExportable(): ExportableNowPlayingStore {

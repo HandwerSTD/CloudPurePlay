@@ -123,6 +123,9 @@ export struct DataSourceSettings {
                   });
                   target.share(shareData)
                 })
+              // (this.getUIContext().getHostContext() as common.UIAbilityContext).openLink(APIConfigUtils.sharePlainAPILink(), {
+              //   appLinkingOnly: false
+              // })
             }
           }),
           cardBackgroundColor: $r('app.color.play_list_single_item_bg'),

@@ -723,6 +723,14 @@
     {
       "name": "first_open_page_external_config_subtitle",
       "value": "接收到来自 %s 的配置，点击下方按钮以配置。"
+    },
+    {
+      "name": "external_share_song",
+      "value": "外部分享的歌曲"
+    },
+    {
+      "name": "external_share_song_desc",
+      "value": "接收到来自外部的歌曲《%s》，点击下方按钮以播放。"
     }
   ]
 }

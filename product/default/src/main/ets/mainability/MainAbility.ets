@@ -123,7 +123,7 @@ export default class MainAbility extends UIAbility {
           })
         } else if (d.hostname.startsWith('shareSong')) {
           GlobalStore.outerWant = new OuterWantDataModel('share_song', {
-            "url": want.uri
+            "url": want.uri,
           })
         }
       }

@@ -6,6 +6,8 @@ import { ImageTitleWelcomeTemplate, SymbolTitle } from "../FirstOpenSubPages/Com
 
 @ComponentV2
 export struct NewConfigPanel {
+  @Consumer(SCApp.outerWantPanel) showOuterWantPanel: boolean = false
+
   snack = new HdsSnackBar(this.getUIContext())
   @Provider(SCApp.settingsSheet) consoleSheet: boolean = true // 覆盖一下 Index 的 Provider
   pageStack: NavPathStack = new NavPathStack()
@@ -15,6 +17,13 @@ export struct NewConfigPanel {
   aboutToAppear(): void {
     this.want = GlobalStore.outerWant
     this.pageStack.pushPathByName('Main',[], false)
+  }
+
+  @Monitor('consoleSheet')
+  onFinish() {
+    if (!this.consoleSheet) {
+      this.showOuterWantPanel = false
+    }
   }
 
   @Builder pageMap(name: string) {

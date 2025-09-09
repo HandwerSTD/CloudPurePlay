@@ -3,17 +3,22 @@ import { GlobalContext, GlobalStore, OuterWantDataModel, PlayControl, SCApp, SCG
 import { LightUpLongButton } from "@handwer/ui_components"
 import { HdsSnackBar } from "@kit.UIDesignKit"
 import { ImageTitleWelcomeTemplate, SymbolTitle } from "../FirstOpenSubPages/CommonTemplate"
+import { url } from "@kit.ArkTS"
 
 @ComponentV2
 export struct ReceiveShareSongPanel {
+  @Consumer(SCApp.outerWantPanel) showOuterWantPanel: boolean = false
+
   snack = new HdsSnackBar(this.getUIContext())
   pageStack: NavPathStack = new NavPathStack()
   @Local pageOpacity: number = 1
   @Local want: OuterWantDataModel | undefined = undefined
+  @Local songName: string = ''
 
   aboutToAppear(): void {
     this.want = GlobalStore.outerWant
     this.pageStack.pushPathByName('Main',[], false)
+    this.songName = decodeURIComponent(url.URL.parseURL(this.want!.data['url'] as string).params.get('songName') as string)
   }
 
   @Builder pageMap(name: string) {
@@ -36,6 +41,7 @@ export struct ReceiveShareSongPanel {
         icon: $r('sys.symbol.play_round_triangle_fill'),
         clickAction: () => {
           PlayControl.playSongFromShareLink(this.want!.data['url'] as string)
+          this.showOuterWantPanel = false
         }
       })
     }
@@ -45,8 +51,8 @@ export struct ReceiveShareSongPanel {
     NavDestination() {
       ImageTitleWelcomeTemplate({
         customImage: this.header,
-        title: $r('app.string.first_open_page_external_share_config'),
-        subtitle: $r('app.string.first_open_page_external_config_subtitle', this.want?.data['apiName'] ?? ''),
+        title: $r('app.string.external_share_song'),
+        subtitle: $r('app.string.external_share_song_desc', this.songName),
         footer: () => {
           this.footer()
         }

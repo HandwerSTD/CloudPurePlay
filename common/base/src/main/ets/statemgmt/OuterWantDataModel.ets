@@ -6,7 +6,7 @@ export class OuterWantDataModel {
   @Trace type: OuterWantType
   @Trace data: Record<string, Object>
 
-  constructor(t: OuterWantType, d: Record<string, Object>) {
+  constructor(t: OuterWantType = '', d: Record<string, Object> = {}) {
     this.type = t;
     this.data = d;
   }

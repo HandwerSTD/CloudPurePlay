@@ -39,7 +39,11 @@
             "uris": [
               {
                 "scheme": 'cloudpureplay',
-                "host": "handwer.top"
+                "host": "shareSong"
+              },
+              {
+                "scheme": 'cloudpureplay',
+                "host": "shareConfig"
               }
             ]
           }

@@ -18,7 +18,9 @@ import { LightUpRoundedButton, LightUpConfig, LightUpDefaultConfig, OverrideLigh
   UIComponentUtils,
   LightUpContainer,
   AddToPlaylistSheet,
-  DialogUtils} from "@handwer/ui_components"
+  DialogUtils,
+  LightUpLongButton,
+  LightUpIconTextButton} from "@handwer/ui_components"
 import { ColorMetrics, curves, LengthMetrics, SymbolGlyphModifier } from "@kit.ArkUI"
 import { ClickUtil } from "@pura/harmony-utils"
 import { HdsActionBar, ActionBarButton, hdsEffect, HdsSnackBar } from "@kit.UIDesignKit"
@@ -29,6 +31,7 @@ import { ExplorePageBuilder } from "@handwer/explore"
 import { EmptyStateView, EmptyStateViewBar } from "../components/EmptyStateView"
 import { unifiedDataChannel, uniformTypeDescriptor } from "@kit.ArkData"
 import { systemShare } from "@kit.ShareKit"
+import { common } from "@kit.AbilityKit"
 
 const nps = NowPlayingStore
 const LIGHT_TOP_BTN_SM: LightUpConfig = {
@@ -167,6 +170,7 @@ export struct MainPage {
             baseIcon: nps.isLiked ? $r('sys.symbol.heart_fill') : $r('sys.symbol.heart'),
             baseIconSymbolGlyphModifier: nps.isLiked ? new SymbolGlyphModifier().fontColor([Color.Red]) : undefined,
             width: LengthMetrics.vp(40),
+            enabled: !NowPlayingStore.isPlayingOuter,
             onClick: () => {
               SongLike.likeThisSong((icon, msg) => {
                 SnackBarUtils.showMessage(this.hdsSnackBar, icon, msg)
@@ -203,6 +207,9 @@ export struct MainPage {
                   });
                   target.share(shareData)
                 })
+              // (this.getUIContext().getHostContext() as common.UIAbilityContext).openLink(PlayControl.generateShareLink(), {
+              //   appLinkingOnly: false
+              // })
             }
           }),
         ]
@@ -286,6 +293,10 @@ export struct MainPage {
     Row({space: 24}) {
       // Discover
       Blank().width(40)
+
+      Text('来自外部的歌曲')
+        .fontColor(Color.White)
+        .visibility(NowPlayingStore.isPlayingOuter ? Visibility.Visible : Visibility.None)
 
       // Settings
       LightUpRoundedButton({

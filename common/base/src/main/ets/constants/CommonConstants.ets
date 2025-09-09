@@ -36,6 +36,7 @@ export class SCApp {
   static shouldDisableTab = 'shouldDisableTab'
   static retryLoginSheet: string = 'retryLoginSheet'
   static wearable_goToPlayer = 'wearable_goToPlayer'
+  static outerWantPanel: string = 'outerWantPanel'
 }
 
 export class SCGlobal {
