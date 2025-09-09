@@ -161,7 +161,6 @@ export struct AlbumDetail {
         ListItem() {
           Column() {
             LightUpLinedContainer({lightUpConfig: LightUpLinedDefaultConfig}) {
-            LightUpLinedContainer({lightUpConfig: LightUpLinedDefaultConfig}) {
               CommonListItem({
                 icon: $r('sys.symbol.list_interrupt'),
                 title: $r('app.string.add_to_queue_end')
@@ -179,15 +178,16 @@ export struct AlbumDetail {
                   this.addToPersonalFM()
                 })
             }
-              // LightUpLinedContainer({lightUpConfig: LightUpLinedDefaultConfig}) {
-              //   CommonListItem({
-              //     icon: $r('sys.symbol.info_circle'),
-              //     title: $r('app.string.add_to_personal_fm')
-              //   })
-              //     .onClick(() => {
-              //       this.showAlbumInfo()
-              //     })
-              // }
+            // LightUpLinedContainer({lightUpConfig: LightUpLinedDefaultConfig}) {
+            //   CommonListItem({
+            //     icon: $r('sys.symbol.info_circle'),
+            //     title: $r('app.string.add_to_personal_fm')
+            //   })
+            //     .onClick(() => {
+            //       this.showAlbumInfo()
+            //     })
+            // }
+            LightUpLinedContainer({lightUpConfig: LightUpLinedDefaultConfig}) {
               if (this.isThisAlbumSub) {
                 CommonListItem({
                   icon: $r('sys.symbol.trash'),

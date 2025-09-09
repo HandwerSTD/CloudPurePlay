@@ -311,7 +311,9 @@ export class PlayControl {
       if (usingCustomAPI) {
         NowPlayingStore.nowPlayingSource = new PlaySourceData(PlaySourceDataType.OUTER, song.id)
       } else {
-        NowPlayingStore.nowPlayingSource = new PlaySourceData(PlaySourceDataType.DISABLED, song.id)
+        if (NowPlayingStore.nowPlayingSource.PlaySourceDataType === PlaySourceDataType.OUTER) {
+          NowPlayingStore.nowPlayingSource = new PlaySourceData(PlaySourceDataType.DISABLED, song.id)
+        }
       }
     } catch (e) {
       LogUtil.error(TAG, '播放出错: ' + e)
