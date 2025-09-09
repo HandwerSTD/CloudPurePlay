@@ -20,9 +20,10 @@ export struct LoadingView {
     Row({space: 24}) {
       this.Symbol()
       Text() {
-        Span('已准备好')
+        Span($r('app.string.on_ready'))
           .fontSize(14)
-        Span('\n碰一碰分享 / 隔空抓取')
+        Span('\n')
+        Span($r('app.string.knock_share_hop_transfer'))
           .fontWeight(FontWeight.Bold)
           .fontSize(20)
           .textShadow({

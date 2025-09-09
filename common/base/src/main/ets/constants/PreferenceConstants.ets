@@ -13,9 +13,11 @@ export enum SCPref {
   showPlayerOnLaunch = 'showPlayerOnLaunch',
   showMusicLibraryInOnlineMusic = 'showMusicLibraryInOnlineMusic',
   navigationRightHandMode = 'navigationRightHandMode',
+  autoNavRightHand = 'autoNavRightHand',
   playerTwoColumnRightHandMode = 'playerTwoColumnRightHandMode',
 
   // 播放设置
   autoPlayOnLaunch = 'autoPlayOnLaunch',
-  autoPlayFM = 'autoPlayFM'
+  autoPlayFM = 'autoPlayFM',
+  useStylusControl = 'useStylusControl'
 }

@@ -7,6 +7,7 @@ import { LightUpRoundedButton,LightUpDefaultConfig,OverrideLightUpStat,BackButto
 import { MusicLibrary } from "@handwer/music_library"
 import { ExplorePage } from "./ExplorePage"
 import { AllAlbums } from "./ExploreSubViews/AllAlbums"
+import { motion } from "@kit.MultimodalAwarenessKit"
 
 
 @ComponentV2
@@ -65,11 +66,20 @@ struct MainPage_Shell {
   defaultTabIndex: number = 0
 
   @Local primaryWidth: number = 0
+  @Local opHandStat: number = 0
 
   gs = GlobalStore
 
   showTabTimeoutHandler?: number
 
+  get shouldTabOnRightHand(): boolean {
+    if (canIUse('SystemCapability.MultimodalAwareness.Motion')) {
+      if (this.opHandStat !== motion.OperatingHandStatus.UNKNOWN_STATUS) {
+        return this.opHandStat === motion.OperatingHandStatus.RIGHT_HAND_OPERATED
+      }
+    }
+    return this.gs.pref.tabRightHand
+  }
   shouldTabItemLight(index: number) {
     return this.currentTabIndex === index && !this.settingsSheet
   }
@@ -198,7 +208,7 @@ struct MainPage_Shell {
 
   build() {
     NavDestination() {
-      Stack({alignContent: this.gs.pref.tabRightHand ? Alignment.BottomEnd : Alignment.BottomStart}) {
+      Stack({alignContent: this.shouldTabOnRightHand ? Alignment.BottomEnd : Alignment.BottomStart}) {
         Tabs({controller: this.tabController, index: this.defaultTabIndex === -1 ? undefined : this.defaultTabIndex}) {
           TabContent() {
             ExplorePage()
@@ -212,7 +222,7 @@ struct MainPage_Shell {
           this.currentTabIndex = target
         })
         if (this.showFloatingTab && !this.shouldDisableTab) {
-          if (this.gs.pref.tabRightHand) {
+          if (this.shouldTabOnRightHand) {
             this.ActionButton_ActionBar_RightHanded()
           } else {
             this.ActionButton_ActionBar()
@@ -222,6 +232,11 @@ struct MainPage_Shell {
       .onTouch((event) => {
         if (event.type === TouchType.Down && !this.shouldDisableTab) {
           this.showTab()
+        }
+        try {
+          const stat = motion.getRecentOperatingHandStatus()
+          this.opHandStat = stat
+        } catch (e) {
         }
       })
     }.hideTitleBar(true)

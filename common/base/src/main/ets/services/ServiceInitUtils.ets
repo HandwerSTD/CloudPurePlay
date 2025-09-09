@@ -42,6 +42,8 @@ export class ServiceInitUtils {
     const pref = GlobalStore.pref
     pref.tabRightHand = Settings.get<boolean>(SCPref.navigationRightHandMode) ?? false
     pref.playerRightHand = Settings.get<boolean>(SCPref.playerTwoColumnRightHandMode) ?? false
+    pref.autoNavRightHandMode = Settings.get<boolean>(SCPref.autoNavRightHand) ?? false
+    pref.useStylusControl = Settings.get<boolean>(SCPref.useStylusControl) ?? false
   }
   static loadPresetPreferences() {
     if (Settings.get<boolean>(SCPref.useMissionContinue) === undefined) {
@@ -53,6 +55,9 @@ export class ServiceInitUtils {
     }
     if (Settings.get<boolean>(SCPref.autoPlayFM) === undefined) {
       Settings.put(SCPref.autoPlayFM, true)
+    }
+    if (Settings.get<boolean>(SCPref.useStylusControl) === undefined) {
+      Settings.put(SCPref.useStylusControl, false)
     }
   }
   static async reInit(newInstanceType: INSTANCE_TYPE, newUser: User, newPasswd: string, newRequestContext: Object) {

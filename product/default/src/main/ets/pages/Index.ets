@@ -1,4 +1,6 @@
-import { GlobalStore, Logger, LoginStatus, OuterWantDataModel, PlayControl, SCApp, UserStore} from '@handwer/base'
+import { GlobalStore, Logger, LoginStatus,
+  NowPlayingStore,
+  OuterWantDataModel, PlayControl, SCApp, UserStore} from '@handwer/base'
 import { PlayerUI } from '@handwer/player_ui'
 import { SettingsMainPage } from '@handwer/app_settings'
 import { HdsSnackBar } from '@kit.UIDesignKit'
@@ -39,14 +41,29 @@ struct Index {
       PlayControl.playNext()
     }
     const pausePlay = () => {
-
+      if (NowPlayingStore.isPaused) {
+        PlayControl.resumeMusic()
+      } else {
+        PlayControl.pauseMusic()
+      }
     }
-    if (this.gs.isInForeground) {
-      stylusInteraction.on("squeeze", playNext)
-      stylusInteraction.on("doubleTap", playNext)
-    } else {
-      stylusInteraction.off("squeeze", playNext)
-      stylusInteraction.off("doubleTap", playNext)
+    try {
+
+      if (GlobalStore.pref.useStylusControl) {
+        if (this.gs.isInForeground) {
+            stylusInteraction.on("squeeze", () => {
+              pausePlay()
+            })
+            stylusInteraction.on("doubleTap", () => {
+              playNext()
+            })
+        } else {
+          stylusInteraction.off("squeeze")
+          stylusInteraction.off("doubleTap")
+        }
+      }
+    } catch (e) {
+      Logger.error(`Index`, `err on setting stylusInteraction: ${e.message}`)
     }
   }
 
@@ -106,6 +123,7 @@ struct Index {
       this.gs.globalSnack = new HdsSnackBar(this.getUIContext())
       this.onLoginStatusChange()
       this.onOuterWant()
+      this.onForegroundSwitch()
       setTimeout(() => {
         this.connectTimeout = true
         this.onLoginStatusChange()

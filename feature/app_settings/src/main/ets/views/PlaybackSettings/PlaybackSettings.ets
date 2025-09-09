@@ -1,6 +1,6 @@
-import { SCPref, Settings } from "@handwer/base"
-import { HDS_TITLE_CONFIG_STYLE, LightedCommonListToggleItem } from "@handwer/ui_components"
-import { HdsNavigation, HdsNavigationTitleMode, HdsNavigationAttribute } from "@hms.hds.hdsBaseComponent"
+import { SCPref, Settings, GlobalStore } from "@handwer/base"
+import { HDS_TITLE_CONFIG_STYLE, LightedCommonListToggleItem, SnackBarUtils } from "@handwer/ui_components"
+import { HdsNavigation, HdsNavigationTitleMode, HdsNavigationAttribute } from "@kit.UIDesignKit"
 
 @ComponentV2
 export struct PlaybackSettings {
@@ -8,10 +8,12 @@ export struct PlaybackSettings {
 
   @Local autoPlayOnLaunch: boolean = false
   @Local autoPlayFMOnLaunch: boolean = false
+  @Local useStylusControl: boolean = false
 
   aboutToAppear(): void {
     this.autoPlayOnLaunch = Settings.get<boolean>(SCPref.autoPlayOnLaunch) ?? false
     this.autoPlayFMOnLaunch = Settings.get<boolean>(SCPref.autoPlayFM) ?? true
+    this.useStylusControl = Settings.get<boolean>(SCPref.useStylusControl) ?? false
   }
 
   build() {
@@ -48,6 +50,20 @@ export struct PlaybackSettings {
                   }
                 })
               }.transition(TransitionEffect.OPACITY.animation({duration: 300}))
+            }
+            ListItem() {
+              LightedCommonListToggleItem({
+                icon: $r('sys.symbol.pencil_tip'),
+                title: $r('app.string.use_stylus_control'),
+                subtitle: $r('app.string.use_stylus_control_desc'),
+                isOn: this.useStylusControl,
+                onToggleChange: (val) => {
+                  this.useStylusControl = val
+                  Settings.put(SCPref.useStylusControl, val)
+                  GlobalStore.pref.useStylusControl = val
+                  SnackBarUtils.showMessage(GlobalStore.globalSnack!, $r('sys.symbol.pencil_tip'), $r('app.string.restart_to_take_effect'))
+                }
+              })
             }
             ListItem().height(12)
           }.padding({left: 12, right: 12})

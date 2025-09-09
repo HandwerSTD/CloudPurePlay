@@ -558,11 +558,19 @@
     },
     {
       "name": "navigation_right_hand_mode",
-      "value": "导航栏右手模式"
+      "value": "偏好导航栏右手模式"
     },
     {
       "name": "navigation_right_hand_mode_desc",
       "value": "将导航栏按钮调整到适合右手操作的位置"
+    },
+    {
+      "name": "auto_nav_right_hand",
+      "value": "智能切换导航栏左右手模式"
+    },
+    {
+      "name": "auto_nav_right_hand_desc",
+      "value": "自动在导航栏左手和右手模式之间智能切换"
     },
     {
       "name": "player_two_column_right_hand_mode",
@@ -587,6 +595,18 @@
     {
       "name": "auto_play_fm_on_launch_empty",
       "value": "启动时无歌自动播放私人FM"
+    },
+    {
+      "name": "use_stylus_control",
+      "value": "使用手写笔控制播放"
+    },
+    {
+      "name": "use_stylus_control_desc",
+      "value": "双击下一首，轻捏暂停"
+    },
+    {
+      "name": "restart_to_take_effect",
+      "value": "重启应用后生效"
     },
     {
       "name": "first_open_page_private_cloud_music_player",
@@ -731,6 +751,42 @@
     {
       "name": "external_share_song_desc",
       "value": "接收到来自外部的歌曲《%s》，点击下方按钮以播放。"
+    },
+    {
+      "name": "this_device_unsupport",
+      "value": "本机不支持该功能"
+    },
+    {
+      "name": "on_ready",
+      "value": "已准备好"
+    },
+    {
+      "name": "knock_share_hop_transfer",
+      "value": "碰一碰分享 / 隔空抓取"
+    },
+    {
+      "name": "first_open_page__interaction_title",
+      "value": "音乐更灵动，交互更智慧"
+    },
+    {
+      "name": "first_open_page__interaction_subtitle",
+      "value": "基于 HarmonyOS 多模态感知，为你带来更有趣、更智慧的操作体验。分享歌曲，碰一碰即可发送，一抓一放即可传输；控制音乐播放，更只需提笔轻触。直观、自然，却又充满惊喜。"
+    },
+    {
+      "name": "first_open_page__interaction_share_feature",
+      "value": "启动分享后，碰一碰或隔空抓取，即可分享音乐配置或当前播放的歌曲；有趣就要一起分享，分享也要更有趣！"
+    },
+    {
+      "name": "first_open_page__interaction_stylus_feature",
+      "value": "手写笔化身“魔法棒”，双击手写笔即可切歌，轻捏手写笔即可控制播放。"
+    },
+    {
+      "name": "first_open_page__interaction_hand_recognition_feature",
+      "value": "智能左右手识别，导航栏跟着握持手，无论左右手都舒服。"
+    },
+    {
+      "name": "first_open_page__interaction_feature_disclaimer",
+      "value": "部分功能需要机型、系统版本等支持，最终体验请以实际为准。"
     }
   ]
 }

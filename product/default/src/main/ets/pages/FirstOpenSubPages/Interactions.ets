@@ -34,9 +34,9 @@ export struct MultiInteractions {
     Stack({alignContent: Alignment.TopEnd}) {
       Row() {
         Swiper() {
-          this.featureCard($r('sys.symbol.dual_phone_pairing'), '启动分享后，碰一碰或隔空抓取，即可分享音乐配置或当前播放的歌曲。有趣就要一起分享，分享也要更有趣。')
-          this.featureCard($r('sys.symbol.pencil_waveform'), '双击手写笔即可切歌，轻捏手写笔即可控制播放，手写笔化身 DJ 台。')
-          this.featureCard($r('sys.symbol.hand_stars'), '智能左右手识别，导航栏跟着握持手，无论左右手都舒服。')
+          this.featureCard($r('sys.symbol.dual_phone_pairing'), $r('app.string.first_open_page__interaction_share_feature'))
+          this.featureCard($r('sys.symbol.pencil_waveform'), $r('app.string.first_open_page__interaction_stylus_feature'))
+          this.featureCard($r('sys.symbol.hand_stars'), $r('app.string.first_open_page__interaction_hand_recognition_feature'))
         }.autoPlay(true)
       }.width('100%')
       .justifyContent(FlexAlign.Center)
@@ -68,7 +68,7 @@ export struct MultiInteractions {
       LightUpLinedContainer() {
         CommonListItem({
           icon: $r('sys.symbol.phone_2'),
-          title: '部分功能需要机型、系统版本等支持，最终体验请以实际为准。',
+          title: $r('app.string.first_open_page__interaction_feature_disclaimer'),
           trailing: () => {}
         })
       }
@@ -79,8 +79,8 @@ export struct MultiInteractions {
   }
   build() {
     ImageTitleWelcomeTemplate({
-      title: '音乐更灵动，交互更智慧',
-      subtitle: '基于 HarmonyOS 多模态感知，为你带来更有趣、更智慧的操作体验。分享歌曲，碰一碰即可发送，一抓一放即可传输；控制音乐播放，更只需提笔轻触。直观、自然，却又充满惊喜。',
+      title: $r('app.string.first_open_page__interaction_title'),
+      subtitle: $r('app.string.first_open_page__interaction_subtitle'),
       customImage: this.header,
       footer: () => {
         this.footer()
