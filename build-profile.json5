@@ -2,23 +2,36 @@
   "app": {
     "signingConfigs": [
       {
-        "name": "default",
+        "name": "release",
         "type": "HarmonyOS",
         "material": {
-          "certpath": "C:\\Users\\handw\\.ohos\\config\\default_CloudPurePlay_nhc6xdidR_8RfT1xbA4ysLVZDnaCCereVSnVgQPOifU=.cer",
-          "keyAlias": "debugKey",
-          "keyPassword": "0000001B6DDA17F41EFBF173010576EEC65635EB9113984317641029D6AE5ABA3AF6289CEFE853B91AC882",
-          "profile": "C:\\Users\\handw\\.ohos\\config\\default_CloudPurePlay_nhc6xdidR_8RfT1xbA4ysLVZDnaCCereVSnVgQPOifU=.p7b",
+          "storeFile": "D:/HarmonyOS/my_secrets-master/quickysticker_sign.p12",
+          "storePassword": "0000001D8AFD168633A99FF1F7866E7B3F96E9806A2596B14F7B3FBAB3F0C89F1B6B61C92B912EE49A3F61FA1C",
+          "keyAlias": "QuickySticker",
+          "keyPassword": "0000001D17EB93E6375468C6200E65F06CBAA7F26E9B42375905D8637287A4272B3FBDA14BE646937DA8722E40",
           "signAlg": "SHA256withECDSA",
-          "storeFile": "C:\\Users\\handw\\.ohos\\config\\default_CloudPurePlay_nhc6xdidR_8RfT1xbA4ysLVZDnaCCereVSnVgQPOifU=.p12",
-          "storePassword": "0000001B5FD6FB3BB828D3D9FFFE52231D37EC74F1EC6D7A102BAAB9B1C5EDB5B1FE40375D445E8FF1D7FF"
+          "profile": "D:/HarmonyOS/my_secrets-master/cloudpureplay_releaseRelease.p7b",
+          "certpath": "D:/HarmonyOS/my_secrets-master/quickysticker.cer"
+        }
+      },
+      {
+        "name": "debug",
+        "type": "HarmonyOS",
+        "material": {
+          "storeFile": "D:/HarmonyOS/my_secrets-master/quickysticker_sign.p12",
+          "storePassword": "0000001D8AFD168633A99FF1F7866E7B3F96E9806A2596B14F7B3FBAB3F0C89F1B6B61C92B912EE49A3F61FA1C",
+          "keyAlias": "QuickySticker",
+          "keyPassword": "0000001D17EB93E6375468C6200E65F06CBAA7F26E9B42375905D8637287A4272B3FBDA14BE646937DA8722E40",
+          "signAlg": "SHA256withECDSA",
+          "profile": "D:/HarmonyOS/my_secrets-master/cloudpureplay_debugDebug.p7b",
+          "certpath": "D:/HarmonyOS/my_secrets-master/debug_quickstickr.cer"
         }
       }
     ],
     "products": [
       {
         "name": "default",
-        "signingConfig": "default",
+        "signingConfig": "release",
         "targetSdkVersion": "6.0.0(20)",
         "compatibleSdkVersion": "5.1.0(18)",
         "runtimeOS": "HarmonyOS",
