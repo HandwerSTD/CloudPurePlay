@@ -73,7 +73,7 @@ struct MainPage_Shell {
   showTabTimeoutHandler?: number
 
   get shouldTabOnRightHand(): boolean {
-    if (canIUse('SystemCapability.MultimodalAwareness.Motion')) {
+    if (canIUse('SystemCapability.MultimodalAwareness.Motion') && this.gs.pref.autoNavRightHandMode) {
       if (this.opHandStat !== motion.OperatingHandStatus.UNKNOWN_STATUS) {
         return this.opHandStat === motion.OperatingHandStatus.RIGHT_HAND_OPERATED
       }

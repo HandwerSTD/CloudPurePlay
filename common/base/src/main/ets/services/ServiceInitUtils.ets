@@ -59,7 +59,9 @@ export class ServiceInitUtils {
     if (Settings.get<boolean>(SCPref.useStylusControl) === undefined) {
       Settings.put(SCPref.useStylusControl, true)
     }
-
+    if (Settings.get<boolean>(SCPref.autoNavRightHand) === undefined) {
+      Settings.put(SCPref.autoNavRightHand, true)
+    }
     if (Settings.get<boolean>(SCPref.autoPlayOnLaunch) === undefined) {
       Settings.put(SCPref.autoPlayOnLaunch, true)
     }
