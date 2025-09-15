@@ -110,6 +110,7 @@ export struct DataSourceSettings {
               symbol: new SymbolGlyphModifier($r('sys.symbol.share')).fontColor([Color.White]),
             },
             onClick: () => {
+              SnackBarUtils.showMessage(this.snack, $r('sys.symbol.share'), $r('app.string.share_api_plain_notice'));
               const thumbnailUri = UserStore.user.data.profile.avatarUrl as string
               ShareUtils.startKnockShare(this.getUIContext().getHostContext()?.getApplicationContext()!,
                 (onClose): string => {

@@ -787,6 +787,10 @@
     {
       "name": "first_open_page__interaction_feature_disclaimer",
       "value": "部分功能需要机型、系统版本等支持，最终体验请以实际为准。"
+    },
+    {
+      "name": "share_api_plain_notice",
+      "value": "分享配置后对方有权查看密码，请谨慎分享"
     }
   ]
 }

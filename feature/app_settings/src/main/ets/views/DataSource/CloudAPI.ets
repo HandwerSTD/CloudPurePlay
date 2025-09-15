@@ -25,47 +25,34 @@ export struct CloudAPI_Source {
     CloudAPIConfigUtils.setRequestContext(context)
   }
 
+  loginInfoSetter(cookie: string) {
+    const context = CloudAPIConfigUtils.getRequestContext() ?? {
+      baseUrl: 'http://111.229.38.178:3333/',
+      cookie: {
+        cookie: cookie,
+      },
+    } as Cloud_RequestContext
+    CloudAPIConfigUtils.setRequestContext(context)
+    LoginAPIUtils.getLoginStatus((val) => {
+      Logger.debug(`NavidromeAPI`, `getLoginStat: ${JSON.stringify(val)}`)
+      this.pageStack.pushPath({
+        name: 'APIFinishWelcome',
+        param: generate_APIFinishWelcome_PageParams(val.data.profile.nickname, val.data.profile.avatarUrl, () => {
+          const idd = DialogHelper.showLoadingDialog()
+          ServiceInitUtils.reInit(INSTANCE_TYPE.CLOUD, val, cookie, context)
+            .finally(() => {
+              DialogHelper.closeDialog(idd)
+            })
+        },InstanceSwitcher.getInstanceNameByType(INSTANCE_TYPE.CLOUD))
+      })
+    }, INSTANCE_TYPE.CLOUD)
+  }
+
   build() {
     NavDestination() {
       CloudAPI_Console({
         LoginInfoSetter: (user, cookie) => {
-          // UserManager.setUserInfo({
-          //   data: {
-          //     account: {
-          //       userName: user.data.account.userName,
-          //       id: user.data.account.id.toString(),
-          //       vipType: user.data.account.vipType
-          //     },
-          //     profile: {
-          //       userId: user.data.profile.userId.toString(),
-          //       nickname: user.data.profile.nickname,
-          //       backgroundUrl: user.data.profile.backgroundUrl,
-          //       gender: user.data.profile.gender,
-          //       avatarUrl: user.data.profile.avatarUrl
-          //     }
-          //   }
-          // } as User, cookie)
-          // UserManager.fetchAllUserData()
-          const context = CloudAPIConfigUtils.getRequestContext() ?? {
-            baseUrl: 'http://111.229.38.178:3333/',
-            cookie: {
-              cookie: cookie,
-            },
-          } as Cloud_RequestContext
-          CloudAPIConfigUtils.setRequestContext(context)
-          LoginAPIUtils.getLoginStatus((val) => {
-            Logger.debug(`NavidromeAPI`, `getLoginStat: ${JSON.stringify(val)}`)
-            this.pageStack.pushPath({
-              name: 'APIFinishWelcome',
-              param: generate_APIFinishWelcome_PageParams(val.data.profile.nickname, val.data.profile.avatarUrl, () => {
-                const idd = DialogHelper.showLoadingDialog()
-                ServiceInitUtils.reInit(INSTANCE_TYPE.CLOUD, val, cookie, context)
-                  .finally(() => {
-                    DialogHelper.closeDialog(idd)
-                  })
-              },InstanceSwitcher.getInstanceNameByType(INSTANCE_TYPE.CLOUD))
-            })
-          }, INSTANCE_TYPE.CLOUD)
+          this.loginInfoSetter(cookie)
         }
       })
     }.title('CloudAPI')
@@ -75,6 +62,13 @@ export struct CloudAPI_Source {
     })
     .onWillHide(() => {
       this.pageOpacity = 0
+    })
+    .onReady((ctx) => {
+      if (ctx.pathInfo.param) {
+        // 优先加载传参过来的Config
+        const req = ((ctx.pathInfo.param) as Record<string, Object>)['context'] as Cloud_RequestContext
+        this.loginInfoSetter(req.cookie.cookie!)
+      }
     })
     .opacity(this.pageOpacity)
     .animation({duration: 300})

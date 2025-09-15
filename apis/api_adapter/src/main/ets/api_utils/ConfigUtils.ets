@@ -2,9 +2,11 @@
  * ConfigUtils
  *
  */
+import { AegRsa, AegStrUtil } from '@hw-agconnect/petal-aegis'
 import { url } from '@kit.ArkTS'
 import { Base64Util, CryptoUtil, MD5 } from '@pura/harmony-utils'
-import { CloudAPIConfigUtils, Cloud_RequestContext, InstanceSwitcher, INSTANCE_TYPE,
+import { CloudAPIConfigUtils, Cloud_RequestContext,
+  InstanceSwitcher, INSTANCE_TYPE,
   NavidromeAPIConfigUtils,
   NavidromeRequestContext,
   RealIP_INITIAL } from '../../../../Index'
@@ -66,6 +68,7 @@ export class APIConfigUtils {
       throw Error('API Unimplemented')
     }
   }
+  // 用于 share music，而不是 share config
   static get requestConfig(): CommonRequestConfig {
     if (InstanceSwitcher.InstanceType === INSTANCE_TYPE.NAVIDROME) {
       const ctx = APIConfigUtils.NowRequestContext as NavidromeRequestContext
@@ -73,6 +76,13 @@ export class APIConfigUtils {
         apiAddr: ctx.baseUrl,
         apiUser: ctx.username,
         apiPasswd: ctx.password!
+      }
+    } else if (InstanceSwitcher.InstanceType === INSTANCE_TYPE.CLOUD) {
+      const ctx = APIConfigUtils.NowRequestContext as Cloud_RequestContext
+      return {
+        apiAddr: ctx.baseUrl,
+        apiUser: '',
+        apiPasswd: ctx.cookie.cookie!
       }
     } else {
       throw Error('API Unimplemented')
@@ -93,19 +103,24 @@ export class APIConfigUtils {
     }
   }
   static sharePlainAPILink() {
-    const data = encodeURIComponent(JSON.stringify(APIConfigUtils.NowRequestContext))
+    const raw_data = (new AegStrUtil()).ohAegStringToUint8Array(JSON.stringify(APIConfigUtils.NowRequestContext))
+    const data = Base64Util.encodeToStrSync(raw_data)
     return `cloudpureplay://shareConfig/share?type=plain&api=${InstanceSwitcher.InstanceTypeName}&data=${data}`
   }
-  static shareEncryptedAPILink() {
-
-  }
+  // TODO: 加密分享，接收到的加密配置文件不可二次分享，不可查看密码
+  // static async shareEncryptedAPILink(pubKey: string) {
+  //   const data = (JSON.stringify(APIConfigUtils.NowRequestContext))
+  //   const enc_data = await AegRsa.ohAegRsaEncTextHex(data, pubKey)
+  //   return `cloudpureplay://shareConfig/share?type=encrypt&api=${InstanceSwitcher.InstanceTypeName}&data=${enc_data}`
+  // }
   static getConfigFromShareLink(link: string): [Object | null, string] {
     const u = url.URL.parseURL(link)
     const type = u.params.get('type')
-    const data = u.params.get('data')
+    const data64 = u.params.get('data')
     const api = u.params.get('api')
+    const data = (new AegStrUtil()).ohAegUint8ArrayToString(Base64Util.decodeSync(data64!))
     if (type === 'plain') {
-      return [JSON.parse(decodeURIComponent(data!)) as Object, api!]
+      return [JSON.parse((data!)) as Object, api!]
     }
     return [null, '']
   }
