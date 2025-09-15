@@ -1,7 +1,5 @@
-import { LightUpLinedContainer, LightUpLongButton } from "@handwer/ui_components";
+import {  LightUpLongButton } from "@handwer/ui_components";
 import { ImageTitleWelcomeTemplate } from "./CommonTemplate";
-import { hdsEffect } from "@kit.UIDesignKit";
-import { ResponsiveUtil } from '@handwer/base'
 
 @ComponentV2
 export struct FinalWelcome {

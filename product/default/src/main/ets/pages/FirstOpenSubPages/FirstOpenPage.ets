@@ -1,7 +1,7 @@
 import { promptAction, router } from '@kit.ArkUI';
 import { OpenWelcome } from './OpenWelcome';
 import { FinalWelcome } from './FinalWelcome';
-import { GlobalStore } from '@handwer/base';
+import { GlobalStore, SCPref, Settings } from '@handwer/base';
 import { hdsEffect } from '@kit.UIDesignKit';
 import { LightUp } from './LightUp';
 import { WebDAV } from './WebDAV';
@@ -116,6 +116,7 @@ struct FirstOpenPage {
   }]
 
   private jumpToApp() {
+    Settings.put<boolean>(SCPref.notFirstOpen, true);
     router.replaceUrl({
       url: 'pages/Index'
     })

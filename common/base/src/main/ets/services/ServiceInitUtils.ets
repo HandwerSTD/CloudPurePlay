@@ -57,7 +57,11 @@ export class ServiceInitUtils {
       Settings.put(SCPref.autoPlayFM, true)
     }
     if (Settings.get<boolean>(SCPref.useStylusControl) === undefined) {
-      Settings.put(SCPref.useStylusControl, false)
+      Settings.put(SCPref.useStylusControl, true)
+    }
+
+    if (Settings.get<boolean>(SCPref.autoPlayOnLaunch) === undefined) {
+      Settings.put(SCPref.autoPlayOnLaunch, true)
     }
   }
   static async reInit(newInstanceType: INSTANCE_TYPE, newUser: User, newPasswd: string, newRequestContext: Object) {

@@ -22,6 +22,7 @@ export struct InListSongItem {
       }
       Column() {
         Text(this.songName).fontSize(16).fontWeight(FontWeight.Bold)
+          .maxLines(2)
           .songText()
         Text(this.songArtist)
           .fontColor($r('sys.color.font_secondary')).fontSize(14)
@@ -42,9 +43,9 @@ export struct InListSongItem {
 }
 
 @Extend(Text) function songText() {
+  // TODO:  可调 overflow 样式
   // .layoutWeight(1)
-  .textOverflow({overflow: TextOverflow.Ellipsis})
   .fontColor(Color.White)
-  .maxLines(2)
+  .maxLines(1)
   .textOverflow({overflow: TextOverflow.Ellipsis})
 }

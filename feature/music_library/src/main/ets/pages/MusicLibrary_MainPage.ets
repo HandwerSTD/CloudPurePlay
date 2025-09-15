@@ -346,7 +346,10 @@ export struct MainPage {
   onShowSearch() {
     this.shouldDisableTab = this.showSearchPage
   }
-
+  @Monitor('modifyPlaylist')
+  onShowEdit() {
+    this.shouldDisableTab = this.modifyPlaylist
+  }
   build() {
     Row() {
       Stack() {

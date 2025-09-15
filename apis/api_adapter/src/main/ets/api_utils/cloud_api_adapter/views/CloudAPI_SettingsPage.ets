@@ -1,7 +1,8 @@
-import { CloudAPIConfigUtils, CloudAPI_User, LoginAPIUtils } from "@handwer/cloud_api"
+import { CloudAPIConfigUtils, CloudAPI_User, LoginAPIUtils, RealIP_INITIAL } from "@handwer/cloud_api"
 import { webview } from "@kit.ArkWeb"
 import { promptAction } from "@kit.ArkUI"
 import { LogUtil } from "@pura/harmony-utils"
+import { INSTANCE_TYPE } from "../../../../../../Index"
 
 
 // UserManager.setUserInfo(user)
@@ -60,7 +61,7 @@ export struct WebLogin {
   menus: NavigationMenuItem[] = [
     {
       value: 'refresh',
-      icon: $r('sys.symbol.route'),
+      icon: $r('sys.symbol.circle'),
       action: () => {
         this.controller.removeCache(true)
         this.loadUrl() }
@@ -135,7 +136,13 @@ export struct WebLogin {
       let cookie = webview.WebCookieManager.fetchCookieSync('https://music.163.com')
       if (await this.checkValidCookie(cookie)) {
         cookie = cookie + '; OS=pc'
-        CloudAPIConfigUtils.setupCookie(cookie)
+        CloudAPIConfigUtils.setRequestContext({
+          baseUrl: 'http://111.229.38.178:3333/',
+          cookie: {
+            cookie: cookie,
+          },
+          realIp: RealIP_INITIAL
+        })
         let result = await LoginAPIUtils.getLoginStatus((user) => {
           this.LoginInfoSetter(user, cookie)
         })
@@ -152,6 +159,9 @@ export struct WebLogin {
     } catch (error) {
       LogUtil.error('获取Cookie失败', error.message)
       // ToastUtil.showToast('获取Cookie失败：' + error.message)
+      promptAction.showToast({
+        message: '获取登录信息失败: '+error.message
+      })
       return false
     }
   }
@@ -167,7 +177,7 @@ export struct WebLogin {
         return false
       }
     } catch (error) {
-      // LogUtil.error('检查 Cookie 有效性出错: ', error.message)
+      LogUtil.error('检查 Cookie 有效性出错: ', error.message)
       return false
     }
   }
