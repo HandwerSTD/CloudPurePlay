@@ -67,7 +67,9 @@ export struct CloudAPI_Source {
       if (ctx.pathInfo.param) {
         // 优先加载传参过来的Config
         const req = ((ctx.pathInfo.param) as Record<string, Object>)['context'] as Cloud_RequestContext
-        this.loginInfoSetter(req.cookie.cookie!)
+        if (req && req.cookie && req.cookie.cookie) {
+          this.loginInfoSetter(req.cookie.cookie!)
+        }
       }
     })
     .opacity(this.pageOpacity)

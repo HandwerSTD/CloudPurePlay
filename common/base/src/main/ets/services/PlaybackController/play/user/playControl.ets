@@ -228,7 +228,7 @@ export class PlayControl {
     store.nowPlayingSource = kv.get('nowPlayingSource') ?? store.nowPlayingSource
     Logger.debug(TAG, `load store info = ${JSON.stringify(store)}`)
     await AVPlayerUtils.init()
-    if (store.currentSong !== Song_INITIAL) {
+    if (store.currentSong.id !== Song_INITIAL.id) {
       store.isPlaying = true
       store.isPaused = true
       const playOnStart = Settings.get<boolean>(SCPref.autoPlayOnLaunch) ?? false
