@@ -182,12 +182,6 @@ export struct SearchSongView {
           .onAreaChange((_, nw) => {
             this.gridCount = ResponsiveUtil.chooseByWidth([1,2,3])
           })
-          .onScrollStart(() => {
-            this.shouldLightSourceOff = true
-          })
-          .onScrollStop(() => {
-            this.shouldLightSourceOff = false
-          })
         } else {
           // 空状态占位符
           Column() {

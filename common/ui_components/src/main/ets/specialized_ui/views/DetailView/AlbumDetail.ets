@@ -361,12 +361,6 @@ export struct AlbumDetail {
       fadingEdgeLength: LengthMetrics.percent(10)
     })
     .layoutWeight(ResponsiveUtil.wLgXl() ? 2 : undefined)
-    .onScrollStart(() => {
-      this.shouldLightSourceOff = true
-    })
-    .onScrollStop(() => {
-      this.shouldLightSourceOff = false
-    })
     .height('100%')
     .padding({
       left: ResponsiveUtil.chooseByWidth([12,12,12]),

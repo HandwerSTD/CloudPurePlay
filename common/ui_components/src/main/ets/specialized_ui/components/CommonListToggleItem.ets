@@ -16,6 +16,7 @@ export struct CommonListToggleItem {
   @Param @Require isOn: boolean
   @Param toggleType: ToggleType = ToggleType.Switch
   @Param @Require onToggleChange: (isOn: boolean) => void
+  @Param isDisabledSwitch: boolean = false
 
   build() {
     Row() {
@@ -49,6 +50,7 @@ export struct CommonListToggleItem {
         .onChange((val) => {
           this.onToggleChange(val)
         })
+        .enabled(!this.isDisabledSwitch)
     }
     .hoverEffect(HoverEffect.Highlight)
     .borderRadius(24)
@@ -78,6 +80,7 @@ export struct LightedCommonListToggleItem {
   @Param @Require isOn: boolean
   @Param toggleType: ToggleType = ToggleType.Switch
   @Param @Require onToggleChange: (isOn: boolean) => void
+  @Param isDisabledSwitch: boolean = false
 
   build() {
     Column() {
@@ -91,7 +94,8 @@ export struct LightedCommonListToggleItem {
           highlightBorder: this.highlightBorder,
           isOn: this.isOn,
           toggleType: this.toggleType,
-          onToggleChange: this.onToggleChange
+          onToggleChange: this.onToggleChange,
+          isDisabledSwitch: this.isDisabledSwitch
         })
       }
     }.backgroundColor($r('app.color.play_list_single_item_bg'))
@@ -99,5 +103,6 @@ export struct LightedCommonListToggleItem {
     .visualEffect(new hdsEffect.HdsEffectBuilder().pointLight({
       illuminatedType: hdsEffect.PointLightIlluminatedType.BORDER_CONTENT
     }).buildEffect())
+    .opacity(this.isDisabledSwitch ? 0.8 : 1)
   }
 }

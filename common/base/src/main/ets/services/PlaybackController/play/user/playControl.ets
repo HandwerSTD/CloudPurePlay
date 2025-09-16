@@ -269,7 +269,7 @@ export class PlayControl {
         try { tempArtists = artists.slice(0, 100 - songNameLength) }
         catch (e) { artists = '未知' }
       }
-      if(!picUrl) {
+      if(!picUrl || picUrl === '') {
         picUrl = await SongAPIUtils.getSongPicUrl(song)
       }
       await PlayControl.setPicUrl(picUrl)

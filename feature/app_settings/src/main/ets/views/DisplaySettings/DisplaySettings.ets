@@ -1,8 +1,6 @@
 import { GlobalStore, SCPref, Settings } from "@handwer/base"
-import { HDS_TITLE_CONFIG_STYLE, LightedCommonListToggleItem, SnackBarUtils } from "@handwer/ui_components"
+import { HDS_TITLE_CONFIG_STYLE, LightedCommonListToggleItem } from "@handwer/ui_components"
 import { HdsNavigation, HdsNavigationTitleMode, HdsNavigationAttribute } from "@kit.UIDesignKit"
-
-import { motion } from "@kit.MultimodalAwarenessKit"
 
 @ComponentV2
 export struct DisplaySettings {
@@ -10,7 +8,6 @@ export struct DisplaySettings {
 
   @Local showPlayerOnLaunch: boolean = false
   @Local showMusicLibraryInOnlineMusic: boolean = false
-  @Local autoNavRightHand: boolean = false
 
   pref = GlobalStore.pref
   get navigationRightHandMode() {
@@ -18,9 +15,6 @@ export struct DisplaySettings {
   }
   get playerTwoColumnRightHandMode() {
     return this.pref.playerRightHand
-  }
-  get autoNavRightHandMode() {
-    return this.autoNavRightHand
   }
   set navigationRightHandMode(val: boolean) {
     this.getUIContext().animateTo({duration: 300}, () => {
@@ -32,14 +26,10 @@ export struct DisplaySettings {
       this.pref.playerRightHand = val
     })
   }
-  set autoNavRightHandMode(val: boolean) {
-    this.autoNavRightHand = val
-  }
 
   aboutToAppear(): void {
     this.showPlayerOnLaunch = Settings.get<boolean>(SCPref.showPlayerOnLaunch) ?? false
     this.showMusicLibraryInOnlineMusic = Settings.get<boolean>(SCPref.showMusicLibraryInOnlineMusic) ?? false
-    this.autoNavRightHand = Settings.get<boolean>(SCPref.autoNavRightHand) ?? false
   }
 
   build() {
@@ -81,24 +71,8 @@ export struct DisplaySettings {
                 onToggleChange: (val) => {
                   this.navigationRightHandMode = val
                   Settings.put(SCPref.navigationRightHandMode, val)
-                }
-              })
-            }
-            ListItem() {
-              LightedCommonListToggleItem({
-                icon: $r('sys.symbol.hand_tap'),
-                title: $r('app.string.auto_nav_right_hand'),
-                subtitle: $r('app.string.auto_nav_right_hand_desc'),
-                isOn: GlobalStore.pref.autoNavRightHandMode,
-                onToggleChange: (val) => {
-                  GlobalStore.pref.autoNavRightHandMode = val
-                  Settings.put(SCPref.autoNavRightHand, val)
-                  try {
-                    motion.getRecentOperatingHandStatus()
-                  } catch (e) {
-                    SnackBarUtils.showMessage(GlobalStore.globalSnack!, $r('sys.symbol.hand_tap'), $r('app.string.this_device_unsupport'))
-                  }
-                }
+                },
+                isDisabledSwitch: GlobalStore.pref.autoNavRightHandMode
               })
             }
             ListItem() {

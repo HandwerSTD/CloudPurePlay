@@ -308,8 +308,9 @@ export struct PlaylistDetail {
               Row() {
                 ForEach(([1, 2, 3, 4, 5]), () => {
                   Column() {
-                  }.height(1).width(1)
+                  }.height(1).width(1).opacity(0)
                   .visualEffect(new hdsEffect.HdsEffectBuilder().pointLight({
+                    illuminatedType: hdsEffect.PointLightIlluminatedType.BORDER_CONTENT,
                     options: {
                       height: song.s.id === this.nps.currentSong.id && !this.shouldLightSourceOff ? 100 : 0,
                       intensity: 1
@@ -366,12 +367,6 @@ export struct PlaylistDetail {
       fadingEdgeLength: LengthMetrics.percent(10)
     })
     .layoutWeight(ResponsiveUtil.wLgXl() ? 2 : undefined)
-    .onScrollStart(() => {
-      this.shouldLightSourceOff = true
-    })
-    .onScrollStop(() => {
-      this.shouldLightSourceOff = false
-    })
     .height('100%')
     .padding({
       left: ResponsiveUtil.chooseByWidth([12,12,12]),

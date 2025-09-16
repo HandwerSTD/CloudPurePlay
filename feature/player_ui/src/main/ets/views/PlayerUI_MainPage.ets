@@ -660,29 +660,51 @@ export struct MainPage {
         .visibility(ResponsiveUtil.chooseByWidth([Visibility.None, Visibility.None, Visibility.Visible]))
 
       // 播放
-      LightUpBorderRoundButton({
-        icon: nps.isPaused ? $r('sys.symbol.play_fill') : $r('sys.symbol.pause_fill'),
-        customFontSize: 20,
-        customFontColor: [Color.White],
-        customBgColor: Color.Transparent,
-        clickAction: () => {
-          this.isBottomAreaExpand = false
-          if(nps.isPaused) {
-            PlayControl.resumeMusic()
-          } else {
-            PlayControl.pauseMusic()
-          }
-        },
-        lightUpConfig: ResponsiveUtil.chooseByWidth([LIGHT_PLAYBACK_BTN_MD,LIGHT_PLAYBACK_BTN_MD,LIGHT_PLAYBACK_BTN_LG])
-      })
-        .shadow({
-          color: '#ccffffff',
-          radius: 36
+      Stack({alignContent: Alignment.BottomEnd}){
+        LightUpBorderRoundButton({
+          icon: nps.isPaused ? $r('sys.symbol.play_fill') : $r('sys.symbol.pause_fill'),
+          customFontSize: 20,
+          customFontColor: [Color.White],
+          customBgColor: Color.Transparent,
+          clickAction: () => {
+            this.isBottomAreaExpand = false
+            if(nps.isPaused) {
+              PlayControl.resumeMusic()
+            } else {
+              PlayControl.pauseMusic()
+            }
+          },
+          lightUpConfig: ResponsiveUtil.chooseByWidth([LIGHT_PLAYBACK_BTN_MD,LIGHT_PLAYBACK_BTN_MD,LIGHT_PLAYBACK_BTN_LG])
         })
-        .backgroundColor(nps.isPaused ? undefined : '#66ffffff')
-        .backdropBlur(nps.isPaused ? undefined : 64)
-        .animation({duration: 1000, curve: Curve.Ease})
-        .borderRadius(48)
+          .shadow({
+            color: '#ccffffff',
+            radius: 36
+          })
+          .backgroundColor(nps.isPaused ? undefined : '#66ffffff')
+          .backdropBlur(nps.isPaused ? undefined : 64)
+          .animation({duration: 1000, curve: Curve.Ease})
+          .borderRadius(48)
+          .gesture((LongPressGesture({duration: 2000})).onAction(() => {
+            SongLike.likeThisSong((icon, msg) => {
+              SnackBarUtils.showMessage(this.hdsSnackBar, icon, msg)
+            })
+          }))
+        LightUpRoundedButton({
+          icon: $r('sys.symbol.heart_fill'),
+          customFontColor: [Color.Red],
+          customFontSize: 8,
+          customPadding: 3,
+          overrideLightUpStat: OverrideLightUpStat.ALWAYS_ENABLED,
+          clickAction: () => {},
+          lightUpConfig: {
+            lightIntensity: 1,
+            lightHeight: 60
+          }
+        })
+          .visibility(this.isThisSongLiked ? Visibility.Visible : Visibility.None)
+          .translate({x: 4, y: 4})
+          .hitTestBehavior(HitTestMode.Transparent)
+      }
 
       // 下一首
       LightUpRoundedButton({

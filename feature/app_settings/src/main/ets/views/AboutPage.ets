@@ -18,9 +18,10 @@ export struct AboutPage {
     HdsNavDestination() {
       Column() {
         Column() {
-          Image($r('sys.media.ohos_app_icon'))
+          Image($r('app.media.ff'))
             .width(90)
             .height(90)
+            .borderRadius(24)
             .onClick(() => {
               ++this.logCounter;
               if (this.logCounter > 5) {

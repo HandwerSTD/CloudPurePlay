@@ -11,7 +11,8 @@ import { NavidromeAPI_Source } from "../views/DataSource/NavidromeAPI";
 import { MissionContinueSettings } from "../views/MissionContinue/MissionContinueSettings";
 import { DisplaySettings } from "../views/DisplaySettings/DisplaySettings";
 import { PlaybackSettings } from "../views/PlaybackSettings/PlaybackSettings";
-import { router } from "@kit.ArkUI";
+import { LengthMetrics, router } from "@kit.ArkUI";
+import { SmartFeaturesSettings } from "../views/SmartFeaturesSettings/SmartFeaturesSettings";
 
 @ComponentV2
 export struct MainPage {
@@ -51,6 +52,8 @@ export struct MainPage {
       DisplaySettings()
     } else if (name === 'PlaybackSettings') {
       PlaybackSettings()
+    } else if (name === 'SmartFeaturesSettings') {
+      SmartFeaturesSettings()
     }
   }
 
@@ -122,6 +125,22 @@ export struct MainPage {
     }).buildEffect())
   }
 
+  @Builder SmartFeaturesSettingsBuilder() {
+    Column() {
+      LightUpLinedContainer() {
+        CommonListItem({
+          icon: $r('sys.symbol.wand_and_stars'),
+          title: '智慧功能',
+        }).onClick(() => {
+          this.pushPage('SmartFeaturesSettings', {})
+        })
+      }
+    }.backgroundColor($r('app.color.play_list_single_item_bg'))
+    .borderRadius(20)
+    .visualEffect(new hdsEffect.HdsEffectBuilder().pointLight({
+      illuminatedType: hdsEffect.PointLightIlluminatedType.BORDER_CONTENT
+    }).buildEffect())
+  }
   @Builder AboutApp() {
     Column() {
       LightUpLinedContainer() {
@@ -180,6 +199,9 @@ export struct MainPage {
               this.PlaybackSettingsBuilder()
             }
             ListItem() {
+              this.SmartFeaturesSettingsBuilder()
+            }
+            ListItem() {
               this.MultiDevice()
             }
             ListItem() {
@@ -187,6 +209,9 @@ export struct MainPage {
             }
             ListItem().height(12)
           }.padding({left: 12, right: 12})
+          .fadingEdge(true, {
+            fadingEdgeLength: LengthMetrics.percent(10)
+          })
         }
         .width('100%').height('100%')
       }.titleBar({

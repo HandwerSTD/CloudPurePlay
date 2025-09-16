@@ -11,7 +11,6 @@ import { EmptyQueueView } from "../components/EmptyQueueView"
 
 @ComponentV2
 export struct PlayQueueView {
-  @Local queueItemShowLight: boolean = false
 
   pq = PlayQueueStore
 
@@ -50,7 +49,6 @@ export struct PlayQueueView {
                   PlayQueueSingleItem({
                     item: item,
                     itemIndex: index,
-                    showLight: this.queueItemShowLight
                   })
                 }
                 .transition(TransitionEffect.asymmetric(
@@ -71,14 +69,9 @@ export struct PlayQueueView {
               strokeWidth: 2,
               endMargin: 24
             })
-            .onScrollStart(() => {this.queueItemShowLight = false})
-            .onScrollStop(() => {this.queueItemShowLight = true})
             // .padding({left: 12, right: 12})
           }
         }
-        .onAppear(() => {
-          this.queueItemShowLight = true
-        })
       }
       .margin({top: 12}) // Navigation 默认避让
       .title({
@@ -188,9 +181,9 @@ export struct PlayQueueSingleItem {
   @Builder DualEndPointLight() {
     Row() {
       ForEach([1,2,3,4,5], () => {
-        Column() {}.height(2).width(2)
+        Column() {}.height(1).width(1).opacity(0)
         .visualEffect(new hdsEffect.HdsEffectBuilder().pointLight({
-          // sourceType: hdsEffect.PointLightSourceType.BRIGHT,
+          illuminatedType: hdsEffect.PointLightIlluminatedType.BORDER_CONTENT,
           options: {
             color: Color.White,
             intensity: this.isNowPlaying && this.showLight ? 1 : 0,
@@ -210,84 +203,6 @@ export struct PlayQueueSingleItem {
       this.MainArea()
     }
   }
-
-
-  // @Local pointLocation: number = 0
-  // @Local pointLightX: number = 0
-  // @Local pointLightY: number = 0
-  // @Local coverArea: Area | undefined = undefined
-  // pointLightMoveIntervalHandler?: number
-  // @Builder PointLight() {
-  //   if (this.showLight) {
-  //     Column() {}.height(2).width(2)
-  //     .visualEffect(new hdsEffect.HdsEffectBuilder().pointLight({
-  //       options: {
-  //         color: Color.White,
-  //         intensity: 1,
-  //         height: 100
-  //       }
-  //     }).buildEffect())
-  //     .translate({
-  //       x: this.pointLightX,
-  //       y: this.pointLightY
-  //     })
-  //     .animation({duration: 1500})
-  //   }
-  // }
-
-  // aboutToAppear(): void {
-  //   this.onPlayStateChange()
-  // }
-
-  // @Monitor('pq.currentQueueIndex')
-  // onPlayStateChange() {
-  //   if (this.isNowPlaying) {
-  //     // 点光源移动
-  //     Logger.debug(`play queue item on light up`)
-  //     this.showLight = true
-  //     this.pointLightMoveIntervalHandler = setInterval(() => {
-  //       this.pointLocation += 1;
-  //       this.pointLocation %= 4;
-  //       switch (this.pointLocation) {
-  //         case 0:
-  //           this.pointLightX = 0;
-  //           this.pointLightY = 0;
-  //           break;
-  //         case 1:
-  //           this.pointLightX = (this.coverArea!.width.valueOf() as number) //+ this.lightOffset
-  //           break;
-  //         case 2:
-  //           // this.pointLightY = (this.coverArea!.height.valueOf() as number) //+ this.lightOffset
-  //           break;
-  //         case 3:
-  //           this.pointLightX = 0;
-  //           break;
-  //       }
-  //     }, 1500)
-  //   } else {
-  //     this.showLight = false
-  //     clearInterval(this.pointLightMoveIntervalHandler)
-  //     this.pointLightMoveIntervalHandler = undefined
-  //   }
-  // }
-  // relocatePointLight() {
-  //   if (!this.showLight) return
-  //   switch (this.pointLocation) {
-  //     case 0:
-  //       this.pointLightX = 0;
-  //       this.pointLightY = 0;
-  //       break;
-  //     case 1:
-  //       this.pointLightX = (this.coverArea!.width.valueOf() as number)
-  //       break;
-  //     case 2:
-  //       // this.pointLightY = (this.coverArea!.height.valueOf() as number)
-  //       break;
-  //     case 3:
-  //       this.pointLightX = 0;
-  //       break;
-  //   }
-  // }
 }
 
 @Builder

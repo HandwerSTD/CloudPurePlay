@@ -38,9 +38,11 @@ export struct LightUpContainer {
   build() {
     Stack() {
       Column() {
-      }.height(1).width(1).visualEffect(new hdsEffect.HdsEffectBuilder()
+      }.height(1).width(1).opacity(0)
+      .visualEffect(new hdsEffect.HdsEffectBuilder()
         .pressShadow(this.intensity > 0 ? hdsEffect.PressShadowType.BLEND_GRADIENT : 0)
         .pointLight({
+          illuminatedType: hdsEffect.PointLightIlluminatedType.BORDER_CONTENT,
           options: {
             color: Color.White,
             intensity: this.finalIntensity,
@@ -113,9 +115,11 @@ export struct LightUpLinedContainer {
       Row() {
         ForEach((new Array(this.lightNum).fill(0)), () => {
           Column() {
-          }.height(1).width(1).visualEffect(new hdsEffect.HdsEffectBuilder()
+          }.height(1).width(1).opacity(0)
+          .visualEffect(new hdsEffect.HdsEffectBuilder()
             .pressShadow(this.intensity > 0 && this.usePressShadow ? hdsEffect.PressShadowType.BLEND_GRADIENT : 0)
             .pointLight({
+              illuminatedType: hdsEffect.PointLightIlluminatedType.BORDER_CONTENT,
               options: {
                 color: Color.White,
                 intensity: this.finalIntensity,
