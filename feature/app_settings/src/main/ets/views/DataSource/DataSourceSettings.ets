@@ -80,7 +80,7 @@ export struct DataSourceSettings {
           const type = InstanceSwitcher.getTypeByName(name)
           if (type !== -1) {
             const ctx = await DistributedUtils.getRequestContext(type, device.deviceId)
-            this.pushPage(this.apiPage[type], {'context': ctx})
+            this.pushPage(this.apiPage[type], {'context': ctx['context']})
           } else {
             SnackBarUtils.showMessage(this.snack, $r('sys.symbol.multi_screen_collaboration'), $r('app.string.target_device_no_api_config'))
           }
@@ -248,12 +248,13 @@ export struct DeviceSelectorPanel {
             lightUpConfig: LightUpDefaultConfig,
             icon: $r('sys.symbol.dot_radiowaves_left_and_right'),
             clickAction: () => {
-              let new_dev = DistributedUtils.scanDevices()
-              if (new_dev) {
-                this.deviceList.devices = new_dev.map((val): SingleDeviceViewModel => {
-                  return SingleDeviceViewModel.fromDistInfo(val);
-                })
-              }
+              this.aboutToAppear()
+              // let new_dev = DistributedUtils.scanDevices()
+              // if (new_dev) {
+              //   this.deviceList.devices = new_dev.map((val): SingleDeviceViewModel => {
+              //     return SingleDeviceViewModel.fromDistInfo(val);
+              //   })
+              // }
             }
           })
         }.width('100%').padding({left: 12, right: 12})

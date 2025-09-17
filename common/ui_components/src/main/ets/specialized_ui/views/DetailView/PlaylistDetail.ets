@@ -70,6 +70,7 @@ export struct PlaylistDetail {
   }
 
   async onStart() {
+    // TODO: 性能优化
     this.fullPlayListDetail = new Array(Math.min(100, this.playListInfo.trackCount)).fill({
       name: '', id: "0", al: Album_INITIAL, dt: 0, ar: [], fee: 0
     } as PlayListSong)

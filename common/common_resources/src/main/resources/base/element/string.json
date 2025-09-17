@@ -430,7 +430,7 @@
     },
     {
       "name": "multi_device_sync",
-      "value": "多设备同步"
+      "value": "其他设备音乐源"
     },
     {
       "name": "need_dist_perm_to_sync",
@@ -762,7 +762,7 @@
     },
     {
       "name": "knock_share_hop_transfer",
-      "value": "碰一碰分享 / 隔空抓取"
+      "value": "碰一碰分享 | 隔空抓取"
     },
     {
       "name": "first_open_page__interaction_title",

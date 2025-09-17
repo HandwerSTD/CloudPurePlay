@@ -105,7 +105,10 @@ export default class MainAbility extends UIAbility {
       const data = params['data'] as MissionContinueData
       // TODO: else
       if (DeviceCollaborationUtils.checkContinueData(data.requestContextHash)) {
+        Logger.info(TAG, `check continuation succeeded, applying data`)
         DeviceCollaborationUtils.applyContinuation(data)
+      } else {
+        Logger.info(TAG, `check continuation failed`)
       }
     }
   }

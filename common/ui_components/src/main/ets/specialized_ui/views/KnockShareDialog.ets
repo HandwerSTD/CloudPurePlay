@@ -25,7 +25,7 @@ export struct LoadingView {
         Span('\n')
         Span($r('app.string.knock_share_hop_transfer'))
           .fontWeight(FontWeight.Bold)
-          .fontSize(20)
+          .fontSize(17)
           .textShadow({
             radius: 12,
             color: '#aaffffff'

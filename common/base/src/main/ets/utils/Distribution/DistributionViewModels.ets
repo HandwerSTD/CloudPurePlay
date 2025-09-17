@@ -19,7 +19,7 @@ export const DeviceIcon: Record<DeviceType, Resource> = {
   [DeviceType.car]: $r('sys.symbol.car_fill'),
   [DeviceType.t2in1]: $r('sys.symbol.matebook_fill'),
   [DeviceType.pc]: $r('sys.symbol.matebook_fill'),
-  [DeviceType.wearable]: $r('sys.symbol.watch')
+  [DeviceType.wearable]: $r('sys.symbol.watch_fill')
 }
 
 @ObservedV2

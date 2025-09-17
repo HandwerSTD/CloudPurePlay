@@ -31,6 +31,12 @@ class DistributedUtil {
         message: $r('app.string.dist_service_failed')
       })
         this.getPermission()
+          .then(async (res) => {
+            if (res) {
+              this.inst = distributedDeviceManager.createDeviceManager(getContext().applicationInfo.name)
+              await DistKVUtil.getInstance().init(context)
+            }
+          })
     })
   }
   dispose() {
@@ -57,15 +63,22 @@ class DistributedUtil {
     Logger.debug(`DistributedUtils`, `subscribed remote change`)
     DistKVUtil.getInstance().registerCallback(callback)
   }
-  triggerSync(deviceId: string) {
+  triggerSync(deviceId?: string) {
     let base = DistKVUtil.getInstance()
-    base.syncData(deviceId)
+    if (deviceId) base.syncData(deviceId)
+    else {
+      const devices = this.inst?.getAvailableDeviceListSync() ?? []
+      devices.forEach((val) => {
+        base.syncData(val.networkId!)
+      })
+    }
   }
 
   async writeRequestContext(apiType: INSTANCE_TYPE, apiContext: Record<string, Object>) {
     const key = InstanceSwitcher.getInstanceNameByType(apiType) + "_apiContext"
     await DistKVUtil.getInstance().write(key, JSON.stringify(apiContext))
     await DistKVUtil.getInstance().write(SCDistKV.currentUsedAPI, InstanceSwitcher.getInstanceNameByType(apiType))
+    this.triggerSync()
   }
 
   async getUsingAPIName(deviceId?: string): Promise<string> {

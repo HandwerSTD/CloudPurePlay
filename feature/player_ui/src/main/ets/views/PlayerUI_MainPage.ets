@@ -81,6 +81,9 @@ export struct MainPage {
     if (!this.showExplore) return '100%'
     return 100
   }
+  get bottomPlayControlShouldLift(): Length {
+    return !ResponsiveUtil.PuraXOuterCheck() && ResponsiveUtil.widthCheck(['sm, md']) ? 64 : 0
+  }
   get nowPlayingCoverImg() {
     if (nps.currentSong === Song_INITIAL) {
       return $r('sys.media.Celia')
@@ -568,7 +571,7 @@ export struct MainPage {
         this.CoverInfo()
         this.PlaybackControl()
       }.height('100%').width('100%')
-      .padding({left: 24, right: 24})
+      .padding({left: 24, right: 24, bottom: this.bottomPlayControlShouldLift})
       .justifyContent(FlexAlign.SpaceAround)
       .clip(false)
       .margin({bottom: this.gs.wd.bottom === 0 ? 24 : this.gs.wd.bottom})

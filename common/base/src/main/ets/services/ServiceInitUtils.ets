@@ -9,7 +9,7 @@ import {
   INSTANCE_TYPE, User,
 } from '@handwer/api_adapter'
 import { UserManager } from './Network/UserManager'
-import { FeaturedPlayUtils, GlobalStore, SCEmitter, SCPref } from '../exports'
+import { DistributedUtils, FeaturedPlayUtils, GlobalStore, SCEmitter, SCPref } from '../exports'
 import { EmitterUtil } from '@pura/harmony-utils'
 
 export class ServiceInitUtils {
@@ -77,6 +77,9 @@ export class ServiceInitUtils {
     APIConfigUtils.loadRequestContext(newRequestContext);
     Settings.put(SCPref.apiInstanceType, newInstanceType);
     Settings.put(SCPref.currentAPIConfig, newRequestContext);
+    DistributedUtils.writeRequestContext(newInstanceType, {
+      'context': newRequestContext
+    })
     UserManager.setUserInfo(newUser, newPasswd);
     await ServiceInitUtils.init()
     EmitterUtil.post(SCEmitter.UserInfoReInit, [])
