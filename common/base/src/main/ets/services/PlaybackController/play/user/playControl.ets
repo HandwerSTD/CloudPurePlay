@@ -19,7 +19,7 @@ import AVSessionUtils from "../system/AVSessionUtils"
 import { SongLike } from "./songLike"
 import { fileIo } from "@kit.CoreFileKit"
 import PlayQueueUtils from "../../queue/PlayQueueUtils"
-import NowPlayingStore from "../NowPlayingStore"
+import NowPlayingStore, { ExportablePlaySourceData } from "../NowPlayingStore"
 import { playQueueStore } from "../../queue/PlayQueueStore"
 import { UserManager } from "../../../Network/UserManager"
 import Settings, { PreferenceUtils } from "../../../Preferences/PreferenceUtils"
@@ -229,7 +229,8 @@ export class PlayControl {
     store.currentArtists = kv.get('CurrentArtists') ?? store.currentArtists
     store.currentPic = kv.get('CurrentImage') ?? store.currentPic
     store.playMode = kv.get('PlayMode') ?? store.playMode
-    store.nowPlayingSource = kv.get('nowPlayingSource') ?? store.nowPlayingSource
+    const playSourceData = kv.get<ExportablePlaySourceData>('NowPlayingSource')
+    store.nowPlayingSource = new PlaySourceData(playSourceData?.PlaySourceDataType ?? -1, playSourceData?.PlaySourceDataId ?? '')
     Logger.debug(TAG, `load store info = ${JSON.stringify(store)}`)
     await AVPlayerUtils.init()
     if (store.currentSong.id !== Song_INITIAL.id) {
@@ -398,7 +399,7 @@ export class PlayControl {
         await AVSessionUtils.setMetadata(song, artistsString, picUrl)
         await AVSessionUtils.activate()
         await AVSessionUtils.bufferingState(0)
-        await PlayControl.saveCurrentSongInfo(0, song, artistsString, picUrl)
+        PlayControl.saveCurrentSongInfo(0, song, artistsString, picUrl)
         await AVPlayerUtils.setUrl(fdPath)
         
         // 播放成功，清除重试记录
@@ -624,7 +625,7 @@ export class PlayControl {
     playControlKV.put('CurrentArtists', artists)
     playControlKV.put('CurrentImage', imgUrl)
     playControlKV.put('CurrentQueueIndex', PlayQueueUtils.currentQueueIndex)
-    playControlKV.put('nowPlayingSource', NowPlayingStore.nowPlayingSource)
+    playControlKV.put('NowPlayingSource', NowPlayingStore.toExportable().PlaySourceData)
   }
   static syncToStorage() {
     PlayControl.saveCurrentSongInfo(NowPlayingStore.playMode, NowPlayingStore.currentSong, NowPlayingStore.currentArtists, NowPlayingStore.currentPic)

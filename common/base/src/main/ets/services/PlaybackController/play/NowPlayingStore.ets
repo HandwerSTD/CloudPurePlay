@@ -24,7 +24,7 @@ interface ExportableNowPlayingStore {
   PlaySourceData: ExportablePlaySourceData
 }
 
-interface ExportablePlaySourceData {
+export interface ExportablePlaySourceData {
   PlaySourceDataType: PlaySourceDataType
   PlaySourceDataId: string
 }
