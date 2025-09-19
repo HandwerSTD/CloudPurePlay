@@ -204,7 +204,8 @@ struct FirstOpenPage {
             .cachedCount(0, false)
             MyStepper({
               nowIndex: this.nowIndex,
-              configuration: this.stepperConfig
+              configuration: this.stepperConfig,
+              useDefaultTextColor: !this.showFlow
             }).clip(false)
               .hitTestBehavior(HitTestMode.Transparent)
           }
@@ -232,6 +233,7 @@ interface MyStepperConfig {
 struct MyStepper {
   @Param @Require configuration: MyStepperConfig[]
   @Param @Require nowIndex: number
+  @Param useDefaultTextColor: boolean = false
 
   @Builder leftBuilder() {
     Row() {
@@ -240,8 +242,10 @@ struct MyStepper {
           SymbolGlyph($r('sys.symbol.chevron_left'))
             .fontSize(24)
             .fontWeight(FontWeight.Medium)
-            .fontColor([$r('sys.color.font_primary')])
+            .fontColor([this.useDefaultTextColor ? $r('sys.color.font_primary') : Color.White])
           Text(this.configuration[this.nowIndex].previousLabel)
+            .fontColor(this.useDefaultTextColor ? $r('sys.color.font_primary') : Color.White)
+
         }.alignItems(VerticalAlign.Center)
         .height(24)
         .onClick(() => {
@@ -253,10 +257,13 @@ struct MyStepper {
   @Builder rightBuilder() {
     Row({space: 8}) {
       Text(this.configuration[this.nowIndex].nextLabel)
+        .fontColor(this.useDefaultTextColor ? $r('sys.color.font_primary') : Color.White)
+
       SymbolGlyph($r('sys.symbol.chevron_right'))
         .fontSize(24)
         .fontWeight(FontWeight.Medium)
-        .fontColor([$r('sys.color.font_primary')])
+        .fontColor([this.useDefaultTextColor ? $r('sys.color.font_primary') : Color.White])
+
     }.alignItems(VerticalAlign.Center)
     .height(24)
     .onClick(() => {

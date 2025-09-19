@@ -8,7 +8,7 @@ import { LightUpLinedContainer } from '../../../../Index'
 export struct LightUpRoundedButton {
   @Param @Require icon: Resource
   @Param @Require clickAction: () => void
-  @Param @Require lightUpConfig: LightUpConfig
+  @Param lightUpConfig: LightUpConfig = LightUpDefaultConfig
 
   @Param customBgColor: ResourceColor | undefined = undefined
   @Param customFontColor: ResourceColor[] | undefined = undefined

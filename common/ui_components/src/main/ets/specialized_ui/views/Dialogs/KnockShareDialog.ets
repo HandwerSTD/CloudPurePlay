@@ -13,7 +13,7 @@ export struct LoadingView {
     Column() {
       SymbolGlyph($r('sys.symbol.dual_phone_pairing'))
         .fontSize(44)
-        .fontColor([ThemeManager.getBrand()])
+        .fontColor([Color.White])
         .symbolShadow({
           radius: 6,
           color: '#ccffffff'
