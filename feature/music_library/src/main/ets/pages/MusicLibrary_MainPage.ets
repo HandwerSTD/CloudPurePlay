@@ -40,7 +40,8 @@ export struct MainPage {
   @Local fullWidth: number = 0
 
   get listPadding(): Padding {
-    return GlobalStore.isDarkMode ? {left: 12, right: 12} : {left: 8, right: 8}
+    const fac = ResponsiveUtil.chooseByWidth([1, 1.2, 1.5])
+    return GlobalStore.isDarkMode ? {left: 12 * fac, right: 12 * fac} : {left: 8 * fac, right: 8 * fac}
   }
 
   isPlaylistCreated(list: PlayList) {

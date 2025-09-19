@@ -364,7 +364,7 @@ export struct MainPage {
         })
         .fontColor(Color.White)
     }.visibility(this.isBottomAreaExpand ? Visibility.Hidden : Visibility.Visible)
-    .padding({right: 40}) // 避让右边按钮
+    .padding({right: 44}) // 避让右边按钮
     .transition(TransitionEffect.OPACITY.animation({duration: 200}))
     .alignItems(HorizontalAlign.Start)
     .onClick(() => {
@@ -599,7 +599,7 @@ export struct MainPage {
   }
 
   // -----------------------------------------------
-
+  // TODO: Pura X 适配
   @Builder NowPlayingArea_Bar() {
     if (this.shouldShowEmptyState) {
       // 空状态时显示简化的导航栏
@@ -759,7 +759,9 @@ export struct MainPage {
       }).buildEffect())
       // .backdropBlur(64) // 背景本身就是模糊的了，多加一层没意义
       .width('100%').height('100%')
-    }.width('100%').padding({left: 8, right: 8})
+    }.width('100%').padding(ResponsiveUtil.chooseByWidth<Padding>([
+      {left: 8, right: 8}, {left: 12, right: 12}
+    ]))
     .layoutWeight(1)
     .opacity(this.explorePageOpacity)
     .animation({duration: 300})
