@@ -4,6 +4,7 @@ import { WindowAvoidanceData } from "../utils/WindowUtil"
 import { common } from "@kit.AbilityKit"
 import { PrefDataModel } from "./PreferenceDataModel"
 import { OuterWantDataModel } from "./OuterWantDataModel"
+import { MissionContinueData } from "../../../../Index"
 
 @ObservedV2
 class GlobalStore {
@@ -44,6 +45,7 @@ class GlobalStore {
 
   globalSnack?: Object
   contextFaker?: common.UIAbilityContext
+  continuationInfo?: MissionContinueData
 }
 
 export default GlobalStore.instance

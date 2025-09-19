@@ -16,6 +16,8 @@ import {
 import { DialogHelper } from '@pura/harmony-dialog';
 import { url } from '@kit.ArkTS'
 import { APIConfigUtils } from '@handwer/api_adapter';
+import { SnackBarUtils } from '@handwer/ui_components';
+import { HdsSnackBar } from '@kit.UIDesignKit';
 
 const DOMAIN = 0xA0FF;
 const TAG = '[MainAbility]'
@@ -72,6 +74,9 @@ export default class MainAbility extends UIAbility {
       this.appStartUp(windowStage)
     });
   }
+  onWindowStageRestore(windowStage: window.WindowStage): void {
+    this.onWindowStageCreate(windowStage)
+  }
 
   onWindowStageDestroy(): void {
     // Main window is destroyed, release UI related resources
@@ -107,6 +112,15 @@ export default class MainAbility extends UIAbility {
       if (DeviceCollaborationUtils.checkContinueData(data.requestContextHash)) {
         Logger.info(TAG, `check continuation succeeded, applying data`)
         DeviceCollaborationUtils.applyContinuation(data)
+        let showedSnack = false
+        RetryUtil.retry(5, async () => {
+          if (GlobalStore.globalSnack) {
+            SnackBarUtils.showMessage(GlobalStore.globalSnack as HdsSnackBar, $r('sys.symbol.Interconnection_ic_multiscreen_collaboration'), $r('app.string.mission_continue_from_device_name', data.deviceName ?? 'Unknown'))
+            showedSnack = true
+          }
+        }, async () => {
+          return showedSnack
+        })
       } else {
         Logger.info(TAG, `check continuation failed`)
       }

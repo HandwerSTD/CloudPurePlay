@@ -89,6 +89,7 @@ export struct CommonSongListCard {
       coverInfo: it.picUrl,
       songName: it.name,
       songArtist: it.artist,
+      compactMode: true,
       onPlay: () => {
         it.onClick()
       }
@@ -105,6 +106,13 @@ export struct CommonSongListCard {
 
   aboutToAppear(): void {
     this.onItemsLengthChange()
+  }
+
+  get ListTopBottomPadding(): Padding {
+    return ResponsiveUtil.chooseByWidth<Padding>([{top: 24, bottom: 12}, {top: 24, bottom: 24}])
+  }
+  get HeaderLRPadding(): Padding {
+    return ResponsiveUtil.chooseByWidth<Padding>([{left: 12, right: 12}, {left: 24, right: 24}])
   }
 
   build() {
@@ -140,8 +148,9 @@ export struct CommonSongListCard {
           }
         })
       }.width('100%').justifyContent(FlexAlign.SpaceBetween)
-      .padding({left: 24, right: 24, top: 24})
-      List({space: 24}) {
+      .padding(this.HeaderLRPadding)
+      .margin({top: 24})
+      List({space: ResponsiveUtil.chooseByWidth([18, 24])}) {
         ForEach((new Array(this.lanes).fill(0)), () => {
           ListItem()
         })
@@ -157,8 +166,8 @@ export struct CommonSongListCard {
         ForEach((new Array(this.lanes).fill(0)), () => {
           ListItem()
         })
-      }.lanes(this.lanes, 24)
-      .padding({top: 24, bottom: 24})
+      }.lanes(this.lanes, ResponsiveUtil.chooseByWidth([12, 24]))
+      .padding(this.ListTopBottomPadding)
       .animation({duration: 300})
       .listDirection(Axis.Horizontal)
       .scrollBar(BarState.Off)

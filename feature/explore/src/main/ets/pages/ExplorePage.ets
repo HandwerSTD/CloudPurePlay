@@ -128,6 +128,7 @@ export struct ExplorePage {
     .fadingEdge(true, {
       fadingEdgeLength: LengthMetrics.percent(10)
     })
+    .scrollBar(BarState.Off)
     .clip(false)
     .onAreaChange((_, nw) => {
       // this.gridColumnNum = ResponsiveUtil.chooseByWidth([2,4,6])

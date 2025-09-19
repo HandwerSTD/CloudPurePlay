@@ -32,7 +32,7 @@ class PlayQueueUtils {
     }
   }
 
-  private async syncQueueToStorage() {
+  syncQueueToStorage() {
     try {
       playQueueKV.put(SCQueueKV.queue, playQueueStore.queue)
       playQueueKV.put(SCQueueKV.cycleMode, playQueueStore.cycleMode)
@@ -50,7 +50,7 @@ class PlayQueueUtils {
         fileName,
         picUrl
       })
-      await this.syncQueueToStorage()
+      this.syncQueueToStorage()
     } catch (e) {
       LogUtil.error(TAG, '添加失败 add queue element error: ' + e.message())
     }
@@ -110,7 +110,7 @@ class PlayQueueUtils {
       }
 
       // 同步到存储
-      await this.syncQueueToStorage()
+      this.syncQueueToStorage()
     } catch (e) {
       LogUtil.error(TAG, '删除失败 delete queue element error: ' + e.message())
     }

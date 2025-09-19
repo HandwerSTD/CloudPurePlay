@@ -82,7 +82,9 @@ export struct MainPage {
     return 100
   }
   get bottomPlayControlShouldLift(): Length {
-    return !ResponsiveUtil.PuraXOuterCheck() && ResponsiveUtil.widthCheck(['sm, md']) ? 64 : 0
+    // return !ResponsiveUtil.PuraXOuterCheck() && ResponsiveUtil.widthCheck(['sm, md']) ? 64 : 0
+    return 36
+
   }
   get nowPlayingCoverImg() {
     if (nps.currentSong === Song_INITIAL) {
@@ -222,6 +224,7 @@ export struct MainPage {
     }.hitTestBehavior(this.isBottomAreaExpand ? HitTestMode.Default : HitTestMode.Transparent)
   }
 
+  // TODO: 小艺智能体
   @Builder TopAreaActionButton_ActionBar_PrimaryButton() {
     LightUpRoundedButton({
       lightUpConfig: ResponsiveUtil.chooseByWidth([LIGHT_TOP_BTN_SM, LIGHT_TOP_BTN_MD, LIGHT_TOP_BTN_LG]),
@@ -687,7 +690,7 @@ export struct MainPage {
           .backdropBlur(nps.isPaused ? undefined : 64)
           .animation({duration: 1000, curve: Curve.Ease})
           .borderRadius(48)
-          .gesture((LongPressGesture({duration: 2000})).onAction(() => {
+          .gesture((LongPressGesture({duration: 1000})).onAction(() => {
             SongLike.likeThisSong((icon, msg) => {
               SnackBarUtils.showMessage(this.hdsSnackBar, icon, msg)
             })
@@ -748,12 +751,13 @@ export struct MainPage {
       }).buildEffect())
       // .backdropBlur(64) // 背景本身就是模糊的了，多加一层没意义
       .width('100%').height('100%')
-    }.width('100%').padding({left: 12, right: 12})
+    }.width('100%').padding({left: 8, right: 8})
     .layoutWeight(1)
     .opacity(this.explorePageOpacity)
     .animation({duration: 300})
   }
 
+  // TODO: backButton
   aboutToAppear(): void {
     const showPlayer = Settings.get<boolean>(SCPref.showPlayerOnLaunch) ?? true
     if (showPlayer) {

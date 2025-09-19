@@ -791,6 +791,10 @@
     {
       "name": "share_api_plain_notice",
       "value": "分享配置后对方有权查看密码，请谨慎分享"
+    },
+    {
+      "name": "mission_continue_from_device_name",
+      "value": "来自%s的歌曲"
     }
   ]
 }

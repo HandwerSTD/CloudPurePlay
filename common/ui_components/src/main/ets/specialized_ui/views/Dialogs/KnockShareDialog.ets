@@ -1,4 +1,10 @@
 import { ThemeManager } from "@handwer/base"
+import { DialogOptions } from "@pura/harmony-dialog"
+
+@Builder
+export function KnockShareDialogBuilder(options: DialogOptions) {
+  LoadingView()
+}
 
 @ComponentV2
 export struct LoadingView {
@@ -38,15 +44,10 @@ export struct LoadingView {
     .backgroundColor($r('app.color.ui_sheet_bg_col'))
     .borderRadius(24)
     .shadow(ShadowStyle.OUTER_FLOATING_SM)
-    // .backgroundBlurStyle(BlurStyle.BACKGROUND_THICK)
+    .backgroundBlurStyle(BlurStyle.BACKGROUND_THICK)
     .constraintSize({
       minHeight: 116
     })
-    .width('100%')
   }
 
-}
-
-@Builder export function KnockShareDialogBuilder() {
-  LoadingView()
 }

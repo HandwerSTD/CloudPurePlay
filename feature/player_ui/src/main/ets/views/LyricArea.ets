@@ -20,7 +20,6 @@ export struct LyricComponent {
   @Local lyric: Lyric[] = []
   @Local isLoading: boolean = false
   @Local needUpdate: boolean = false
-  // @Local dataSource: LazyData<Lyric> = new LazyData()
   @Local newLyricEffect: boolean = true
 
   private scroller: Scroller = new Scroller()

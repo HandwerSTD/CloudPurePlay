@@ -15,7 +15,7 @@ export struct MultiInteractions {
       gradientColor: [0x02c1f8, 0x025fea],
     })
   }
-
+  // TODO: 开关
   @Builder featureCard(symbol: Resource, msg: ResourceStr) {
     Column() {
 

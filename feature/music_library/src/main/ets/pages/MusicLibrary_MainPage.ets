@@ -1,5 +1,5 @@
 import { Album, InstanceSwitcher, PlayList, PlayListAPIUtils } from "@handwer/api_adapter"
-import { ResponsiveUtil, SCApp, UserManager, UserStore } from "@handwer/base"
+import { GlobalStore, ResponsiveUtil, SCApp, UserManager, UserStore } from "@handwer/base"
 import { HDS_TITLE_CONFIG_STYLE, LightUpContainer, LightUpRoundedButton, LightUpDefaultConfig,
   WithAnimationFAB,
   DialogUtils,
@@ -39,6 +39,10 @@ export struct MainPage {
   @Local modifyPlaylist: boolean = false
   @Local fullWidth: number = 0
 
+  get listPadding(): Padding {
+    return GlobalStore.isDarkMode ? {left: 12, right: 12} : {left: 8, right: 8}
+  }
+
   isPlaylistCreated(list: PlayList) {
     return list.userId === this.user.userId
   }
@@ -67,7 +71,8 @@ export struct MainPage {
         }
       }
         Text(list.name)
-          .margin(12).maxLines(1).textOverflow({overflow: TextOverflow.Ellipsis})
+          .margin({top: 12}).maxLines(1).textOverflow({overflow: TextOverflow.Ellipsis})
+          .wordBreak(WordBreak.BREAK_ALL)
           .fontSize(12).fontWeight(FontWeight.Bold)
           .fontColor($r('sys.color.font_on_primary'))
     }
@@ -86,15 +91,17 @@ export struct MainPage {
     Column() {
       Row() {
         Image(this.user.user.data.profile.avatarUrl)
-          .height(64).width(64).aspectRatio(1)
+          .height(48).width(48).aspectRatio(1)
           .borderRadius(32)
         Blank().width(12)
         Column() {
-          Text(this.user.user.data.profile.nickname).fontSize(20).fontWeight(FontWeight.Bold)
+          Text(this.user.user.data.profile.nickname).fontSize(16).fontWeight(FontWeight.Bold)
             .maxLines(1).textOverflow({overflow: TextOverflow.Ellipsis})
           Text($r('app.string.api_switch_from_what', InstanceSwitcher.InstanceTypeName))
+            .fontSize(14)
             .maxLines(1).textOverflow({overflow: TextOverflow.Ellipsis})
-        }.layoutWeight(1).height(64).justifyContent(FlexAlign.SpaceAround)
+        }.layoutWeight(1).justifyContent(FlexAlign.SpaceAround)
+        .height(48)
         .alignItems(HorizontalAlign.Start)
         Row() {
           LightUpIconTextButton({
@@ -141,7 +148,8 @@ export struct MainPage {
         // }
       }
       Text(list.name)
-        .margin(12).maxLines(1).textOverflow({overflow: TextOverflow.Ellipsis})
+        .margin({top: 12}).maxLines(1).textOverflow({overflow: TextOverflow.Ellipsis})
+        .wordBreak(WordBreak.BREAK_ALL)
         .fontSize(12).fontWeight(FontWeight.Bold)
         .fontColor($r('sys.color.font_on_primary'))
     }
@@ -156,7 +164,7 @@ export struct MainPage {
   }
 
   @Builder MyAlbumList() {
-    ListItemGroup({space: 36}) {
+    ListItemGroup({space: ResponsiveUtil.chooseByWidth([24, 36])}) {
       ForEach(UserStore.userSubAlbum, (list: Album, index) => {
         ListItem() {
           LightUpContainer({
@@ -174,7 +182,7 @@ export struct MainPage {
     .transition(TransitionEffect.OPACITY
       .combine(TransitionEffect.translate({ y: 24 }))
       .animation({ duration: 500, curve: Curve.Friction}))
-    .padding({left: 12, right: 12})
+    .padding(this.listPadding)
   }
   @Builder MyPlaylist() {
     ListItemGroup({space: 36}) {
@@ -195,9 +203,10 @@ export struct MainPage {
     .transition(TransitionEffect.OPACITY
       .combine(TransitionEffect.translate({ y: 24 }))
       .animation({ duration: 500, curve: Curve.Friction}))
-    .padding({left: 12, right: 12})
+    .padding(this.listPadding)
   }
 
+  // TODO: 页面信息密度太低
   @Builder MyContent() {
     List() {
       ForEach((new Array(this.gridColumnNum).fill(0)), (_: number) => {
@@ -220,10 +229,11 @@ export struct MainPage {
     .fadingEdge(true, {
       fadingEdgeLength: LengthMetrics.percent(10)
     })
-    .lanes(this.gridColumnNum, 24)
+    .lanes(this.gridColumnNum, ResponsiveUtil.chooseByWidth([12, 24]))
+    .scrollBar(BarState.Off)
     .clip(false)
     .onAreaChange((_, nw) => {
-      this.gridColumnNum = ResponsiveUtil.chooseByWidth([2,4,6])
+      this.gridColumnNum = ResponsiveUtil.chooseByWidth([3,4,6])
       this.fullWidth = nw.width.valueOf() as number
     })
   }

@@ -95,7 +95,7 @@ export class APIConfigUtils {
    */
   static getRequestContextIdentifier(): string {
     if (InstanceSwitcher.InstanceType === INSTANCE_TYPE.CLOUD) {
-      return MD5.digestSync(CloudAPIConfigUtils.getRequestContext()?.cookie.cookie ?? '_');
+      return '__cloud_api__' //MD5.digestSync(CloudAPIConfigUtils.getRequestContext()?.cookie.cookie ?? '_');
     } else if (InstanceSwitcher.InstanceType === INSTANCE_TYPE.NAVIDROME) {
       return NavidromeAPIConfigUtils.getRequestContextIdentifier()
     } else {

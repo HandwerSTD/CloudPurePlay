@@ -69,6 +69,7 @@ export class PlaySourceData {
   }
 }
 
+
 const playControlKV = new PreferenceUtils('PlayControl')
 
 // 临时API上下文管理器
@@ -217,6 +218,9 @@ export class PlayRetryManager {
 let shouldPauseOnStart: boolean = false
 
 export class PlayControl {
+  static initKV() {
+    playControlKV.init()
+  }
   static async init() {
     const store = NowPlayingStore;
     const kv = playControlKV;
@@ -613,8 +617,8 @@ export class PlayControl {
     NowPlayingStore.currentPic = picUrl
   }
 
-  static async saveCurrentSongInfo(playMode: number, song: Song, artists: string, imgUrl: string | ResourceStr) {
-    Logger.debug(TAG, `triggered to save current song: song = ${JSON.stringify(song)}`)
+  static saveCurrentSongInfo(playMode: number, song: Song, artists: string, imgUrl: string | ResourceStr) {
+    // Logger.debug(TAG, `triggered to save current song: song = ${JSON.stringify(song)}`)
     playControlKV.put('PlayMode', playMode)
     playControlKV.put('CurrentSong', song)
     playControlKV.put('CurrentArtists', artists)
@@ -622,11 +626,14 @@ export class PlayControl {
     playControlKV.put('CurrentQueueIndex', PlayQueueUtils.currentQueueIndex)
     playControlKV.put('nowPlayingSource', NowPlayingStore.nowPlayingSource)
   }
+  static syncToStorage() {
+    PlayControl.saveCurrentSongInfo(NowPlayingStore.playMode, NowPlayingStore.currentSong, NowPlayingStore.currentArtists, NowPlayingStore.currentPic)
+  }
   static async clearCurrentSong() {
     await PlayControl.stopMusic()
     await PlayControl.setPlayData(0, Song_INITIAL, '')
     NowPlayingStore.isPlaying = false
-    await PlayControl.saveCurrentSongInfo(0, Song_INITIAL, '','');
+    PlayControl.saveCurrentSongInfo(0, Song_INITIAL, '','');
     await AVSessionUtils.destroy()
   }
 

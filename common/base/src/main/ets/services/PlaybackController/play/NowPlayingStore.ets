@@ -21,7 +21,12 @@ interface ExportableNowPlayingStore {
   fileName: string
   isLocalFile: boolean
 
-  PlaySourceData: PlaySourceData
+  PlaySourceData: ExportablePlaySourceData
+}
+
+interface ExportablePlaySourceData {
+  PlaySourceDataType: PlaySourceDataType
+  PlaySourceDataId: string
 }
 
 @ObservedV2
@@ -86,7 +91,10 @@ class NowPlayingStore {
       fileName: this.fileName,
       isLocalFile: this.isLocalFile,
 
-      PlaySourceData: this.nowPlayingSource,
+      PlaySourceData: {
+        PlaySourceDataId: this.nowPlayingSource.PlaySourceDataId,
+        PlaySourceDataType: this.nowPlayingSource.PlaySourceDataType
+      },
     }
   }
 
@@ -112,7 +120,9 @@ class NowPlayingStore {
     this.fileName = data.fileName ?? ''
     this.isLocalFile = data.isLocalFile ?? false
 
-    this.nowPlayingSource = data.PlaySourceData ?? new PlaySourceData(-1, '')
+    this.nowPlayingSource = data.PlaySourceData ?
+      new PlaySourceData(data.PlaySourceData.PlaySourceDataType, data.PlaySourceData.PlaySourceDataId)
+      : new PlaySourceData(-1, '')
   }
 }
 

@@ -4,7 +4,7 @@
   "dependencies": {
     "@sj/mediacache": "^1.0.3",
     "@hadss/super_fast_file_trans": "^1.0.1",
-    "@pura/harmony-dialog": "^1.1.7",
+    "@pura/harmony-dialog": "^1.1.8",
     "@tencent/mmkv": "^2.2.2",
     "@pura/harmony-utils": "^1.3.6",
     "@pie/lazy-data": "^1.0.0",

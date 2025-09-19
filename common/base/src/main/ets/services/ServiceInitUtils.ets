@@ -9,11 +9,31 @@ import {
   INSTANCE_TYPE, User,
 } from '@handwer/api_adapter'
 import { UserManager } from './Network/UserManager'
-import { DistributedUtils, FeaturedPlayUtils, GlobalStore, SCEmitter, SCPref } from '../exports'
+import { DistributedUtils, FeaturedPlayUtils, GlobalStore,
+  Logger,
+  NowPlayingStore,
+  PlayQueueStore,
+  SCEmitter, SCPref } from '../exports'
 import { EmitterUtil } from '@pura/harmony-utils'
+import { playQueueKV } from './PlaybackController/queue/PlayQueueStore'
+
+const TAG = '[ServiceInitUtils]'
 
 export class ServiceInitUtils {
   static async init() {
+    const isContinuation = GlobalStore.continuationInfo !== undefined;
+    if (isContinuation) {
+      Logger.debug(TAG, `isContinuation`)
+      const info = GlobalStore.continuationInfo!
+      // play queue
+      playQueueKV.init()
+      PlayQueueStore.fromExportable(JSON.parse(info.playQueueStore))
+      playQueueUtils.syncQueueToStorage();
+      // now playing
+      PlayControl.initKV()
+      NowPlayingStore.fromExportable(JSON.parse(info.nowPlayingStore))
+      PlayControl.syncToStorage()
+    }
     // 初始化全局设置
     Settings.init()
     ServiceInitUtils.loadPresetPreferences()
