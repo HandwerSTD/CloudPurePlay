@@ -1,6 +1,8 @@
 import { FeaturedPlayUtils,
   GlobalContext,
-  GlobalStore, Logger, NowPlayingStore, PlayControl,
+  GlobalStore,
+  ImgCache,
+  Logger, NowPlayingStore, PlayControl,
   PlayQueueStore,
   PlayQueueUtils,
   ResponsiveUtil,
@@ -86,9 +88,9 @@ export struct MainPage {
     return 36
 
   }
-  get nowPlayingCoverImg() {
+  get nowPlayingCoverImg(): string {
     if (nps.currentSong === Song_INITIAL) {
-      return $r('sys.media.Celia')
+      return ''
     } else {
       return nps.playMode === PLAYMODE.LOCAL ? nps.currentPic : nps.currentPic + '?param=512y512'
     }
@@ -199,16 +201,21 @@ export struct MainPage {
           new ActionBarButton({
             baseIcon: $r('sys.symbol.share'),
             width: LengthMetrics.vp(40),
-            onClick: () => {
-              ShareUtils.startKnockShare(this.getUIContext().getHostContext()?.getApplicationContext()!,
+            onClick: async () => {
+              const ctx = this.getUIContext().getHostContext()!
+              const img = await DialogUtils.showLoadingUntil((): Promise<string> => {
+                return ImgCache.download(NowPlayingStore.currentPic as string);
+              });
+              const thumb = await ShareUtils.copyUriAsThumbnail(ctx, img)
+              ShareUtils.startKnockShare(ctx.getApplicationContext()!,
                 (onClose): string => {
                   return DialogUtils.showKnockShareDialog(onClose);
                 }, (target) => {
                   let shareData: systemShare.SharedData = new systemShare.SharedData({
                     utd: uniformTypeDescriptor.UniformDataType.HYPERLINK,
-                    uri: PlayControl.generateShareLink(),
+                    content: PlayControl.generateShareLink(),
                     title: NowPlayingStore.currentSong.name,
-                    thumbnailUri: NowPlayingStore.currentPic as string
+                    thumbnailUri: thumb
                   });
                   target.share(shareData)
                 })

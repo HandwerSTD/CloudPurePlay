@@ -8,7 +8,9 @@
     "@tencent/mmkv": "^2.2.2",
     "@pura/harmony-utils": "^1.3.6",
     "@pie/lazy-data": "^1.0.0",
-    "@hw-agconnect/petal-aegis": "^1.4.11-300"
+    "@hw-agconnect/petal-aegis": "^1.4.11-300",
+    "@webabcd/harmony-cachedimage": "^1.0.1",
+    "@ohos_lib/file-saver": "^1.0.20"
   },
   "devDependencies": {
     "@ohos/hypium": "1.0.21",

@@ -17,6 +17,10 @@ import { fileIo, fileUri } from '@kit.CoreFileKit';
 import { BusinessError } from '@kit.BasicServicesKit';
 import { image } from '@kit.ImageKit';
 import Logger from './Logger';
+import { Context } from '@kit.AbilityKit';
+import { aci, cachedImage, pci } from '@webabcd/harmony-cachedimage';
+import { FileSaverHelper } from '@ohos_lib/file-saver';
+import { CacheUtil, LRUCacheUtil } from '@pura/harmony-utils';
 
 const TAG: string = '[FileUtils]';
 
@@ -152,5 +156,38 @@ export class FileUtils {
 
   public static async ls(path: string) {
     return fileIo.listFile(path)
+  }
+}
+
+export class ImgCache {
+  static async init(context: Context) {
+    // TODO: 缓存库有问题
+    // await cachedImage.init({
+    //   // 用于图片文件存放的沙箱目录
+    //   cacheDirectory: context.getApplicationContext().cacheDir + "/ImageCache",
+    //   // 图片在本地存储中的缓存时间，单位：秒
+    //   // 每次加载图片都会更新其访问时间，当访问时间超过了缓存时间，则会删除
+    //   cacheSeconds: 86400,
+    //   // 是否启用日志记录
+    //   enableLog: false
+    // })
+  }
+  static async cache(url: string) {
+    // return aci(url)
+    return url
+  }
+  static proxy(url: string) {
+    // return pci(url)
+    return url
+  }
+  static async download(url: string) {
+    return FileSaverHelper.getInstance(getContext()).downloadFileToSandBox(url)
+      .then((res) => {
+        if (res.success) {
+          if (res.filePath?.startsWith('file://')) return res.filePath
+          else return fileUri.getUriFromPath(res.filePath)
+        }
+        else return url
+      })
   }
 }

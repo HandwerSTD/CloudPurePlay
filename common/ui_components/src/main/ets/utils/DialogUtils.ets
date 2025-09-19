@@ -4,6 +4,13 @@ import { HeartDialogBuilder, NoHeartDialogBuilder } from "../specialized_ui/view
 import { KnockShareDialogBuilder } from "../specialized_ui/views/Dialogs/KnockShareDialog";
 
 export class DialogUtils {
+  static async showLoadingUntil<T>(task: () => Promise<T>) {
+    const id = DialogHelper.showLoadingDialog()
+    return await task()
+      .finally(() => {
+        DialogHelper.closeDialog(id)
+      })
+  }
   static showAlertDialog(uiContext: UIContext, title: ResourceStr, msg: ResourceStr, onCancel: () => void, onAccept: () => void) {
     uiContext.showAlertDialog({
       title: title,

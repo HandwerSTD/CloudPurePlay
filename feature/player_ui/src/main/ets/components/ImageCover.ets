@@ -1,4 +1,4 @@
-import { Logger, NowPlayingStore, PlayQueueUtils, ResponsiveUtil } from "@handwer/base"
+import { ImgCache, Logger, NowPlayingStore, PlayQueueUtils, ResponsiveUtil } from "@handwer/base"
 import { hdsEffect } from "@kit.UIDesignKit"
 import { curves } from "@kit.ArkUI"
 import { cacheDownload } from "@kit.BasicServicesKit"
@@ -9,7 +9,7 @@ const nps = NowPlayingStore
 
 @ComponentV2
 export struct ImageCover {
-  @Param @Require nowPlayingCoverImg: ResourceStr
+  @Param @Require nowPlayingCoverImg: string
   @Param @Require handleLike: () => void = () => {}
   @Param useLight: boolean = false
   @Param useCoverAmbBreathe: boolean = false
@@ -24,8 +24,8 @@ export struct ImageCover {
 
   @Local coverAmbLightOpacity: number = 1
 
-  @Local nowPlayingCoverFaker: ResourceStr | undefined = undefined
-  @Local nowPlayingCoverFakerUnder: ResourceStr | undefined = undefined
+  @Local nowPlayingCoverFaker: string | undefined = undefined
+  @Local nowPlayingCoverFakerUnder: string | undefined = undefined
   @Local coverFakerVisibility: Visibility = Visibility.Visible
   coverFakerTransitionHandler: number | undefined = undefined
   @Local useCoverFaker: boolean = true
@@ -106,12 +106,12 @@ export struct ImageCover {
   onImgChanged() {
     if (typeof this.nowPlayingCoverImg === 'string') {
       try {
-        cacheDownload.download(this.nowPlayingCoverImg as string, {})
+        ImgCache.cache(this.nowPlayingCoverImg)
       } catch (e) {}
       // 预加载下一个封面
       try {
         const nxtPic = PlayQueueUtils.peekNextSong()?.picUrl
-        if (nxtPic) cacheDownload.download(nxtPic, {})
+        if (nxtPic) ImgCache.cache(nxtPic)
       } catch (e) {
         Logger.warn(`preload next cover pic failed: ${JSON.stringify(e)}`)
       }
@@ -166,7 +166,7 @@ export struct ImageCover {
     Stack() {
       this.PointLight()
 
-      Image(this.nowPlayingCoverFaker)
+      Image(ImgCache.proxy(this.nowPlayingCoverFaker as string))
         .draggable(false)
         .onAreaChange((_, area) => {
           this.coverArea = area
@@ -180,7 +180,7 @@ export struct ImageCover {
 
 
       Stack() {
-        Image(this.nowPlayingCoverFakerUnder)
+        Image(ImgCache.proxy(this.nowPlayingCoverFakerUnder as string))
           .draggable(false)
           .id('coverFakerUnder')
           .ImageFaker(() => {
@@ -192,7 +192,7 @@ export struct ImageCover {
               this.resetNewBackgroundColor(colors)
             }, 2000)
           })
-        Image(this.nowPlayingCoverFaker)
+        Image(ImgCache.proxy(this.nowPlayingCoverFaker as string))
           .draggable(false)
           .ImageFaker(() => {
             this.handleLike()
@@ -248,12 +248,12 @@ export struct ImageCover {
 
 @ComponentV2
 export struct ImageCoverThumbnail {
-  @Param @Require nowPlayingCoverImg: ResourceStr
+  @Param @Require nowPlayingCoverImg: string
   @Param radius: number = 10
 
   build() {
     Stack({alignContent: Alignment.Center}) {
-      Image(this.nowPlayingCoverImg)
+      Image(ImgCache.proxy(this.nowPlayingCoverImg))
         .aspectRatio(1)
         .layoutWeight(nps.currentSong.id === "0" ? undefined : 1)
         .margin(nps.isPaused ? ResponsiveUtil.chooseByWidth(['10%', '7%']) : 12)

@@ -5,7 +5,7 @@ interface ExportableNowPlayingStore {
 
   currentSong: Song
   currentArtists: string
-  currentPic: ResourceStr
+  currentPic: string
   isLiked: boolean
 
   playTime: number
@@ -35,7 +35,7 @@ class NowPlayingStore {
 
   @Trace currentSong: Song = Song_INITIAL
   @Trace currentArtists: string = ''
-  @Trace currentPic: ResourceStr  = ''
+  @Trace currentPic: string  = ''
   @Trace isLiked: boolean = false
 
   @Trace playTime: number = 0

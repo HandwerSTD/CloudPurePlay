@@ -5,6 +5,7 @@ import {
   BreakpointSystem,
   DeviceCollaborationUtils,
   GlobalStore,
+  ImgCache,
   KVStoreUtil, Logger, LogStorage,
   MissionContinueData,
   OuterWantDataModel,
@@ -18,6 +19,7 @@ import { url } from '@kit.ArkTS'
 import { APIConfigUtils } from '@handwer/api_adapter';
 import { SnackBarUtils } from '@handwer/ui_components';
 import { HdsSnackBar } from '@kit.UIDesignKit';
+import { cachedImage } from '@webabcd/harmony-cachedimage';
 
 const DOMAIN = 0xA0FF;
 const TAG = '[MainAbility]'
@@ -171,6 +173,8 @@ export default class MainAbility extends UIAbility {
       config.autoCancel = false
       config.backCancel = false
     })
+    // ImageCache
+    ImgCache.init(this.context)
     // CrashSpider
     SpiderMan.init()
     // Theme
@@ -182,5 +186,6 @@ export default class MainAbility extends UIAbility {
     GlobalStore.appVersion = info.versionName + ` (${info.versionCode.toString().substring(5)})`
     // MusicAPI
     await ServiceInitUtils.init()
+
   }
 }

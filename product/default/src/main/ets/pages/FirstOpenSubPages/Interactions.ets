@@ -9,20 +9,31 @@ import {
 } from "@handwer/ui_components";
 import { ImageTitleWelcomeTemplate, SymbolTitle } from "./CommonTemplate";
 import { hdsEffect } from "@kit.UIDesignKit";
-import { GlobalStore, SCPref, Settings, ShareUtils } from "@handwer/base";
+import { GlobalStore, Logger, SCPref, Settings, ShareUtils } from "@handwer/base";
 import { motion } from "@kit.MultimodalAwarenessKit";
 import { APIConfigUtils, InstanceSwitcher } from "@handwer/api_adapter";
 import { systemShare } from "@kit.ShareKit";
 import { uniformTypeDescriptor } from "@kit.ArkData";
+import { ImageUtil } from "@pura/harmony-utils";
 
 @ComponentV2
 export struct MultiInteractions {
   @Local useStylusControl: boolean = true
   @Local useMissionContinue: boolean = true
+  shareUri: string = ''
 
   aboutToAppear(): void {
     this.useStylusControl = Settings.get<boolean>(SCPref.useStylusControl) ?? true
     this.useMissionContinue = Settings.get<boolean>(SCPref.useMissionContinue) ?? false
+
+    ImageUtil.getPixelMapFromMedia($r('app.media.ff'))
+      .then((res) => {
+        return ShareUtils.savePixelMapAsThumbnail(this.getUIContext().getHostContext()!, res)
+      })
+      .then((res) => {
+        this.shareUri = res
+        Logger.debug('got share uri = ' + res)
+      })
   }
 
   @Builder toggle0() {
@@ -39,9 +50,9 @@ export struct MultiInteractions {
             }, (target) => {
               let shareData: systemShare.SharedData = new systemShare.SharedData({
                 utd: uniformTypeDescriptor.UniformDataType.HYPERLINK,
-                uri: 'https://appgallery.huawei.com/app/detail?id=top.handwer.cloudpureplay',
+                content: 'https://appgallery.huawei.com/app/detail?id=top.handwer.cloudpureplay',
                 title: '云净听',
-                thumbnailUri: 'https://gitee.com/handwer/common/raw/master/icon_1024.jpg'
+                thumbnailUri: this.shareUri
               });
               target.share(shareData)
             })

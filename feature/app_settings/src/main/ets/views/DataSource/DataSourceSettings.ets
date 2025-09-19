@@ -8,7 +8,9 @@ import { UserManager, SCApp, Logger, ServiceInitUtils, SingleDeviceViewModel,
   UserStore,
   LoginStatus,
   ShareUtils,
-  NowPlayingStore} from "@handwer/base"
+  NowPlayingStore,
+  ResponsiveUtil,
+  ImgCache} from "@handwer/base"
 import { CommonListItem,
   DialogUtils,
   HDS_TITLE_CONFIG_STYLE,
@@ -91,47 +93,51 @@ export struct DataSourceSettings {
   @Builder LoadedAPICard() {
     if (UserStore.loginStatus === LoginStatus.LOGGED) {
       ListItem() {
-        HdsListItemCard({
-          prefixItem: new PrefixImage({
-            image: UserStore.user.data.profile.avatarUrl,
-          }),
-          textItem: {
-            primaryText: {
-              text: $r('app.string.api_switch_from_what', InstanceSwitcher.InstanceTypeName),
-              modifier: new TextModifier().fontColor(Color.White)
-            },
-            secondaryText: {
-              text: UserStore.userNickname,
-              modifier: new TextModifier().fontColor(Color.White)
-            },
-          },
-          suffixItem: new SuffixIcon({
-            iconValue: {
-              symbol: new SymbolGlyphModifier($r('sys.symbol.share')).fontColor([Color.White]),
-            },
-            onClick: () => {
-              SnackBarUtils.showMessage(this.snack, $r('sys.symbol.share'), $r('app.string.share_api_plain_notice'));
-              const thumbnailUri = UserStore.user.data.profile.avatarUrl as string
-              ShareUtils.startKnockShare(this.getUIContext().getHostContext()?.getApplicationContext()!,
-                (onClose): string => {
-                  return DialogUtils.showKnockShareDialog(onClose);
-                }, (target) => {
-                  let shareData: systemShare.SharedData = new systemShare.SharedData({
-                    utd: uniformTypeDescriptor.UniformDataType.HYPERLINK,
-                    uri: APIConfigUtils.sharePlainAPILink(),
-                    title: InstanceSwitcher.InstanceTypeName,
-                    thumbnailUri: thumbnailUri
-                  });
-                  target.share(shareData)
-                })
-              // (this.getUIContext().getHostContext() as common.UIAbilityContext).openLink(APIConfigUtils.sharePlainAPILink(), {
-              //   appLinkingOnly: false
-              // })
-            }
-          }),
-          cardBackgroundColor: $r('app.color.play_list_single_item_bg'),
-          // cardWidth: '100%'
-        })
+        Row() {
+          Image(ImgCache.proxy(UserStore.user.data.profile.avatarUrl as string))
+            .height(48).width(48).aspectRatio(1)
+            .borderRadius(32)
+          Blank().width(12)
+          Column() {
+            Text(UserStore.user.data.profile.nickname).fontSize(16).fontWeight(FontWeight.Bold)
+              .maxLines(1).textOverflow({overflow: TextOverflow.Ellipsis})
+            Text($r('app.string.api_switch_from_what', InstanceSwitcher.InstanceTypeName))
+              .fontSize(14)
+              .maxLines(1).textOverflow({overflow: TextOverflow.Ellipsis})
+          }.layoutWeight(1).justifyContent(FlexAlign.SpaceAround)
+          .height(48)
+          .alignItems(HorizontalAlign.Start)
+          Row() {
+            LightUpRoundedButton({
+              icon: $r('sys.symbol.share'),
+              clickAction: async () => {
+                SnackBarUtils.showMessage(this.snack, $r('sys.symbol.share'), $r('app.string.share_api_plain_notice'));
+                const ctx = this.getUIContext().getHostContext()!
+                const img = await DialogUtils.showLoadingUntil((): Promise<string> => {
+                  return ImgCache.download(UserStore.user.data.profile.avatarUrl as string);
+                });
+                const thumb = await ShareUtils.copyUriAsThumbnail(ctx, img)
+                ShareUtils.startKnockShare(ctx.getApplicationContext()!,
+                  (onClose): string => {
+                    return DialogUtils.showKnockShareDialog(onClose);
+                  }, (target) => {
+                    let shareData: systemShare.SharedData = new systemShare.SharedData({
+                      utd: uniformTypeDescriptor.UniformDataType.HYPERLINK,
+                      content: APIConfigUtils.sharePlainAPILink(),
+                      title: InstanceSwitcher.InstanceTypeName,
+                      thumbnailUri: thumb
+                    });
+                    target.share(shareData)
+                  })
+              }
+            })
+          }.justifyContent(FlexAlign.End).margin({left: 12})
+        }.width('100%').padding(ResponsiveUtil.chooseByWidth([12, 12, 24])).borderRadius(24)
+        .backgroundColor($r('app.color.play_list_single_item_bg'))
+        // .margin({top: 24, bottom: 24})
+        .visualEffect(new hdsEffect.HdsEffectBuilder().pointLight({
+          illuminatedType: hdsEffect.PointLightIlluminatedType.BORDER_CONTENT
+        }).buildEffect())
       }
     }
   }
