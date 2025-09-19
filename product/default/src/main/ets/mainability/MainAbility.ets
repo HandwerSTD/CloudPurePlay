@@ -108,7 +108,6 @@ export default class MainAbility extends UIAbility {
     const params = want.parameters
     if (params) {
       const data = params['data'] as MissionContinueData
-      // TODO: else
       if (DeviceCollaborationUtils.checkContinueData(data.requestContextHash)) {
         Logger.info(TAG, `check continuation succeeded, applying data`)
         DeviceCollaborationUtils.applyContinuation(data)
@@ -123,6 +122,15 @@ export default class MainAbility extends UIAbility {
         })
       } else {
         Logger.info(TAG, `check continuation failed`)
+        let showedSnack = false
+        RetryUtil.retry(5, async () => {
+          if (GlobalStore.globalSnack) {
+            SnackBarUtils.showMessage(GlobalStore.globalSnack as HdsSnackBar, $r('sys.symbol.Interconnection_ic_multiscreen_collaboration'), $r('app.string.mission_continue_failed'), $r('app.string.mission_continue_failed_config_mismatch'), 5000)
+            showedSnack = true
+          }
+        }, async () => {
+          return showedSnack
+        })
       }
     }
   }

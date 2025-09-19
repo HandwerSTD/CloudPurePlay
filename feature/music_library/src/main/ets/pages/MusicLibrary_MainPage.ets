@@ -206,7 +206,7 @@ export struct MainPage {
     .padding(this.listPadding)
   }
 
-  // TODO: 页面信息密度太低
+  // TODO: 平板测试
   @Builder MyContent() {
     List() {
       ForEach((new Array(this.gridColumnNum).fill(0)), (_: number) => {

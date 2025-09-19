@@ -254,7 +254,7 @@ struct MainPage_Shell {
           return true;
         }
       }
-      this.exploreSheet = false;
+      this.exploreSheet = !this.exploreSheet;
       return true;
     })
     .opacity(this.pageOpacity)

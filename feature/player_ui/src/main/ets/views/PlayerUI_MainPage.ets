@@ -72,7 +72,7 @@ export struct MainPage {
 
   @Consumer(SCApp.settingsSheet) consoleSheet: boolean = false
   @Provider(SCApp.playQueueSheet) showQueueSheet: boolean = false
-  @Provider(SCApp.exploreSheet) showExplore: boolean = false
+  @Consumer(SCApp.exploreSheet) showExplore: boolean = false
   @Provider(SCApp.showAddToPlaylistSheet) showAddToPlaylistSheet: boolean = false
 
   controller: hdsEffect.ShaderEffectController = new hdsEffect.ShaderEffectController()

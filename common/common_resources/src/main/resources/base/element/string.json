@@ -795,6 +795,14 @@
     {
       "name": "mission_continue_from_device_name",
       "value": "来自%s的歌曲"
+    },
+    {
+      "name": "mission_continue_failed",
+      "value": "接续失败"
+    },
+    {
+      "name": "mission_continue_failed_config_mismatch",
+      "value": "双端需登录相同音乐源"
     }
   ]
 }

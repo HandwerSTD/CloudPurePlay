@@ -45,7 +45,6 @@ export struct InListSongItem {
 }
 
 @Extend(Text) function songText() {
-  // TODO:  可调 overflow 样式
   // .layoutWeight(1)
   .fontColor(Color.White)
   .maxLines(1)

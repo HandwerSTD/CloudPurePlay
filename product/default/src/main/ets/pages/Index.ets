@@ -19,6 +19,7 @@ struct Index {
 
   @Provider(SCApp.settingsSheet) consoleSheet: boolean = false
   @Provider(SCApp.outerWantPanel) showOuterWantPanel: boolean = false
+  @Provider(SCApp.exploreSheet) showExplore: boolean = false
 
   @Local showLoginPanel: boolean = false
   @Local connectTimeout: boolean = false
@@ -82,6 +83,7 @@ struct Index {
   @Builder SettingsPanel() {
     SettingsMainPage()
   }
+
 
   build() {
     Row() {
