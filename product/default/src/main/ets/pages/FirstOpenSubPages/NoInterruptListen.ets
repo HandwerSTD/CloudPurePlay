@@ -87,6 +87,7 @@ export struct NoInterruptListen {
       }
       .autoPlay(true)
       .interval(8000)
+      .indicator(new DotIndicator().selectedColor(Color.White))
     }
     .width('100%')
     .justifyContent(FlexAlign.Center)

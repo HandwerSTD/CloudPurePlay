@@ -1,23 +1,42 @@
-import { ThemeManager } from "@handwer/base"
 import { DialogOptions } from "@pura/harmony-dialog"
 
 @Builder
 export function HeartDialogBuilder(options: DialogOptions) {
-  LoadingView()
+  LoadingView({
+    isRedHeart: true
+  })
 }
+@Builder
+export function NoHeartDialogBuilder(options: DialogOptions) {
+  LoadingView({
+    isRedHeart: false
+  })
+}
+
 
 @ComponentV2
 export struct LoadingView {
+  @Param @Require isRedHeart: boolean
 
   @Builder Symbol() {
     Column() {
-      SymbolGlyph($r('sys.symbol.heart_fill'))
-        .fontSize(44)
-        .fontColor([Color.Red])
-        .symbolShadow({
-          radius: 6,
-          color: '#ccffffff'
-        })
+      if (this.isRedHeart) {
+        SymbolGlyph($r('sys.symbol.heart_fill'))
+          .fontSize(44)
+          .fontColor([Color.Red])
+          .symbolShadow({
+            radius: 6,
+            color: '#ccffffff'
+          })
+      } else {
+        SymbolGlyph($r('sys.symbol.heart'))
+          .fontSize(44)
+          .fontColor([Color.White])
+          .symbolShadow({
+            radius: 6,
+            color: '#ccffffff'
+          })
+      }
       // .lightUpEffect(1.3)
     }
   }
@@ -42,7 +61,7 @@ export struct LoadingView {
     .margin(5)
     .padding(24)
     .backgroundColor($r('app.color.ui_sheet_bg_col'))
-    .borderRadius(24)
+    .borderRadius(24).aspectRatio(1)
     .shadow(ShadowStyle.OUTER_FLOATING_SM)
     .backgroundBlurStyle(BlurStyle.BACKGROUND_THICK)
     .constraintSize({

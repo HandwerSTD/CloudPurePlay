@@ -691,6 +691,7 @@ export struct MainPage {
           .animation({duration: 1000, curve: Curve.Ease})
           .borderRadius(48)
           .gesture((LongPressGesture({duration: 1000})).onAction(() => {
+            DialogUtils.showHeartDialog1sec(!NowPlayingStore.isLiked)
             SongLike.likeThisSong((icon, msg) => {
               SnackBarUtils.showMessage(this.hdsSnackBar, icon, msg)
             })

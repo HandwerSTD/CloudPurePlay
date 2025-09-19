@@ -87,6 +87,7 @@ export struct DisplaySettings {
                 }
               })
             }
+            // TODO: 背景流光可动
             ListItem().height(12)
           }.padding({left: 12, right: 12})
         }

@@ -40,6 +40,7 @@ export struct PersonalFM {
           this.featureCard($r('sys.symbol.heart'), $r('app.string.first_open_page_heart_mode_desc'))
           this.featureCard($r('sys.symbol.calendar_31_a'), $r('app.string.first_open_page_daily_recommend_desc'))
         }.autoPlay(true)
+        .indicator(new DotIndicator().selectedColor(Color.White))
       }.width('100%')
       .justifyContent(FlexAlign.Center)
       .backgroundColor($r('app.color.play_list_single_item_bg'))

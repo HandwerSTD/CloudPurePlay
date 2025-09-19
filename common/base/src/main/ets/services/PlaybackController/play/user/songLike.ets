@@ -52,6 +52,7 @@ export class SongLike {
         const result = await SongAPIUtils.likeMusic(currentSong.id)
         if (result) NowPlayingStore.isLiked = !isLiked
         // 喜欢列表
+        // TODO: 获得的列表疑似不全
         await SongAPIUtils.getLikeList(UserStore.user, (val) => {
           if (val) store.likeList = new Set(val)
           UserManager.persistLikeList()

@@ -1,5 +1,6 @@
 import { ThemeManager } from "@handwer/base";
 import { DialogAction, DialogHelper } from "@pura/harmony-dialog";
+import { HeartDialogBuilder, NoHeartDialogBuilder } from "../specialized_ui/views/Dialogs/HeartDialog";
 import { KnockShareDialogBuilder } from "../specialized_ui/views/Dialogs/KnockShareDialog";
 
 export class DialogUtils {
@@ -42,8 +43,9 @@ export class DialogUtils {
       }
     })
   }
-  static showHeartDialog() {
-    return DialogHelper.showCustomDialog(wrapBuilder(KnockShareDialogBuilder), {
+  static showHeartDialog1sec(like: boolean) {
+    const builder = like ? wrapBuilder(HeartDialogBuilder) : wrapBuilder(NoHeartDialogBuilder)
+    const id = DialogHelper.showCustomDialog(builder, {
       title: '',
       autoCancel: true,
       alignment: DialogAlignment.Center,
@@ -51,6 +53,11 @@ export class DialogUtils {
       onWillDisappear: () => {
       }
     })
+    setTimeout(() => {
+      if (DialogHelper.isShowing(id)) {
+        DialogHelper.closeDialog(id)
+      }
+    }, 1000)
   }
 }
 
