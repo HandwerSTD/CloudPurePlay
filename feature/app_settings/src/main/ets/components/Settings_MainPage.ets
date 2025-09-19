@@ -151,7 +151,7 @@ export struct MainPage {
           .onClick(() => {
             // SnackBarUtils.showMessage(this.snack, $r('sys.symbol.doc_plaintext_and_pencil'), $r('app.string.opening_group'))
             // startQQGroupAbility(getContext() as common.UIAbilityContext, 982093132)
-            router.replaceUrl({
+            this.getUIContext().getRouter().replaceUrl({
               url: 'pages/FirstOpenSubPages/FirstOpenPage'
             })
           })

@@ -89,21 +89,12 @@ struct FirstOpenPage {
       this.controller.showPrevious()
     },
     onNext: () => {
-      this.controller.showNext()
-    }
-  },{
-    // MissionContinue
-    previousLabel: $r('sys.string.stepper_back'),
-    nextLabel: $r('sys.string.stepper_next'),
-    onPrevious: () => {
-      this.controller.showPrevious()
-    },
-    onNext: () => {
       this.bgMove()
       this.controller.showNext()
       this.showFinal = true
     }
-  },{
+  },
+    {
     // FinalWelcome
     previousLabel: $r('sys.string.stepper_back'),
     nextLabel: $r('sys.string.general_start'),
@@ -117,7 +108,7 @@ struct FirstOpenPage {
 
   private jumpToApp() {
     Settings.put<boolean>(SCPref.notFirstOpen, true);
-    router.replaceUrl({
+    this.getUIContext().getRouter().replaceUrl({
       url: 'pages/Index'
     })
   }
@@ -194,8 +185,7 @@ struct FirstOpenPage {
               NoInterruptListen()
               PersonalFM()
               MultiInteractions()
-              // TODO: 裁剪整合
-              MissionContinue()
+              // MissionContinue()
               FinalWelcome({
                 show: this.showFinal,
                 onFinish: () => {

@@ -757,7 +757,6 @@ export struct MainPage {
     .animation({duration: 300})
   }
 
-  // TODO: backButton
   aboutToAppear(): void {
     const showPlayer = Settings.get<boolean>(SCPref.showPlayerOnLaunch) ?? true
     if (showPlayer) {
