@@ -3,11 +3,13 @@ import { HdsActionBar, ActionBarButton, ActionBarStyle } from "@kit.UIDesignKit"
 import { ColorMetrics, LengthMetrics, SymbolGlyphModifier } from "@kit.ArkUI"
 import { LightUpRoundedButton,LightUpDefaultConfig,OverrideLightUpStat,BackButtonUtils,
   AlbumDetail,
-  PlaylistDetail } from "@handwer/ui_components"
+  PlaylistDetail,
+  SnackBarUtils} from "@handwer/ui_components"
 import { MusicLibrary } from "@handwer/music_library"
 import { ExplorePage } from "./ExplorePage"
 import { AllAlbums } from "./ExploreSubViews/AllAlbums"
 import { motion } from "@kit.MultimodalAwarenessKit"
+import { common } from "@kit.AbilityKit"
 
 
 @ComponentV2
@@ -52,7 +54,6 @@ export function ExplorePageBuilder() {
 }
 
 @ComponentV2
-
 struct MainPage_Shell {
   @Provider(SCApp.shouldDisableTab) shouldDisableTab: boolean = false
   @Consumer(SCApp.exploreSheet) exploreSheet: boolean = false
@@ -69,7 +70,6 @@ struct MainPage_Shell {
   @Local opHandStat: number = 0
 
   gs = GlobalStore
-
   showTabTimeoutHandler?: number
 
   get shouldTabOnRightHand(): boolean {
@@ -255,6 +255,10 @@ struct MainPage_Shell {
         }
       }
       this.exploreSheet = !this.exploreSheet;
+      SnackBarUtils.showMessage(GlobalStore.globalSnack!, $r('sys.symbol.house'), $r('app.string.press_back_again_to_exit'), undefined, 2000,
+        () => {
+        (this.getUIContext().getHostContext()! as common.UIAbilityContext).moveAbilityToBackground()
+      })
       return true;
     })
     .opacity(this.pageOpacity)

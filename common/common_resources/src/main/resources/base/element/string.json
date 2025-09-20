@@ -803,6 +803,10 @@
     {
       "name": "mission_continue_failed_config_mismatch",
       "value": "双端需登录相同音乐源"
+    },
+    {
+      "name": "press_back_again_to_exit",
+      "value": "再返回一次可回到后台"
     }
   ]
 }
