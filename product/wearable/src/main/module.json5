@@ -32,6 +32,42 @@
         ]
       }
     ],
+    "requestPermissions": [{
+      "name": "ohos.permission.INTERNET",
+      "usedScene": {
+        "abilities": ["MainAbility"],
+        "when": "inuse"
+      }
+    },
+      {
+        "name": "ohos.permission.GET_NETWORK_INFO",
+        "usedScene": {
+          "abilities": ["MainAbility"],
+          "when": "inuse"
+        }
+      },
+      {
+        "name": "ohos.permission.KEEP_BACKGROUND_RUNNING",
+        "reason": "$string:background_running_perm",
+        "usedScene": {
+          "abilities": ["MainAbility"],
+          "when": "always"
+        }
+      },
+      {
+        "name": "ohos.permission.VIBRATE",
+      },
+      {
+        "name": "ohos.permission.DISTRIBUTED_DATASYNC",
+        "reason": "$string:need_dist_perm_to_sync",
+        "usedScene": {
+          "abilities": ["MainAbility"],
+          "when": "always"
+        }
+      },
+      {
+        "name": "ohos.permission.DETECT_GESTURE"
+      }],
     "extensionAbilities": [
       {
         "name": "WearableBackupAbility",
@@ -43,7 +79,7 @@
             "name": "ohos.extension.backup",
             "resource": "$profile:backup_config"
           }
-        ],
+        ]
       }
     ]
   }

@@ -82,6 +82,7 @@ class DistributedUtil {
   }
 
   async getUsingAPIName(deviceId?: string): Promise<string> {
+    this.triggerSync(deviceId)
     return await DistKVUtil.getInstance().read(SCDistKV.currentUsedAPI, deviceId) as string
   }
   async getRequestContext(apiType: INSTANCE_TYPE, deviceId?: string): Promise<Record<string, Object>> {

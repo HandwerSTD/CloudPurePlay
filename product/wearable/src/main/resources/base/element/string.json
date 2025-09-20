@@ -11,6 +11,10 @@
     {
       "name": "WearableEntryAbility_label",
       "value": "CloudPurePlay"
+    },
+    {
+      "name": "background_running_perm",
+      "value": "用于在后台播放音乐"
     }
   ]
 }
