@@ -65,6 +65,7 @@ export class ServiceInitUtils {
     pref.playerRightHand = Settings.get<boolean>(SCPref.playerTwoColumnRightHandMode) ?? false
     pref.autoNavRightHandMode = Settings.get<boolean>(SCPref.autoNavRightHand) ?? false
     pref.useStylusControl = Settings.get<boolean>(SCPref.useStylusControl) ?? false
+    pref.dynamicBackgroundStreaming = Settings.get<boolean>(SCPref.dynamicBackgroundStreaming) ?? false
   }
   static loadPresetPreferences() {
     if (Settings.get<boolean>(SCPref.useMissionContinue) === undefined) {
@@ -85,6 +86,9 @@ export class ServiceInitUtils {
     }
     if (Settings.get<boolean>(SCPref.autoPlayOnLaunch) === undefined) {
       Settings.put(SCPref.autoPlayOnLaunch, true)
+    }
+    if (Settings.get<boolean>(SCPref.dynamicBackgroundStreaming) === undefined) {
+      Settings.put(SCPref.dynamicBackgroundStreaming, false)
     }
   }
   static async reInit(newInstanceType: INSTANCE_TYPE, newUser: User, newPasswd: string, newRequestContext: Object) {

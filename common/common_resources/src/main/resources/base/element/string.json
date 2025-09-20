@@ -581,6 +581,14 @@
       "value": "Optimize right-hand experience in two-column player layout"
     },
     {
+      "name": "dynamic_background_streaming",
+      "value": "Dynamic Background Streaming"
+    },
+    {
+      "name": "dynamic_background_streaming_desc",
+      "value": "Enable dynamic background streaming effects for enhanced visual experience"
+    },
+    {
       "name": "playback_settings",
       "value": "Playback Settings"
     },

@@ -790,11 +790,11 @@ export struct MainPage {
               params: {
                 colorSource: [Color.Black, Color.Blue, Color.Pink],
               },
-              // animation: {
-              //   duration: 5000,
-              //   autoPlay: true,
-              //   iterations: -1
-              // }
+              animation: GlobalStore.pref.dynamicBackgroundStreaming ? {
+                duration: 5000,
+                autoPlay: true,
+                iterations: -1
+              } : undefined
             })
             .buildEffect())
           .transition(TransitionEffect.OPACITY.animation({duration: 2000}))
@@ -804,11 +804,11 @@ export struct MainPage {
             .shaderEffect({
               effectType: hdsEffect.EffectType.UV_BACKGROUND_FLOW_LIGHT,
               // controller: this.controller,
-              // animation: {
-              //   duration: 5000,
-              //   autoPlay: true,
-              //   iterations: -1
-              // }
+              animation: GlobalStore.pref.dynamicBackgroundStreaming ? {
+                duration: 5000,
+                autoPlay: true,
+                iterations: -1
+              } : undefined
             })
             .buildEffect())
           .transition(TransitionEffect.OPACITY.animation({duration: 2000}))
@@ -816,14 +816,6 @@ export struct MainPage {
     }.width('100%').height('100%')
   }
 
-  @Monitor('gs.pref.playerRightHand')
-  onRightHandMode() {
-    if (this.gs.pref.playerRightHand && !ResponsiveUtil.widthCheck(['sm'])) {
-      this.swiperArr = [1, 0]
-    } else {
-      this.swiperArr = [0, 1]
-    }
-  }
   @Local swiperArr: number[] = [0, 1]
   @Builder SwiperItem(index: number) {
     if (index === 0) {
@@ -912,6 +904,15 @@ export struct MainPage {
   }
   async handleLike() {
 
+  }
+
+  @Monitor('gs.pref.playerRightHand')
+  onRightHandMode() {
+    if (this.gs.pref.playerRightHand && !ResponsiveUtil.widthCheck(['sm'])) {
+      this.swiperArr = [1, 0]
+    } else {
+      this.swiperArr = [0, 1]
+    }
   }
 
   @Monitor('_nps.currentSong')

@@ -581,6 +581,14 @@
       "value": "在双栏布局的播放页中优化右手操作体验"
     },
     {
+      "name": "dynamic_background_streaming",
+      "value": "动态背景流光"
+    },
+    {
+      "name": "dynamic_background_streaming_desc",
+      "value": "启用动态背景流光效果，增强视觉体验"
+    },
+    {
       "name": "playback_settings",
       "value": "播放设置"
     },

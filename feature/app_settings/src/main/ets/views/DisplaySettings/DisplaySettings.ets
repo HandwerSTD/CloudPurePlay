@@ -16,6 +16,9 @@ export struct DisplaySettings {
   get playerTwoColumnRightHandMode() {
     return this.pref.playerRightHand
   }
+  get dynamicBackgroundStreaming() {
+    return this.pref.dynamicBackgroundStreaming
+  }
   set navigationRightHandMode(val: boolean) {
     this.getUIContext().animateTo({duration: 300}, () => {
       this.pref.tabRightHand = val
@@ -25,6 +28,9 @@ export struct DisplaySettings {
     this.getUIContext().animateTo({duration: 300}, () => {
       this.pref.playerRightHand = val
     })
+  }
+  set dynamicBackgroundStreaming(val: boolean) {
+    this.pref.dynamicBackgroundStreaming = val
   }
 
   aboutToAppear(): void {
@@ -87,7 +93,18 @@ export struct DisplaySettings {
                 }
               })
             }
-            // TODO: 背景流光可动
+            ListItem() {
+              LightedCommonListToggleItem({
+                icon: $r('sys.symbol.background_blurred'),
+                title: $r('app.string.dynamic_background_streaming'),
+                // subtitle: $r('app.string.dynamic_background_streaming_desc'),
+                isOn: this.dynamicBackgroundStreaming,
+                onToggleChange: (val) => {
+                  this.dynamicBackgroundStreaming = val
+                  Settings.put(SCPref.dynamicBackgroundStreaming, val)
+                }
+              })
+            }
             ListItem().height(12)
           }.padding({left: 12, right: 12})
         }
