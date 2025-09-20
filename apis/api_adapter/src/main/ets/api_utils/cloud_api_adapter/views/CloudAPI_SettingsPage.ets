@@ -4,15 +4,9 @@ import { promptAction } from "@kit.ArkUI"
 import { LogUtil } from "@pura/harmony-utils"
 import { INSTANCE_TYPE } from "../../../../../../Index"
 
-
-// UserManager.setUserInfo(user)
-// UserSettings.put(SCUser.user, user)
-// UserSettings.put(SCUser.cookie, cookie)
-// UserManager.fetchAllUserData()
-
 @ComponentV2
 export struct CloudAPI_Console {
-  @Param @Require LoginInfoSetter: (user: CloudAPI_User, cookie: string) => void
+  @Param @Require LoginInfoSetter: (cookie: string) => void
 
   @Local qrImg: string = ''
   @Local qrKey: string = ''
@@ -24,8 +18,8 @@ export struct CloudAPI_Console {
       closeSheet: () => {
         this.webSheet = false
       },
-      LoginInfoSetter: (user, cookie) => {
-        this.LoginInfoSetter(user, cookie)
+      LoginInfoSetter: (cookie) => {
+        this.LoginInfoSetter(cookie)
       }
     })
   }
@@ -54,7 +48,7 @@ export struct CloudAPI_Console {
 @ComponentV2
 export struct WebLogin {
   @Event closeSheet: () => void
-  @Param @Require LoginInfoSetter: (user: CloudAPI_User, cookie: string) => void
+  @Param @Require LoginInfoSetter: (cookie: string) => void
   @Local userAgent: string = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
   @Local isLoading: boolean = true
   controller: webview.WebviewController = new webview.WebviewController()
@@ -136,20 +130,11 @@ export struct WebLogin {
       let cookie = webview.WebCookieManager.fetchCookieSync('https://music.163.com')
       if (await this.checkValidCookie(cookie)) {
         cookie = cookie + '; OS=pc'
-        CloudAPIConfigUtils.setRequestContext({
-          baseUrl: 'http://111.229.38.178:3333/',
-          cookie: {
-            cookie: cookie,
-          },
-          realIp: RealIP_INITIAL
-        })
-        let result = await LoginAPIUtils.getLoginStatus((user) => {
-          this.LoginInfoSetter(user, cookie)
-        })
+        this.LoginInfoSetter(cookie)
         promptAction.showToast({
           message: '登陆成功！'
         })
-        return result
+        return true
       } else {
         promptAction.showToast({
           message: '获取登录信息失败，请确认是否已在网页内登录！'

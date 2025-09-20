@@ -11,6 +11,7 @@ interface SongInfo {
 }
 
 interface ResultData {
+  id: number
   songInfo: SongInfo
 }
 

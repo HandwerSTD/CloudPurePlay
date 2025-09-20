@@ -170,8 +170,9 @@ export const setHeartMode = async (id: number, pid: number, cleanQueue: () => Pr
     params: { id, pid }
   })
   for(let item of response.data) {
+    if (item.songInfo === null) continue;
     tempSong = {
-      id: item.songInfo.id,
+      id: item.songInfo?.id ?? item.id,
       name: item.songInfo.name,
       artists: item.songInfo.ar,
       album: item.songInfo.al,

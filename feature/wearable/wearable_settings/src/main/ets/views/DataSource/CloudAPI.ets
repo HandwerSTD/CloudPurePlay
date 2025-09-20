@@ -32,12 +32,16 @@ export struct CloudAPI_Source {
         ArcList() {
           ArcListItem() {
             CloudAPI_Console({
-              LoginInfoSetter: (user, cookie) => {
+              LoginInfoSetter: (cookie) => {
                 const context = CloudAPIConfigUtils.getRequestContext() ?? {
                   baseUrl: 'http://111.229.38.178:3333/',
                   cookie: {
                     cookie: cookie,
                   },
+                  realIp: {
+                    toggle: false,
+                    realIp: ''
+                  }
                 } as Cloud_RequestContext
                 CloudAPIConfigUtils.setRequestContext(context)
                 LoginAPIUtils.getLoginStatus((val) => {

@@ -1,4 +1,4 @@
-import { PlayQueue, SongAPIUtils } from "@handwer/api_adapter"
+import { PlayListAPIUtils, PlayQueue, SongAPIUtils } from "@handwer/api_adapter"
 import { DialogHelper } from "@pura/harmony-dialog"
 import { LogUtil } from "@pura/harmony-utils"
 import { Logger } from "../../../../exports"
@@ -42,8 +42,11 @@ export class FeaturedPlayUtils {
         try {
           nps.isPlayerLoading = true
           showToastCallback($r('sys.symbol.opticaldisc_badge_heart'), $r('app.string.start_playing_heart_mode'))
-
-          await SongAPIUtils.setHeartMode(PlayQueueUtils.getCurrentSong().id, user.userPlaylists[0].id,
+          let songId = PlayQueueUtils.getCurrentSong().id
+          if (songId === '') {
+            songId = user.dailyList.songs[0].song.id
+          }
+          await SongAPIUtils.setHeartMode(songId, user.userPlaylists[0].id,
             (): Promise<void> => {
               return PlayQueueUtils.cleanQueue();
             },

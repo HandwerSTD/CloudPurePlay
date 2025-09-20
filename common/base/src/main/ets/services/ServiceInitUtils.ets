@@ -21,6 +21,7 @@ const TAG = '[ServiceInitUtils]'
 
 export class ServiceInitUtils {
   static async init() {
+    Logger.debug(TAG, `service initialize`)
     const isContinuation = GlobalStore.continuationInfo !== undefined;
     if (isContinuation) {
       Logger.debug(TAG, `isContinuation`)

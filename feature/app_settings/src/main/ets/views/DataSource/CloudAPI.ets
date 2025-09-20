@@ -4,37 +4,59 @@ import {
   CloudAPI_Console,
   LoginAPIUtils,
   INSTANCE_TYPE,
-  InstanceSwitcher
+  InstanceSwitcher,
+  RealIP_INITIAL
 } from "@handwer/api_adapter"
 import { SCApp, Logger, ServiceInitUtils } from "@handwer/base"
+import { LightUpLinedContainer, OverrideLightUpStat } from "@handwer/ui_components"
 import { DialogHelper } from "@pura/harmony-dialog"
 import { generate_APIFinishWelcome_PageParams } from "./APIFinishWelcome"
+import { hdsEffect } from "@kit.UIDesignKit"
 
 @ComponentV2
 export struct CloudAPI_Source {
   @Consumer(SCApp.settingsPageStack) pageStack: NavPathStack = new NavPathStack()
 
   @Local pageOpacity: number = 1
+  @Local focusedInput: number = 0
+  @Local apiAddr: string = ''
+
 
   aboutToAppear(): void {
     const context = CloudAPIConfigUtils.getRequestContext() ?? {
-      baseUrl: 'http://111.229.38.178:3333/',
+      baseUrl: this.apiAddr,
       cookie: {
       },
+      realIp: {
+        toggle: false,
+        realIp: ''
+      }
     } as Cloud_RequestContext
     CloudAPIConfigUtils.setRequestContext(context)
+    this.apiAddr = context.baseUrl
   }
 
   loginInfoSetter(cookie: string) {
-    const context = CloudAPIConfigUtils.getRequestContext() ?? {
-      baseUrl: 'http://111.229.38.178:3333/',
+    if (this.apiAddr.endsWith('/')) {
+      this.apiAddr = this.apiAddr.substring(0, this.apiAddr.length - 1)
+    }
+    if (!this.apiAddr.startsWith('http://') && !this.apiAddr.startsWith('https://')) {
+      this.apiAddr = 'http://' + this.apiAddr
+    }
+    const context: Cloud_RequestContext = {
+      baseUrl: this.apiAddr,
       cookie: {
         cookie: cookie,
+        customCookie: undefined
       },
-    } as Cloud_RequestContext
+      realIp: {
+        toggle: false,
+        realIp: ''
+      }
+    }
     CloudAPIConfigUtils.setRequestContext(context)
     LoginAPIUtils.getLoginStatus((val) => {
-      Logger.debug(`NavidromeAPI`, `getLoginStat: ${JSON.stringify(val)}`)
+      Logger.debug(`CloudAPI`, `getLoginStat: ${JSON.stringify(val)}`)
       this.pageStack.pushPath({
         name: 'APIFinishWelcome',
         param: generate_APIFinishWelcome_PageParams(val.data.profile.nickname, val.data.profile.avatarUrl, () => {
@@ -50,11 +72,20 @@ export struct CloudAPI_Source {
 
   build() {
     NavDestination() {
-      CloudAPI_Console({
-        LoginInfoSetter: (user, cookie) => {
-          this.loginInfoSetter(cookie)
-        }
-      })
+      Column() {
+        Row() {
+          LightUpLinedContainer({ overrideLightUpStat: this.focusedInput === 1 ? OverrideLightUpStat.ALWAYS_ENABLED : OverrideLightUpStat.ALWAYS_DISABLED}) {
+            TextInput({placeholder: $r('app.string.api_source_addr'), text: this.apiAddr!!})
+              .type(InputType.USER_NAME)
+              .TextInputEffect(1, (n) => this.focusedInput = n)
+          }
+        }.RowLightUpEffect()
+        CloudAPI_Console({
+          LoginInfoSetter: (cookie) => {
+            this.loginInfoSetter(cookie)
+          }
+        })
+      }.padding({left: 12, right: 12})
     }.title('CloudAPI')
     .backgroundColor(Color.Transparent)
     .onShown(() => {
@@ -68,6 +99,7 @@ export struct CloudAPI_Source {
         // 优先加载传参过来的Config
         const req = ((ctx.pathInfo.param) as Record<string, Object>)['context'] as Cloud_RequestContext
         if (req && req.cookie && req.cookie.cookie) {
+          this.apiAddr = req.baseUrl
           this.loginInfoSetter(req.cookie.cookie!)
         }
       }
@@ -75,4 +107,23 @@ export struct CloudAPI_Source {
     .opacity(this.pageOpacity)
     .animation({duration: 300})
   }
+}
+
+@Extend(Row) function RowLightUpEffect() {
+  .borderRadius(999)
+  .visualEffect(new hdsEffect.HdsEffectBuilder().pointLight({
+    illuminatedType: hdsEffect.PointLightIlluminatedType.BORDER_CONTENT
+  }).buildEffect())
+}
+@Extend(TextInput) function TextInputEffect(index: number, changeIndex: (stat: number) => void) {
+  .fontColor(Color.White)
+  .placeholderColor(Color.White)
+  .maxLines(1)
+  .onFocus(() => {
+    changeIndex(index)
+  })
+  .onBlur(() => {
+    changeIndex(-1)
+  })
+  .padding(12)
 }

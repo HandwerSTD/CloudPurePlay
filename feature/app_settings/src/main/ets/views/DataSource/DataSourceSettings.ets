@@ -100,9 +100,10 @@ export struct DataSourceSettings {
           Blank().width(12)
           Column() {
             Text(UserStore.user.data.profile.nickname).fontSize(16).fontWeight(FontWeight.Bold)
+              .fontColor(Color.White)
               .maxLines(1).textOverflow({overflow: TextOverflow.Ellipsis})
             Text($r('app.string.api_switch_from_what', InstanceSwitcher.InstanceTypeName))
-              .fontSize(14)
+              .fontSize(14).fontColor(Color.White)
               .maxLines(1).textOverflow({overflow: TextOverflow.Ellipsis})
           }.layoutWeight(1).justifyContent(FlexAlign.SpaceAround)
           .height(48)
