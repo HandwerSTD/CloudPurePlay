@@ -16,18 +16,18 @@ export struct DataSourceSettings {
 
   readonly apiPage = ['NavidromeAPI_Source', 'CloudAPI_Source']
 
-  @Builder CloudAPI() {
-    ArcListItem() {
-      ArcCommonListItem({
-        icon: $r('sys.symbol.play_circle_badge_music_note'),
-        title: 'CloudAPI',
-      })
-      .onClick(() => {
-        this.pushPage('CloudAPI_Source', {})
-      })
-    }
-    .width(ArcConst.ARC_LIST_W)
-  }
+  // @Builder CloudAPI() {
+  //   ArcListItem() {
+  //     ArcCommonListItem({
+  //       icon: $r('sys.symbol.play_circle_badge_music_note'),
+  //       title: 'CloudAPI',
+  //     })
+  //     .onClick(() => {
+  //       this.pushPage('CloudAPI_Source', {})
+  //     })
+  //   }
+  //   .width(ArcConst.ARC_LIST_W)
+  // }
 
   @Builder NavidromeAPI() {
     ArcListItem() {
@@ -60,7 +60,7 @@ export struct DataSourceSettings {
       Column() {
         ArcList() {
           this.DataSyncPanel()
-          this.CloudAPI()
+          // this.CloudAPI()
           this.NavidromeAPI()
         }
         .focusable(true)
