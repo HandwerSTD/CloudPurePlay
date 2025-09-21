@@ -1,7 +1,6 @@
 import { ImgCache, Logger, NowPlayingStore, PlayQueueUtils, ResponsiveUtil } from "@handwer/base"
 import { hdsEffect } from "@kit.UIDesignKit"
 import { curves } from "@kit.ArkUI"
-import { cacheDownload } from "@kit.BasicServicesKit"
 import { ClickUtil } from "@pura/harmony-utils"
 import { AlbumCoverColorUtils } from "../utils/AlbumCoverColorUtils"
 import { BgFlowController } from "@handwer/ui_components"
@@ -50,6 +49,9 @@ export struct ImageCover {
         y: this.pointLightY
       })
       .animation({duration: 2000})
+      .onAppear(() => {
+        this.onPlayStateChange()
+      })
     }
   }
 
@@ -189,8 +191,8 @@ export struct ImageCover {
           .onComplete(() => {
             ClickUtil.debounce(async () => {
               const colors = await AlbumCoverColorUtils.getCoverColor()
-              // Logger.debug(`colors = ${JSON.stringify(colors)}`)
-              BgFlowController.getInstance().changeColor(colors)
+              Logger.debug(`colors = ${JSON.stringify(colors)}`)
+              BgFlowController.getInstance().changeColor(colors, NowPlayingStore.currentSong.id, this.getUIContext())
             }, 1000)
           })
         Image(ImgCache.proxy(this.nowPlayingCoverFaker as string))
@@ -285,7 +287,7 @@ export struct ImageCoverThumbnail {
           ClickUtil.debounce(async () => {
             const colors = await AlbumCoverColorUtils.getCoverColor('coverUnder_Thumbnail')
             // Logger.debug(`colors = ${JSON.stringify(colors)}`)
-            BgFlowController.getInstance().changeColor(colors)
+            BgFlowController.getInstance().changeColor(colors, NowPlayingStore.currentSong.id, this.getUIContext())
           }, 500)
         })
     }

@@ -133,7 +133,7 @@ export struct DisplaySettings {
                     GlobalStore.pref.bgFlowColorStrat = idx
                     Settings.put(SCPref.bgFlowColorStrat, idx)
                     if (idx === 0) {
-                      BgFlowController.getInstance().changeColorToDefault()
+                      BgFlowController.getInstance().changeColorToDefault(this.getUIContext())
                     } else {
                       SnackBarUtils.showMessage(GlobalStore.globalSnack!, $r('sys.symbol.background_blurred'), $r('app.string.bg_flow_color_effect_next_song'))
                     }

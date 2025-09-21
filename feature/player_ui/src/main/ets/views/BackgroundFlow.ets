@@ -14,7 +14,7 @@ export struct BackgroundFlow {
   @Monitor('gs.isDarkMode')
   onDarkModeSwitch() {
     if (this.controller?.onDefaultColor) {
-      this.controller.changeColorToDefault()
+      this.controller.changeColorToDefault(this.getUIContext())
     }
   }
 
@@ -48,6 +48,7 @@ export struct BackgroundFlow {
         this.controller!.play()
       }
     })
+    .id('backgroundFlow_Column')
   }
 }
 

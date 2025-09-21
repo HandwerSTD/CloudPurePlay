@@ -1,5 +1,7 @@
 import { GlobalStore } from "@handwer/base";
 import { hdsEffect } from "@kit.UIDesignKit"
+import common from "@ohos.app.ability.common";
+import { ColorMetrics } from "@kit.ArkUI";
 
 const LightColor: ResourceColor[] = ['#BD74DB', '#9CB6DD', '#C2A87B', '#7C87D2'];
 const DarkColor: ResourceColor[] = [Color.Black, Color.Pink, Color.Blue]
@@ -17,6 +19,7 @@ export class BgFlowController {
   private constructor() {}
 
   @Trace switch: number = 0 // 当前显示的 bg
+  flowColorSourceId: string = ''
 
   flowPlayState: FlowPlayState = FlowPlayState.STOP
   onDefaultColor: boolean = true
@@ -37,11 +40,13 @@ export class BgFlowController {
   switchToNext() {
     this.switch = this.nextSwitch
   }
-  changeColor(colors: ResourceColor[]) {
+  changeColor(colors: ResourceColor[], id: string, ctx: UIContext) {
     if (GlobalStore.pref.bgFlowColorStrat === 0) {
-      this.changeColorToDefault()
-    } else {
+      this.changeColorToDefault(ctx)
+    } else if (this.flowColorSourceId !== id) {
       this._changeColor(colors)
+      this.flowColorSourceId = id
+      this.setStatusBarColor(colors[0] as string, ctx)
     }
   }
   private _changeColor(colors: ResourceColor[]) {
@@ -58,13 +63,46 @@ export class BgFlowController {
       }
     }, 100)
   }
-  changeColorToDefault() {
+  changeColorToDefault(ctx: UIContext) {
     this.onDefaultColor = true;
     if (GlobalStore.isDarkMode) {
       this._changeColor(DarkColor)
+      this.setStatusBarColor('#000000', ctx)
     } else {
       this._changeColor(LightColor)
+      this.setStatusBarColor('#ffffff', ctx)
     }
+  }
+  setStatusBarColor(color: string, ctx: UIContext) {
+    const res = this.pickTextColorFromHex(color)
+    let col = Color.White
+    if (res === 'black') {
+      col = Color.Black
+    }
+    (ctx.getHostContext() as common.UIAbilityContext).windowStage.getMainWindowSync().setStatusBarColor(ColorMetrics.resourceColor(col))
+  }
+  pickTextColorFromHex(hex: string): "black" | "white" {
+    // 去掉 #
+    hex = hex.replace(/^#/, "");
+
+    // 支持简写形式 #RGB
+    if (hex.length === 3) {
+      hex = hex.split("").map(ch => ch + ch).join("");
+    }
+
+    if (hex.length !== 6) {
+      throw new Error("Invalid hex color: " + hex);
+    }
+
+    // 解析 RGB
+    const r = parseInt(hex.substring(0, 2), 16);
+    const g = parseInt(hex.substring(2, 4), 16);
+    const b = parseInt(hex.substring(4, 6), 16);
+
+    // 亮度计算
+    const luminance = 0.299 * r + 0.587 * g + 0.114 * b;
+
+    return luminance > 128 ? "black" : "white";
   }
   // TODO: 遗留问题 流光无法动态变化
   stop() {
