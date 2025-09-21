@@ -52,6 +52,7 @@ export struct PlaylistDetail {
   @Local isLoading: boolean = false;
   hasMore: boolean = true;
   currentOffset: number = 0;
+  @Consumer(SCApp.exploreSheet) exploreSheet: boolean = false
   @Consumer(SCApp.explorePageStack) pageStack: NavPathStack = new NavPathStack()
   @Consumer(SCApp.showAddToPlaylistSheet) showAddToPlaylistSheet: boolean = false
 
@@ -408,6 +409,10 @@ export struct PlaylistDetail {
       })
     })
     .onBackPressed(() => {
+      if (!this.exploreSheet) {
+        this.exploreSheet = true;
+        return true;
+      }
       this.pageStack.pop({} as PlaylistDetail_PopReturn, true)
       return true;
     })

@@ -56,6 +56,7 @@ export struct AlbumDetail {
   @Local isLoading: boolean = false;
   hasMore: boolean = true;
   currentOffset: number = 0;
+  @Consumer(SCApp.exploreSheet) exploreSheet: boolean = false
   @Consumer(SCApp.explorePageStack) pageStack: NavPathStack = new NavPathStack()
   @Consumer(SCApp.showAddToPlaylistSheet) showAddToPlaylistSheet: boolean = false
 
@@ -397,6 +398,13 @@ export struct AlbumDetail {
     }.onReady((context) => {
       this.albumInfo = (context.pathInfo.param as Record<string, Object>)['albumInfo'] as Album
       this.onStart()
+    })
+    .onBackPressed(() => {
+      if (!this.exploreSheet) {
+        this.exploreSheet = true;
+        return true;
+      }
+      return false;
     })
     .onWillDisappear(() => {
       this.shouldLightSourceOff = true

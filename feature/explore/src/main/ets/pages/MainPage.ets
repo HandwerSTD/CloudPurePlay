@@ -248,17 +248,25 @@ struct MainPage_Shell {
       this.pageOpacity = 0
     })
     .onBackPressed(() => {
-      for (const p of BackButtonUtils.backButtonFuncs) {
-        if (p.judge()) {
-          p.action();
-          return true;
+      if (!this.exploreSheet) {
+        // Player 已展开，优先关闭 Player
+        this.exploreSheet = true;
+      } else {
+        // Explore 已展开，处理监听的事件
+        for (const p of BackButtonUtils.backButtonFuncs) {
+          if (p.judge()) {
+            p.action();
+            return true;
+          }
         }
+        // 无监听事件，关闭 Explore
+        this.exploreSheet = false;
       }
-      this.exploreSheet = !this.exploreSheet;
+      // 两种情况都是已经在首页了，再划一次退出
       SnackBarUtils.showMessage(GlobalStore.globalSnack!, $r('sys.symbol.house'), $r('app.string.press_back_again_to_exit'), undefined, 2000,
         () => {
         (this.getUIContext().getHostContext()! as common.UIAbilityContext).moveAbilityToBackground()
-      })
+      });
       return true;
     })
     .opacity(this.pageOpacity)

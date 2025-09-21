@@ -10,6 +10,7 @@ import { LengthMetrics } from "@kit.ArkUI"
 
 @ComponentV2
 export struct AllAlbums {
+  @Consumer(SCApp.exploreSheet) exploreSheet: boolean = false
   @Consumer(SCApp.explorePageStack) pageStack: NavPathStack = new NavPathStack()
   @Local gridCount: number = 1
   @Local fullWindowSizeArea?: Area
@@ -108,6 +109,13 @@ export struct AllAlbums {
           mainTitle: $r('app.string.all_albums')
         }
       }
+    })
+    .onBackPressed(() => {
+      if (!this.exploreSheet) {
+        this.exploreSheet = true;
+        return true;
+      }
+      return false;
     })
     .backgroundColor(Color.Transparent)
     .onShown(() => {

@@ -2,7 +2,7 @@
   "app": {
     "bundleName": "top.handwer.cloudpureplay",
     "vendor": "example",
-    "versionCode": 1020000, // M; nn; mm; pp
+    "versionCode": 1020001, // M; nn; mm; pp
     "versionName": "1.2.0",
     "icon": "$media:layered_image",
     "label": "$string:app_name"
