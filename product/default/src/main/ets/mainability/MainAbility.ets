@@ -177,8 +177,6 @@ export default class MainAbility extends UIAbility {
     ImgCache.init(this.context)
     // CrashSpider
     SpiderMan.init()
-    // Theme
-    ThemeManager.setTheme(Settings.get(SCPref.theme) ?? 0)
     // Breakpoint
     BreakpointSystem.instance().init(windowStage)
     // App Version

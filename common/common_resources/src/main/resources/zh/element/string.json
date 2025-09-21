@@ -815,6 +815,14 @@
     {
       "name": "press_back_again_to_exit",
       "value": "再返回一次可回到后台"
+    },
+    {
+      "name": "auto_switched_to_dark",
+      "value": "已自动切换到深色模式"
+    },
+    {
+      "name": "auto_switched_to_light",
+      "value": "已自动切换到浅色模式"
     }
   ]
 }

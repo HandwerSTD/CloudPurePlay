@@ -8,6 +8,7 @@ export struct CommonListItem {
   @Param @Require title: ResourceStr
   @Param subtitle: ResourceStr | null = null
   @Param filled: boolean = true
+  @Param trailingOnBottom: boolean = false
   @Param highlightBorder: boolean = false
 
   @Param fontColor: ResourceColor = $r('sys.color.font_on_primary')
@@ -15,35 +16,42 @@ export struct CommonListItem {
   @BuilderParam trailing?: () => void
 
   build() {
-    Row() {
-      if (this.icon) {
-        if (this.isSymbol) {
-          SymbolGlyph(this.icon)
-            .fontSize(24)
-            .margin({ right: 12 })
-            .fontColor([this.fontColor])
+    Column() {
+      Row() {
+        if (this.icon) {
+          if (this.isSymbol) {
+            SymbolGlyph(this.icon)
+              .fontSize(24)
+              .margin({ right: 12 })
+              .fontColor([this.fontColor])
+          } else {
+            Image(this.icon)
+              .width(24.29)
+              .margin({ right: 12 })
+              .draggable(false)
+          }
+        }
+        Column() {
+          Text(this.title)
+            .fontColor(this.fontColor)
+          if (this.subtitle) {
+            Text(this.subtitle)
+              .fontSize(12)
+              .fontColor(this.hintFontColor)
+          }
+        }.layoutWeight(1).alignItems(HorizontalAlign.Start)
+        if (this.trailing && !this.trailingOnBottom) {
+          this.trailing()
         } else {
-          Image(this.icon)
-            .width(24.29)
-            .margin({ right: 12 })
-            .draggable(false)
+          SymbolGlyph($r('sys.symbol.chevron_right'))
+            .fontSize(24)
+            .fontColor([this.fontColor])
         }
       }
-      Column() {
-        Text(this.title)
-          .fontColor(this.fontColor)
-        if (this.subtitle) {
-          Text(this.subtitle)
-            .fontSize(12)
-            .fontColor(this.hintFontColor)
-        }
-      }.layoutWeight(1).alignItems(HorizontalAlign.Start)
-      if (this.trailing) {
+      .justifyContent(FlexAlign.Start)
+      .height(54)
+      if (this.trailing && this.trailingOnBottom) {
         this.trailing()
-      } else {
-        SymbolGlyph($r('sys.symbol.chevron_right'))
-          .fontSize(24)
-          .fontColor([this.fontColor])
       }
     }
     .hoverEffect(HoverEffect.Highlight)
@@ -56,9 +64,7 @@ export struct CommonListItem {
       width: 0,
       radius: 24
     })
-    .padding({ left: 12, right: 12 })
-    .justifyContent(FlexAlign.Start)
-    .height(54)
+    .padding({ left: 12, right: 12, bottom: this.trailingOnBottom ? 12 : 0 })
   }
 }
 
@@ -70,6 +76,7 @@ export struct LightedCommonListItem {
   @Param subtitle: ResourceStr | null = null
   @Param filled: boolean = true
   @Param highlightBorder: boolean = false
+  @Param trailingOnBottom: boolean = false
   @BuilderParam trailing?: () => void
   // @Param shouldBeLightedUp: boolean = false
 
@@ -83,7 +90,8 @@ export struct LightedCommonListItem {
           subtitle: this.subtitle,
           filled: this.filled,
           highlightBorder: this.highlightBorder,
-          trailing: this.trailing
+          trailing: this.trailing,
+          trailingOnBottom: this.trailingOnBottom
         })
       }
     }.backgroundColor($r('app.color.play_list_single_item_bg'))

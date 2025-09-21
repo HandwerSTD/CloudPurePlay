@@ -17,6 +17,7 @@ export enum SCPref {
   playerTwoColumnRightHandMode = 'playerTwoColumnRightHandMode',
   dynamicBackgroundStreaming = 'dynamicBackgroundStreaming',
   bgFlowColorStrat = 'bgFlowColorStrat',
+  appColorMode = "appColorMode",
 
   // 播放设置
   autoPlayOnLaunch = 'autoPlayOnLaunch',

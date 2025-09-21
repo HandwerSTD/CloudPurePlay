@@ -9,6 +9,7 @@ export * from './utils/SubWindowUtil';
 export * from './utils/GlobalContext';
 export * from './utils/CommonUtil';
 export * from './utils/BackgroundTaskManager';
+export * from './utils/LightDarkSwitchUtils';
 export { default as DistributedUtils } from './utils/Distribution/DistributionUtils'
 export * from './utils/Distribution/DistributionViewModels'
 export * from './utils/Distribution/DeviceCollaborationUtils'

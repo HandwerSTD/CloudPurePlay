@@ -1,4 +1,5 @@
 import { CustomColors, CustomTheme, ThemeControl } from '@kit.ArkUI'
+import { SCPref, Settings } from '../../../../Index'
 
 export class AppColors implements CustomColors {
 }
@@ -37,11 +38,21 @@ export const themeNames = [
   $r('app.string.orange')
 ]
 
+/**
+ * Theme mode enumeration
+ */
+export enum AppColorMode {
+  MANUAL_LIGHT = 0,      // 手动浅色
+  MANUAL_DARK = 1,        // 手动深色
+  FOLLOW_SYSTEM = 2,    // 跟随系统
+  SMART_MODE = 3           // 智能模式（基于光传感器）
+}
 
 @ObservedV2
 export class ThemeManager {
   static singleton_: ThemeManager;
   @Trace appTheme: CustomTheme = gAppTheme
+  @Trace _appColorModeStat: AppColorMode = AppColorMode.FOLLOW_SYSTEM
   nowUsedThemeIndex: number = 0
   static getSingleton() {
     if(!ThemeManager.singleton_) {
@@ -58,6 +69,10 @@ export class ThemeManager {
   static getBrand() {
     return ThemeManager.getTheme().colors?.brand!
   }
+  static init() {
+    ThemeManager.getSingleton().appColorModeStat = Settings.get(SCPref.appColorMode) ?? AppColorMode.FOLLOW_SYSTEM
+    ThemeManager.setTheme(Settings.get(SCPref.theme) ?? 0)
+  }
   static setTheme(index: number) {
     let st = ThemeManager.getSingleton()
     st.appTheme = new AppTheme({
@@ -66,5 +81,12 @@ export class ThemeManager {
     ThemeControl.setDefaultTheme(st.appTheme)
     st.nowUsedThemeIndex = index
     // SettingsUtil.ThemeID = index
+  }
+  get appColorModeStat() {
+    return this._appColorModeStat
+  }
+  set appColorModeStat(stat: AppColorMode) {
+    Settings.put(SCPref.appColorMode, stat)
+    this._appColorModeStat = stat
   }
 }

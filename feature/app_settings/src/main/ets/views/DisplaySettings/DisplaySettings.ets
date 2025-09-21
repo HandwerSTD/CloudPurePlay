@@ -1,10 +1,11 @@
-import { GlobalStore, SCPref, Settings } from "@handwer/base"
+import { AmbientLightUtils, GlobalStore, SCPref, Settings, ThemeManager } from "@handwer/base"
 import { BgFlowController, HDS_TITLE_CONFIG_STYLE,
   LightedCommonListItem,
   LightedCommonListToggleItem,
   SnackBarUtils} from "@handwer/ui_components"
 import { HdsNavigation, HdsNavigationTitleMode, HdsNavigationAttribute, hdsEffect } from "@kit.UIDesignKit"
 import { CapsuleSegmentButtonV2, SegmentButtonV2Items, TabSegmentButtonV2 } from "@ohos.arkui.advanced.SegmentButtonV2"
+import { ConfigurationConstant } from "@kit.AbilityKit"
 
 @ComponentV2
 export struct DisplaySettings {
@@ -138,6 +139,41 @@ export struct DisplaySettings {
                     }
                   },
                 }).width(128)
+              }
+            }
+            ListItem() {
+              LightedCommonListItem({
+                icon: $r('sys.symbol.dark_mode'),
+                title: '深浅色模式',
+                trailingOnBottom: true
+              }) {
+                TabSegmentButtonV2({
+                  items: new SegmentButtonV2Items([{
+                    text: '浅色'
+                  }, {
+                    text: '深色'
+                  }, {
+                    text: '系统'
+                  }, {
+                    text: '智能'
+                  }]),
+                  selectedIndex: ThemeManager.getSingleton().appColorModeStat,
+                  onItemClicked: (idx) => {
+                    ThemeManager.getSingleton().appColorModeStat = idx
+                    if (idx === 3) {
+                      AmbientLightUtils.registerLightSensorListener(this.getUIContext().getHostContext()!.getApplicationContext(),
+                        (isLowLight) => {
+                          SnackBarUtils.showMessage(GlobalStore.globalSnack!, $r('sys.symbol.dark_mode'), isLowLight ? $r('app.string.auto_switched_to_dark') : $r('app.string.auto_switched_to_light'))
+                        })
+                    } else {
+                      let color = ConfigurationConstant.ColorMode.COLOR_MODE_NOT_SET;
+                      if (idx === 0) color = ConfigurationConstant.ColorMode.COLOR_MODE_LIGHT
+                      if (idx === 1) color = ConfigurationConstant.ColorMode.COLOR_MODE_DARK
+                      this.getUIContext().getHostContext()?.getApplicationContext().setColorMode(color)
+                      AmbientLightUtils.unregisterLightSensorListener()
+                    }
+                  },
+                }).width('100%')
               }
             }
             ListItem().height(12)

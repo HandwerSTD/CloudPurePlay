@@ -1,6 +1,8 @@
-import { GlobalStore, Logger, LoginStatus,
+import { GlobalStore, Logger, LoginStatus, AmbientLightUtils,
   NowPlayingStore,
-  OuterWantDataModel, PlayControl, SCApp, UserStore} from '@handwer/base'
+  OuterWantDataModel, PlayControl, SCApp, UserStore,
+  ThemeManager,
+  AppColorMode} from '@handwer/base'
 import { PlayerUI } from '@handwer/player_ui'
 import { SettingsMainPage } from '@handwer/app_settings'
 import { hdsEffect, HdsSnackBar } from '@kit.UIDesignKit'
@@ -8,7 +10,9 @@ import { RetryLoginPanel } from '../views/RetryLoginPanel'
 import { NewConfigPanel } from './OuterWantPanels/NewConfigPanel'
 import { ReceiveShareSongPanel } from './OuterWantPanels/ReceiveShareSong'
 import { stylusInteraction } from '@kit.Penkit'
-import { BgFlowController } from '@handwer/ui_components'
+import { BgFlowController, SnackBarUtils } from '@handwer/ui_components'
+import { promptAction } from '@kit.ArkUI'
+import { ConfigurationConstant } from '@kit.AbilityKit'
 
 const TAG = '[Index]'
 
@@ -39,6 +43,26 @@ struct Index {
   }
   @Monitor('gs.isInForeground')
   onForegroundSwitch() {
+    // Light sensor monitoring for theme switching
+    try {
+      if (this.gs.isInForeground && ThemeManager.getSingleton().appColorModeStat === AppColorMode.SMART_MODE) {
+        // Register light sensor listener when app comes to foreground
+        AmbientLightUtils.registerLightSensorListener(
+          this.getUIContext().getHostContext()!.getApplicationContext(),
+          (isLowLight) => {
+            SnackBarUtils.showMessage(GlobalStore.globalSnack!, $r('sys.symbol.dark_mode'), isLowLight ? $r('app.string.auto_switched_to_dark') : $r('app.string.auto_switched_to_light'))
+          }
+        )
+        Logger.info(TAG, 'Light sensor listener registered')
+      } else {
+        // Unregister light sensor listener when app goes to background
+        AmbientLightUtils.unregisterLightSensorListener()
+        Logger.info(TAG, 'Light sensor listener unregistered')
+      }
+    } catch (e) {
+      Logger.error(TAG, `Error managing light sensor: ${e.message}`)
+    }
+
     // stylus
     try {
       const playNext = () => {

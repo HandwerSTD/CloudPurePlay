@@ -13,7 +13,8 @@ import { DistributedUtils, FeaturedPlayUtils, GlobalStore,
   Logger,
   NowPlayingStore,
   PlayQueueStore,
-  SCEmitter, SCPref } from '../exports'
+  SCEmitter, SCPref,
+  ThemeManager } from '../exports'
 import { EmitterUtil } from '@pura/harmony-utils'
 import { playQueueKV } from './PlaybackController/queue/PlayQueueStore'
 
@@ -37,6 +38,7 @@ export class ServiceInitUtils {
     }
     // 初始化全局设置
     Settings.init()
+    ThemeManager.init()
     ServiceInitUtils.loadPresetPreferences()
     ServiceInitUtils.loadViewPref()
     // 初始化 API
