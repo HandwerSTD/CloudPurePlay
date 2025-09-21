@@ -15,9 +15,10 @@
 
 import { sensor } from '@kit.SensorServiceKit';
 import { BusinessError } from '@kit.BasicServicesKit';
-import { common, ConfigurationConstant } from '@kit.AbilityKit';
+import { AbilityConstant, common, ConfigurationConstant, EnvironmentCallback } from '@kit.AbilityKit';
 import Logger from './Logger';
 import { promptAction } from '@kit.ArkUI';
+import { GlobalStore } from '../../../../Index';
 
 
 /**
@@ -55,9 +56,12 @@ export class AmbientLightUtils {
     }
     if (!callback) {
       callback = (isLowLight) => {
+        if (isLowLight !== GlobalStore.isDarkMode) {
+          // 仅不匹配时切换
           appContext.setColorMode(isLowLight ? ConfigurationConstant.ColorMode.COLOR_MODE_DARK : ConfigurationConstant.ColorMode.COLOR_MODE_LIGHT)
           promptCallback?.(isLowLight)
-        };
+        }
+      };
     }
 
     AmbientLightUtils.lowLightThreshold = threshold;
@@ -68,8 +72,7 @@ export class AmbientLightUtils {
       sensor.on(sensor.SensorId.AMBIENT_LIGHT, (data: sensor.LightResponse) => {
         AmbientLightUtils.handleLightSensorData(data);
       }, { interval: samplingInterval });
-
-
+      // 注册不了系统深浅色监听，只能监听应用的
       AmbientLightUtils.isListening = true;
       Logger.info(AmbientLightUtils.TAG,
         `Light sensor listener registered with threshold: ${threshold} lux, interval: ${samplingInterval}ns`);
@@ -113,7 +116,7 @@ export class AmbientLightUtils {
   private static handleLightSensorData(data: sensor.LightResponse): void {
     const currentLightValue = data.intensity;
 
-    Logger.debug(AmbientLightUtils.TAG, `Current light intensity: ${currentLightValue} lux`);
+    // Logger.debug(AmbientLightUtils.TAG, `Current light intensity: ${currentLightValue} lux`);
 
     // Check if we should trigger low light callback
     const isCurrentlyLowLight = currentLightValue <= AmbientLightUtils.lowLightThreshold;
@@ -125,10 +128,21 @@ export class AmbientLightUtils {
       AmbientLightUtils.isInLowLightState = isCurrentlyLowLight;
       Logger.info(AmbientLightUtils.TAG,
         `Low light detect: ${isCurrentlyLowLight}, ${currentLightValue} lux (threshold: ${AmbientLightUtils.lowLightThreshold} lux)`);
-      
+
+      let shouldTurnDarkWhenNight = false
+      if (AmbientLightUtils.lastLightValue === -1) {
+        // check time
+        const hr = (new Date()).getHours()
+        // 晚8点到早7点
+        if ((20 <= hr && hr <= 24) || (0 <= hr && hr <= 6)) {
+          shouldTurnDarkWhenNight = true;
+          Logger.debug(AmbientLightUtils.TAG, `forced dark mode because of night`)
+        }
+      }
+
       if (AmbientLightUtils.onLowLightCallback) {
         try {
-          AmbientLightUtils.onLowLightCallback(isCurrentlyLowLight);
+          AmbientLightUtils.onLowLightCallback(isCurrentlyLowLight || shouldTurnDarkWhenNight);
         } catch (error) {
           Logger.error(AmbientLightUtils.TAG, `Error in low light callback: ${error}`);
         }

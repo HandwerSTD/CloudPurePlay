@@ -173,6 +173,10 @@ export default class MainAbility extends UIAbility {
       config.autoCancel = false
       config.backCancel = false
     })
+    // Settings
+    Settings.init()
+    // Theme
+    ThemeManager.init(this.context.getApplicationContext())
     // ImageCache
     ImgCache.init(this.context)
     // CrashSpider

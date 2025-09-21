@@ -11,8 +11,6 @@ import { NewConfigPanel } from './OuterWantPanels/NewConfigPanel'
 import { ReceiveShareSongPanel } from './OuterWantPanels/ReceiveShareSong'
 import { stylusInteraction } from '@kit.Penkit'
 import { BgFlowController, SnackBarUtils } from '@handwer/ui_components'
-import { promptAction } from '@kit.ArkUI'
-import { ConfigurationConstant } from '@kit.AbilityKit'
 
 const TAG = '[Index]'
 
@@ -115,7 +113,6 @@ struct Index {
   @Builder SettingsPanel() {
     SettingsMainPage()
   }
-
 
   build() {
     Row() {

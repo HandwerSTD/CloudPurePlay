@@ -76,7 +76,8 @@ export class BgFlowController {
   setStatusBarColor(color: string, ctx: UIContext) {
     const res = this.pickTextColorFromHex(color)
     let col = Color.White
-    if (res === 'black') {
+    // 深色模式强制白色状态栏
+    if (res === 'black' && GlobalStore.isDarkMode === false) {
       col = Color.Black
     }
     (ctx.getHostContext() as common.UIAbilityContext).windowStage.getMainWindowSync().setStatusBarColor(ColorMetrics.resourceColor(col))

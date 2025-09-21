@@ -1,5 +1,6 @@
 import { CustomColors, CustomTheme, ThemeControl } from '@kit.ArkUI'
 import { SCPref, Settings } from '../../../../Index'
+import { common, ConfigurationConstant } from '@kit.AbilityKit'
 
 export class AppColors implements CustomColors {
 }
@@ -69,8 +70,17 @@ export class ThemeManager {
   static getBrand() {
     return ThemeManager.getTheme().colors?.brand!
   }
-  static init() {
-    ThemeManager.getSingleton().appColorModeStat = Settings.get(SCPref.appColorMode) ?? AppColorMode.FOLLOW_SYSTEM
+  static init(appCtx: common.ApplicationContext) {
+    ThemeManager.getSingleton().appColorModeStat = Settings.get(SCPref.appColorMode) ?? AppColorMode.SMART_MODE
+    const idx = ThemeManager.getSingleton().appColorModeStat
+    if (idx === 3) {
+      // 在 Index.ets 中注册监听了
+    } else {
+      let color = ConfigurationConstant.ColorMode.COLOR_MODE_NOT_SET;
+      if (idx === 0) color = ConfigurationConstant.ColorMode.COLOR_MODE_LIGHT
+      if (idx === 1) color = ConfigurationConstant.ColorMode.COLOR_MODE_DARK
+      appCtx.setColorMode(color)
+    }
     ThemeManager.setTheme(Settings.get(SCPref.theme) ?? 0)
   }
   static setTheme(index: number) {
