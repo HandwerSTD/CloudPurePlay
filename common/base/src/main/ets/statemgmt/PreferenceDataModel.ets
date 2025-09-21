@@ -5,4 +5,5 @@ export class PrefDataModel {
   @Trace autoNavRightHandMode: boolean = false
   @Trace useStylusControl: boolean = false
   @Trace dynamicBackgroundStreaming: boolean = false
+  @Trace bgFlowColorStrat: number = 0
 }

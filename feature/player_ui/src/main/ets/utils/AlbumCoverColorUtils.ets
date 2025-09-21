@@ -2,14 +2,14 @@ import effectKit from "@ohos.effectKit";
 import { ColorMetrics, componentSnapshot } from "@kit.ArkUI";
 
 export class AlbumCoverColorUtils {
-  static async getCoverColor() {
+  static async getCoverColor(id?: string) {
     return await AlbumCoverColorUtils.getColorFromPixelMap(
-      componentSnapshot.getSync('coverFakerUnder')
+      componentSnapshot.getSync(id ?? 'coverFakerUnder')
     )
   }
   static async getColorFromPixelMap(pixelMap: PixelMap) {
     const kit = await effectKit.createColorPicker(pixelMap)
-    const res = kit.getTopProportionColors(3)
+    const res = kit.getTopProportionColors(7)
     let result: ColorMetrics[] = []
     res.forEach((val) => {
       if (val) {

@@ -22,7 +22,8 @@ import { LightUpRoundedButton, LightUpConfig, LightUpDefaultConfig, OverrideLigh
   AddToPlaylistSheet,
   DialogUtils,
   LightUpLongButton,
-  LightUpIconTextButton} from "@handwer/ui_components"
+  LightUpIconTextButton,
+  BgFlowController} from "@handwer/ui_components"
 import { ColorMetrics, curves, LengthMetrics, SymbolGlyphModifier } from "@kit.ArkUI"
 import { ClickUtil } from "@pura/harmony-utils"
 import { HdsActionBar, ActionBarButton, hdsEffect, HdsSnackBar } from "@kit.UIDesignKit"
@@ -34,6 +35,7 @@ import { EmptyStateView, EmptyStateViewBar } from "../components/EmptyStateView"
 import { unifiedDataChannel, uniformTypeDescriptor } from "@kit.ArkData"
 import { systemShare } from "@kit.ShareKit"
 import { common } from "@kit.AbilityKit"
+import { BackgroundFlow } from "./BackgroundFlow"
 
 const nps = NowPlayingStore
 const LIGHT_TOP_BTN_SM: LightUpConfig = {
@@ -77,7 +79,7 @@ export struct MainPage {
   @Consumer(SCApp.exploreSheet) showExplore: boolean = false
   @Provider(SCApp.showAddToPlaylistSheet) showAddToPlaylistSheet: boolean = false
 
-  controller: hdsEffect.ShaderEffectController = new hdsEffect.ShaderEffectController()
+  controller?: hdsEffect.ShaderEffectController
 
   get swiperHeight(): Length | undefined {
     if (!this.showExplore) return '100%'
@@ -382,14 +384,6 @@ export struct MainPage {
           },
           useLight: true,
           useCoverAmbBreathe: false,
-          resetNewBackgroundColor: (colors) => {
-            // this.backgroundFlowingColors = colors
-            // Logger.debug(`try resetting flow colors: `, this.backgroundFlowingColors.toString())
-            // this.controller.setEffectParams({
-            //   colorSource: this.backgroundFlowingColors
-            // },)
-            // this.controller.play()
-          }
         })
       }.layoutWeight(1)
       // Blank().height(24)
@@ -779,41 +773,10 @@ export struct MainPage {
     this.onRightHandMode()
   }
 
-  @Builder BackgroundFlow() {
+  ctrl = new hdsEffect.ShaderEffectController()
 
-    Column() {
-      if (GlobalStore.isDarkMode) {
-        Column().width('100%').height('100%')
-          .visualEffect(new hdsEffect.HdsEffectBuilder()
-            .shaderEffect({
-              effectType: hdsEffect.EffectType.UV_BACKGROUND_FLOW_LIGHT,
-              params: {
-                colorSource: [Color.Black, Color.Blue, Color.Pink],
-              },
-              animation: GlobalStore.pref.dynamicBackgroundStreaming ? {
-                duration: 5000,
-                autoPlay: true,
-                iterations: -1
-              } : undefined
-            })
-            .buildEffect())
-          .transition(TransitionEffect.OPACITY.animation({duration: 2000}))
-      } else {
-        Column().width('100%').height('100%')
-          .visualEffect(new hdsEffect.HdsEffectBuilder()
-            .shaderEffect({
-              effectType: hdsEffect.EffectType.UV_BACKGROUND_FLOW_LIGHT,
-              // controller: this.controller,
-              animation: GlobalStore.pref.dynamicBackgroundStreaming ? {
-                duration: 5000,
-                autoPlay: true,
-                iterations: -1
-              } : undefined
-            })
-            .buildEffect())
-          .transition(TransitionEffect.OPACITY.animation({duration: 2000}))
-      }
-    }.width('100%').height('100%')
+  @Builder BackgroundFlow() {
+    BackgroundFlow()
   }
 
   @Local swiperArr: number[] = [0, 1]
@@ -903,7 +866,10 @@ export struct MainPage {
     }
   }
   async handleLike() {
-
+    DialogUtils.showHeartDialog1sec(!NowPlayingStore.isLiked)
+    SongLike.likeThisSong((icon, msg) => {
+      SnackBarUtils.showMessage(this.hdsSnackBar, icon, msg)
+    })
   }
 
   @Monitor('gs.pref.playerRightHand')

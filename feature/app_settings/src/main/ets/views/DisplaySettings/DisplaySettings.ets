@@ -1,6 +1,10 @@
 import { GlobalStore, SCPref, Settings } from "@handwer/base"
-import { HDS_TITLE_CONFIG_STYLE, LightedCommonListToggleItem } from "@handwer/ui_components"
-import { HdsNavigation, HdsNavigationTitleMode, HdsNavigationAttribute } from "@kit.UIDesignKit"
+import { BgFlowController, HDS_TITLE_CONFIG_STYLE,
+  LightedCommonListItem,
+  LightedCommonListToggleItem,
+  SnackBarUtils} from "@handwer/ui_components"
+import { HdsNavigation, HdsNavigationTitleMode, HdsNavigationAttribute, hdsEffect } from "@kit.UIDesignKit"
+import { CapsuleSegmentButtonV2, SegmentButtonV2Items, TabSegmentButtonV2 } from "@ohos.arkui.advanced.SegmentButtonV2"
 
 @ComponentV2
 export struct DisplaySettings {
@@ -93,17 +97,48 @@ export struct DisplaySettings {
                 }
               })
             }
+            // ListItem() {
+            //   LightedCommonListToggleItem({
+            //     icon: $r('sys.symbol.background_blurred'),
+            //     title: $r('app.string.dynamic_background_streaming'),
+            //     // subtitle: $r('app.string.dynamic_background_streaming_desc'),
+            //     isOn: this.dynamicBackgroundStreaming,
+            //     onToggleChange: (val) => {
+            //       this.dynamicBackgroundStreaming = val
+            //       Settings.put(SCPref.dynamicBackgroundStreaming, val)
+            //       if (!val) {
+            //         BgFlowController.getInstance().stop()
+            //       } else {
+            //         BgFlowController.getInstance().play()
+            //         BgFlowController.getInstance().resume()
+            //       }
+            //     }
+            //   })
+            // }
+
             ListItem() {
-              LightedCommonListToggleItem({
+              LightedCommonListItem({
                 icon: $r('sys.symbol.background_blurred'),
-                title: $r('app.string.dynamic_background_streaming'),
-                // subtitle: $r('app.string.dynamic_background_streaming_desc'),
-                isOn: this.dynamicBackgroundStreaming,
-                onToggleChange: (val) => {
-                  this.dynamicBackgroundStreaming = val
-                  Settings.put(SCPref.dynamicBackgroundStreaming, val)
-                }
-              })
+                title: $r('app.string.bg_flow_color_strategy'),
+              }) {
+                TabSegmentButtonV2({
+                  items: new SegmentButtonV2Items([{
+                    text: $r('app.string.bg_flow_color_fixed')
+                  }, {
+                    text: $r('app.string.bg_flow_color_cover')
+                  }]),
+                  selectedIndex: GlobalStore.pref.bgFlowColorStrat,
+                  onItemClicked: (idx) => {
+                    GlobalStore.pref.bgFlowColorStrat = idx
+                    Settings.put(SCPref.bgFlowColorStrat, idx)
+                    if (idx === 0) {
+                      BgFlowController.getInstance().changeColorToDefault()
+                    } else {
+                      SnackBarUtils.showMessage(GlobalStore.globalSnack!, $r('sys.symbol.background_blurred'), $r('app.string.bg_flow_color_effect_next_song'))
+                    }
+                  },
+                }).width(128)
+              }
             }
             ListItem().height(12)
           }.padding({left: 12, right: 12})

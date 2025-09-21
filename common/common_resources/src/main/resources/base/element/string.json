@@ -589,6 +589,22 @@
       "value": "Enable dynamic background streaming effects for enhanced visual experience"
     },
     {
+      "name": "bg_flow_color_strategy",
+      "value": "背景流光颜色"
+    },
+    {
+      "name": "bg_flow_color_fixed",
+      "value": "固定"
+    },
+    {
+      "name": "bg_flow_color_cover",
+      "value": "封面"
+    },
+    {
+      "name": "bg_flow_color_effect_next_song",
+      "value": "将于下首歌播放时生效"
+    },
+    {
       "name": "playback_settings",
       "value": "Playback Settings"
     },

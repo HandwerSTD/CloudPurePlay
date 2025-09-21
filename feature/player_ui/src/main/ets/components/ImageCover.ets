@@ -4,6 +4,7 @@ import { curves } from "@kit.ArkUI"
 import { cacheDownload } from "@kit.BasicServicesKit"
 import { ClickUtil } from "@pura/harmony-utils"
 import { AlbumCoverColorUtils } from "../utils/AlbumCoverColorUtils"
+import { BgFlowController } from "@handwer/ui_components"
 
 const nps = NowPlayingStore
 
@@ -13,7 +14,6 @@ export struct ImageCover {
   @Param @Require handleLike: () => void = () => {}
   @Param useLight: boolean = false
   @Param useCoverAmbBreathe: boolean = false
-  @Event resetNewBackgroundColor: (colors: ResourceColor[]) => void
 
   readonly lightOffset = 0
   @Local pointLocation: number = 0
@@ -189,8 +189,9 @@ export struct ImageCover {
           .onComplete(() => {
             ClickUtil.debounce(async () => {
               const colors = await AlbumCoverColorUtils.getCoverColor()
-              this.resetNewBackgroundColor(colors)
-            }, 2000)
+              // Logger.debug(`colors = ${JSON.stringify(colors)}`)
+              BgFlowController.getInstance().changeColor(colors)
+            }, 1000)
           })
         Image(ImgCache.proxy(this.nowPlayingCoverFaker as string))
           .draggable(false)
@@ -270,6 +271,7 @@ export struct ImageCoverThumbnail {
         .saturate(3)
         .opacity(0.7)
       Image(this.nowPlayingCoverImg)
+        .id('coverUnder_Thumbnail')
         .borderRadius(this.radius)
         .draggable(false)
         .shadow({
@@ -279,6 +281,13 @@ export struct ImageCoverThumbnail {
         .ImageFaker(() => {
         })
         .borderRadius(this.radius)
+        .onComplete(() => {
+          ClickUtil.debounce(async () => {
+            const colors = await AlbumCoverColorUtils.getCoverColor('coverUnder_Thumbnail')
+            // Logger.debug(`colors = ${JSON.stringify(colors)}`)
+            BgFlowController.getInstance().changeColor(colors)
+          }, 500)
+        })
     }
   }
 }

@@ -3,11 +3,12 @@ import { GlobalStore, Logger, LoginStatus,
   OuterWantDataModel, PlayControl, SCApp, UserStore} from '@handwer/base'
 import { PlayerUI } from '@handwer/player_ui'
 import { SettingsMainPage } from '@handwer/app_settings'
-import { HdsSnackBar } from '@kit.UIDesignKit'
+import { hdsEffect, HdsSnackBar } from '@kit.UIDesignKit'
 import { RetryLoginPanel } from '../views/RetryLoginPanel'
 import { NewConfigPanel } from './OuterWantPanels/NewConfigPanel'
 import { ReceiveShareSongPanel } from './OuterWantPanels/ReceiveShareSong'
 import { stylusInteraction } from '@kit.Penkit'
+import { BgFlowController } from '@handwer/ui_components'
 
 const TAG = '[Index]'
 
@@ -38,18 +39,18 @@ struct Index {
   }
   @Monitor('gs.isInForeground')
   onForegroundSwitch() {
-    const playNext = () => {
-      PlayControl.playNext()
-    }
-    const pausePlay = () => {
-      if (NowPlayingStore.isPaused) {
-        PlayControl.resumeMusic()
-      } else {
-        PlayControl.pauseMusic()
-      }
-    }
+    // stylus
     try {
-
+      const playNext = () => {
+        PlayControl.playNext()
+      }
+      const pausePlay = () => {
+        if (NowPlayingStore.isPaused) {
+          PlayControl.resumeMusic()
+        } else {
+          PlayControl.pauseMusic()
+        }
+      }
       if (GlobalStore.pref.useStylusControl) {
         if (this.gs.isInForeground) {
             stylusInteraction.on("squeeze", () => {
@@ -65,6 +66,13 @@ struct Index {
       }
     } catch (e) {
       Logger.error(`Index`, `err on setting stylusInteraction: ${e.message}`)
+    }
+    // bgFlow
+    const flow = BgFlowController.getInstance()
+    if (this.gs.isInForeground) {
+      flow.resume()
+    } else {
+      flow.pause()
     }
   }
 
