@@ -67,7 +67,7 @@ export class ServiceInitUtils {
     pref.autoNavRightHandMode = Settings.get<boolean>(SCPref.autoNavRightHand) ?? false
     pref.useStylusControl = Settings.get<boolean>(SCPref.useStylusControl) ?? false
     pref.dynamicBackgroundStreaming = Settings.get<boolean>(SCPref.dynamicBackgroundStreaming) ?? false
-    pref.bgFlowColorStrat = Settings.get<number>(SCPref.bgFlowColorStrat) ?? 0
+    pref.bgFlowColorStrat = Settings.get<number>(SCPref.bgFlowColorStrat) ?? 1
   }
   static loadPresetPreferences() {
     if (Settings.get<boolean>(SCPref.useMissionContinue) === undefined) {
@@ -93,7 +93,7 @@ export class ServiceInitUtils {
       Settings.put(SCPref.dynamicBackgroundStreaming, false)
     }
     if (Settings.get<number>(SCPref.bgFlowColorStrat) === undefined) {
-      Settings.put(SCPref.bgFlowColorStrat, 0)
+      Settings.put(SCPref.bgFlowColorStrat, 1)
     }
   }
   static async reInit(newInstanceType: INSTANCE_TYPE, newUser: User, newPasswd: string, newRequestContext: Object) {
