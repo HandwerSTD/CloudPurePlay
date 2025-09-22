@@ -8,10 +8,11 @@ import {
   RealIP_INITIAL
 } from "@handwer/api_adapter"
 import { SCApp, Logger, ServiceInitUtils } from "@handwer/base"
-import { LightUpLinedContainer, OverrideLightUpStat } from "@handwer/ui_components"
+import { HDS_TITLE_CONFIG_STYLE, LightUpLinedContainer, OverrideLightUpStat } from "@handwer/ui_components"
 import { DialogHelper } from "@pura/harmony-dialog"
 import { generate_APIFinishWelcome_PageParams } from "./APIFinishWelcome"
-import { hdsEffect } from "@kit.UIDesignKit"
+import { hdsEffect, HdsNavDestination } from "@kit.UIDesignKit"
+import { promptAction } from "@kit.ArkUI"
 
 @ComponentV2
 export struct CloudAPI_Source {
@@ -33,10 +34,16 @@ export struct CloudAPI_Source {
       }
     } as Cloud_RequestContext
     CloudAPIConfigUtils.setRequestContext(context)
-    this.apiAddr = context.baseUrl
+    this.apiAddr = context.baseUrl ?? ''
   }
 
   loginInfoSetter(cookie: string) {
+    if (!this.apiAddr || this.apiAddr == '') {
+      promptAction.openToast({
+        message: '请填写合法的 API 地址后再试'
+      })
+      return
+    }
     if (this.apiAddr.endsWith('/')) {
       this.apiAddr = this.apiAddr.substring(0, this.apiAddr.length - 1)
     }
@@ -71,7 +78,7 @@ export struct CloudAPI_Source {
   }
 
   build() {
-    NavDestination() {
+    HdsNavDestination() {
       Column() {
         Row() {
           LightUpLinedContainer({ overrideLightUpStat: this.focusedInput === 1 ? OverrideLightUpStat.ALWAYS_ENABLED : OverrideLightUpStat.ALWAYS_DISABLED}) {
@@ -86,7 +93,14 @@ export struct CloudAPI_Source {
           }
         })
       }.padding({left: 12, right: 12})
-    }.title('CloudAPI')
+    }.titleBar({
+      content: {
+        title: {
+          mainTitle: 'CloudAPI'
+        }
+      },
+      style: HDS_TITLE_CONFIG_STYLE
+    })
     .backgroundColor(Color.Transparent)
     .onShown(() => {
       this.pageOpacity = 1
