@@ -11,7 +11,7 @@ import { SCApp, Logger, ServiceInitUtils } from "@handwer/base"
 import { HDS_TITLE_CONFIG_STYLE, LightUpLinedContainer, OverrideLightUpStat } from "@handwer/ui_components"
 import { DialogHelper } from "@pura/harmony-dialog"
 import { generate_APIFinishWelcome_PageParams } from "./APIFinishWelcome"
-import { hdsEffect, HdsNavDestination } from "@kit.UIDesignKit"
+import { hdsEffect, HdsNavDestination, HdsNavDestinationAttribute } from "@kit.UIDesignKit"
 import { promptAction } from "@kit.ArkUI"
 
 @ComponentV2
