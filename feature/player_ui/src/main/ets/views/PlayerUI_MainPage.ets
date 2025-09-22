@@ -66,6 +66,7 @@ const LIGHT_PLAYBACK_BTN_LG: LightUpConfig = {
   lightBloom: 0,
 }
 
+const BAR_OFFSET = 6
 @ComponentV2
 export struct MainPage {
   hdsSnackBar = new HdsSnackBar(this.getUIContext())
@@ -83,7 +84,8 @@ export struct MainPage {
 
   get swiperHeight(): Length | undefined {
     if (!this.showExplore) return '100%'
-    return 100
+    if (ResponsiveUtil.wLgXl()) return 100
+    return 80 + BAR_OFFSET
   }
   get bottomPlayControlShouldLift(): Length {
     // return !ResponsiveUtil.PuraXOuterCheck() && ResponsiveUtil.widthCheck(['sm, md']) ? 64 : 0
@@ -617,7 +619,8 @@ export struct MainPage {
       }.width('100%')
       .padding({left: ResponsiveUtil.chooseByWidth([12, 12, 24]),
         right: 24,
-        top: 8, bottom: 8})
+        top: 8, bottom: 8 + BAR_OFFSET})
+      .clip(false)
     }
   }
   @Builder AuthorInfo_Bar() {
@@ -632,7 +635,7 @@ export struct MainPage {
           fadeout: true
         })
         .fontColor(Color.White).fontWeight(FontWeight.Bold)
-        .fontSize(24)
+        .fontSize(20)
       Text(nps.currentArtists)
         .textAlign(TextAlign.Start)
         .textOverflow({
@@ -834,7 +837,6 @@ export struct MainPage {
       })
       .padding({
         top: this.gs.wd.top === 0 ? 12 : this.gs.wd.top,
-        // bottom: this.gs.wd.bottom
       })
       .onAreaChange(() => {
         this.onRightHandMode()

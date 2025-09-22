@@ -8,7 +8,7 @@ export struct ImageCover {
   build() {
     Stack() {
       NetImage({
-        imageUrlI: this.nowPlayingCoverImg
+        imageUrlI: this.nowPlayingCoverImg,
       })
         .aspectRatio(1)
         .layoutWeight(1)
@@ -20,7 +20,7 @@ export struct ImageCover {
           radius: 192
         })
         // .borderRadius(24)
-        .brightness(1.3)
+        .brightness(1.4)
         .saturate(3)
         .translate({y: 24})
         .transition(TransitionEffect.OPACITY.animation({duration: 1000}))
@@ -31,6 +31,7 @@ export struct ImageCover {
       Stack() {
         NetImage({
           imageUrlI: this.nowPlayingCoverImg,
+          customPlaceholder: $r('app.media.ff'),
           radius: 20
         })
           .borderRadius(20)
@@ -40,7 +41,7 @@ export struct ImageCover {
           .constraintSize({
             maxWidth: '100%'
           })
-          .shadow(ShadowStyle.OUTER_DEFAULT_MD)
+          .shadow(ShadowStyle.OUTER_FLOATING_SM)
           .animation({ duration: 500 })
       }.hitTestBehavior(HitTestMode.Transparent)
     }.alignContent(Alignment.TopStart)

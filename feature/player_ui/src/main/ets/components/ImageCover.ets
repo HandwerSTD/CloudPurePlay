@@ -269,7 +269,6 @@ export struct ImageCoverThumbnail {
       })
         .aspectRatio(1)
         .layoutWeight(nps.currentSong.id === "0" ? undefined : 1)
-        .margin(nps.isPaused ? ResponsiveUtil.chooseByWidth(['10%', '7%']) : 12)
         .constraintSize({
           maxWidth: '100%'
         })
@@ -306,7 +305,6 @@ export struct ImageCoverThumbnail {
         })
         .borderRadius(20)
         .shadow(ShadowStyle.OUTER_DEFAULT_MD)
-        .margin(nps.isPaused ? ResponsiveUtil.chooseByWidth(['10%', '7%']) : 12)
         .animation({ curve:
         ResponsiveUtil.chooseByWidth(
           [curves.springMotion(0.8,0.4), curves.springMotion(0.6, 0.5)])
@@ -316,5 +314,6 @@ export struct ImageCoverThumbnail {
         }).buildEffect())
         .borderRadius(this.radius)
     }
+    .margin({left: 12, right: 12, top: 4, bottom: 6})
   }
 }
