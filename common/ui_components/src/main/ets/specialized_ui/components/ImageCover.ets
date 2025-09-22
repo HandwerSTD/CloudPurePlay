@@ -1,50 +1,50 @@
+import { NetImage } from "../../components/NetImage"
+import { hdsEffect } from '@kit.UIDesignKit'
+
 @ComponentV2
 export struct ImageCover {
   @Param @Require nowPlayingCoverImg: ResourceStr
 
   build() {
     Stack() {
-      Image(this.nowPlayingCoverImg)
-        .draggable(false)
-        .ImageLightShadowFaker()
-        .opacity(0.8)
+      NetImage({
+        imageUrlI: this.nowPlayingCoverImg
+      })
+        .aspectRatio(1)
+        .layoutWeight(1)
+        .constraintSize({
+          maxWidth: '100%'
+        })
+        // .scale({x: 0.95, y: 0.95})
+        .foregroundEffect({
+          radius: 192
+        })
+        // .borderRadius(24)
         .brightness(1.3)
+        .saturate(3)
+        .translate({y: 24})
+        .transition(TransitionEffect.OPACITY.animation({duration: 1000}))
+        .draggable(false)
+        .opacity(0.8)
         .animation({ duration: 500 })
 
       Stack() {
-        Image(this.nowPlayingCoverImg)
+        NetImage({
+          imageUrlI: this.nowPlayingCoverImg,
+          radius: 20
+        })
+          .borderRadius(20)
           .draggable(false)
-          .ImageFaker()
+          .aspectRatio(1)
+          .layoutWeight(1)
+          .constraintSize({
+            maxWidth: '100%'
+          })
+          .shadow(ShadowStyle.OUTER_DEFAULT_MD)
           .animation({ duration: 500 })
       }.hitTestBehavior(HitTestMode.Transparent)
     }.alignContent(Alignment.TopStart)
   }
-}
-@Extend(Image) function ImageLightShadowFaker() {
-  .aspectRatio(1)
-  .layoutWeight(1)
-  .constraintSize({
-    maxWidth: '100%'
-  })
-  // .scale({x: 0.95, y: 0.95})
-  .foregroundEffect({
-    radius: 192
-  })
-  // .borderRadius(24)
-  .brightness(1.3)
-  .saturate(3)
-  .translate({y: 24})
-  .transition(TransitionEffect.OPACITY.animation({duration: 1000}))
-}
-
-@Extend(Image) function ImageFaker() {
-  .aspectRatio(1)
-  .layoutWeight(1)
-  .constraintSize({
-    maxWidth: '100%'
-  })
-  .borderRadius(20)
-  .shadow(ShadowStyle.OUTER_DEFAULT_MD)
 }
 
 @ComponentV2
@@ -53,11 +53,49 @@ export struct ImageCoverThumbnail {
   @Param useCoverShadow: boolean = false
   @Param radius: number = 10
 
-  build() {
-    if (this.useCoverShadow) {
+  @Param name?: ResourceStr = undefined
 
+  @Builder img() {
+    NetImage({
+      imageUrlI: this.nowPlayingCoverImg,
+      radius: this.radius,
+      lightedUp: hdsEffect.PointLightIlluminatedType.BORDER
+    })
+      .borderRadius(this.radius)
+      .draggable(false)
+      .shadow({
+        radius: 2,
+        color: '#11000000'
+      })
+      .aspectRatio(1)
+      .layoutWeight(1)
+      .constraintSize({
+        maxWidth: '100%'
+      })
+      .clip(true)
+      .shadow(ShadowStyle.OUTER_DEFAULT_MD)
+      .borderRadius(this.radius)
+      .clickEffect({
+        level: ClickEffectLevel.HEAVY
+      })
+  }
+
+  @Builder nameText() {
+    if (this.name) {
+      Text(this.name)
+        .margin({top: 12}).maxLines(1).textOverflow({overflow: TextOverflow.Ellipsis})
+        .wordBreak(WordBreak.BREAK_ALL)
+        .fontSize(12).fontWeight(FontWeight.Bold)
+        .fontColor($r('sys.color.font_on_primary'))
+    }
+  }
+
+  @Builder IMG() {
+    if (this.useCoverShadow) {
       Stack({alignContent: Alignment.Center}) {
-        Image(this.nowPlayingCoverImg)
+        NetImage({
+          imageUrlI: this.nowPlayingCoverImg
+        })
           .aspectRatio(1)
           .layoutWeight(1)
           .constraintSize({
@@ -72,26 +110,21 @@ export struct ImageCoverThumbnail {
           .brightness(1.3)
           .saturate(3)
           .opacity(0.7)
-        Image(this.nowPlayingCoverImg)
-          .borderRadius(this.radius)
-          .draggable(false)
-          .shadow({
-            radius: 2,
-            color: '#11000000'
-          })
-          .ImageFaker()
-          .borderRadius(this.radius)
+        this.img()
       }
     } else {
-      Image(this.nowPlayingCoverImg)
-        .borderRadius(this.radius)
-        .draggable(false)
-        .shadow({
-          radius: 2,
-          color: '#11000000'
-        })
-        .ImageFaker()
-        .borderRadius(this.radius)
+      this.img()
+    }
+  }
+
+  build() {
+    if (this.name) {
+      Column() {
+        this.IMG()
+        this.nameText()
+      }
+    } else {
+      this.IMG()
     }
   }
 }

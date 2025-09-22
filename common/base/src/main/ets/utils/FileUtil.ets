@@ -21,6 +21,7 @@ import { Context } from '@kit.AbilityKit';
 import { aci, cachedImage, pci } from '@webabcd/harmony-cachedimage';
 import { FileSaverHelper } from '@ohos_lib/file-saver';
 import { CacheUtil, LRUCacheUtil } from '@pura/harmony-utils';
+import { ImageKnife } from '@ohos/imageknifepro';
 
 const TAG: string = '[FileUtils]';
 
@@ -161,33 +162,20 @@ export class FileUtils {
 
 export class ImgCache {
   static async init(context: Context) {
-    // TODO: 缓存库有问题
-    // await cachedImage.init({
-    //   // 用于图片文件存放的沙箱目录
-    //   cacheDirectory: context.getApplicationContext().cacheDir + "/ImageCache",
-    //   // 图片在本地存储中的缓存时间，单位：秒
-    //   // 每次加载图片都会更新其访问时间，当访问时间超过了缓存时间，则会删除
-    //   cacheSeconds: 86400,
-    //   // 是否启用日志记录
-    //   enableLog: false
-    // })
+    return ImageKnife.getInstance().initFileCache(context)
   }
   static async cache(url: string) {
-    // return aci(url)
-    return url
+    return ImageKnife.getInstance().preloadCache(url)
   }
   static proxy(url: string) {
-    // return pci(url)
     return url
   }
-  static async download(url: string) {
-    return FileSaverHelper.getInstance(getContext()).downloadFileToSandBox(url)
-      .then((res) => {
-        if (res.success) {
-          if (res.filePath?.startsWith('file://')) return res.filePath
-          else return fileUri.getUriFromPath(res.filePath)
-        }
-        else return url
+  static async download(url: string): Promise<string> {
+    // return FileSaverHelper.getInstance(getContext()).downloadFileToSandBox(url)
+    return ImgCache.cache(url)
+      .then((res): string => {
+        if (res.startsWith('file://')) return res
+        else return fileUri.getUriFromPath(res)
       })
   }
 }

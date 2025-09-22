@@ -5,6 +5,8 @@ import { hdsEffect } from "@kit.UIDesignKit"
 import { LengthMetrics } from "@kit.ArkUI"
 import { Album, PlayList, Song } from "@handwer/api_adapter"
 import { InListSongItem } from "./InListSongItem"
+import { NetImage } from "../../components/NetImage"
+import { ImageCoverThumbnail } from "./ImageCover"
 
 export interface CommonCoverItem {
   picUrl: string
@@ -61,22 +63,11 @@ export struct CommonSongListCard {
   @Builder CoverItem(it: CommonCoverItem) {
     Column() {
       Row() {
-        Image(it.picUrl).borderRadius(12)
-          .draggable(false)
-          .shadow(ShadowStyle.OUTER_DEFAULT_XS)
-          .visualEffect(new hdsEffect.HdsEffectBuilder().pointLight({
-            illuminatedType: hdsEffect.PointLightIlluminatedType.BORDER
-          }).buildEffect())
-          .clickEffect({
-            level: ClickEffectLevel.HEAVY
-          })
-          .layoutWeight(1)
-          .aspectRatio(1)
+        ImageCoverThumbnail({
+          nowPlayingCoverImg: it.picUrl,
+          name: it.name
+        })
       }
-      Text(it.name)
-        .margin(12).maxLines(1).textOverflow({overflow: TextOverflow.Ellipsis})
-        .fontSize(12).fontWeight(FontWeight.Bold)
-        .fontColor($r('sys.color.font_on_primary'))
     }.width(ResponsiveUtil.chooseByWidth([120, 150]))
     .transition(TransitionEffect.OPACITY.animation({duration: 300}))
     .onClick(() => {

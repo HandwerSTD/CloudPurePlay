@@ -1,5 +1,5 @@
 import { Album, PlayList } from "@handwer/api_adapter"
-import { LightUpContainer } from "@handwer/ui_components"
+import { ImageCoverThumbnail, LightUpContainer } from "@handwer/ui_components"
 import { hdsEffect } from "@kit.UIDesignKit"
 import { LengthMetrics } from "@kit.ArkUI"
 import { ResponsiveUtil, UserStore } from "@handwer/base"
@@ -16,22 +16,10 @@ export struct MusicLibrarySearchView {
   @Local searchAlbums: Album[] = []
 
   @Builder PlayList_SingleItem(list: PlayList, index: number) {
-    Column() {
-      Image(list.coverImgUrl).borderRadius(12)
-      // .margin({left:12, right: 12, top: 12})
-        .draggable(false)
-        .shadow(ShadowStyle.OUTER_DEFAULT_XS)
-        .visualEffect(new hdsEffect.HdsEffectBuilder().pointLight({
-          illuminatedType: hdsEffect.PointLightIlluminatedType.BORDER
-        }).buildEffect())
-        .clickEffect({
-          level: ClickEffectLevel.HEAVY
-        })
-      Text(list.name)
-        .margin(12).maxLines(1).textOverflow({overflow: TextOverflow.Ellipsis})
-        .fontSize(12).fontWeight(FontWeight.Bold)
-        .fontColor($r('sys.color.font_on_primary'))
-    }
+    ImageCoverThumbnail({
+      nowPlayingCoverImg: list.coverImgUrl,
+      name: list.name
+    })
     .onClick(() => {
       this.onPlayListItemClicked(index)
     })
@@ -64,22 +52,10 @@ export struct MusicLibrarySearchView {
     }
   }
   @Builder Album_SingleItem(list: Album, index: number) {
-    Column() {
-      Image(list.picUrl).borderRadius(12)
-      // .margin({left:12, right: 12, top: 12})
-        .draggable(false)
-        .shadow(ShadowStyle.OUTER_DEFAULT_XS)
-        .visualEffect(new hdsEffect.HdsEffectBuilder().pointLight({
-          illuminatedType: hdsEffect.PointLightIlluminatedType.BORDER
-        }).buildEffect())
-        .clickEffect({
-          level: ClickEffectLevel.HEAVY
-        })
-      Text(list.name)
-        .margin(12).maxLines(1).textOverflow({overflow: TextOverflow.Ellipsis})
-        .fontSize(12).fontWeight(FontWeight.Bold)
-        .fontColor($r('sys.color.font_on_primary'))
-    }
+    ImageCoverThumbnail({
+      nowPlayingCoverImg: list.picUrl,
+      name: list.name
+    })
     .onClick(() => {
       this.onPlayListItemClicked(index)
     })

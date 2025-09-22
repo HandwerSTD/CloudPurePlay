@@ -3,7 +3,7 @@ import { hdsEffect } from "@kit.UIDesignKit"
 import { curves } from "@kit.ArkUI"
 import { ClickUtil } from "@pura/harmony-utils"
 import { AlbumCoverColorUtils } from "../utils/AlbumCoverColorUtils"
-import { BgFlowController } from "@handwer/ui_components"
+import { BgFlowController, NetImage } from "@handwer/ui_components"
 
 const nps = NowPlayingStore
 
@@ -130,123 +130,131 @@ export struct ImageCover {
   @Monitor('nowPlayingCoverImg')
   onPlayingCoverChanged() {
     // 如果已有正在切换的任务，进入快速切换模式一段时间，不再播放动画
-    if (this.coverFakerTransitionHandler || !this.useCoverFaker) {
-      clearTimeout(this.coverFakerTransitionHandler)
-      this.coverFakerTransitionHandler = undefined
-      this.getUIContext().animateTo({
-        duration: 0
-      }, () => {
-        this.coverFakerVisibility = Visibility.Visible
-        this.nowPlayingCoverFaker = this.nowPlayingCoverImg
-        this.nowPlayingCoverFakerUnder = this.nowPlayingCoverImg
-      })
-      this.useCoverFaker = false
-      ClickUtil.debounce(() => {
-        this.useCoverFaker = true
-      }, 2000, 'coverFakerDebounce')
-      return
-    }
+    // if (this.coverFakerTransitionHandler || !this.useCoverFaker) {
+    //   clearTimeout(this.coverFakerTransitionHandler)
+    //   this.coverFakerTransitionHandler = undefined
+    //   this.getUIContext().animateTo({
+    //     duration: 0
+    //   }, () => {
+    //     this.coverFakerVisibility = Visibility.Visible
+    //     this.nowPlayingCoverFaker = this.nowPlayingCoverImg
+    //     this.nowPlayingCoverFakerUnder = this.nowPlayingCoverImg
+    //   })
+    //   this.useCoverFaker = false
+    //   ClickUtil.debounce(() => {
+    //     this.useCoverFaker = true
+    //   }, 2000, 'coverFakerDebounce')
+    //   return
+    // }
     // 在真实封面发生切换时，先让下封面显示新真实封面
     this.nowPlayingCoverFakerUnder = this.nowPlayingCoverImg
     // 此时上封面还是旧真实封面，让其发生透明过渡；关闭光效
     this.getUIContext().animateTo({
-      duration: 1000
+      duration: 1000,
+      onFinish: () => {
+        // 延迟一秒，待动画播完，切换（此时不可见的）上封面为真实封面，再切换为可见
+        this.nowPlayingCoverFaker = this.nowPlayingCoverImg
+        this.coverFakerVisibility = Visibility.Visible
+        this.coverFakerTransitionHandler = undefined
+        this.coverAmbLightOpacity = 0.9
+      }
     }, () => {
       this.coverFakerVisibility = Visibility.None
       this.coverAmbLightOpacity = 0
     })
-    // 延迟一秒，待动画播完，切换（此时不可见的）上封面为真实封面，再切换为可见
-    this.coverFakerTransitionHandler = setTimeout(() => {
-      this.nowPlayingCoverFaker = this.nowPlayingCoverImg
-      this.coverFakerVisibility = Visibility.Visible
-      this.coverFakerTransitionHandler = undefined
-      this.coverAmbLightOpacity = 0.9
-    }, 1000)
+  }
+
+  @Builder Shadow() {
+    NetImage({
+      imageUrlI: ImgCache.proxy(this.nowPlayingCoverFaker as string),
+    })
+      .onAreaChange((_, area) => {
+        this.coverArea = area
+        this.relocatePointLight()
+      }).aspectRatio(1)
+      .layoutWeight(1)
+      .foregroundEffect({
+        radius: 192
+      })
+      .brightness(1.3)
+      .saturate(3)
+      .translate({y: 24})
+      .transition(TransitionEffect.OPACITY.animation({duration: 1000}))
+      .opacity(this.coverAmbLightOpacity)
+      .animation({duration: 1000, curve: Curve.Ease})
+      .brightness(this.onCoverAmbLightUp ? 1.6 : 1.3)
+      .animation({duration: 500})
+  }
+
+  @Builder UnderImg() {
+    NetImage({
+      imageUrlI: ImgCache.proxy(this.nowPlayingCoverFakerUnder as string),
+      customPlaceholder: $r('app.media.ff'),
+      radius: 20,
+      loadCompleteCallback: {
+        onComplete: () => {
+          setTimeout(async () => {
+            const colors = await AlbumCoverColorUtils.getCoverColor()
+            BgFlowController.getInstance().changeColor(colors, NowPlayingStore.currentSong.id, this.getUIContext())
+          }, 1000)
+        }
+      },
+      lightedUp: hdsEffect.PointLightIlluminatedType.BORDER_CONTENT
+    })
+      .id('coverFakerUnder')
+      .draggable(false)
+      .aspectRatio(1)
+      .constraintSize({
+        maxWidth: '100%'
+      })
+      .borderRadius(20)
+      .shadow(ShadowStyle.OUTER_DEFAULT_MD)
+      .margin(nps.isPaused ? ResponsiveUtil.chooseByWidth(['10%', '7%']) : 12)
+      .animation({ curve:
+      ResponsiveUtil.chooseByWidth(
+        [curves.springMotion(0.8,0.4), curves.springMotion(0.6, 0.5)])
+      })
+      // .opacity(this.coverFakerVisibility === Visibility.Visible ? 1 : 0 )
+      // .animation(this.useCoverFaker ? {duration: 1000} : undefined)
+  }
+  @Builder TopImg() {
+    NetImage({
+      imageUrlI: ImgCache.proxy(this.nowPlayingCoverFaker as string),
+      customPlaceholder: $r('app.media.ff'),
+      lightedUp: hdsEffect.PointLightIlluminatedType.BORDER_CONTENT,
+      radius: 20
+    })
+      .draggable(false)
+      .aspectRatio(1)
+      .constraintSize({
+        maxWidth: '100%'
+      })
+      .borderRadius(20)
+      .shadow(ShadowStyle.OUTER_DEFAULT_MD)
+      .margin(nps.isPaused ? ResponsiveUtil.chooseByWidth(['10%', '7%']) : 12)
+      .animation({ curve:
+      ResponsiveUtil.chooseByWidth(
+        [curves.springMotion(0.8,0.4), curves.springMotion(0.6, 0.5)])
+      })
+      .opacity(this.coverFakerVisibility === Visibility.Visible ? 1 : 0 )
+      .animation(this.useCoverFaker ? {duration: 1000} : undefined)
   }
 
   build() {
     Stack() {
       this.PointLight()
-
-      Image(ImgCache.proxy(this.nowPlayingCoverFaker as string))
-        .draggable(false)
-        .onAreaChange((_, area) => {
-          this.coverArea = area
-          this.relocatePointLight()
-        })
-        .ImageLightShadowFaker()
-        .opacity(this.coverAmbLightOpacity)
-        .animation({duration: 1000, curve: Curve.Ease})
-        .brightness(this.onCoverAmbLightUp ? 1.6 : 1.3)
-        .animation({duration: 500})
-
-
-      Stack() {
-        Image(ImgCache.proxy(this.nowPlayingCoverFakerUnder as string))
-          .draggable(false)
-          .id('coverFakerUnder')
-          .ImageFaker(() => {
-            this.handleLike()
-          })
-          .onComplete(() => {
-            ClickUtil.debounce(async () => {
-              const colors = await AlbumCoverColorUtils.getCoverColor()
-              Logger.debug(`colors = ${JSON.stringify(colors)}`)
-              BgFlowController.getInstance().changeColor(colors, NowPlayingStore.currentSong.id, this.getUIContext())
-            }, 1000)
-          })
-        Image(ImgCache.proxy(this.nowPlayingCoverFaker as string))
-          .draggable(false)
-          .ImageFaker(() => {
-            this.handleLike()
-          }, false)
-          .opacity(this.coverFakerVisibility === Visibility.Visible ? 1 : 0 )
-          .animation(this.useCoverFaker ? {duration: 1000} : undefined)
-      }.hitTestBehavior(HitTestMode.Transparent)
+      this.Shadow()
+      this.UnderImg()
+      this.TopImg()
     }.alignContent(Alignment.TopStart)
+    .gesture(
+      TapGesture({
+        count: 2,
+      }).onAction(() => {
+        this.handleLike()
+      })
+    )
   }
-}
-
-@Extend(Image) function ImageLightShadowFaker() {
-  .aspectRatio(1)
-  .layoutWeight(nps.currentSong.id === "0" ? undefined : 1)
-  .constraintSize({
-    maxWidth: '100%'
-  })
-  // .scale({x: 0.95, y: 0.95})
-  .foregroundEffect({
-    radius: 192
-  })
-  // .borderRadius(24)
-  .brightness(1.3)
-  .saturate(3)
-  .translate({y: 24})
-  .transition(TransitionEffect.OPACITY.animation({duration: 1000}))
-}
-
-@Extend(Image) function ImageFaker(handleLike: () => void, useShadow: boolean = true) {
-  .aspectRatio(1)
-  .layoutWeight(nps.currentSong.id === "0" ? undefined : 1)
-  .constraintSize({
-    maxWidth: '100%'
-  })
-  .borderRadius(20)
-  .shadow(useShadow ? ShadowStyle.OUTER_DEFAULT_MD : undefined)
-  .margin(nps.isPaused ? ResponsiveUtil.chooseByWidth(['10%', '7%']) : 12)
-  .animation({ curve:
-  ResponsiveUtil.chooseByWidth(
-    [curves.springMotion(0.8,0.4), curves.springMotion(0.6, 0.5)])
-  })
-  .visualEffect(new hdsEffect.HdsEffectBuilder().pointLight({
-    illuminatedType: hdsEffect.PointLightIlluminatedType.BORDER_CONTENT
-  }).buildEffect())
-  .gesture(
-    TapGesture({
-      count: 2,
-    }).onAction(() => {
-      handleLike()
-    })
-  )
 }
 
 @ComponentV2
@@ -256,7 +264,9 @@ export struct ImageCoverThumbnail {
 
   build() {
     Stack({alignContent: Alignment.Center}) {
-      Image(ImgCache.proxy(this.nowPlayingCoverImg))
+      NetImage({
+        imageUrlI: this.nowPlayingCoverImg
+      })
         .aspectRatio(1)
         .layoutWeight(nps.currentSong.id === "0" ? undefined : 1)
         .margin(nps.isPaused ? ResponsiveUtil.chooseByWidth(['10%', '7%']) : 12)
@@ -267,12 +277,22 @@ export struct ImageCoverThumbnail {
         .foregroundEffect({
           radius: 64
         })
-        // .scale({x: 1.2, y: 1})
-        // .translate({y: 10})
         .brightness(1.3)
         .saturate(3)
         .opacity(0.7)
-      Image(this.nowPlayingCoverImg)
+      NetImage({
+        imageUrlI: this.nowPlayingCoverImg,
+        customPlaceholder: $r('app.media.ff'),
+        radius: this.radius,
+        loadCompleteCallback: {
+          onComplete: async () => {
+            setTimeout(async () => {
+              const colors = await AlbumCoverColorUtils.getCoverColor('coverUnder_Thumbnail')
+              BgFlowController.getInstance().changeColor(colors, NowPlayingStore.currentSong.id, this.getUIContext())
+            }, 1000)
+          }
+        }
+      })
         .id('coverUnder_Thumbnail')
         .borderRadius(this.radius)
         .draggable(false)
@@ -280,16 +300,21 @@ export struct ImageCoverThumbnail {
           radius: 2,
           color: '#11000000'
         })
-        .ImageFaker(() => {
+        .aspectRatio(1)
+        .constraintSize({
+          maxWidth: '100%'
         })
+        .borderRadius(20)
+        .shadow(ShadowStyle.OUTER_DEFAULT_MD)
+        .margin(nps.isPaused ? ResponsiveUtil.chooseByWidth(['10%', '7%']) : 12)
+        .animation({ curve:
+        ResponsiveUtil.chooseByWidth(
+          [curves.springMotion(0.8,0.4), curves.springMotion(0.6, 0.5)])
+        })
+        .visualEffect(new hdsEffect.HdsEffectBuilder().pointLight({
+          illuminatedType: hdsEffect.PointLightIlluminatedType.BORDER_CONTENT
+        }).buildEffect())
         .borderRadius(this.radius)
-        .onComplete(() => {
-          ClickUtil.debounce(async () => {
-            const colors = await AlbumCoverColorUtils.getCoverColor('coverUnder_Thumbnail')
-            // Logger.debug(`colors = ${JSON.stringify(colors)}`)
-            BgFlowController.getInstance().changeColor(colors, NowPlayingStore.currentSong.id, this.getUIContext())
-          }, 500)
-        })
     }
   }
 }

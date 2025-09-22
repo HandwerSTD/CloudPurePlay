@@ -20,6 +20,7 @@ import { APIConfigUtils } from '@handwer/api_adapter';
 import { SnackBarUtils } from '@handwer/ui_components';
 import { HdsSnackBar } from '@kit.UIDesignKit';
 import { cachedImage } from '@webabcd/harmony-cachedimage';
+import { ImageKnife } from '@ohos/imageknifepro';
 
 const DOMAIN = 0xA0FF;
 const TAG = '[MainAbility]'

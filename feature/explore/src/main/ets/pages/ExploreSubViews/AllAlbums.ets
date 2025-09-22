@@ -3,7 +3,8 @@ import { ResponsiveUtil, SCApp } from "@handwer/base"
 import {
   HDS_TITLE_CONFIG_STYLE, LightUpContainer,
   generatePageParams_AlbumDetail,
-  Album_PopReturn} from "@handwer/ui_components"
+  Album_PopReturn,
+  ImageCoverThumbnail} from "@handwer/ui_components"
 import { hdsEffect, HdsNavDestination, HdsNavDestinationAttribute } from "@kit.UIDesignKit"
 import { LazyData } from "@pie/lazy-data"
 import { LengthMetrics } from "@kit.ArkUI"
@@ -21,31 +22,10 @@ export struct AllAlbums {
 
   @Builder Album_SingleItem(list: Album, index: number) {
     Column() {
-      Stack({alignContent: Alignment.BottomEnd}) {
-        Image(list.picUrl).borderRadius(12)
-        // .margin({left:12, right: 12, top: 12})
-          .draggable(false)
-          .shadow(ShadowStyle.OUTER_DEFAULT_XS)
-          .visualEffect(new hdsEffect.HdsEffectBuilder().pointLight({
-            illuminatedType: hdsEffect.PointLightIlluminatedType.BORDER
-          }).buildEffect())
-          .clickEffect({
-            level: ClickEffectLevel.HEAVY
-          })
-        // if (this.modifyPlaylist) {
-        //   SymbolGlyph(this.isPlaylistCreated(list) ? $r('sys.symbol.xmark') : $r('sys.symbol.heart_square_stack_fill'))
-        //     .margin({right: 12, bottom: 12})
-        //     .padding(4)
-        //     .fontColor([$r('sys.color.font_primary')])
-        //     .backgroundBlurStyle(BlurStyle.COMPONENT_THICK)
-        //     .borderRadius(24)
-        //     .transition(TransitionEffect.translate({x:-4}).animation({curve: curves.springMotion()}).combine(TransitionEffect.OPACITY.animation({duration: 300})))
-        // }
-      }
-      Text(list.name)
-        .margin(12).maxLines(1).textOverflow({overflow: TextOverflow.Ellipsis})
-        .fontSize(12).fontWeight(FontWeight.Bold)
-        .fontColor($r('sys.color.font_on_primary'))
+      ImageCoverThumbnail({
+        nowPlayingCoverImg: list.picUrl,
+        name: list.name
+      })
     }
     .onClick(() => {
       this.onPushAlbum(list)

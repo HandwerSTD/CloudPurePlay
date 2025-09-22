@@ -2,6 +2,7 @@ import { GlobalStore } from "@handwer/base";
 import { hdsEffect } from "@kit.UIDesignKit"
 import common from "@ohos.app.ability.common";
 import { ColorMetrics } from "@kit.ArkUI";
+import { ClickUtil } from "@pura/harmony-utils";
 
 const LightColor: ResourceColor[] = ['#BD74DB', '#9CB6DD', '#C2A87B', '#7C87D2'];
 const DarkColor: ResourceColor[] = [Color.Black, Color.Pink, Color.Blue]
@@ -41,6 +42,7 @@ export class BgFlowController {
     this.switch = this.nextSwitch
   }
   changeColor(colors: ResourceColor[], id: string, ctx: UIContext) {
+
     if (GlobalStore.pref.bgFlowColorStrat === 0) {
       this.changeColorToDefault(ctx)
     } else if (this.flowColorSourceId !== id) {
@@ -48,6 +50,9 @@ export class BgFlowController {
       this.flowColorSourceId = id
       this.setStatusBarColor(colors[0] as string, ctx)
     }
+
+    ClickUtil.throttle(() => {
+    })
   }
   private _changeColor(colors: ResourceColor[]) {
     this.onDefaultColor = false;

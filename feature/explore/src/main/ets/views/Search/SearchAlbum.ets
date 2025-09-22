@@ -8,7 +8,8 @@ import {
   generatePageParams_AlbumDetail,
   LightUpContainer,
   LightUpRoundedButton,
-  LightUpDefaultConfig } from "@handwer/ui_components"
+  LightUpDefaultConfig,
+  ImageCoverThumbnail} from "@handwer/ui_components"
 import { hdsEffect } from "@kit.UIDesignKit"
 import { LazyData } from "@pie/lazy-data"
 import { LengthMetrics } from "@kit.ArkUI"
@@ -25,23 +26,10 @@ export struct SearchAlbumView {
   allAlbums: Album[] = []
 
   @Builder Album_SingleItem(list: Album, index: number) {
-    Column() {
-      Stack({alignContent: Alignment.BottomEnd}) {
-        Image(list.picUrl).borderRadius(12)
-          .draggable(false)
-          .shadow(ShadowStyle.OUTER_DEFAULT_XS)
-          .visualEffect(new hdsEffect.HdsEffectBuilder().pointLight({
-            illuminatedType: hdsEffect.PointLightIlluminatedType.BORDER
-          }).buildEffect())
-          .clickEffect({
-            level: ClickEffectLevel.HEAVY
-          })
-      }
-      Text(list.name)
-        .margin(12).maxLines(1).textOverflow({overflow: TextOverflow.Ellipsis})
-        .fontSize(12).fontWeight(FontWeight.Bold)
-        .fontColor($r('sys.color.font_on_primary'))
-    }
+    ImageCoverThumbnail({
+      nowPlayingCoverImg: list.picUrl,
+      name: list.name
+    })
     .onClick(() => {
       this.onPushAlbum(list)
     })

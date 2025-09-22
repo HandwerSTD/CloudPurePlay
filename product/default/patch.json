@@ -1,8 +1,8 @@
 {
   "app": {
     "bundleName": "top.handwer.cloudpureplay",
-    "patchVersionCode": 2001690,
-    "versionCode": 1010200
+    "patchVersionCode": 2001691,
+    "versionCode": 1020001
   },
   "module": {
     "name": "default",

@@ -10,7 +10,8 @@ import { HDS_TITLE_CONFIG_STYLE, LightUpContainer, LightUpRoundedButton, LightUp
   Album_PopReturn,
   generatePageParams_AlbumDetail,
   generatePageParams_PlayListDetail,
-  PlaylistDetail_PopReturn} from "@handwer/ui_components"
+  PlaylistDetail_PopReturn,
+  ImageCoverThumbnail} from "@handwer/ui_components"
 import { hdsEffect, HdsNavigation, HdsNavigationAttribute, HdsNavigationTitleMode,
   HdsSnackBar,
   IconStyleMode } from "@kit.UIDesignKit"
@@ -51,19 +52,13 @@ export struct MainPage {
   @Builder PlayList_SingleItem(list: PlayList, index: number) {
     Column() {
       Stack({alignContent: Alignment.BottomEnd}) {
-        Image(list.coverImgUrl).borderRadius(12)
-        // .margin({left:12, right: 12, top: 12})
-          .draggable(false)
-          .shadow(ShadowStyle.OUTER_DEFAULT_XS)
-          .visualEffect(new hdsEffect.HdsEffectBuilder().pointLight({
-            illuminatedType: hdsEffect.PointLightIlluminatedType.BORDER
-          }).buildEffect())
-          .clickEffect({
-            level: ClickEffectLevel.HEAVY
-          })
+        ImageCoverThumbnail({
+          nowPlayingCoverImg: list.coverImgUrl,
+          name: list.name
+        })
         if (this.modifyPlaylist) {
-          SymbolGlyph(this.isPlaylistCreated(list) ? $r('sys.symbol.xmark') : $r('sys.symbol.heart_square_stack_fill'))
-            .margin({right: 12, bottom: 12})
+          SymbolGlyph(this.isPlaylistCreated(list) ? $r('sys.symbol.trash') : $r('sys.symbol.xmark'))
+            .margin({right: 12, bottom: 12+20})
             .padding(4)
             .fontColor([$r('sys.color.font_primary')])
             .backgroundBlurStyle(BlurStyle.COMPONENT_THICK)
@@ -71,11 +66,6 @@ export struct MainPage {
             .transition(TransitionEffect.translate({x:-4}).animation({curve: curves.springMotion()}).combine(TransitionEffect.OPACITY.animation({duration: 300})))
         }
       }
-        Text(list.name)
-          .margin({top: 12}).maxLines(1).textOverflow({overflow: TextOverflow.Ellipsis})
-          .wordBreak(WordBreak.BREAK_ALL)
-          .fontSize(12).fontWeight(FontWeight.Bold)
-          .fontColor($r('sys.color.font_on_primary'))
     }
     .onClick(() => {
       if (this.modifyPlaylist) {
@@ -127,32 +117,10 @@ export struct MainPage {
 
   @Builder Album_SingleItem(list: Album, index: number) {
     Column() {
-      Stack({alignContent: Alignment.BottomEnd}) {
-        Image(list.picUrl).borderRadius(12)
-        // .margin({left:12, right: 12, top: 12})
-          .draggable(false)
-          .shadow(ShadowStyle.OUTER_DEFAULT_XS)
-          .visualEffect(new hdsEffect.HdsEffectBuilder().pointLight({
-            illuminatedType: hdsEffect.PointLightIlluminatedType.BORDER
-          }).buildEffect())
-          .clickEffect({
-            level: ClickEffectLevel.HEAVY
-          })
-        // if (this.modifyPlaylist) {
-        //   SymbolGlyph(this.isPlaylistCreated(list) ? $r('sys.symbol.xmark') : $r('sys.symbol.heart_square_stack_fill'))
-        //     .margin({right: 12, bottom: 12})
-        //     .padding(4)
-        //     .fontColor([$r('sys.color.font_primary')])
-        //     .backgroundBlurStyle(BlurStyle.COMPONENT_THICK)
-        //     .borderRadius(24)
-        //     .transition(TransitionEffect.translate({x:-4}).animation({curve: curves.springMotion()}).combine(TransitionEffect.OPACITY.animation({duration: 300})))
-        // }
-      }
-      Text(list.name)
-        .margin({top: 12}).maxLines(1).textOverflow({overflow: TextOverflow.Ellipsis})
-        .wordBreak(WordBreak.BREAK_ALL)
-        .fontSize(12).fontWeight(FontWeight.Bold)
-        .fontColor($r('sys.color.font_on_primary'))
+      ImageCoverThumbnail({
+        nowPlayingCoverImg: list.picUrl,
+        name: list.name
+      })
     }
     .onClick(() => {
       if (this.modifyPlaylist) {
