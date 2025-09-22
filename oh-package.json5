@@ -10,7 +10,8 @@
     "@pie/lazy-data": "^1.0.0",
     "@hw-agconnect/petal-aegis": "^1.4.11-300",
     "@webabcd/harmony-cachedimage": "^1.0.1",
-    "@ohos_lib/file-saver": "^1.0.20"
+    "@ohos_lib/file-saver": "^1.0.20",
+    "@ohos/imageknifepro": "^1.0.8"
   },
   "devDependencies": {
     "@ohos/hypium": "1.0.21",
