@@ -277,7 +277,6 @@ export struct PlaylistDetail {
 
   @Builder TopArea() {
     Column({space: 24}) {
-      // TODO: 这里会闪一下
       SwappableCoverImage({
         oldImage: this.coverImg,
         newImage: this.newCoverImg
