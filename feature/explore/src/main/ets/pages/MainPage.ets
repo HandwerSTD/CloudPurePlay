@@ -1,6 +1,6 @@
-import { GlobalStore, ResponsiveUtil, SCApp, SCPref, Settings } from "@handwer/base"
-import { HdsActionBar, ActionBarButton, ActionBarStyle } from "@kit.UIDesignKit"
-import { ColorMetrics, LengthMetrics, SymbolGlyphModifier } from "@kit.ArkUI"
+import { GlobalStore, Logger, ResponsiveUtil, SCApp, SCPref, Settings } from "@handwer/base"
+import { HdsActionBar, ActionBarButton, ActionBarStyle, hdsEffect } from "@kit.UIDesignKit"
+import { ColorMetrics, LengthMetrics, promptAction, SymbolGlyphModifier } from "@kit.ArkUI"
 import { LightUpRoundedButton,LightUpDefaultConfig,OverrideLightUpStat,BackButtonUtils,
   AlbumDetail,
   PlaylistDetail,
@@ -10,6 +10,7 @@ import { ExplorePage } from "./ExplorePage"
 import { AllAlbums } from "./ExploreSubViews/AllAlbums"
 import { motion } from "@kit.MultimodalAwarenessKit"
 import { common } from "@kit.AbilityKit"
+import { FunctionComponent } from "@hms.ai.AgentFramework"
 
 
 @ComponentV2
@@ -84,6 +85,36 @@ struct MainPage_Shell {
     return this.currentTabIndex === index && !this.settingsSheet
   }
 
+  @Local showAgent: boolean = false
+
+  @Builder AgentButton() {
+    Column() {
+      FunctionComponent({
+        agentId: 'agentff076a3ec4214f94ab0d73f605099800',
+        onError: (err) => {
+          Logger.error('open agent failed: ' + err.code + err.message)
+          promptAction.openToast({
+            message: '启动智能体失败：' + err.message
+          })
+        },
+        options: {
+          backgroundColor: Color.White
+        }
+      })
+    }.width(52).height(52).borderRadius(30)
+    .backgroundBlurStyle(BlurStyle.COMPONENT_REGULAR)
+    .justifyContent(FlexAlign.Center)
+    .shadow(ShadowStyle.OUTER_FLOATING_SM)
+    .offset({
+      y: -72
+    })
+    .visualEffect(new hdsEffect.HdsEffectBuilder().pointLight({
+      illuminatedType: hdsEffect.PointLightIlluminatedType.BORDER_CONTENT
+    }).buildEffect())
+    .opacity(this.showAgent ? 1 : 0)
+    .animation({duration: 200, delay: 100})
+  }
+
   @Builder TopAreaActionButton_ActionBar_PrimaryButton() {
     LightUpRoundedButton({
       lightUpConfig: LightUpDefaultConfig,
@@ -104,6 +135,14 @@ struct MainPage_Shell {
         this.primaryWidth = val.width.valueOf() as number
       })
       .backgroundBlurStyle(BlurStyle.BACKGROUND_THICK)
+      .gesture(LongPressGesture({duration: 1000}).onAction(() => {
+        this.showAgent = true
+        this.showTab()
+        this.isTabExpand = true
+      }))
+      .overlay(this.AgentButton(), {
+        align: Alignment.Center
+      })
   }
 
   @Builder ActionButton_ActionBar() {
@@ -294,6 +333,7 @@ struct MainPage_Shell {
       this.showFloatingTab = false
       this.isTabExpand = false
       this.showTabTimeoutHandler = undefined
+      this.showAgent = false
     }, 3000)
   }
 }
