@@ -119,7 +119,8 @@ export class AmbientLightUtils {
     // Logger.debug(AmbientLightUtils.TAG, `Current light intensity: ${currentLightValue} lux`);
 
     // Check if we should trigger low light callback
-    let isCurrentlyLowLight = currentLightValue <= AmbientLightUtils.lowLightThreshold;
+    const thresholdOffset = (AmbientLightUtils.isInLowLightState ? 20 : 0)
+    let isCurrentlyLowLight = currentLightValue <= (AmbientLightUtils.lowLightThreshold + thresholdOffset);
 
     let shouldTurnDarkWhenNight = false
     const hr = (new Date()).getHours()
@@ -131,8 +132,7 @@ export class AmbientLightUtils {
     isCurrentlyLowLight = isCurrentlyLowLight || shouldTurnDarkWhenNight;
 
     // Only trigger callback when transitioning from non-low-light to low-light state
-    if ((isCurrentlyLowLight && !AmbientLightUtils.isInLowLightState)
-      || (!isCurrentlyLowLight && AmbientLightUtils.isInLowLightState)
+    if ((isCurrentlyLowLight !== AmbientLightUtils.isInLowLightState)
       || AmbientLightUtils.lastLightValue === -1) {
       AmbientLightUtils.isInLowLightState = isCurrentlyLowLight;
       Logger.info(AmbientLightUtils.TAG,

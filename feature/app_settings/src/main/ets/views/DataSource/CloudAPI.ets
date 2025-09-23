@@ -92,7 +92,7 @@ export struct CloudAPI_Source {
             this.loginInfoSetter(cookie)
           }
         })
-      }.padding({left: 12, right: 12})
+      }.padding({left: 12, right: 12, top: $r('sys.float.ohos_id_navigation_bar_height')})
     }.titleBar({
       content: {
         title: {
