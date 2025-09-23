@@ -4,6 +4,7 @@ export class PrefDataModel {
   @Trace playerRightHand: boolean = false
   @Trace autoNavRightHandMode: boolean = false
   @Trace useStylusControl: boolean = false
+  @Trace swipeToNextTrack: boolean = true
   @Trace dynamicBackgroundStreaming: boolean = false
   @Trace bgFlowColorStrat: number = 0
 }

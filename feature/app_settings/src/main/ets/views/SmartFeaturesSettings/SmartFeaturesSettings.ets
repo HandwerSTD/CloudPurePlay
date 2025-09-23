@@ -63,7 +63,7 @@ export struct SmartFeaturesSettings {
         style: HDS_TITLE_CONFIG_STYLE,
         content: {
           title: {
-            mainTitle: '智慧功能'
+            mainTitle: $r('app.string.smart_sensing_features')
           }
         }
       })

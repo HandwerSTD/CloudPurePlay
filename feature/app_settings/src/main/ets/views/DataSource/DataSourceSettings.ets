@@ -14,6 +14,7 @@ import { UserManager, SCApp, Logger, ServiceInitUtils, SingleDeviceViewModel,
 import { CommonListItem,
   DialogUtils,
   HDS_TITLE_CONFIG_STYLE,
+  LightedCommonListItem,
   LightUpDefaultConfig,
   LightUpLinedContainer, LightUpLinedDefaultConfig,
   LightUpRoundedButton,
@@ -24,7 +25,7 @@ import { hdsEffect, HdsNavigation,
   HdsNavigationTitleMode, HdsNavigationAttribute,
   HdsSnackBar, HdsListItemCard, PrefixImage, SuffixIcon } from "@kit.UIDesignKit"
 import { pasteboard } from "@kit.BasicServicesKit"
-import { common } from "@kit.AbilityKit"
+import { common, OpenLinkOptions } from "@kit.AbilityKit"
 import { systemShare } from "@kit.ShareKit"
 import { uniformTypeDescriptor } from "@kit.ArkData"
 
@@ -151,6 +152,18 @@ export struct DataSourceSettings {
     }
   }
 
+  @Builder Problem() {
+
+      LightedCommonListItem({
+        icon: $r('sys.symbol.doc_plaintext_and_pencil'),
+        title: $r('app.string.have_question'),
+      })
+        .onClick(() => {
+          SnackBarUtils.showMessage(this.snack, $r('sys.symbol.doc_plaintext_and_pencil'), $r('app.string.opening_group'))
+          startQQGroupAbility(getContext() as common.UIAbilityContext, 982093132)
+        })
+  }
+
   build() {
     NavDestination() {
       HdsNavigation() {
@@ -161,6 +174,7 @@ export struct DataSourceSettings {
             this.CloudAPI()
             this.NavidromeAPI()
             this.DataSyncPanel()
+            this.Problem()
             ListItem().height(12)
           }.padding({left: 12, right: 12})
         }
@@ -290,4 +304,14 @@ export struct DeviceSelectorPanel {
   build() {
     this.DeviceListCard()
   }
+}
+
+function startQQGroupAbility(context: common.UIAbilityContext, groupNum: number) {
+  let openLinkOptions: OpenLinkOptions = {
+    appLinkingOnly: false,
+  }
+  try {
+    context.openLink('mqqapi://card/show_pslcard?src_type=internal&version=1&uin=' + groupNum +
+      '&card_type=group&source=qrcode', openLinkOptions)
+  } catch (paramError) {}
 }

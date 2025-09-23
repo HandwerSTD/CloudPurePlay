@@ -22,5 +22,6 @@ export enum SCPref {
   // 播放设置
   autoPlayOnLaunch = 'autoPlayOnLaunch',
   autoPlayFM = 'autoPlayFM',
-  useStylusControl = 'useStylusControl'
+  useStylusControl = 'useStylusControl',
+  swipeToNextTrack = 'swipeToNextTrack'
 }

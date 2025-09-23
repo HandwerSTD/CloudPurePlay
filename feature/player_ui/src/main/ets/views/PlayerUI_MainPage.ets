@@ -54,6 +54,9 @@ const LIGHT_PLAYBACK_BTN_LG: LightUpConfig = {
 }
 
 const BAR_OFFSET = 6
+
+const SLIDE_BAR_MAXH = 48
+
 @ComponentV2
 export struct MainPage {
   hdsSnackBar = new HdsSnackBar(this.getUIContext())
@@ -303,6 +306,7 @@ export struct MainPage {
     if (index === 0) {
       if (!this.showExplore) {
         // Normal
+
         PlayerUIArea({
           hdsSnackBar: this.hdsSnackBar,
           showExplore: this.showExplore,
@@ -320,6 +324,16 @@ export struct MainPage {
           },
           bottomPlayControlShouldLift: this.bottomPlayControlShouldLift
         })
+          .gesture(PanGesture({direction: PanDirection.Vertical}).onActionStart((event) => {
+            this.onPrepareSlideToPlay(event.offsetY)
+          }).onActionUpdate((event) => {
+            this.onSlideToPlay(event.offsetY)
+          }).onActionEnd((event) => {
+            this.onSlideToPlayFinish()
+          }))
+          .translate({
+            y: this.slideGesOffset === 0 ? 0 : this.slideBlurPer * 12
+          })
       } else {
         // Bottom Bar
         this.NowPlayingArea_Bar()
@@ -328,7 +342,40 @@ export struct MainPage {
       this.LyricArea()
     }
   }
+  @Provider('slideBlurPer') slideBlurPer: number = 0
 
+  get SlideToPlayIndicatorHeight() {
+    if (!GlobalStore.pref.swipeToNextTrack) return 0
+    const offset = (this.slideGesOffset ?? 0) * 0.4
+    if (offset >= 0) return 0
+    return Math.abs(offset)
+  }
+  get SlideToHouseIndicatorHeight() {
+    const offset = (this.slideGesOffset ?? 0) * 0.4
+    if (offset <= 0) return 0
+    return Math.abs(offset)
+  }
+  @Builder SlideToPlayIndicator() {
+    Column() {
+      SlideIndicator({
+        icon: this.slideUpToMain ? $r('sys.symbol.house_fill') : $r('sys.symbol.backward_end_fill'),
+        title: this.slideUpToMain ? $r('app.string.scroll_to_go_explore') : $r('app.string.scroll_to_play_prev'),
+        h: this.SlideToHouseIndicatorHeight,
+        alignItem: VerticalAlign.Bottom,
+        maxH: SLIDE_BAR_MAXH
+      })
+      SlideIndicator({
+        icon: $r('sys.symbol.forward_end_fill'),
+        title: $r('app.string.scroll_to_play_next'),
+        h: this.SlideToPlayIndicatorHeight,
+        alignItem: VerticalAlign.Top,
+        maxH: SLIDE_BAR_MAXH
+      })
+    }.height('100%').justifyContent(FlexAlign.SpaceBetween)
+    .padding({top: Math.max(this.gs.wd.top, 12) + 12, bottom: 24, left: 24, right: 24})
+    .hitTestBehavior(HitTestMode.Transparent)
+    // .animation({duration: 500})
+  }
   build() {
     Stack() {
       this.BackgroundFlow()
@@ -374,6 +421,12 @@ export struct MainPage {
         this.onRightHandMode()
       })
       .height('100%')
+      .linearGradientBlur(Math.abs(this.slideBlurPer) * 64, {
+        direction: this.slideBlurPer > 0 ? GradientDirection.Top : GradientDirection.Bottom,
+        fractionStops: [[0, 0], [0, 0.33], [1, 0.66], [1, 1]]
+      })
+      .animation({duration: 500})
+      this.SlideToPlayIndicator()
     }.backgroundColor(Color.Black)
   }
 
@@ -400,5 +453,112 @@ export struct MainPage {
   showAddToPlaylist() {
     GlobalContext.getContext().setObject(SCGlobal.addToPlaylistSongData, nps.currentSong)
     this.showAddToPlaylistSheet = true
+  }
+
+  @Local slideGesOffset: number = 0
+  @Local slideUpToMain: boolean = true
+
+  onPrepareSlideToPlay(dir: number) {
+    this.slideGesOffset = dir > 0 ? 1 : -1
+  }
+  onSlideToPlay(offset: number) {
+    if (offset / (this.slideGesOffset + 0.0001) > 0) {
+      this.slideGesOffset = offset
+      this.slideBlurPer = Math.max(this.SlideToPlayIndicatorHeight, this.SlideToHouseIndicatorHeight) / SLIDE_BAR_MAXH * Math.sign(this.slideGesOffset)
+    }
+  }
+  onSlideToPlayFinish() {
+    Logger.debug(`offset = ${this.slideGesOffset}`)
+    // Play Next
+    if (this.SlideToPlayIndicatorHeight >= SLIDE_BAR_MAXH) {
+      PlayControl.playNext()
+        .then((res) => {
+          if (res !== false) {
+            this.slideUpToMain = false;
+            SnackBarUtils.showMessageWithAction(this.hdsSnackBar, {
+              icon: $r('sys.symbol.forward_end_fill'),
+              message: '开始播放下一首',
+            }, {
+              title: '撤销',
+              action: () => {
+                PlayControl.playPre()
+                this.hdsSnackBar.dismiss()
+                this.slideUpToMain = true;
+              }
+            }).finally(() => {
+              this.slideUpToMain = true
+            })
+          }
+        })
+    }
+    // Open Explore
+    if (this.SlideToHouseIndicatorHeight >= SLIDE_BAR_MAXH) {
+      if (this.slideUpToMain) {
+        this.showExplore = true
+        this.slideGesOffset = 0
+      } else {
+        PlayControl.playPre()
+        this.hdsSnackBar.dismiss()
+      }
+    }
+
+    // finally
+    if (this.slideGesOffset !== 0) {
+      this.getUIContext().animateTo({
+        duration: 500
+      }, () => {
+        this.slideGesOffset = 0
+      })
+    }
+
+    this.slideBlurPer = 0
+  }
+}
+
+
+@ComponentV2
+struct SlideIndicator {
+  @Param @Require icon: Resource
+  @Param @Require title: ResourceStr
+  @Param @Require h: number
+  @Param @Require maxH: number
+  @Param @Require alignItem: VerticalAlign
+
+  @Local trans: number = 0
+
+  @Monitor('h')
+  onHeightChange() {
+    if (this.h >= this.maxH) {
+      this.trans = (this.h - this.maxH) * 0.3 * (this.alignItem === VerticalAlign.Bottom ? 1 : -1)
+    } else {
+      this.trans = 0
+    }
+  }
+
+  get ht() {
+    return Math.min(this.h, this.maxH)
+  }
+
+  build() {
+    Row() {
+      Row({space: 24}) {
+        SymbolGlyph(this.icon)
+          .fontColor([Color.White])
+          .fontSize(20)
+        Text(this.title)
+      }
+      .height(this.maxH).clip(true)
+    }.width('100%').justifyContent(FlexAlign.Center).alignItems(this.alignItem)
+    .backdropBlur(128)
+    .backgroundColor($r('app.color.ui_sheet_bg_col'))
+    .shadow(ShadowStyle.OUTER_DEFAULT_SM)
+    .borderRadius(14)
+    .opacity(this.ht / this.maxH)
+    .height(this.ht)
+    .animation({duration: 100})
+    .clip(true)
+    .translate({
+      y: this.trans
+    })
   }
 }

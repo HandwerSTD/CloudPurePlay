@@ -32,28 +32,36 @@ export class SnackBarUtils {
       }
     })
   }
-  static showMessageWithAction(snackbar: Object | HdsSnackBar, options: SnackBarMessageOptions, operation: SnackBarOperation) {
-    (snackbar as HdsSnackBar).show({
-      icon: options.icon
-    }, {
-      title: options.message,
-      content: options.sub_msg,
-    }, {
-      operationType: SnackBarOperationType.TEXT_ONLY,
-      content: operation.title,
-      onContentClick: () => {
-        operation.action();
-        (snackbar as HdsSnackBar).dismiss()
-      }
-    }, {
-      backgroundBlurStyle: BlurStyle.COMPONENT_REGULAR,
-      duration: options.duration ?? 3000,
-      pressBackCallback: () => {
-        if (options.onBackPress) {
-          options.onBackPress();
+  static async showMessageWithAction(snackbar: Object | HdsSnackBar, options: SnackBarMessageOptions, operation: SnackBarOperation) {
+    return new Promise<void>((resolve) => {
+      setTimeout(() => {
+        resolve()
+      }, options.duration ?? 3000);
+      (snackbar as HdsSnackBar).show({
+        icon: options.icon
+      }, {
+        title: options.message,
+        content: options.sub_msg,
+      }, {
+        operationType: SnackBarOperationType.TEXT_ONLY,
+        content: operation.title,
+        onContentClick: () => {
+          operation.action();
+          (snackbar as HdsSnackBar).dismiss()
+          resolve()
+        },
+      }, {
+        backgroundBlurStyle: BlurStyle.COMPONENT_REGULAR,
+        duration: options.duration ?? 3000,
+        pressBackCallback: () => {
+          if (options.onBackPress) {
+            options.onBackPress();
+          }
+          (snackbar as HdsSnackBar).dismiss()
+          resolve()
         }
-        (snackbar as HdsSnackBar).dismiss()
-      }
+      })
+      // TODO: resolve
     })
   }
 }

@@ -85,6 +85,11 @@ export struct DisplaySettings {
                 },
                 isDisabledSwitch: GlobalStore.pref.autoNavRightHandMode
               })
+                .onClick(() => {
+                  if (GlobalStore.pref.autoNavRightHandMode) {
+                    SnackBarUtils.showMessage(GlobalStore.globalSnack!, $r('sys.symbol.hand_draw'), $r('app.string.navigation_right_hand_mode_desc_auto_enabled_prompt'))
+                  }
+                })
             }
             ListItem() {
               LightedCommonListToggleItem({
@@ -144,18 +149,18 @@ export struct DisplaySettings {
             ListItem() {
               LightedCommonListItem({
                 icon: $r('sys.symbol.dark_mode'),
-                title: '深浅色模式',
+                title: $r('app.string.dark_light_mode'),
                 trailingOnBottom: true
               }) {
                 TabSegmentButtonV2({
                   items: new SegmentButtonV2Items([{
-                    text: '浅色'
+                    text: $r('app.string.dark_light_mode_light')
                   }, {
-                    text: '深色'
+                    text: $r('app.string.dark_light_mode_dark')
                   }, {
-                    text: '系统'
+                    text: $r('app.string.dark_light_mode_system')
                   }, {
-                    text: '智能'
+                    text: $r('app.string.dark_light_mode_auto')
                   }]),
                   selectedIndex: ThemeManager.getSingleton().appColorModeStat,
                   onItemClicked: (idx) => {

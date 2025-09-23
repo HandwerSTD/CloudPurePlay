@@ -8,7 +8,7 @@ import {
   RealIP_INITIAL
 } from "@handwer/api_adapter"
 import { SCApp, Logger, ServiceInitUtils } from "@handwer/base"
-import { HDS_TITLE_CONFIG_STYLE, LightUpLinedContainer, OverrideLightUpStat } from "@handwer/ui_components"
+import { DialogUtils, HDS_TITLE_CONFIG_STYLE, LightUpLinedContainer, OverrideLightUpStat } from "@handwer/ui_components"
 import { DialogHelper } from "@pura/harmony-dialog"
 import { generate_APIFinishWelcome_PageParams } from "./APIFinishWelcome"
 import { hdsEffect, HdsNavDestination, HdsNavDestinationAttribute } from "@kit.UIDesignKit"
@@ -22,6 +22,8 @@ export struct CloudAPI_Source {
   @Local focusedInput: number = 0
   @Local apiAddr: string = ''
 
+  contextBackup?: Cloud_RequestContext
+
 
   aboutToAppear(): void {
     const context = CloudAPIConfigUtils.getRequestContext() ?? {
@@ -33,6 +35,7 @@ export struct CloudAPI_Source {
         realIp: ''
       }
     } as Cloud_RequestContext
+    this.contextBackup = JSON.parse(JSON.stringify(context))
     CloudAPIConfigUtils.setRequestContext(context)
     this.apiAddr = context.baseUrl ?? ''
   }
@@ -62,19 +65,22 @@ export struct CloudAPI_Source {
       }
     }
     CloudAPIConfigUtils.setRequestContext(context)
-    LoginAPIUtils.getLoginStatus((val) => {
-      Logger.debug(`CloudAPI`, `getLoginStat: ${JSON.stringify(val)}`)
-      this.pageStack.pushPath({
-        name: 'APIFinishWelcome',
-        param: generate_APIFinishWelcome_PageParams(val.data.profile.nickname, val.data.profile.avatarUrl, () => {
-          const idd = DialogHelper.showLoadingDialog()
-          ServiceInitUtils.reInit(INSTANCE_TYPE.CLOUD, val, cookie, context)
-            .finally(() => {
-              DialogHelper.closeDialog(idd)
-            })
-        },InstanceSwitcher.getInstanceNameByType(INSTANCE_TYPE.CLOUD))
-      })
-    }, INSTANCE_TYPE.CLOUD)
+    DialogUtils.showLoadingUntil(() => {
+      return LoginAPIUtils.getLoginStatus((val) => {
+        Logger.debug(`CloudAPI`, `getLoginStat: ${JSON.stringify(val)}`)
+        this.pageStack.pushPath({
+          name: 'APIFinishWelcome',
+          param: generate_APIFinishWelcome_PageParams(val.data.profile.nickname, val.data.profile.avatarUrl, () => {
+            this.contextBackup = undefined
+            const idd = DialogHelper.showLoadingDialog()
+            ServiceInitUtils.reInit(INSTANCE_TYPE.CLOUD, val, cookie, context)
+              .finally(() => {
+                DialogHelper.closeDialog(idd)
+              })
+          },InstanceSwitcher.getInstanceNameByType(INSTANCE_TYPE.CLOUD))
+        })
+      }, INSTANCE_TYPE.CLOUD)
+    })
   }
 
   build() {
@@ -117,6 +123,14 @@ export struct CloudAPI_Source {
           this.apiAddr = req.baseUrl
           this.loginInfoSetter(req.cookie.cookie!)
         }
+      }
+    })
+    .onWillDisappear(() => {
+      if (this.contextBackup) {
+        Logger.info('New config was not set, reverting to backup')
+        CloudAPIConfigUtils.setRequestContext(this.contextBackup)
+      } else {
+        Logger.info('New config already set, no need to revert')
       }
     })
     .opacity(this.pageOpacity)

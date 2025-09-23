@@ -613,6 +613,14 @@
       "value": "双击下一首，轻捏暂停"
     },
     {
+      "name": "swipe_to_next_track",
+      "value": "滑动切换下一首"
+    },
+    {
+      "name": "swipe_to_next_track_desc",
+      "value": "配合隔空滑动手势体验更佳"
+    },
+    {
       "name": "restart_to_take_effect",
       "value": "重启应用后生效"
     },
@@ -630,7 +638,7 @@
     },
     {
       "name": "first_open_page_instant_play_desc",
-      "value": "启动应用即播放，少一步繁琐，多一点音乐。多种自动播放模式，无限推荐歌曲播放，始终新鲜。"
+      "value": "启动应用即播放，多种推荐播放模式，少一步繁琐，多一点音乐。"
     },
     {
       "name": "first_open_page_personal_fm_desc",
@@ -678,15 +686,15 @@
     },
     {
       "name": "first_open_page_no_interrupt_desc",
-      "value": "极简 UX 设计，只保留必要的控制，多余元素自动隐藏，给你更清爽的听歌体验。一切设计，都是为了纯净聆听。"
+      "value": "极简 UX 设计，多余元素自动隐藏，给你更清爽的听歌体验。"
     },
     {
       "name": "first_open_page_hidden_progress_desc",
-      "value": "隐藏式进度条，点击显示，自动隐藏，界面更清爽"
+      "value": "隐藏式进度条，点击显示，自动隐藏。"
     },
     {
       "name": "first_open_page_explore_navigation_desc",
-      "value": "在播放器页面，点击󰀦进入探索页；在探索页点击底部封面，可返回播放器，一镜到底，尽显优雅"
+      "value": "在播放器页面，点击󰀦进入探索页；点击底部封面，可返回播放器"
     },
     {
       "name": "first_open_page_play_queue_desc",
@@ -706,7 +714,7 @@
     },
     {
       "name": "first_open_page_light_up_desc",
-      "value": "一款生长在光上的音乐播放器。基于最新 HarmonyOS 光场效果，让每一次播放都在光影之间流动。纯粹聆听，前所未有的「光」体验。\n\n光场设计元素遍布在《云净听》中，无论是播放按钮，还是封面图片，或是精致歌词，都有「光」的流动。"
+      "value": "基于最新 HarmonyOS 光场效果，让每一次播放都在光影之间流动。"
     },
     {
       "name": "first_open_page_light_experience_prefix",
@@ -718,7 +726,7 @@
     },
     {
       "name": "first_open_page_cover_light_desc",
-      "value": "音乐封面发光，光影源自色彩本身，随着节奏与氛围轻微流动，让聆听更沉浸。"
+      "value": "音乐封面发光，光影源自色彩本身，让聆听更沉浸。"
     },
     {
       "name": "first_open_page_agreement_toast",
@@ -778,15 +786,15 @@
     },
     {
       "name": "first_open_page__interaction_subtitle",
-      "value": "基于 HarmonyOS 多模态感知，为你带来更有趣、更智慧的操作体验，直观、自然，却又充满惊喜。"
+      "value": "基于 HarmonyOS 多模态感知，为你带来更有趣、更智慧的操作体验，"
     },
     {
       "name": "first_open_page__interaction_share_feature",
-      "value": "碰一碰或隔空抓取，即可分享音乐配置或歌曲；有趣就要一起分享，分享也要更有趣！"
+      "value": "碰一碰或隔空抓取，即可分享音乐配置或歌曲。"
     },
     {
       "name": "first_open_page__interaction_stylus_feature",
-      "value": "手写笔化身“指挥棒”，双击手写笔即可切歌，轻捏手写笔即可控制播放。"
+      "value": "手写笔化身“指挥棒”，双击手写笔即可切歌，轻捏手写笔控制播放。"
     },
     {
       "name": "first_open_page__interaction_hand_recognition_feature",
@@ -831,6 +839,42 @@
     {
       "name": "smart_sensing_features",
       "value": "智慧感知功能"
+    },
+    {
+      "name": "dark_light_mode",
+      "value": "深浅色模式"
+    },
+    {
+      "name": "dark_light_mode_light",
+      "value": "浅色"
+    },
+    {
+      "name": "dark_light_mode_dark",
+      "value": "深色"
+    },
+    {
+      "name": "dark_light_mode_system",
+      "value": "系统"
+    },
+    {
+      "name": "dark_light_mode_auto",
+      "value": "智能"
+    },
+    {
+      "name": "navigation_right_hand_mode_desc_auto_enabled_prompt",
+      "value": "请到智慧感知设置中关闭“智能切换”"
+    },
+    {
+      "name": "have_question",
+      "value": "遇到问题？加入交流群"
+    },
+    {
+      "name": "scroll_to_go_explore",
+      "value": "滑动进入播放页"
+    },
+    {
+      "name": "scroll_to_play_prev",
+      "value": "滑动播放上一首"
     }
   ]
 }

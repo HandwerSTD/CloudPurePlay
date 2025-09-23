@@ -1,4 +1,4 @@
-import { SCPref, Settings } from "@handwer/base"
+import { SCPref, Settings, GlobalStore } from "@handwer/base"
 import { HDS_TITLE_CONFIG_STYLE, LightedCommonListToggleItem } from "@handwer/ui_components"
 import { HdsNavigation, HdsNavigationTitleMode, HdsNavigationAttribute } from "@kit.UIDesignKit"
 
@@ -8,6 +8,14 @@ export struct PlaybackSettings {
 
   @Local autoPlayOnLaunch: boolean = false
   @Local autoPlayFMOnLaunch: boolean = false
+
+  pref = GlobalStore.pref
+  get swipeToNextTrack() {
+    return this.pref.swipeToNextTrack
+  }
+  set swipeToNextTrack(val: boolean) {
+    this.pref.swipeToNextTrack = val
+  }
 
   aboutToAppear(): void {
     this.autoPlayOnLaunch = Settings.get<boolean>(SCPref.autoPlayOnLaunch) ?? false
@@ -48,6 +56,18 @@ export struct PlaybackSettings {
                   }
                 })
               }.transition(TransitionEffect.OPACITY.animation({duration: 300}))
+            }
+            ListItem() {
+              LightedCommonListToggleItem({
+                icon: $r('sys.symbol.swipe'),
+                title: $r('app.string.swipe_to_next_track'),
+                subtitle: $r('app.string.swipe_to_next_track_desc'),
+                isOn: this.swipeToNextTrack,
+                onToggleChange: (val) => {
+                  this.swipeToNextTrack = val
+                  Settings.put(SCPref.swipeToNextTrack, val)
+                }
+              })
             }
             ListItem().height(12)
           }.padding({left: 12, right: 12})

@@ -629,6 +629,14 @@
       "value": "Double tap for next track, pinch to pause"
     },
     {
+      "name": "swipe_to_next_track",
+      "value": "Swipe to Next Track"
+    },
+    {
+      "name": "swipe_to_next_track_desc",
+      "value": "Works better with air gestures"
+    },
+    {
       "name": "restart_to_take_effect",
       "value": "Restart the app to take effect"
     },
@@ -847,6 +855,42 @@
     {
       "name": "smart_sensing_features",
       "value": "智慧感知功能"
+    },
+    {
+      "name": "dark_light_mode",
+      "value": "深浅色模式"
+    },
+    {
+      "name": "dark_light_mode_light",
+      "value": "浅色"
+    },
+    {
+      "name": "dark_light_mode_dark",
+      "value": "深色"
+    },
+    {
+      "name": "dark_light_mode_system",
+      "value": "系统"
+    },
+    {
+      "name": "dark_light_mode_auto",
+      "value": "智能"
+    },
+    {
+      "name": "navigation_right_hand_mode_desc_auto_enabled_prompt",
+      "value": "请到智慧感知设置中关闭“智能切换”"
+    },
+    {
+      "name": "have_question",
+      "value": "遇到问题？加入交流群"
+    },
+    {
+      "name": "scroll_to_go_explore",
+      "value": "滑动进入播放页"
+    },
+    {
+      "name": "scroll_to_play_prev",
+      "value": "滑动播放上一首"
     }
   ]
 }

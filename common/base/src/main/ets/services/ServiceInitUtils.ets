@@ -66,6 +66,7 @@ export class ServiceInitUtils {
     pref.playerRightHand = Settings.get<boolean>(SCPref.playerTwoColumnRightHandMode) ?? false
     pref.autoNavRightHandMode = Settings.get<boolean>(SCPref.autoNavRightHand) ?? false
     pref.useStylusControl = Settings.get<boolean>(SCPref.useStylusControl) ?? false
+    pref.swipeToNextTrack = Settings.get<boolean>(SCPref.swipeToNextTrack) ?? true
     pref.dynamicBackgroundStreaming = Settings.get<boolean>(SCPref.dynamicBackgroundStreaming) ?? false
     pref.bgFlowColorStrat = Settings.get<number>(SCPref.bgFlowColorStrat) ?? 1
   }
@@ -82,6 +83,9 @@ export class ServiceInitUtils {
     }
     if (Settings.get<boolean>(SCPref.useStylusControl) === undefined) {
       Settings.put(SCPref.useStylusControl, true)
+    }
+    if (Settings.get<boolean>(SCPref.swipeToNextTrack) === undefined) {
+      Settings.put(SCPref.swipeToNextTrack, true)
     }
     if (Settings.get<boolean>(SCPref.autoNavRightHand) === undefined) {
       Settings.put(SCPref.autoNavRightHand, false)
