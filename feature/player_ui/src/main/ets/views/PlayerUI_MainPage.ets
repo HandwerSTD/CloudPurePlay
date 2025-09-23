@@ -89,7 +89,7 @@ export struct MainPage {
   }
   get bottomPlayControlShouldLift(): Length {
     // return !ResponsiveUtil.PuraXOuterCheck() && ResponsiveUtil.widthCheck(['sm, md']) ? 64 : 0
-    return 36
+    return 36 + 24
 
   }
   get nowPlayingCoverImg(): string {
@@ -581,7 +581,13 @@ export struct MainPage {
       .justifyContent(FlexAlign.SpaceAround)
       .clip(false)
       .margin({bottom: this.gs.wd.bottom === 0 ? 24 : this.gs.wd.bottom})
-      // .transition(TransitionEffect.OPACITY.animation({duration: 300}))
+      // .gesture(PanGesture({direction: PanDirection.Vertical}).onActionStart(() => {
+      //
+      // }).onActionUpdate(() => {
+      //
+      // }).onActionEnd(() => {
+      //
+      // }))
     }
   }
 

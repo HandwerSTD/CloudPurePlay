@@ -56,6 +56,9 @@ export struct PlaylistDetail {
   @Consumer(SCApp.explorePageStack) pageStack: NavPathStack = new NavPathStack()
   @Consumer(SCApp.showAddToPlaylistSheet) showAddToPlaylistSheet: boolean = false
 
+  @Local coverImg: ResourceStr = ''
+  @Local newCoverImg?: ResourceStr = undefined
+
   @Local playListInfo: PlayList = PlayList_INITIAL
   @Local fullPlayListDetail: PlayListSong[] = []
   @Local fullPlayListDataSource: LazyData<PlaylistSongViewModel> = new LazyData()
@@ -81,6 +84,7 @@ export struct PlaylistDetail {
     this.fullPlayListDataSource.notifyDataReload()
     const info = await PlayListAPIUtils.getPlaylistInfo(this.playListInfo.id)
     this.playListInfo = info
+    this.newCoverImg = info.coverImgUrl
     this.writeToUserStore()
     await this.loadSongs(200, 0)
     await this.loadSongs(this.playListInfo.trackCount, 200)
@@ -273,8 +277,10 @@ export struct PlaylistDetail {
 
   @Builder TopArea() {
     Column({space: 24}) {
-      ImageCover({
-        nowPlayingCoverImg: this.playListInfo.coverImgUrl
+      // TODO: 这里会闪一下
+      SwappableCoverImage({
+        oldImage: this.coverImg,
+        newImage: this.newCoverImg
       })
         .width(ResponsiveUtil.chooseByWidth<Dimension>(['50%', '50%'])).aspectRatio(1)
         .constraintSize(this. fullWindowSizeArea ? {
@@ -403,6 +409,7 @@ export struct PlaylistDetail {
       }.height('100%').width('100%')
     }.onReady((context) => {
       this.playListInfo = (context.pathInfo.param as Record<string, Object>)['playListInfo'] as PlayList
+      this.coverImg = this.playListInfo.coverImgUrl
       this.onStart()
       EmitterUtil.onSubscribe(SCEmitter.PlaylistContentUpdate, (data: PlaylistContentUpdateInfo) => {
         this.onReceivePlayListSongUpdate(data)
@@ -686,4 +693,41 @@ export function generatePageParams_PlayListDetail(playList: PlayList) {
   const params: Record<string, Object> = {}
   params['playListInfo'] = playList
   return params
+}
+
+@ComponentV2
+struct SwappableCoverImage {
+  @Param @Require oldImage: ResourceStr
+  @Param newImage?: ResourceStr = undefined
+
+  @Local oldVisible: Visibility = Visibility.Visible
+
+  @Builder old() {
+    ImageCover({
+      nowPlayingCoverImg: this.oldImage,
+      // usePlaceholder: false
+    }).visibility(this.oldVisible)
+      .transition(TransitionEffect.OPACITY.animation({duration: 1000}))
+  }
+  @Builder newI() {
+    if (this.newImage) {
+      ImageCover({
+        nowPlayingCoverImg: this.newImage,
+        usePlaceholder: false,
+        loadCompleteCallback: {
+          onComplete: () => {
+            this.oldVisible = Visibility.None
+          },
+          completeDelay: 1000
+        },
+      })
+    }
+  }
+
+  build() {
+    Stack() {
+      this.newI()
+      this.old()
+    }
+  }
 }

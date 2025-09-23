@@ -3,7 +3,7 @@ import { hdsEffect } from "@kit.UIDesignKit"
 
 @ComponentV2
 export struct LightUpContainer {
-  @Param @Require lightUpConfig: LightUpConfig
+  @Param lightUpConfig: LightUpConfig = LightUpDefaultConfig
   @BuilderParam child: () => void
 
   @Param lightAlignment: Alignment = Alignment.Center

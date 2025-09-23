@@ -7,6 +7,7 @@ import { Album, PlayList, Song } from "@handwer/api_adapter"
 import { InListSongItem } from "./InListSongItem"
 import { NetImage } from "../../components/NetImage"
 import { ImageCoverThumbnail } from "./ImageCover"
+import { LightUpContainer } from "../../light_up/LightUpContainer"
 
 export interface CommonCoverItem {
   picUrl: string
@@ -62,7 +63,7 @@ export struct CommonSongListCard {
 
   @Builder CoverItem(it: CommonCoverItem) {
     Column() {
-      Row() {
+      LightUpContainer() {
         ImageCoverThumbnail({
           nowPlayingCoverImg: it.picUrl,
           name: it.name

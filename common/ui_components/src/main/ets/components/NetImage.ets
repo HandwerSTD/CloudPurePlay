@@ -4,6 +4,8 @@ import { hdsEffect } from "@kit.UIDesignKit"
 
 export interface ImageLoadCompleteCallback {
   onComplete?: () => void
+  completeDelay?: number
+  onCompleteImmediate?: () => void
   onError?: () => void
 }
 
@@ -20,7 +22,7 @@ export struct NetImage {
   @Param loadCompleteCallback?: ImageLoadCompleteCallback = undefined
   @Param lightedUp?: hdsEffect.PointLightIlluminatedType = hdsEffect.PointLightIlluminatedType.BORDER
   @Param radius: number = 0
-  @Param customPlaceholder?: ResourceStr = undefined
+  @Param customPlaceholder: ResourceStr = $r('app.media.icon_216_gray')
 
   @Builder Lighter() {
     Column() {
@@ -35,10 +37,15 @@ export struct NetImage {
     ImageKnifeComponent({
       imageKnifeOption: {
         loadSrc: this.imageUrlI,
-        placeholderSrc: this.customPlaceholder ?? $r('app.media.icon_216_gray'),
+        placeholderSrc: this.customPlaceholder,
         onLoadListener: {
           onLoadSuccess: () => {
-            this.loadCompleteCallback?.onComplete?.()
+            this.loadCompleteCallback?.onCompleteImmediate?.()
+            if (this.loadCompleteCallback?.onComplete) {
+              setTimeout(() => {
+                this.loadCompleteCallback?.onComplete?.()
+              }, this.loadCompleteCallback.completeDelay ?? 500)
+            }
           },
           onLoadFailed: () => {
             this.loadCompleteCallback?.onError?.()

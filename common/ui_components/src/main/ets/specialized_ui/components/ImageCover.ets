@@ -1,14 +1,17 @@
-import { NetImage } from "../../components/NetImage"
+import { ImageLoadCompleteCallback, NetImage } from "../../components/NetImage"
 import { hdsEffect } from '@kit.UIDesignKit'
 
 @ComponentV2
 export struct ImageCover {
   @Param @Require nowPlayingCoverImg: ResourceStr
+  @Param loadCompleteCallback?: ImageLoadCompleteCallback = undefined
+  @Param usePlaceholder: boolean = true
 
   build() {
     Stack() {
       NetImage({
         imageUrlI: this.nowPlayingCoverImg,
+        loadCompleteCallback: this.loadCompleteCallback
       })
         .aspectRatio(1)
         .layoutWeight(1)
@@ -31,8 +34,9 @@ export struct ImageCover {
       Stack() {
         NetImage({
           imageUrlI: this.nowPlayingCoverImg,
-          customPlaceholder: $r('app.media.ff'),
-          radius: 20
+          customPlaceholder: this.usePlaceholder ? $r('app.media.ff') : undefined,
+          radius: 20,
+          lightedUp: hdsEffect.PointLightIlluminatedType.BORDER_CONTENT
         })
           .borderRadius(20)
           .draggable(false)
