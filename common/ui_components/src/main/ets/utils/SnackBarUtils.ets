@@ -1,4 +1,17 @@
-import { HdsSnackBar } from "@kit.UIDesignKit";
+import { HdsSnackBar, SnackBarOperationType } from "@kit.UIDesignKit";
+
+interface SnackBarOperation {
+  title: ResourceStr
+  action: () => void
+}
+
+interface SnackBarMessageOptions {
+  icon: ResourceStr,
+  message: ResourceStr,
+  sub_msg?: ResourceStr,
+  duration?: number,
+  onBackPress?: () => void
+}
 
 export class SnackBarUtils {
   static showMessage(snackbar: Object | HdsSnackBar, icon: ResourceStr, message: ResourceStr, sub_msg?: ResourceStr, duration?: number, onBackPress?: () => void) {
@@ -14,6 +27,30 @@ export class SnackBarUtils {
       pressBackCallback: () => {
         if (onBackPress) {
           onBackPress();
+        }
+        (snackbar as HdsSnackBar).dismiss()
+      }
+    })
+  }
+  static showMessageWithAction(snackbar: Object | HdsSnackBar, options: SnackBarMessageOptions, operation: SnackBarOperation) {
+    (snackbar as HdsSnackBar).show({
+      icon: options.icon
+    }, {
+      title: options.message,
+      content: options.sub_msg,
+    }, {
+      operationType: SnackBarOperationType.TEXT_ONLY,
+      content: operation.title,
+      onContentClick: () => {
+        operation.action();
+        (snackbar as HdsSnackBar).dismiss()
+      }
+    }, {
+      backgroundBlurStyle: BlurStyle.COMPONENT_REGULAR,
+      duration: options.duration ?? 3000,
+      pressBackCallback: () => {
+        if (options.onBackPress) {
+          options.onBackPress();
         }
         (snackbar as HdsSnackBar).dismiss()
       }

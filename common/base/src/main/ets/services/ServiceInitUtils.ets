@@ -84,7 +84,7 @@ export class ServiceInitUtils {
       Settings.put(SCPref.useStylusControl, true)
     }
     if (Settings.get<boolean>(SCPref.autoNavRightHand) === undefined) {
-      Settings.put(SCPref.autoNavRightHand, true)
+      Settings.put(SCPref.autoNavRightHand, false)
     }
     if (Settings.get<boolean>(SCPref.autoPlayOnLaunch) === undefined) {
       Settings.put(SCPref.autoPlayOnLaunch, true)

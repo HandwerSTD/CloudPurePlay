@@ -135,11 +135,11 @@ struct MainPage_Shell {
         this.primaryWidth = val.width.valueOf() as number
       })
       .backgroundBlurStyle(BlurStyle.BACKGROUND_THICK)
-      .gesture(LongPressGesture({duration: 1000}).onAction(() => {
-        this.showAgent = true
-        this.showTab()
-        this.isTabExpand = true
-      }))
+      // .gesture(LongPressGesture({duration: 1000}).onAction(() => {
+      //   this.showAgent = true
+      //   this.showTab()
+      //   this.isTabExpand = true
+      // }))
       .overlay(this.AgentButton(), {
         align: Alignment.Center
       })

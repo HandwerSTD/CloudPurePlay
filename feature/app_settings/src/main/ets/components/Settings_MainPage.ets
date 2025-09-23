@@ -130,7 +130,7 @@ export struct MainPage {
       LightUpLinedContainer() {
         CommonListItem({
           icon: $r('sys.symbol.wand_and_stars'),
-          title: '智慧功能',
+          title: $r('app.string.smart_sensing_features'),
         }).onClick(() => {
           this.pushPage('SmartFeaturesSettings', {})
         })

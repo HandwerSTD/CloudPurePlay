@@ -80,6 +80,7 @@ export struct CloudAPI_Source {
   build() {
     HdsNavDestination() {
       Column() {
+        Blank().height(12)
         Row() {
           LightUpLinedContainer({ overrideLightUpStat: this.focusedInput === 1 ? OverrideLightUpStat.ALWAYS_ENABLED : OverrideLightUpStat.ALWAYS_DISABLED}) {
             TextInput({placeholder: $r('app.string.api_source_addr'), text: this.apiAddr!!})

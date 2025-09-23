@@ -823,6 +823,14 @@
     {
       "name": "auto_switched_to_light",
       "value": "已自动切换到浅色模式"
+    },
+    {
+      "name": "scroll_to_play_next",
+      "value": "滑动播放下一首"
+    },
+    {
+      "name": "smart_sensing_features",
+      "value": "智慧感知功能"
     }
   ]
 }

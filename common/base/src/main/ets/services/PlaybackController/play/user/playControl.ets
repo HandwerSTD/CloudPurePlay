@@ -509,7 +509,7 @@ export class PlayControl {
     }
   }
 
-  static async playNext() {
+  static async playNext(): Promise<boolean | void> {
     const isPersonalFm = NowPlayingStore.isPersonalFM
     if(isPersonalFm && !(PlayQueueUtils.currentQueueIndex < PlayQueueUtils.queue.length - 1)) {
       const personalFmMode = NowPlayingStore.personalFmMode
@@ -547,6 +547,7 @@ export class PlayControl {
           AVSessionUtils.pauseState(0)
         }
         ToastUtil.showToast('没有下一首了~')
+        return false
       }
     }
   }

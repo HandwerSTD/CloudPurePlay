@@ -10,7 +10,8 @@ import {
   ImgCache,
   ShareUtils,
   FeaturedPlayUtils,
-  SongConvertUtils
+  SongConvertUtils,
+  Logger
 } from "@handwer/base"
 import {
   UIComponentUtils,
@@ -571,6 +572,35 @@ export struct PlayerUIArea {
     .animation({duration: 300, curve: Curve.Ease})
   }
 
+  get SlideToPlayIndicatorHeight() {
+    const offset = (this.slideToPlayOffset ?? 0) * 0.4
+    if (offset >= 0) return 0
+    return Math.min(Math.abs(offset), 40)
+  }
+  @Builder SlideToPlayIndicator() {
+    Row() {
+      Row({space: 24}) {
+        SymbolGlyph($r('sys.symbol.forward_end_fill'))
+          .fontColor([Color.White])
+          .fontSize(20)
+          .symbolShadow({
+            radius: 12,
+            color: '#66ffffff'
+          })
+        Text($r('app.string.scroll_to_play_next'))
+      }
+      .height(30).clip(true)
+    }.width('100%').justifyContent(FlexAlign.Center)
+    .backgroundBlurStyle(BlurStyle.COMPONENT_REGULAR)
+    .shadow(ShadowStyle.OUTER_DEFAULT_SM)
+    .borderRadius(12)
+    .opacity(Math.max(this.SlideToPlayIndicatorHeight - 16, 0) / 30)
+    .height(this.SlideToPlayIndicatorHeight)
+    .margin({bottom: 12})
+    .animation({duration: 100})
+    .clip(true)
+  }
+
   build() {
     if (this.shouldShowEmptyState) {
       // 空状态视图
@@ -589,10 +619,49 @@ export struct PlayerUIArea {
         this.CoverInfo()
         this.PlaybackControl()
       }.height('100%').width('100%')
+      .overlay(this.SlideToPlayIndicator(), {
+        align: Alignment.Bottom
+      })
       .padding({left: 24, right: 24, bottom: this.bottomPlayControlShouldLift})
       .justifyContent(FlexAlign.SpaceAround)
       .clip(false)
       .margin({bottom: this.gs.wd.bottom === 0 ? 24 : this.gs.wd.bottom})
+      .gesture(PanGesture({direction: PanDirection.Vertical}).onActionStart(() => {
+        this.onPrepareSlideToPlay()
+      }).onActionUpdate((event) => {
+        this.onSlideToPlay(event.offsetY)
+      }).onActionEnd((event) => {
+        this.onSlideToPlayFinish()
+      }))
     }
+  }
+
+  @Local slideToPlayOffset?: number = undefined
+
+  onPrepareSlideToPlay() {
+    this.slideToPlayOffset = 0
+  }
+  onSlideToPlay(offset: number) {
+    this.slideToPlayOffset = offset
+  }
+  onSlideToPlayFinish() {
+    Logger.debug(`offset = ${this.slideToPlayOffset}`)
+    if ((this.slideToPlayOffset ?? 0) < -60) {
+      PlayControl.playNext()
+        .then((res) => {
+          if (res !== false) {
+            SnackBarUtils.showMessageWithAction(this.hdsSnackBar, {
+              icon: $r('sys.symbol.forward_end_fill'),
+              message: '开始播放下一首',
+            }, {
+              title: '撤销',
+              action: () => {
+                PlayControl.playPre()
+              }
+            })
+          }
+        })
+    }
+    this.slideToPlayOffset = 0
   }
 }
