@@ -33,8 +33,8 @@ import { PlayQueueViewBuilder } from "./PlayQueueView"
 import { ExplorePageBuilder } from "@handwer/explore"
 import { EmptyStateView, EmptyStateViewBar } from "../components/EmptyStateView"
 import { unifiedDataChannel, uniformTypeDescriptor } from "@kit.ArkData"
-import { systemShare } from "@kit.ShareKit"
-import { common } from "@kit.AbilityKit"
+import { harmonyShare, systemShare } from "@kit.ShareKit"
+import { ApplicationStateChangeCallback, common } from "@kit.AbilityKit"
 import { BackgroundFlow } from "./BackgroundFlow"
 import { PlayerUIArea } from "./PlayerArea"
 import { LightUpProgressBar } from "../components/PlaybackControlComponent"
@@ -295,6 +295,7 @@ export struct MainPage {
       this.explorePageOpacity = 1
     }
     this.onRightHandMode()
+    this.registerGestureShare()
   }
 
   @Builder BackgroundFlow() {
@@ -527,6 +528,27 @@ export struct MainPage {
 
     this.slideBlurPer = 0
     this.slideUpToMain = true
+  }
+
+  registerGestureShare() {
+
+    const gestureCallback = () => {
+      DialogUtils.showPlayPauseDialog1sec(NowPlayingStore.isPaused)
+      PlayControl.playOrPause()
+    }
+
+    const callback: ApplicationStateChangeCallback = {
+      onApplicationForeground() {
+        harmonyShare.on("gesturesShare", gestureCallback)
+      },
+      onApplicationBackground() {
+        // 注册后台监听，切回后台不再分享，并关闭弹窗
+        harmonyShare.off("gesturesShare", gestureCallback)
+      }
+    }
+    this.getUIContext().getHostContext()!.getApplicationContext()
+      .on("applicationStateChange", callback)
+    harmonyShare.on("gesturesShare", gestureCallback)
   }
 }
 

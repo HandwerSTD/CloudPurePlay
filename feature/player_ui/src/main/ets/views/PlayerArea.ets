@@ -24,11 +24,12 @@ import {
 } from "@handwer/ui_components"
 import { ClickUtil } from "@pura/harmony-utils"
 import { EmptyStateView } from "../components"
-import { systemShare } from "@kit.ShareKit"
+import { harmonyShare, systemShare } from "@kit.ShareKit"
 import { HdsSnackBar, HdsActionBar, ActionBarButton } from "@kit.UIDesignKit"
 import { uniformTypeDescriptor } from "@kit.ArkData"
 import { curves, LengthMetrics, SymbolGlyphModifier, ColorMetrics, promptAction } from "@kit.ArkUI"
 import { ImageCover } from "../components/ImageCover"
+import { ApplicationStateChangeCallback } from "@kit.AbilityKit"
 
 const LIGHT_TOP_BTN_SM: LightUpConfig = {
   lightIntensity: 3,
@@ -599,6 +600,5 @@ export struct PlayerUIArea {
       }
     }
   }
-
 }
 

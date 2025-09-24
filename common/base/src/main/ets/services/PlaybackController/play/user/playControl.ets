@@ -458,6 +458,14 @@ export class PlayControl {
     NowPlayingStore.isPaused = true
   }
 
+  static async playOrPause() {
+    if(NowPlayingStore.isPaused) {
+      await PlayControl.resumeMusic()
+    } else {
+      await PlayControl.pauseMusic()
+    }
+  }
+
   static async resumeMusic() {
     if (shouldPauseOnStart) {
       shouldPauseOnStart = false
