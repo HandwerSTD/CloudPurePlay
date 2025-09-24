@@ -3,13 +3,13 @@ import { DialogOptions } from "@pura/harmony-dialog"
 @Builder
 export function PlayDialogBuilder(options: DialogOptions) {
   LoadingView({
-    isRedHeart: true
+    isRedHeart: false
   })
 }
 @Builder
 export function PauseDialogBuilder(options: DialogOptions) {
   LoadingView({
-    isRedHeart: false
+    isRedHeart: true
   })
 }
 

@@ -1,7 +1,17 @@
-import { HDS_TITLE_CONFIG_STYLE, LightedCommonListToggleItem, SnackBarUtils } from "@handwer/ui_components"
+import {
+  CommonListItem,
+  CommonListToggleItem,
+  HDS_TITLE_CONFIG_STYLE,
+  LightedCommonItem,
+  LightedCommonListToggleItem,
+  LightUpContainer,
+  LightUpLinedContainer,
+  SnackBarUtils } from "@handwer/ui_components"
 import { HdsNavigation, HdsNavigationTitleMode, HdsNavigationAttribute } from "@kit.UIDesignKit"
-import { GlobalStore, SCPref, Settings } from "@handwer/base"
+import { AmbientLightUtils, GlobalStore, SCPref, Settings, ThemeManager } from "@handwer/base"
 import { motion } from "@kit.MultimodalAwarenessKit"
+import { ConfigurationConstant } from "@kit.AbilityKit"
+import { TabSegmentButtonV2, SegmentButtonV2Items } from "@kit.ArkUI"
 
 @ComponentV2
 export struct SmartFeaturesSettings {
@@ -13,6 +23,14 @@ export struct SmartFeaturesSettings {
     // 初始化智慧功能设置数据
     this.autoNavRightHand = Settings.get<boolean>(SCPref.autoNavRightHand) ?? false
     this.useStylusControl = Settings.get<boolean>(SCPref.useStylusControl) ?? false
+  }
+
+  pref = GlobalStore.pref
+  get swipeToNextTrack() {
+    return this.pref.swipeToNextTrack
+  }
+  set swipeToNextTrack(val: boolean) {
+    this.pref.swipeToNextTrack = val
   }
 
   build() {
@@ -53,6 +71,42 @@ export struct SmartFeaturesSettings {
                   SnackBarUtils.showMessage(GlobalStore.globalSnack!, $r('sys.symbol.pencil_tip'), $r('app.string.restart_to_take_effect'))
                 }
               })
+            }
+
+            ListItem() {
+              LightedCommonItem() {
+                LightUpLinedContainer() {
+                  CommonListToggleItem({
+                    icon: $r('sys.symbol.swipe'),
+                    title: $r('app.string.swipe_to_next_track'),
+                    subtitle: $r('app.string.swipe_to_next_track_desc'),
+                    isOn: this.swipeToNextTrack,
+                    onToggleChange: (val) => {
+                      this.swipeToNextTrack = val
+                      Settings.put(SCPref.swipeToNextTrack, val)
+                    }
+                  })
+                }
+                LightUpLinedContainer() {
+                  CommonListItem({
+                    icon: $r('sys.symbol.phone_and_hand'),
+                    title: $r('app.string.air_grab'),
+                  }) {
+                    TabSegmentButtonV2({
+                      items: new SegmentButtonV2Items([{
+                        text: $r('app.string.air_grab_play')
+                      }, {
+                        text: $r('app.string.air_grab_heart')
+                      }]),
+                      selectedIndex: GlobalStore.pref.fistGesture,
+                      onItemClicked: (idx) => {
+                        GlobalStore.pref.fistGesture = idx
+                        Settings.put(SCPref.fistGesture, idx)
+                      },
+                    }).width(128)
+                  }
+                }
+              }
             }
             
             ListItem().height(12)

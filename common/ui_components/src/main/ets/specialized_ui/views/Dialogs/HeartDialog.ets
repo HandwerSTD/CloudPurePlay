@@ -23,7 +23,7 @@ export struct LoadingView {
       if (this.isRedHeart) {
         SymbolGlyph($r('sys.symbol.heart_fill'))
           .fontSize(44)
-          .fontColor([Color.Red])
+          .fontColor([Color.White])
           .symbolShadow({
             radius: 6,
             color: '#ccffffff'

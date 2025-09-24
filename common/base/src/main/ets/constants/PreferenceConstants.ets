@@ -23,5 +23,6 @@ export enum SCPref {
   autoPlayOnLaunch = 'autoPlayOnLaunch',
   autoPlayFM = 'autoPlayFM',
   useStylusControl = 'useStylusControl',
-  swipeToNextTrack = 'swipeToNextTrack'
+  swipeToNextTrack = 'swipeToNextTrack',
+  fistGesture = "fistGesture"
 }

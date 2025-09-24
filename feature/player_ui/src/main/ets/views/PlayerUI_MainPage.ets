@@ -467,7 +467,7 @@ export struct MainPage {
       this.slideGesOffset = offset
       this.slideBlurPer = Math.max(this.SlideToPlayIndicatorHeight, this.SlideToHouseIndicatorHeight) / SLIDE_BAR_MAXH * Math.sign(this.slideGesOffset)
     }
-    if (this.SlideToHouseIndicatorHeight >= SLIDE_BAR_MAXH * 2.4) {
+    if (this.SlideToHouseIndicatorHeight >= SLIDE_BAR_MAXH * 2.4 && GlobalStore.pref.swipeToNextTrack) {
       this.slideUpToMain = false
     } else {
       this.slideUpToMain = true
@@ -482,9 +482,9 @@ export struct MainPage {
           if (res !== false) {
             SnackBarUtils.showMessageWithAction(this.hdsSnackBar, {
               icon: $r('sys.symbol.forward_end_fill'),
-              message: '开始播放下一首',
+              message: $r('app.string.start_playing_next'),
             }, {
-              title: '撤销',
+              title: $r('app.string.common_undo'),
               action: () => {
                 PlayControl.playPre()
                 this.hdsSnackBar.dismiss()
@@ -503,9 +503,9 @@ export struct MainPage {
           if (res !== false) {
             SnackBarUtils.showMessageWithAction(this.hdsSnackBar, {
               icon: $r('sys.symbol.backward_end_fill'),
-              message: '开始播放上一首',
+              message: $r('app.string.start_playing_previous'),
             }, {
-              title: '撤销',
+              title: $r('app.string.common_undo'),
               action: () => {
                 PlayControl.playNext()
                 this.hdsSnackBar.dismiss()
@@ -533,8 +533,15 @@ export struct MainPage {
   registerGestureShare() {
 
     const gestureCallback = () => {
-      DialogUtils.showPlayPauseDialog1sec(NowPlayingStore.isPaused)
-      PlayControl.playOrPause()
+      if (GlobalStore.pref.fistGesture === 0) {
+        DialogUtils.showPlayPauseDialog1sec(NowPlayingStore.isPaused)
+        PlayControl.playOrPause()
+      } else {
+        DialogUtils.showHeartDialog1sec(!NowPlayingStore.isLiked)
+        SongLike.likeThisSong((icon, msg) => {
+          SnackBarUtils.showMessage(this.hdsSnackBar, icon, msg)
+        })
+      }
     }
 
     const callback: ApplicationStateChangeCallback = {

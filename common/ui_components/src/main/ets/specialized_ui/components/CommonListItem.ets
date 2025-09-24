@@ -101,3 +101,19 @@ export struct LightedCommonListItem {
     }).buildEffect())
   }
 }
+
+@ComponentV2
+export struct LightedCommonItem {
+  @Param spc: number = 0
+  @BuilderParam child: () => void
+
+  build() {
+    Column({space: this.spc}) {
+      this.child()
+    }.backgroundColor($r('app.color.play_list_single_item_bg'))
+    .borderRadius(20)
+    .visualEffect(new hdsEffect.HdsEffectBuilder().pointLight({
+      illuminatedType: hdsEffect.PointLightIlluminatedType.BORDER_CONTENT
+    }).buildEffect())
+  }
+}

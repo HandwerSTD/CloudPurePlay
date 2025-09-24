@@ -614,7 +614,7 @@
     },
     {
       "name": "swipe_to_next_track",
-      "value": "滑动切换下一首"
+      "value": "滑动切换歌曲"
     },
     {
       "name": "swipe_to_next_track_desc",
@@ -875,6 +875,30 @@
     {
       "name": "scroll_to_play_prev",
       "value": "滑动播放上一首"
+    },
+    {
+      "name": "air_grab",
+      "value": "隔空抓取功能"
+    },
+    {
+      "name": "air_grab_play",
+      "value": "播放"
+    },
+    {
+      "name": "air_grab_heart",
+      "value": "红心"
+    },
+    {
+      "name": "start_playing_previous",
+      "value": "开始播放上一首"
+    },
+    {
+      "name": "common_undo",
+      "value": "撤销"
+    },
+    {
+      "name": "start_playing_next",
+      "value": "开始播放下一首"
     }
   ]
 }

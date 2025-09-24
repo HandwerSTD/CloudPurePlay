@@ -73,6 +73,7 @@ export class ServiceInitUtils {
     pref.swipeToNextTrack = Settings.get<boolean>(SCPref.swipeToNextTrack) ?? true
     pref.dynamicBackgroundStreaming = Settings.get<boolean>(SCPref.dynamicBackgroundStreaming) ?? false
     pref.bgFlowColorStrat = Settings.get<number>(SCPref.bgFlowColorStrat) ?? 1
+    pref.fistGesture = Settings.get<number>(SCPref.fistGesture) ?? 0
   }
   static loadPresetPreferences() {
     if (Settings.get<boolean>(SCPref.useMissionContinue) === undefined) {

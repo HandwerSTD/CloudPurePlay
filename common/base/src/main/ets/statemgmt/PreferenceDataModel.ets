@@ -6,5 +6,17 @@ export class PrefDataModel {
   @Trace useStylusControl: boolean = false
   @Trace swipeToNextTrack: boolean = true
   @Trace dynamicBackgroundStreaming: boolean = false
-  @Trace bgFlowColorStrat: number = 0
+  @Trace bgFlowColorStrat: BG_FLOW_COLOR_STRAT = 0
+  @Trace fistGesture: FIST_GESTURE = 0
+}
+
+export enum BG_FLOW_COLOR_STRAT {
+  LIGHT = 0,
+  DARK,
+  SYSTEM,
+  AUTO
+}
+export enum FIST_GESTURE {
+  PLAYBACK = 0,
+  HEART
 }
