@@ -7,7 +7,7 @@
     "deviceTypes": [
       "phone",
       "tablet",
-      "2in1",
+      "2in1"
     ],
     "deliveryWithInstall": true,
     "installationFree": false,
@@ -23,6 +23,12 @@
         "startWindowBackground": "$color:start_window_background",
         "exported": true,
         "continuable": true,
+        "metadata": [
+          {
+            "name": "ohos.ability.shortcuts",
+            "resource": "$profile:shortcuts_config"
+          }
+        ],
         "skills": [
           {
             "entities": [
@@ -44,6 +50,10 @@
               {
                 "scheme": 'cloudpureplay',
                 "host": "shareConfig"
+              },
+              {
+                "scheme": 'cloudpureplay',
+                "host": "quickPlay"
               }
             ]
           }

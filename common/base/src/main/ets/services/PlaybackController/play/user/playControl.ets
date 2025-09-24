@@ -278,7 +278,7 @@ export class PlayControl {
         picUrl = await SongAPIUtils.getSongPicUrl(song)
       }
       await PlayControl.setPicUrl(picUrl)
-      await PlayControl.saveCurrentSongInfo(mode, song, artists, picUrl)
+      PlayControl.saveCurrentSongInfo(mode, song, artists, picUrl)
       await LyricUtils.setLyric(song)
 
       if (pauseOnStart) {

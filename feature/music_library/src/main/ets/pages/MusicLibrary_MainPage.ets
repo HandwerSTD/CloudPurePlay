@@ -175,7 +175,6 @@ export struct MainPage {
     .padding(this.listPadding)
   }
 
-  // TODO: 平板测试
   @Builder MyContent() {
     List() {
       ForEach((new Array(this.gridColumnNum).fill(0)), (_: number) => {

@@ -4,6 +4,7 @@ import { window } from '@kit.ArkUI';
 import {
   BreakpointSystem,
   DeviceCollaborationUtils,
+  FeaturedPlayUtils,
   GlobalStore,
   ImgCache,
   KVStoreUtil, Logger, LogStorage,
@@ -149,12 +150,24 @@ export default class MainAbility extends UIAbility {
           GlobalStore.outerWant = new OuterWantDataModel('new_config', {
             "apiName": api,
             "apiConfig": config!
-          })
+          }, true)
         } else if (d.hostname.startsWith('shareSong')) {
           GlobalStore.outerWant = new OuterWantDataModel('share_song', {
             "url": want.uri,
+          }, true)
+        } else if (d.hostname.startsWith('quickPlay')) {
+          GlobalStore.outerWant = new OuterWantDataModel('quick_play', {
+            'uri': want.uri
           })
+          ServiceInitUtils.checkQuickPlayInfo()
         }
+      }
+    } else if (want.parameters) {
+      if (want.parameters['name'] === 'quickPlay') {
+        GlobalStore.outerWant = new OuterWantDataModel('quick_play', {
+          'uri': want.parameters['type'] as string
+        })
+        ServiceInitUtils.checkQuickPlayInfo()
       }
     }
   }

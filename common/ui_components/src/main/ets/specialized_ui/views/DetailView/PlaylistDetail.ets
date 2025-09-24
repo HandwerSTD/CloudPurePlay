@@ -356,7 +356,7 @@ export struct PlaylistDetail {
                   }))
                   .onMouse((event) => {
                     if (event.button === MouseButton.Right) {
-                      song.showMenu
+                      song.showMenu = !song.showMenu
                     }
                   })
               }

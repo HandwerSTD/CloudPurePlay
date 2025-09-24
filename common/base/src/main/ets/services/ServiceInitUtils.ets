@@ -12,11 +12,14 @@ import { UserManager } from './Network/UserManager'
 import { DistributedUtils, FeaturedPlayUtils, GlobalStore,
   Logger,
   NowPlayingStore,
+  OuterWantDataModel,
   PlayQueueStore,
+  RetryUtil,
   SCEmitter, SCPref,
   ThemeManager } from '../exports'
 import { EmitterUtil } from '@pura/harmony-utils'
 import { playQueueKV } from './PlaybackController/queue/PlayQueueStore'
+import { promptAction } from '@kit.ArkUI'
 
 const TAG = '[ServiceInitUtils]'
 
@@ -59,6 +62,7 @@ export class ServiceInitUtils {
       }
     }
     GlobalStore.initialized = true
+    ServiceInitUtils.checkQuickPlayInfo()
   }
   static loadViewPref() {
     const pref = GlobalStore.pref
@@ -98,6 +102,42 @@ export class ServiceInitUtils {
     }
     if (Settings.get<number>(SCPref.bgFlowColorStrat) === undefined) {
       Settings.put(SCPref.bgFlowColorStrat, 1)
+    }
+  }
+  static checkQuickPlayInfo() {
+    if (!GlobalStore.initialized) return;
+    if (GlobalStore.outerWant.type === 'quick_play') {
+      const uri = GlobalStore.outerWant.data['uri'] as string
+      GlobalStore.outerWant = new OuterWantDataModel()
+      RetryUtil.retryWithResult(3, async () => {
+        if (!UserManager.isLogged) throw Error('not logged');
+        if (uri.includes('fm')) {
+          FeaturedPlayUtils.playPersonalizedFM((icon, msg) => {
+            promptAction.openToast({
+              message: msg
+            })
+          })
+        } else if (uri.includes('daily')) {
+          FeaturedPlayUtils.playDailySongs((icon, msg) => {
+            promptAction.openToast({
+              message: msg
+            })
+          }, $r('sys.symbol.calendar_31_a'))
+        } else if (uri.includes('heart')) {
+          FeaturedPlayUtils.playHeartMode((icon, msg) => {
+            promptAction.openToast({
+              message: msg
+            })
+          })
+        }
+      })
+        .catch((e: Error) => {
+          if (e.message === 'not logged') {
+            promptAction.openToast({
+              message: $r('app.string.try_after_login')
+            })
+          }
+        })
     }
   }
   static async reInit(newInstanceType: INSTANCE_TYPE, newUser: User, newPasswd: string, newRequestContext: Object) {

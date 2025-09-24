@@ -33,7 +33,7 @@ struct Index {
   }
   @Monitor('gs.outerWant')
   onOuterWant() {
-    if (this.gs.outerWant.type !== '') {
+    if (this.gs.outerWant.ui) {
       this.showOuterWantPanel = true
     } else {
       this.showOuterWantPanel = false

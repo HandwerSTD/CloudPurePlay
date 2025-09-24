@@ -1,0 +1,55 @@
+{
+  "shortcuts": [
+    {
+      "shortcutId": "shortcut_heart",
+      "label": "$string:Heart_list",
+      "icon": "$media:ic_shortcut_heart",
+      "visible": true,
+      "wants": [
+        {
+          "bundleName": "top.handwer.cloudpureplay",
+          "moduleName": "default",
+          "abilityName": "MainAbility",
+          "parameters": {
+            "name": "quickPlay",
+            "type": "heart"
+          }
+        }
+      ]
+    },
+    {
+      "shortcutId": "shortcut_daily",
+      "label": "$string:Daily_recommend",
+      "icon": "$media:ic_shortcut_daily",
+      "visible": true,
+      "wants": [
+        {
+          "bundleName": "top.handwer.cloudpureplay",
+          "moduleName": "default",
+          "abilityName": "MainAbility",
+          "parameters": {
+            "name": "quickPlay",
+            "type": "daily"
+          }
+        }
+      ]
+    },
+    {
+      "shortcutId": "shortcut_fm",
+      "label": "$string:Personal_fm",
+      "icon": "$media:ic_shortcut_radio",
+      "visible": true,
+      "wants": [
+        {
+          "bundleName": "top.handwer.cloudpureplay",
+          "moduleName": "default",
+          "abilityName": "MainAbility",
+          "parameters": {
+            "name": "quickPlay",
+            "type": "fm"
+          }
+        }
+      ]
+    }
+  ]
+}
