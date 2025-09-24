@@ -466,6 +466,11 @@ export struct MainPage {
       this.slideGesOffset = offset
       this.slideBlurPer = Math.max(this.SlideToPlayIndicatorHeight, this.SlideToHouseIndicatorHeight) / SLIDE_BAR_MAXH * Math.sign(this.slideGesOffset)
     }
+    if (this.SlideToHouseIndicatorHeight >= SLIDE_BAR_MAXH * 2.4) {
+      this.slideUpToMain = false
+    } else {
+      this.slideUpToMain = true
+    }
   }
   onSlideToPlayFinish() {
     Logger.debug(`offset = ${this.slideGesOffset}`)
@@ -474,7 +479,6 @@ export struct MainPage {
       PlayControl.playNext()
         .then((res) => {
           if (res !== false) {
-            this.slideUpToMain = false;
             SnackBarUtils.showMessageWithAction(this.hdsSnackBar, {
               icon: $r('sys.symbol.forward_end_fill'),
               message: '开始播放下一首',
@@ -483,10 +487,7 @@ export struct MainPage {
               action: () => {
                 PlayControl.playPre()
                 this.hdsSnackBar.dismiss()
-                this.slideUpToMain = true;
               }
-            }).finally(() => {
-              this.slideUpToMain = true
             })
           }
         })
@@ -497,7 +498,20 @@ export struct MainPage {
         this.showExplore = true
         this.slideGesOffset = 0
       } else {
-        PlayControl.playPre()
+        PlayControl.playPre().then((res) => {
+          if (res !== false) {
+            SnackBarUtils.showMessageWithAction(this.hdsSnackBar, {
+              icon: $r('sys.symbol.backward_end_fill'),
+              message: '开始播放上一首',
+            }, {
+              title: '撤销',
+              action: () => {
+                PlayControl.playNext()
+                this.hdsSnackBar.dismiss()
+              }
+            })
+          }
+        })
         this.hdsSnackBar.dismiss()
       }
     }
@@ -512,6 +526,7 @@ export struct MainPage {
     }
 
     this.slideBlurPer = 0
+    this.slideUpToMain = true
   }
 }
 
@@ -546,6 +561,10 @@ struct SlideIndicator {
           .fontColor([Color.White])
           .fontSize(20)
         Text(this.title)
+          .fontColor(Color.White)
+          .textShadow({
+            radius: 6, color: '#88ffffff'
+          })
       }
       .height(this.maxH).clip(true)
     }.width('100%').justifyContent(FlexAlign.Center).alignItems(this.alignItem)

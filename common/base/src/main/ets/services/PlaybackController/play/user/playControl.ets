@@ -493,7 +493,7 @@ export class PlayControl {
     }
   }
 
-  static async playPre() {
+  static async playPre(): Promise<void | boolean> {
     let isLogged: boolean | undefined = UserManager.isLogged
     let cycleMode = await PlayControl.getCycleMode()
     if(PlayQueueUtils.pre()) {
@@ -505,7 +505,7 @@ export class PlayControl {
       }
     } else {
       if(cycleMode == 2) { PlayControl.playQueue(PlayQueueUtils.getQueueLength() - 1) }
-      else { ToastUtil.showToast('没有上一首了~') }
+      else { ToastUtil.showToast('没有上一首了~'); return false;}
     }
   }
 
