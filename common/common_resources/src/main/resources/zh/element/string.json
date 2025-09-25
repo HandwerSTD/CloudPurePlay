@@ -593,6 +593,14 @@
       "value": "播放设置"
     },
     {
+      "name": "play_statistics",
+      "value": "播放统计"
+    },
+    {
+      "name": "first_open_time",
+      "value": "第一次打开应用"
+    },
+    {
       "name": "auto_play_on_launch",
       "value": "启动时自动播放"
     },

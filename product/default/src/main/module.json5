@@ -100,6 +100,9 @@
       },
       {
         "name": "ohos.permission.DETECT_GESTURE"
+      },
+      {
+        "name": "ohos.permission.STORE_PERSISTENT_DATA"
       }
     ],
     "extensionAbilities": [

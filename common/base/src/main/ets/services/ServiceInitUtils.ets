@@ -20,6 +20,7 @@ import { DistributedUtils, FeaturedPlayUtils, GlobalStore,
 import { EmitterUtil } from '@pura/harmony-utils'
 import { playQueueKV } from './PlaybackController/queue/PlayQueueStore'
 import { promptAction } from '@kit.ArkUI'
+import { PlayStatUtils } from './PlayStatistics/PlayStatUtils'
 
 const TAG = '[ServiceInitUtils]'
 
@@ -56,6 +57,8 @@ export class ServiceInitUtils {
     await PlayControl.init()
     // 初始化用户信息
     await UserManager.init()
+    // 初始化播放信息
+    await PlayStatUtils.init()
     if (Settings.get<boolean>(SCPref.autoPlayFM) === true) {
       if (playQueueUtils.getQueueLength() === 0) {
         FeaturedPlayUtils.playPersonalizedFM(() => {})

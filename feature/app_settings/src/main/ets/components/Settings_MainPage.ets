@@ -11,6 +11,7 @@ import { NavidromeAPI_Source } from "../views/DataSource/NavidromeAPI";
 import { MissionContinueSettings } from "../views/MissionContinue/MissionContinueSettings";
 import { DisplaySettings } from "../views/DisplaySettings/DisplaySettings";
 import { PlaybackSettings } from "../views/PlaybackSettings/PlaybackSettings";
+import { PlayStatistics } from "../views/PlayStatistics/PlayStatistics";
 import { LengthMetrics, router } from "@kit.ArkUI";
 import { SmartFeaturesSettings } from "../views/SmartFeaturesSettings/SmartFeaturesSettings";
 
@@ -54,6 +55,8 @@ export struct MainPage {
       PlaybackSettings()
     } else if (name === 'SmartFeaturesSettings') {
       SmartFeaturesSettings()
+    } else if (name === 'PlayStatistics') {
+      PlayStatistics()
     }
   }
 
@@ -141,6 +144,23 @@ export struct MainPage {
       illuminatedType: hdsEffect.PointLightIlluminatedType.BORDER_CONTENT
     }).buildEffect())
   }
+
+  @Builder PlayStatisticsBuilder() {
+    Column() {
+      LightUpLinedContainer() {
+        CommonListItem({
+          icon: $r('sys.symbol.data'),
+          title: $r('app.string.play_statistics'),
+        }).onClick(() => {
+          this.pushPage('PlayStatistics', {})
+        })
+      }
+    }.backgroundColor($r('app.color.play_list_single_item_bg'))
+    .borderRadius(20)
+    .visualEffect(new hdsEffect.HdsEffectBuilder().pointLight({
+      illuminatedType: hdsEffect.PointLightIlluminatedType.BORDER_CONTENT
+    }).buildEffect())
+  }
   @Builder AboutApp() {
     Column() {
       LightUpLinedContainer() {
@@ -197,6 +217,9 @@ export struct MainPage {
             }
             ListItem() {
               this.PlaybackSettingsBuilder()
+            }
+            ListItem() {
+              this.PlayStatisticsBuilder()
             }
             ListItem() {
               this.SmartFeaturesSettingsBuilder()

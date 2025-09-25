@@ -609,6 +609,14 @@
       "value": "Playback Settings"
     },
     {
+      "name": "play_statistics",
+      "value": "Play Statistics"
+    },
+    {
+      "name": "first_open_time",
+      "value": "First App Open Time"
+    },
+    {
       "name": "auto_play_on_launch",
       "value": "Auto Play on Launch"
     },
