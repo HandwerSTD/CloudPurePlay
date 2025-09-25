@@ -532,6 +532,7 @@ export class SearchAPIUtils {
   static async search2(params: SearchParams): Promise<UnifiedSearchResult> {
     if (InstanceSwitcher.InstanceType === INSTANCE_TYPE.CLOUD) {
       throw Error('Cloud API search2 not implemented');
+      // TODO: cloud api search
     } else if (InstanceSwitcher.InstanceType === INSTANCE_TYPE.NAVIDROME) {
       return Navidrome_SearchUtils.search2(params);
     } else {

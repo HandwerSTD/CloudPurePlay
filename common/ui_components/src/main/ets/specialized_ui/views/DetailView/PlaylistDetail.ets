@@ -43,6 +43,7 @@ export interface PlaylistDetail_PopReturn {
   removed?: boolean
 }
 
+// TODO: 歌单内搜索
 @ComponentV2
 export struct PlaylistDetail {
   @Local pageOpacity: number = 1;

@@ -120,6 +120,7 @@ export struct MainPage {
 
   // -----------------------------------------------
   // TODO: Pura X 适配
+  // TODO: 点击展开 / 滑动展开 等等其他交互
   @Builder NowPlayingArea_Bar() {
     if (this.shouldShowEmptyState) {
       // 空状态时显示简化的导航栏
