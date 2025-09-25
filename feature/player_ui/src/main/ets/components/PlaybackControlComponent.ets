@@ -45,6 +45,7 @@ export struct LightUpProgressBar {
           .backgroundColor(Color.White)
           .borderRadius(10)
           .visualEffect(new hdsEffect.HdsEffectBuilder().pointLight({
+            // sourceType: hdsEffect.PointLightSourceType.SOFT,
             options: {
               intensity: this.intensity,
               height: 90

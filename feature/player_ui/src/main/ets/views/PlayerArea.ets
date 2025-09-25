@@ -57,6 +57,8 @@ const LIGHT_PLAYBACK_BTN_LG: LightUpConfig = {
   lightBloom: 0,
 }
 
+const SLIDER_THICKNESS_DEFAULT = 5
+
 @ComponentV2
 export struct PlayerUIArea {
   // 从 MainPage 传入的必要属性
@@ -71,7 +73,7 @@ export struct PlayerUIArea {
   // PlayerUIArea 内部状态变量
   @Local isTopAreaExpand: boolean = false
   @Local isBottomAreaExpand: boolean = false
-  @Local sliderThickness: number = 10
+  @Local sliderThickness: number = SLIDER_THICKNESS_DEFAULT
   @Local isMovingSlider: boolean = false
   @Local sliderMovingTime: number = 0
   @Local shouldShowSlider: boolean = false
@@ -114,7 +116,7 @@ export struct PlayerUIArea {
         this.sliderMovingTime = value
       } else if (mode == SliderChangeMode.End) {
         this.nps.playTime = value
-        this.sliderThickness = 10
+        this.sliderThickness = SLIDER_THICKNESS_DEFAULT
         this.isMovingSlider = false
         if (this.sliderMovingTime !== -1) {
           PlayControl.seekMusic(this.sliderMovingTime)
@@ -424,7 +426,7 @@ export struct PlayerUIArea {
       .alignContent(this.isBottomAreaExpand ? Alignment.Center : Alignment.End)
       .animation({curve: curves.springMotion()})
 
-      this.ProgressBar('90%')
+      this.ProgressBar()
     }
     .layoutWeight(1)
     .height('100%')
@@ -440,7 +442,7 @@ export struct PlayerUIArea {
     })
   }
 
-  @Builder ProgressBar(wid: Dimension) {
+  @Builder ProgressBar() {
     Column() {
       Slider({
         value: this.nps.playTime,
@@ -449,7 +451,7 @@ export struct PlayerUIArea {
         step: 1,
         style: SliderStyle.InSet
       })
-        .width('100%')
+        .width('100%').height(20)
         .blockColor(Color.Transparent)
         .trackColor('#aaffffff')
         .trackThickness(this.sliderThickness)
@@ -503,10 +505,10 @@ export struct PlayerUIArea {
           .alignSelf(ItemAlign.End)
           .layoutWeight(1)
       }
-      .padding({ left: 5, right: 5 })
+      .padding({ left: 6, right: 6 })
       .width('100%')
     }
-    .width(wid)
+    .width('100%').padding({left: 9, right: 9, bottom: 20})
     .height(this.shouldShowSlider || this.isMovingSlider ? 'auto' : 0)
     .opacity(this.shouldShowSlider || this.isMovingSlider ? 0.7 : 0)
     .animation({curve: curves.springMotion(0.6, 0.8)})

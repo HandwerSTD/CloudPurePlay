@@ -212,7 +212,7 @@ export struct ImageCover {
       .margin(nps.isPaused ? ResponsiveUtil.chooseByWidth(['10%', '7%']) : 12)
       .animation({ curve:
       ResponsiveUtil.chooseByWidth(
-        [curves.springMotion(0.8,0.4), curves.springMotion(0.6, 0.5)])
+        [curves.springMotion(0.8,0.6), curves.springMotion(0.6, 0.7)])
       })
       // .opacity(this.coverFakerVisibility === Visibility.Visible ? 1 : 0 )
       // .animation(this.useCoverFaker ? {duration: 1000} : undefined)
@@ -234,7 +234,7 @@ export struct ImageCover {
       .margin(nps.isPaused ? ResponsiveUtil.chooseByWidth(['10%', '7%']) : 12)
       .animation({ curve:
       ResponsiveUtil.chooseByWidth(
-        [curves.springMotion(0.8,0.4), curves.springMotion(0.6, 0.5)])
+        [curves.springMotion(0.8,0.6), curves.springMotion(0.6, 0.7)])
       })
       .opacity(this.coverFakerVisibility === Visibility.Visible ? 1 : 0 )
       .animation(this.useCoverFaker ? {duration: 1000} : undefined)
