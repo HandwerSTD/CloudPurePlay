@@ -51,17 +51,19 @@ struct FirstOpenPage {
     onNext: () => {
       this.controller.showNext()
     }
-  },{
-    // WebDAV
-    previousLabel: $r('sys.string.stepper_back'),
-    nextLabel: $r('sys.string.stepper_next'),
-    onPrevious: () => {
-      this.controller.showPrevious()
-    },
-    onNext: () => {
-      this.controller.showNext()
-    }
-  },{
+  },
+  //   {
+  //   // WebDAV
+  //   previousLabel: $r('sys.string.stepper_back'),
+  //   nextLabel: $r('sys.string.stepper_next'),
+  //   onPrevious: () => {
+  //     this.controller.showPrevious()
+  //   },
+  //   onNext: () => {
+  //     this.controller.showNext()
+  //   }
+  // },
+    {
     // NoInterrupt
     previousLabel: $r('sys.string.stepper_back'),
     nextLabel: $r('sys.string.stepper_next'),
@@ -181,7 +183,7 @@ struct FirstOpenPage {
               LightUp({
                 show: this.showLightUp
               })
-              WebDAV()
+              // WebDAV()
               NoInterruptListen()
               PersonalFM()
               MultiInteractions()
