@@ -136,9 +136,6 @@ export struct MainPage {
         ImageCoverThumbnail({
           nowPlayingCoverImg: this.nowPlayingCoverImg
         })
-          .onClick(() => {
-            this.showExplore = false
-          })
         this.AuthorInfo_Bar()
         this.PlaybackButton_Bar()
       }.width('100%')
@@ -146,6 +143,16 @@ export struct MainPage {
         right: 24,
         top: 8, bottom: 8 + BAR_OFFSET})
       .clip(false)
+      .onClick(() => {
+        this.showExplore = false
+      })
+      .gesture(PanGesture({direction: PanDirection.Vertical}).onActionStart((event) => {
+        this.onPrepareSlideToPlay(event.offsetY)
+      }).onActionUpdate((event) => {
+        this.onSlideToPlay(event.offsetY)
+      }).onActionEnd((event) => {
+        this.onSlideToPlayFinish()
+      }))
     }
   }
   @Builder AuthorInfo_Bar() {
@@ -173,9 +180,9 @@ export struct MainPage {
         .fontColor(Color.White)
     }.layoutWeight(1)
     .alignItems(HorizontalAlign.Start)
-    .onClick(() => {
-      this.showQueueSheet = !this.showQueueSheet
-    })
+    // .onClick(() => {
+    //   this.showQueueSheet = !this.showQueueSheet
+    // })
   }
   @Builder PlaybackButton_Bar() {
     Row({space: 12}) {
@@ -256,6 +263,8 @@ export struct MainPage {
     .margin({ left: 24})
     .animation({duration: 300, curve: Curve.Ease})
   }
+
+
 
   @Builder LightUpProgress() {
     Row() {
@@ -359,20 +368,31 @@ export struct MainPage {
   }
   @Builder SlideToPlayIndicator() {
     Column() {
-      SlideIndicator({
-        icon: this.slideUpToMain ? $r('sys.symbol.house_fill') : $r('sys.symbol.backward_end_fill'),
-        title: this.slideUpToMain ? $r('app.string.scroll_to_go_explore') : $r('app.string.scroll_to_play_prev'),
-        h: this.SlideToHouseIndicatorHeight,
-        alignItem: VerticalAlign.Bottom,
-        maxH: SLIDE_BAR_MAXH
-      })
-      SlideIndicator({
-        icon: $r('sys.symbol.forward_end_fill'),
-        title: $r('app.string.scroll_to_play_next'),
-        h: this.SlideToPlayIndicatorHeight,
-        alignItem: VerticalAlign.Top,
-        maxH: SLIDE_BAR_MAXH
-      })
+      if (this.showExplore) {
+        Blank()
+        SlideIndicator({
+          icon: $r('sys.symbol.play_round_triangle'),
+          title: $r('app.string.scroll_to_go_player'),
+          h: this.SlideToPlayIndicatorHeight,
+          alignItem: VerticalAlign.Top,
+          maxH: SLIDE_BAR_MAXH
+        })
+      } else {
+        SlideIndicator({
+          icon: this.slideUpToMain ? $r('sys.symbol.house_fill') : $r('sys.symbol.backward_end_fill'),
+          title: this.slideUpToMain ? $r('app.string.scroll_to_go_explore') : $r('app.string.scroll_to_play_prev'),
+          h: this.SlideToHouseIndicatorHeight,
+          alignItem: VerticalAlign.Bottom,
+          maxH: SLIDE_BAR_MAXH
+        })
+        SlideIndicator({
+          icon: $r('sys.symbol.forward_end_fill'),
+          title: $r('app.string.scroll_to_play_next'),
+          h: this.SlideToPlayIndicatorHeight,
+          alignItem: VerticalAlign.Top,
+          maxH: SLIDE_BAR_MAXH
+        })
+      }
     }.height('100%').justifyContent(FlexAlign.SpaceBetween)
     .padding({top: Math.max(this.gs.wd.top, 12) + 12, bottom: 24, left: 24, right: 24})
     .hitTestBehavior(HitTestMode.Transparent)
@@ -461,10 +481,16 @@ export struct MainPage {
   @Local slideUpToMain: boolean = true
 
   onPrepareSlideToPlay(dir: number) {
-    this.slideGesOffset = dir > 0 ? 1 : -1
+    if (this.showExplore) {
+      // 仅向上滑动
+      this.slideGesOffset = dir < 0 ? -1 : 0
+    } else {
+      this.slideGesOffset = dir > 0 ? 1 : -1
+    }
   }
   onSlideToPlay(offset: number) {
-    if (offset / (this.slideGesOffset + 0.0001) > 0) {
+    if (this.slideGesOffset === 0) return;
+    if (offset / (this.slideGesOffset) > 0) {
       this.slideGesOffset = offset
       this.slideBlurPer = Math.max(this.SlideToPlayIndicatorHeight, this.SlideToHouseIndicatorHeight) / SLIDE_BAR_MAXH * Math.sign(this.slideGesOffset)
     }
@@ -476,23 +502,29 @@ export struct MainPage {
   }
   onSlideToPlayFinish() {
     Logger.debug(`offset = ${this.slideGesOffset}`)
+    if (this.slideGesOffset === 0) return;
     // Play Next
     if (this.SlideToPlayIndicatorHeight >= SLIDE_BAR_MAXH) {
-      PlayControl.playNext()
-        .then((res) => {
-          if (res !== false) {
-            SnackBarUtils.showMessageWithAction(this.hdsSnackBar, {
-              icon: $r('sys.symbol.forward_end_fill'),
-              message: $r('app.string.start_playing_next'),
-            }, {
-              title: $r('app.string.common_undo'),
-              action: () => {
-                PlayControl.playPre()
-                this.hdsSnackBar.dismiss()
-              }
-            })
-          }
-        })
+      if (this.showExplore) {
+        this.showExplore = !this.showExplore
+        this.slideGesOffset = 0
+      } else {
+        PlayControl.playNext()
+          .then((res) => {
+            if (res !== false) {
+              SnackBarUtils.showMessageWithAction(this.hdsSnackBar, {
+                icon: $r('sys.symbol.forward_end_fill'),
+                message: $r('app.string.start_playing_next'),
+              }, {
+                title: $r('app.string.common_undo'),
+                action: () => {
+                  PlayControl.playPre()
+                  this.hdsSnackBar.dismiss()
+                }
+              })
+            }
+          })
+      }
     }
     // Open Explore
     if (this.SlideToHouseIndicatorHeight >= SLIDE_BAR_MAXH) {

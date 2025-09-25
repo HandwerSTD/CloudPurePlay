@@ -1,4 +1,4 @@
-import { FeaturedPlayUtils, ResponsiveUtil, Settings, SCPref } from "@handwer/base"
+import { FeaturedPlayUtils, ResponsiveUtil, Settings, SCPref, NowPlayingStore, SongLike } from "@handwer/base"
 import { LightUpRoundedButton, LightUpConfig, SnackBarUtils, UIComponentUtils,
   LightUpIconTextButton } from "@handwer/ui_components"
 import { curves, LengthMetrics, SymbolGlyphModifier } from "@kit.ArkUI"
@@ -203,6 +203,104 @@ export struct EmptyStateViewBar {
                 SnackBarUtils.showMessage(this.hdsSnackBar, icon, msg)
               }
             })
+          },
+          lightUpConfig: {
+            lightIntensity: 1.5,
+            lightHeight: 150,
+          }
+        })
+      }
+    }
+    .width('100%')
+    .padding({left: 24,
+      right: 24,
+      top: 8, bottom: 8})
+  }
+}
+
+@ComponentV2
+export struct QuickActionViewBar {
+  hdsSnackBar = new HdsSnackBar(this.getUIContext())
+
+  get todayIcon() {
+    return UIComponentUtils.getTodayIcon()
+  }
+
+  build() {
+    Row() {
+      Row({space: 12}) {
+        LightUpRoundedButton({
+          icon: $r('sys.symbol.heart_fill'),
+          customFontColor: [Color.White],
+          clickAction: () => {
+            FeaturedPlayUtils.playHeartMode((icon, msg) => {
+              if (this.hdsSnackBar) {
+                SnackBarUtils.showMessage(this.hdsSnackBar, icon, msg)
+              }
+            })
+          },
+          lightUpConfig: {
+            lightIntensity: 1.5,
+            lightHeight: 150,
+          }
+        })
+        // 每日推荐
+        LightUpRoundedButton({
+          icon: this.todayIcon,
+          customFontColor: [Color.White],
+          clickAction: () => {
+            FeaturedPlayUtils.playDailySongs((icon, msg) => {
+              if (this.hdsSnackBar) {
+                SnackBarUtils.showMessage(this.hdsSnackBar, icon, msg)
+              }
+            }, this.todayIcon)
+          },
+          lightUpConfig: {
+            lightIntensity: 1.5,
+            lightHeight: 150,
+          }
+        })
+
+        // 私人FM
+        LightUpRoundedButton({
+          icon: $r('sys.symbol.radiostation'),
+          customFontColor: [Color.White],
+          clickAction: () => {
+            FeaturedPlayUtils.playPersonalizedFM((icon, msg) => {
+              if (this.hdsSnackBar) {
+                SnackBarUtils.showMessage(this.hdsSnackBar, icon, msg)
+              }
+            })
+          },
+          lightUpConfig: {
+            lightIntensity: 1.5,
+            lightHeight: 150,
+          }
+        })
+      }
+      Row({space: 12}) {
+
+        // Like
+        LightUpRoundedButton({
+          icon: NowPlayingStore.isLiked ? $r('sys.symbol.heart_fill') : $r('sys.symbol.heart'),
+          customFontColor: [Color.White],
+          clickAction: () => {
+            SongLike.likeThisSong((icon, msg) => {
+              if (this.hdsSnackBar) {
+                SnackBarUtils.showMessage(this.hdsSnackBar, icon, msg)
+              }
+            })
+          },
+          lightUpConfig: {
+            lightIntensity: 1.5,
+            lightHeight: 150,
+          }
+        })
+        LightUpRoundedButton({
+          icon: $r('sys.symbol.music_note_list_fill'),
+          customFontColor: [Color.White],
+          clickAction: () => {
+
           },
           lightUpConfig: {
             lightIntensity: 1.5,

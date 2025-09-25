@@ -86,6 +86,10 @@ class AVSessionUtils {
     controller.sendControlCommand(command, () => {})
   }
 
+  async setIsLike() {
+    (await this.getInstance()).setAVPlaybackState({ isFavorite: this.isFavorite() })
+  }
+
   async setDefaultMetadata(song: Song, artists: string) {
     this.currentSong = song
     this.currentArtists = artists

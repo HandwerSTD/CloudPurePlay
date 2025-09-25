@@ -52,6 +52,7 @@ class AVPlayerUtils {
     this.avPlayer?.off('audioOutputDeviceChangeWithInfo')
     this.avPlayer?.off('audioInterrupt')
     this.avPlayer?.off('seekDone')
+    this.avPlayer?.off('bufferingUpdate')
     this.avPlayer = null
   }
 
@@ -236,6 +237,7 @@ class AVPlayerUtils {
           NowPlayingStore.isPaused = true
           AVSessionUtils.pauseState(avPlayer.currentTime)
           break
+
         case 'completed':
           this.clearInterval()
           AVSessionUtils.pauseState(avPlayer.currentTime)
@@ -246,6 +248,14 @@ class AVPlayerUtils {
         case 'stopped':
           this.clearInterval()
           ContinuousTask.stopBackgroundTask()
+      }
+    })
+    avPlayer.on("bufferingUpdate", (info, val) => {
+      if (info === media.BufferingInfoType.BUFFERING_START) {
+        // slow network buffering
+        AVSessionUtils.bufferingState(val)
+      } else if (info === media.BufferingInfoType.BUFFERING_END) {
+        AVSessionUtils.playState(NowPlayingStore.playTime)
       }
     })
   }

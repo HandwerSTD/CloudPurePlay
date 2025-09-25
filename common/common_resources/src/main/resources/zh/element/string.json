@@ -870,7 +870,7 @@
     },
     {
       "name": "scroll_to_go_explore",
-      "value": "滑动进入播放页"
+      "value": "滑动进入音乐库"
     },
     {
       "name": "scroll_to_play_prev",
@@ -899,6 +899,10 @@
     {
       "name": "start_playing_next",
       "value": "开始播放下一首"
+    },
+    {
+      "name": "scroll_to_go_player",
+      "value": "滑动进入播放页"
     }
   ]
 }

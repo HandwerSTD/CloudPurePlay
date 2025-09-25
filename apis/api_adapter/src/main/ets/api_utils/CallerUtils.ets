@@ -627,3 +627,5 @@ export class SearchAPIUtils {
     }
   }
 }
+
+// TODO: ArtistUtils

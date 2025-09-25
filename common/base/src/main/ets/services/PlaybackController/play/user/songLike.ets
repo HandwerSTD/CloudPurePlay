@@ -4,6 +4,7 @@ import { PlaylistContentUpdateInfo, SCEmitter, ShowToastCallback, SongConvertUti
 import { UserManager } from "../../../Network/UserManager"
 import UserStore from "../../../Network/UserStore"
 import NowPlayingStore from "../NowPlayingStore"
+import AVSessionUtils from "../system/AVSessionUtils"
 
 const TAG = '[songLike] '
 
@@ -57,7 +58,7 @@ export class SongLike {
           if (val) store.likeList = new Set(val)
           UserManager.persistLikeList()
         })
-        toastCallback?.($r('sys.symbol.heart_fill'), result ? '已收藏至【我喜欢的音乐】' : '收藏失败')
+        toastCallback?.($r('sys.symbol.heart'), result ? '已收藏至【我喜欢的音乐】' : '收藏失败')
       } else { // 已喜欢
         let currentSong = NowPlayingStore.currentSong
         // const result = await PlayListAPIUtils.PlayListOperation('del', userPlayLists[0].id, currentSong.id)
@@ -81,6 +82,7 @@ export class SongLike {
       toastCallback?.($r('sys.symbol.heart_slash'), '修改红心失败')
     } finally {
       UserManager.fetchUserPlaylists()
+      AVSessionUtils.setIsLike()
     }
   }
 
